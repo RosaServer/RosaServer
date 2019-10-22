@@ -124,45 +124,47 @@ struct Vehicle;
 struct Item;
 struct RigidBody;
 
-//14364 bytes (381C)
+//14372 bytes (0x3824)
 struct Player {
 	BOOL active;
 	char name[32]; //04
-	int unk0; //24
-	int unk1; //28
+		int unk0; //24
+		int unk1; //28
 	unsigned int subRosaID; //2c
 	unsigned int phoneNumber; //30
 	BOOL isAdmin; //34
 	unsigned int adminAttempts; //38
 	unsigned int accountID; //3C
-	char unk2[0x48 - 0x3C - 4];
+		char unk2[0x48 - 0x3C - 4];
 	BOOL isReady; //48
 	int money; //4C
-	char unk3[0x74 - 0x4C - 4];
-	unsigned int team; //74
-	unsigned int teamSwitchTimer; //78
-	int stocks; //7c
-	int unk4[2];
-	int humanID; //88
-	char unk5[0x150 - 0x88 - 4];
-	int menuTab; //150
-	char unk6[0x2d04 - 0x150 - 4];
-	BOOL isBot; //2d04
-	char unk7[0x3794 - 0x2d04 - 4];
-	int gender; //3794
-	int skinColor; //3798
-	int hairColor; //379c
-	int hair; //37a0
-	int eyeColor; //37a4
-	//currently doesn't work client-side
-	int shirtColor; //37a8
-	int suitColor; //37ac
+	int corporateRating; //50
+	int criminalRating; //54
+		char unk3[0x7C - 0x54 - 4];
+	unsigned int team; //7C
+	unsigned int teamSwitchTimer; //80
+	int stocks; //84
+		int unk4[2];
+	int humanID; //90
+		char unk5[0x158 - 0x90 - 4];
+	int menuTab; //158
+		char unk6[0x2d0c - 0x158 - 4];
+	BOOL isBot; //2d0c
+		char unk7[0x379c - 0x2d0c - 4];
+	int gender; //379c
+	int skinColor; //37a0
+	int hairColor; //37a4
+	int hair; //37a8
+	int eyeColor; //37ac
+	//0 = casual, 1 = suit
+	int model; //37b0
+	int suitColor; //37b4
 	//0 = no tie
-	int tieColor; //37b0
-	int unk8; //37b4
+	int tieColor; //37b8
+		int unk8; //37b4
 	int head; //37b8
 	int necklace; //37bc
-	char unk9[14364 - 14272];
+		char unk9[14372 - 14280];
 
 	int getIndex() const;
 	bool getIsActive() const {
@@ -203,7 +205,7 @@ struct Player {
 	void remove() const;
 };
 
-//288 bytes (120)
+//312 bytes (138)
 struct Bone {
 	int bodyID;
 	Vector pos;
@@ -211,19 +213,19 @@ struct Bone {
 	Vector vel;
 	Vector vel2;
 	RotMatrix rot;
-	char unk[288 - 88];
+		char unk[312 - 88];
 };
 
-//13632 bytes (3540)
+//14152 bytes (3748)
 struct Human {
 	BOOL active;
-	unsigned int unk00; //04
+		unsigned int unk00; //04
 	int playerID; //08
-	int unk0; //0c
-	int unk1; //10
-	int unk2; //14
-	int unk3; //18
-	int unk4; //1c
+		int unk0; //0c
+		int unk1; //10
+		int unk2; //14
+		int unk3; //18
+		int	unk4; //1c
 	int vehicleID; //20
 	int vehicleSeat; //24
 	int lastVehicleID; //28
@@ -232,35 +234,37 @@ struct Human {
 	unsigned int despawnTime; //30
 	unsigned int oldHealth; //34
 	BOOL isImmortal; //38
-	int unk10; //3c
-	int unk11; //40
-	int unk12; //44
-	unsigned int spawnProtection; //38
+		int unk10; //3c
+		int unk11; //40
+		int unk12; //44
+	unsigned int spawnProtection; //48
 	BOOL isOnGround; //4c
 	/*
 	0=normal
 	1=jumping/falling
 	2=sliding
+	5=getting up?
 	*/
 	int movementState; //50
-	int zoomLevel; //54
-	int unk14; //58
-	int unk15; //5c
-	int unk16; //60
-	int unk17; //64
-	int unk18; //68
+		int unk13; //54
+	int zoomLevel; //58
+		int unk14; //5c
+		int unk15; //60
+		int unk16; //64
+		int unk17; //68
+		int unk18; //6c
 	//max 60
-	int damage; //6c
-	BOOL isStanding; //70
-	Vector pos; //74
-	Vector pos2; //80
-	float viewYaw; //8c
-	float viewPitch; //90
-	char unk19[0x120 - 0x90 - 4];
-	float strafeInput; //120
-	float unk20;
-	float walkInput; //128
-	char unk21[0x1b4 - 0x128 - 4];
+	int damage; //70
+	BOOL isStanding; //74
+	Vector pos; //78
+	Vector pos2; //84
+	float viewYaw; //90
+	float viewPitch; //94
+		char unk19[0x124 - 0x94 - 4];
+	float strafeInput; //124
+		float unk20;
+	float walkInput; //12c
+		char unk21[0x1f4 - 0x12c - 4];
 	/*
 	mouse1 = 1		1 << 0
 	mouse2 = 2		1 << 1
@@ -277,45 +281,46 @@ struct Human {
 	e = 2048		1 << 11
 	r = 4096		1 << 12
 	f = 8192		1 << 13
-	
+
 	del = 262144	1 << 18
 	z = 524288		1 << 19
 	*/
-	unsigned int inputFlags; //1b4
-	unsigned int lastInputFlags; //1b8
-	char unk22[0x1c0 - 0x1b8 - 4];
-	Bone bones[16]; //1c0
-	char unk23[0x3038 - (0x1c0 + 4608)];
-	int rightHandOccupied; //3038
-	int rightHandItemID; //303c
-	char unk24[0x3060 - 0x303c - 4];
-	int leftHandOccupied; //3060
-	int leftHandItemID; //3064
-	char unk25[0x32a0 - 0x3064 - 4];
-	int health; //32a0
-	int bloodLevel; //32a4
-	BOOL isBleeding; //32a8
-	int chestHP; //32ac
-	int unk26; //32b0
-	int headHP; //32b4
-	int unk27; //32b8
-	int leftArmHP; //32bc
-	int unk28; //32c0
-	int rightArmHP; //32c4
-	int unk29; //32c8
-	int leftLegHP; //32cc
-	int unk30; //32d0
-	int rightLegHP; //32d4
-
-	char unk31[0x34d0 - 0x32d4 - 4];
-	//000000000400000002000000070000000400000004000000
-	unsigned int gender; //34d0
-	unsigned int head; //34d4
-	unsigned int skinColor; //34d8
-	unsigned int hairColor; //34dc
-	unsigned int hair; //34e0
-	unsigned int eyeColor; //34e4
-	char unk32[13632 - 0x34e4 - 4];
+	unsigned int inputFlags; //1f4
+	unsigned int lastInputFlags; //1f8
+		char unk22[0x200 - 0x1f8 - 4];
+	Bone bones[16]; //200
+		char unk23[0x323c - (0x200 + (312 * 16))];
+	int rightHandOccupied; //323c
+	int rightHandItemID; //3240
+		char unk24[0x3264 - 0x3240 - 4];
+	int leftHandOccupied; //3264
+	int leftHandItemID; //3268
+		char unk25[0x34a4 - 0x3268 - 4];
+	int health; //34a4
+	int bloodLevel; //34a8
+	BOOL isBleeding; //34ac
+	int chestHP; //34b0
+		int unk26; //34b4
+	int headHP; //34b8
+		int unk27; //34bc
+	int leftArmHP; //34c0
+		int unk28; //34c4
+	int rightArmHP; //34c8
+		int unk29; //34cc
+	int leftLegHP; //34d0
+		int unk30; //34d4
+	int rightLegHP; //34d8
+		char unk31[0x36d4 - 0x34d8 - 4];
+	int gender; //36d4
+	int head; //36d8
+	int skinColor; //36dc
+	int hairColor; //36e0
+	int hair; //36e4
+	int eyeColor; //36e8
+	int model; //36ec
+	int suitColor; //36f0
+	int tieColor; //36f4
+		char unk32[14152 - 0x36f4 - 4];
 
 	int getIndex() const;
 	bool getIsActive() const {
@@ -398,31 +403,31 @@ struct ItemType {
 	}
 };
 
-//532 bytes (214)
+//588 bytes (24C)
 struct Item {
 	BOOL active;
 	BOOL physicsSim; //04
 	BOOL physicsSettled; //08
-	int unk1; //0c
+		int unk1; //0c
 	int type; //10
-	int unk2; //14
-	int unk3; //18
-	int unk4; //1c
+		int unk2; //14
+		int unk3; //18
+		int unk4; //1c
 	int parentHumanID; //20
 	int parentItemID; //24
 	int parentSlot; //28
-	char unk5[0x50 - 0x28 - 4];
-	int bodyID; //50
-	Vector pos; //54
-	Vector pos2; //60
-	Vector vel; //6c
-	Vector vel2; //78
-	Vector vel3; //84
-	Vector vel4; //90
-	RotMatrix rot; //9c
-	char unk6[0xec - 0x9c - 36];
-	int bullets; //ec
-	char unk7[532 - 240];
+		char unk5[0x54 - 0x28 - 4];
+	int bodyID; //54
+	Vector pos; //58
+	Vector pos2; //64
+	Vector vel; //70
+	Vector vel2; //7c
+	Vector vel3; //88
+	Vector vel4; //94
+	RotMatrix rot; //a0
+		char unk6[0x124 - 0xa0 - 36];
+	int bullets; //124
+		char unk7[588 - 296];
 
 	int getIndex() const;
 	bool getIsActive() const {
@@ -454,7 +459,7 @@ struct Item {
 	void explode() const;
 };
 
-//20700 bytes (50DC)
+//20548 bytes (5044)
 struct Vehicle {
 	BOOL active;
 	unsigned int type; //04
@@ -468,41 +473,22 @@ struct Vehicle {
 	short despawnTime; //1c
 	short spawnedState; //1e
 	BOOL isLocked; //20
-	int bodyID; //24
-		int unk3[34]; //28
-	Vector pos; //b0
-	Vector pos2; //bc
-	RotMatrix rot; //c8
-	Vector vel; //ec
-		char unk4[0x110 - 0xec - 12];
-	Vector pos3; //110
-	Vector pos4; //11c
-		char unk5[0x2844 - 0x11c - 12];
-	BOOL windowState0; //2844
-	BOOL windowState1; //2848
-	BOOL windowState2; //284c
-	BOOL windowState3; //2850
-	BOOL windowState4; //2854
-	BOOL windowState5; //2858
-	BOOL windowState6; //285c
-	BOOL windowState7; //2860
-		char unk5_1[0x3648 - 0x2860 - 4];
-	float gearX; //3648
-	float steerControl; //364c
-	float gearY; //3650
-	float gasControl; //3654
-		char unk6[0x3988 - 0x3654 - 4];
-	int numWheels; //3988
-	int wheelBodyID0; //398c
-		char unk7[0x3a38 - 0x398c - 4];
-	int wheelBodyID1; //3a38
-		char unk8[0x3ae4 - 0x3a38 - 4];
-	int wheelBodyID2; //3ae4
-		char unk9[0x3b90 - 0x3ae4 - 4];
-	int wheelBodyID3; //3b90
-		char unk10[0x4f0c - 0x3b90 - 4];
-	int bladeBodyID; //4f0c
-		char unk11[20700 - 20240];
+		int unk3; //24
+	int bodyID; //28
+	Vector pos; //2c
+	Vector pos2; //38
+	RotMatrix rot; //44
+		float unk4; //54
+	RotMatrix rot2; //58
+	Vector vel; //68
+		char unk5[0x35c4 - 0x68 - 12];
+	float gearX; //35c4
+	float steerControl; //35c8
+	float gearY; //35cc
+	float gasControl; //35d0
+		char unk6[0x4e88 - 0x35d0 - 4];
+	int bladeBodyID; //4e88
+		char unk7[20548 - 20148];
 
 	int getIndex() const;
 	bool getIsActive() const {
