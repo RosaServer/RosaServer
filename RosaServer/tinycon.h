@@ -30,6 +30,7 @@
 #define TAB 9
 #define ESC 27
 #define DEL 51
+#define CTRLC 3
 
 // Some basic configs
 #define TINYCON_VERSION "0.6"
@@ -45,10 +46,6 @@ int getch();
 // getLine modes
 #define M_LINE 0
 #define M_PASSWORD 1
-
-//void tinyConsole(std::string prompt, int (*callbackFunc)(const char* cmd));
-
-//int tinyConsoleTrigger(const char* cmd);
 
 std::string tinyGetLine();
 
@@ -77,10 +74,11 @@ public:
 	virtual int hotkeys(char);
 	void pause();
 	void quit();
+	std::string getBuffer();
 	std::string getLine();
 	std::string getLine(int);
 	std::string getLine(int, std::string);
 	std::string version();
-	void setMaxHistory(int);
 	void setBuffer(std::string);
+	void setMaxHistory(int);
 };

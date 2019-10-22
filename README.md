@@ -16,3 +16,11 @@ If you want to build RosaServer yourself and contribute:
 4. Compile RosaServer.
 5. Copy `Release/RosaServer.dll` and `LuaJIT/src/lua51.dll` into your server directory.
 6. Either use something like [Stud_PE](http://www.cgsoftlabs.ro/studpe.html) to add RosaServer.dll to subrosadedicated.exe's import table, or inject it manually after launch.
+
+---
+
+Thanks to these open source libraries:
+- [Sol3](https://github.com/ThePhD/sol2)
+- [Detours](https://github.com/microsoft/Detours)
+- [cpp-httplib](https://github.com/yhirose/cpp-httplib)
+- [TinyCon](https://github.com/unix-ninja/hackersandbox)
