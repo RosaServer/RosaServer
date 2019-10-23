@@ -540,10 +540,6 @@ int Human::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)humans) / sizeof(*this);
 }
 
-void Human::update() const {
-	createevent_updatehuman(getIndex());
-}
-
 void Human::remove() const {
 	deletehuman(getIndex());
 }

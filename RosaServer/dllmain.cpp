@@ -82,7 +82,6 @@ void_index_func grenadeexplosion;
 createevent_message_func createevent_message;
 void_index_func createevent_updateplayer;
 void_index_func createevent_updateplayer_finance;
-void_index_func createevent_updatehuman;
 void_index_func createevent_updateitem;
 void_index_func createevent_createobject;
 createevent_updateobject_func createevent_updateobject;
@@ -342,7 +341,6 @@ void luaInit(bool redo) {
 		"player", sol::property(&Human::getPlayer),
 		"vehicle", sol::property(&Human::getVehicle, &Human::setVehicle),
 
-		"update", &Human::update,
 		"remove", &Human::remove,
 		"getPos", &Human::getPos,
 		"setPos", &Human::setPos,
@@ -557,7 +555,6 @@ static BOOL Init(HMODULE& hModule) {
 	{
 		DWORD exeBase = (DWORD)GetModuleHandle(NULL);
 
-		//2300000003000000
 		version = (Version*)(exeBase + 0x971B8);
 
 		serverName = (char*)(exeBase + 0x8BBB254);
@@ -570,7 +567,7 @@ static BOOL Init(HMODULE& hModule) {
 		gameTimer = (int*)(exeBase + 0x8F7A46C);
 		isLevelLoaded = (BOOL*)(exeBase + 0x1339BB20);
 
-		lineIntersectResult = (RayCastResult*)(exeBase + 0x192BF980);//
+		lineIntersectResult = (RayCastResult*)(exeBase + 0x1A0515E0);
 		sunTime = (unsigned int*)(exeBase + 0x33E58A20);//
 
 		connections = (Connection*)(exeBase + 0x1ED22060);
@@ -578,13 +575,13 @@ static BOOL Init(HMODULE& hModule) {
 		players = (Player*)(exeBase + 0x13AFCE60);
 		humans = (Human*)(exeBase + 0x5CC3C8);
 		vehicles = (Vehicle*)(exeBase + 0x81B23E0);
-		itemTypes = (ItemType*)(exeBase + 0x192d1560);//
-		items = (Item*)(exeBase + 0x8f011a0);//
-		bullets = (Bullet*)(exeBase + 0x1ec760);//
-		bodies = (RigidBody*)(exeBase + 0x8f840);//
+		itemTypes = (ItemType*)(exeBase + 0x1A0639C0);
+		items = (Item*)(exeBase + 0x90331E0);
+		bullets = (Bullet*)(exeBase + 0x24F860);
+		bodies = (RigidBody*)(exeBase + 0x9B940);
 
 		numConnections = (unsigned int*)(exeBase + 0x9D33E0);
-		numBullets = (unsigned int*)(exeBase + 0x26a553c0);//
+		numBullets = (unsigned int*)(exeBase + 0x27DE2C20);
 
 		playerai = (playerai_func)(exeBase + 0x72770);//
 		rigidbodysimulation = (void_func)(exeBase + 0xF840);//
@@ -605,46 +602,45 @@ static BOOL Init(HMODULE& hModule) {
 		bulletsimulation = (void_func)(exeBase + 0x5E790);//
 		bullettimetolive = (void_func)(exeBase + 0x19BD0);//
 
-		resetgame = (void_func)(exeBase + 0x7a680);//
-		scenario_createtraffic3 = (void_index_func)(exeBase + 0x6FE70);//
+		resetgame = (void_func)(exeBase + 0x85180);
+		scenario_createtraffic3 = (void_index_func)(exeBase + 0x773D0);
 
-		scenario_armhuman = (armhuman_func)(exeBase + 0x4d4b0);//
+		scenario_armhuman = (armhuman_func)(exeBase + 0x544A0);
 
-		linkitem = (grabitem_func)(exeBase + 0x45120);//
-		chat = (chat_func)(exeBase + 0x604c0);//
+		linkitem = (grabitem_func)(exeBase + 0x4A5B0);
+		chat = (chat_func)(exeBase + 0x65420);
 
-		createlevel = (void_func)(exeBase + 0x755C0);//
+		createlevel = (void_func)(exeBase + 0x7FDE0);
 
-		createplayer = (createplayer_func)(exeBase + 0x31b50);//
-		createhuman = (createhuman_func)(exeBase + 0x74760);//
-		createitem = (createitem_func)(exeBase + 0x44880);//
-		createrope = (createrope_func)(exeBase + 0x459f0);//
+		createplayer = (createplayer_func)(exeBase + 0x34530);
+		createhuman = (createhuman_func)(exeBase + 0x7CE40);
+		createitem = (createitem_func)(exeBase + 0x49CE0);
+		createrope = (createrope_func)(exeBase + 0x4AF60);
 		createvehicle = (createvehicle_func)(exeBase + 0x4E940);
 
-		playerdeathtax = (void_index_func)(exeBase + 0x1bb40);//
-		human_applydamage = (human_applydamage_func)(exeBase + 0x8BF0);//
+		playerdeathtax = (void_index_func)(exeBase + 0x1EB80);
+		human_applydamage = (human_applydamage_func)(exeBase + 0x9130);
 
-		deleteplayer = (void_index_func)(exeBase + 0xe880);//
-		deletehuman = (void_index_func)(exeBase + 0x3d470);//
-		deleteitem = (void_index_func)(exeBase + 0x44c10);//
-		deleteobject = (void_index_func)(exeBase + 0x298c0);//
-		grenadeexplosion = (void_index_func)(exeBase + 0x21db0);//
+		deleteplayer = (void_index_func)(exeBase + 0xFCB0);
+		deletehuman = (void_index_func)(exeBase + 0x416C0);
+		deleteitem = (void_index_func)(exeBase + 0x4A080);
+		deleteobject = (void_index_func)(exeBase + 0x2C340);
+		grenadeexplosion = (void_index_func)(exeBase + 0x24FE0);
 
-		createevent_message = (createevent_message_func)(exeBase + 0x7450);//
-		createevent_updateplayer = (void_index_func)(exeBase + 0x7690);//
-		createevent_updateplayer_finance = (void_index_func)(exeBase + 0x7800);//
-		createevent_updatehuman = (void_index_func)(exeBase + 0x7790);//
-		createevent_updateitem = (void_index_func)(exeBase + 0x7570);//
-		createevent_createobject = (void_index_func)(exeBase + 0x7500);//
-		createevent_updateobject = (createevent_updateobject_func)(exeBase + 0x1bf60);//
-		createevent_sound = (createevent_sound_func)(exeBase + 0x1c030);//
-		createevent_explosion = (createevent_explosion_func)(exeBase + 0x1c190);//
-		createevent_updatedoor = (createevent_updatedoor_func)(exeBase + 0x78f0);//
-		createevent_bullethit = (createevent_bullethit_func)(exeBase + 0x1bec0);//
+		createevent_message = (createevent_message_func)(exeBase + 0x7700);
+		createevent_updateplayer = (void_index_func)(exeBase + 0x78C0);
+		createevent_updateplayer_finance = (void_index_func)(exeBase + 0x79E0);
+		createevent_updateitem = (void_index_func)(exeBase + 0x7820);
+		createevent_createobject = (void_index_func)(exeBase + 0x77B0);
+		createevent_updateobject = (createevent_updateobject_func)(exeBase + 0x1EEC0);
+		createevent_sound = (createevent_sound_func)(exeBase + 0x1EF90);
+		createevent_explosion = (createevent_explosion_func)(exeBase + 0x1F0F0);
+		createevent_updatedoor = (createevent_updatedoor_func)(exeBase + 0x7AD0);
+		createevent_bullethit = (createevent_bullethit_func)(exeBase + 0x1EE20);
 
-		lineintersecthuman = (lineintersecthuman_func)(exeBase + 0x3d680);//
-		lineintersectlevel = (lineintersectlevel_func)(exeBase + 0x45e10);//
-		lineintersectobject = (lineintersectobject_func)(exeBase + 0x2c390);//
+		lineintersecthuman = (lineintersecthuman_func)(exeBase + 0x41890);
+		lineintersectlevel = (lineintersectlevel_func)(exeBase + 0x4B440);
+		lineintersectobject = (lineintersectobject_func)(exeBase + 0x2EE00);
 	}
 
 	DetourTransactionBegin();

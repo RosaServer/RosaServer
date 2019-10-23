@@ -2,16 +2,17 @@
 
 #define MAXNUMOFPLAYERS 256
 #define MAXNUMOFHUMANS 256
-#define MAXNUMOFITEMTYPES 36
+#define MAXNUMOFITEMTYPES 38
 #define MAXNUMOFITEMS 1024
 #define MAXNUMOFVEHICLES 512
 #define MAXNUMOFRIGIDBODIES 2048
 
 /*
 	Event types:
+	0x1		1	bullethit
 	0x2		2	message
-	0x3		3	updateobject (vehicle)
-	0x4		4	something else object
+	0x3		3	createobject (vehicle)
+	0x4		4	updateobject
 	0x5		5	updateitem
 	0x7		7	updateplayer
 	0x8		8	updateplayer_finance
@@ -361,7 +362,6 @@ struct Human {
 	Bone* getBone(unsigned int idx);
 	RigidBody* getRigidBody(unsigned int idx) const;
 
-	void update() const;
 	void remove() const;
 	Vector getPos() const;
 	void setPos(Vector* vec);
@@ -373,7 +373,7 @@ struct Human {
 	void applyDamage(int bone, int damage) const;
 };
 
-//3464 bytes (d88)
+//3748 bytes (EA4)
 struct ItemType {
 	int price;
 	float mass; //04
@@ -388,7 +388,7 @@ struct ItemType {
 	float bulletVelocity; //20
 	float bulletSpread; //24
 	char name[64]; //28
-	char unk2[3464 - 104];
+	char unk2[3748 - 104];
 
 	int getIndex() const;
 	char* getName() {
@@ -405,7 +405,7 @@ struct ItemType {
 	}
 };
 
-//588 bytes (24C)
+//592 bytes (250)
 struct Item {
 	BOOL active;
 	BOOL physicsSim; //04
@@ -429,7 +429,7 @@ struct Item {
 	RotMatrix rot; //a0
 		char unk6[0x124 - 0xa0 - 36];
 	int bullets; //124
-		char unk7[588 - 296];
+		char unk7[592 - 296];
 
 	int getIndex() const;
 	bool getIsActive() const {

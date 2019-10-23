@@ -113,8 +113,8 @@ extern createevent_message_func createevent_message;
 extern void_index_func createevent_updateplayer;
 // Sends money, stocks, phoneNumber
 extern void_index_func createevent_updateplayer_finance;
-// Sends active, playerID
-extern void_index_func createevent_updatehuman;
+// Sends active, playerID, removed
+//extern void_index_func createevent_updatehuman;
 // Sends active, type, parentHumanID, parentItemID, parentSlot
 extern void_index_func createevent_updateitem;
 // Sends type, color
