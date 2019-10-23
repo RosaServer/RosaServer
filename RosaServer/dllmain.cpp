@@ -568,7 +568,7 @@ static BOOL Init(HMODULE& hModule) {
 		isLevelLoaded = (BOOL*)(exeBase + 0x1339BB20);
 
 		lineIntersectResult = (RayCastResult*)(exeBase + 0x1A0515E0);
-		sunTime = (unsigned int*)(exeBase + 0x33E58A20);//
+		sunTime = (unsigned int*)(exeBase + 0x351EAEA0);
 
 		connections = (Connection*)(exeBase + 0x1ED22060);
 		accounts = (Account*)(exeBase + 0x17B0DAF0);
@@ -583,24 +583,24 @@ static BOOL Init(HMODULE& hModule) {
 		numConnections = (unsigned int*)(exeBase + 0x9D33E0);
 		numBullets = (unsigned int*)(exeBase + 0x27DE2C20);
 
-		playerai = (playerai_func)(exeBase + 0x72770);//
-		rigidbodysimulation = (void_func)(exeBase + 0xF840);//
-		objectsimulation = (void_func)(exeBase + 0x774A0);//
-		itemsimulation = (void_func)(exeBase + 0x74F00);//
-		humansimulation = (void_func)(exeBase + 0x7CDF0);//
+		playerai = (playerai_func)(exeBase + 0x79D50);
+		rigidbodysimulation = (void_func)(exeBase + 0x11060);
+		objectsimulation = (void_func)(exeBase + 0x82040);
+		itemsimulation = (void_func)(exeBase + 0x7F760);
+		humansimulation = (void_func)(exeBase + 0x8E0A0);
 
-		logicsimulation = (void_func)(exeBase + 0x85eb0);//
-		logicsimulation_race = (void_func)(exeBase + 0x81950);//
-		logicsimulation_round = (void_func)(exeBase + 0x84700);//
-		logicsimulation_world = (void_func)(exeBase + 0x856B0);//
-		logicsimulation_terminator = (void_func)(exeBase + 0x820F0);//
-		logicsimulation_coop = (void_func)(exeBase + 0x81610);//
-		logicsimulation_versus = (void_func)(exeBase + 0x835E0);//
+		logicsimulation = (void_func)(exeBase + 0x91E10);
+		logicsimulation_race = (void_func)(exeBase + 0x89BE0);
+		logicsimulation_round = (void_func)(exeBase + 0x8C9C0);
+		logicsimulation_world = (void_func)(exeBase + 0x8D8C0);
+		logicsimulation_terminator = (void_func)(exeBase + 0x8A380);
+		logicsimulation_coop = (void_func)(exeBase + 0x898A0);
+		logicsimulation_versus = (void_func)(exeBase + 0x8B820);
 
-		recvpacket = (recvpacket_func)(exeBase + 0x70CA0);//
-		sendpacket = (void_func)(exeBase + 0x6FFD0);//
-		bulletsimulation = (void_func)(exeBase + 0x5E790);//
-		bullettimetolive = (void_func)(exeBase + 0x19BD0);//
+		recvpacket = (recvpacket_func)(exeBase + 0x781E0);
+		sendpacket = (void_func)(exeBase + 0x77530);
+		bulletsimulation = (void_func)(exeBase + 0x64620);
+		bullettimetolive = (void_func)(exeBase + 0x1C9E0);
 
 		resetgame = (void_func)(exeBase + 0x85180);
 		scenario_createtraffic3 = (void_index_func)(exeBase + 0x773D0);
