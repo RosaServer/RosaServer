@@ -558,32 +558,32 @@ static BOOL Init(HMODULE& hModule) {
 		DWORD exeBase = (DWORD)GetModuleHandle(NULL);
 
 		//2300000003000000
-		version = (Version*)(exeBase + 0x8B3F0);//
+		version = (Version*)(exeBase + 0x971B8);
 
-		serverName = (char*)(exeBase + 0x8F79ACC);
+		serverName = (char*)(exeBase + 0x8BBB254);
 		serverPort = (unsigned int*)(exeBase + 0x8BBB660);
 		isPassworded = (BOOL*)(exeBase + 0x8BBB664);
-		password = (char*)(exeBase + 0x8F79CCC);
+		password = (char*)(exeBase + 0x8F79ECC);
 		gameType = (int*)(exeBase + 0x8F7A248);
 		mapName = (char*)(exeBase + 0x8F7A24C);
-		gameState = (int*)(exeBase + 0x8ED1764);//
-		gameTimer = (int*)(exeBase + 0x8ED176C);//
-		isLevelLoaded = (BOOL*)(exeBase + 0x1339AB20);
+		gameState = (int*)(exeBase + 0x8F7A464);
+		gameTimer = (int*)(exeBase + 0x8F7A46C);
+		isLevelLoaded = (BOOL*)(exeBase + 0x1339BB20);
 
 		lineIntersectResult = (RayCastResult*)(exeBase + 0x192BF980);//
 		sunTime = (unsigned int*)(exeBase + 0x33E58A20);//
 
-		connections = (Connection*)(exeBase + 0x1DF6A800);//
-		accounts = (Account*)(exeBase + 0x16DFCE90);//
-		players = (Player*)(exeBase + 0x13841600);//
-		humans = (Human*)(exeBase + 0x5312c4);//
-		vehicles = (Vehicle*)(exeBase + 0x80f66e0);//
+		connections = (Connection*)(exeBase + 0x1ED22060);
+		accounts = (Account*)(exeBase + 0x17B0DAF0);
+		players = (Player*)(exeBase + 0x13AFCE60);
+		humans = (Human*)(exeBase + 0x5CC3C8);
+		vehicles = (Vehicle*)(exeBase + 0x81B23E0);
 		itemTypes = (ItemType*)(exeBase + 0x192d1560);//
 		items = (Item*)(exeBase + 0x8f011a0);//
 		bullets = (Bullet*)(exeBase + 0x1ec760);//
 		bodies = (RigidBody*)(exeBase + 0x8f840);//
 
-		numConnections = (unsigned int*)(exeBase + 0x917b00);//
+		numConnections = (unsigned int*)(exeBase + 0x9D33E0);
 		numBullets = (unsigned int*)(exeBase + 0x26a553c0);//
 
 		playerai = (playerai_func)(exeBase + 0x72770);//
@@ -619,7 +619,7 @@ static BOOL Init(HMODULE& hModule) {
 		createhuman = (createhuman_func)(exeBase + 0x74760);//
 		createitem = (createitem_func)(exeBase + 0x44880);//
 		createrope = (createrope_func)(exeBase + 0x459f0);//
-		createvehicle = (createvehicle_func)(exeBase + 0x48860);//
+		createvehicle = (createvehicle_func)(exeBase + 0x4E940);
 
 		playerdeathtax = (void_index_func)(exeBase + 0x1bb40);//
 		human_applydamage = (human_applydamage_func)(exeBase + 0x8BF0);//

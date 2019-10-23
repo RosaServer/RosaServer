@@ -21,7 +21,7 @@
 	0x14	20	explosion
 */
 
-//135564 bytes (2118C)
+//159120 bytes (26D90)
 struct Connection {
 	uint8_t address[4];
 	unsigned int port; //04
@@ -31,7 +31,7 @@ struct Connection {
 		int unk1; //14
 	int bandwidth; //18
 	int timeoutTime; //1c
-		char unk2[135564 - 32];
+		char unk2[159120 - 32];
 
 	std::string getAddress();
 	bool getAdminVisible() const {
@@ -42,17 +42,19 @@ struct Connection {
 	}
 };
 
-//104 bytes (68)
+//112 bytes (70)
 struct Account {
 	int subRosaID;
 	int phoneNumber; //04
 	long long steamID; //08
 	char name[32]; //10
-	int unk0; //30
+		int unk0; //30
 	int money; //34
-	char unk1[0x54 - 0x34 - 4];
-	int banTime; //54
-	char unk2[104 - 88];
+	int corporateRating; //38
+	int criminalRating; //3c
+		char unk1[0x5c - 0x3c - 4];
+	int banTime; //5c
+		char unk2[112 - 96];
 
 	char* getName() {
 		return name;
