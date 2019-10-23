@@ -625,7 +625,7 @@ static BOOL Init(HMODULE& hModule) {
 		deletehuman = (void_index_func)(exeBase + 0x416C0);
 		deleteitem = (void_index_func)(exeBase + 0x4A080);
 		deleteobject = (void_index_func)(exeBase + 0x2C340);
-		grenadeexplosion = (void_index_func)(exeBase + 0x24FE0);
+		grenadeexplosion = (void_index_func)(exeBase + 0x251E0);
 
 		createevent_message = (createevent_message_func)(exeBase + 0x7700);
 		createevent_updateplayer = (void_index_func)(exeBase + 0x78C0);
