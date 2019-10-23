@@ -209,7 +209,7 @@
     </Link>
     <PostBuildEvent>
       <Command>cd $(OutDir)
-copy /y RosaServer.dll C:\SubRosaDevServer\rosaserver35d.dll</Command>
+copy /y RosaServer.dll ..\..\RosaServerCore\RosaServer.dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

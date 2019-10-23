@@ -16,9 +16,9 @@
  *
  */
 
-// On Unix-like systems, add getch support without curses
+// On Unix-like systems, add _getch support without curses
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
-int getch ()
+int _getch ()
 {
 	struct termios oldt, newt;
 	int ch;
@@ -27,10 +27,10 @@ int getch ()
 	newt.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 	
-	ch = getchar();	
+	ch = _getchar();	
 	if(ch == ESC)
 	{
-		ch = getchar();
+		ch = _getchar();
 		if(ch == 91)
 		{
 			ch = KEY_CTRL1;
@@ -67,7 +67,7 @@ std::string tinyConsole::version ()
 
 void tinyConsole::pause ()
 {
-	getch();
+	_getch();
 }
 
 void tinyConsole::quit ()
@@ -112,7 +112,7 @@ std::string tinyConsole::getLine (int mode = M_LINE, std::string delimeter = "")
 
 	for (;;)
 	{
-		c = getch();
+		c = _getch();
 		if ( c == NEWLINE)
 		{
 			std::cout << std::endl;
@@ -155,7 +155,7 @@ void tinyConsole::run ()
 	// grab input
 	for (;;)
 	{
-		c = getch();
+		c = _getch();
 		if(!hotkeys(c))
 		switch (c)
 		{
@@ -164,7 +164,7 @@ void tinyConsole::run ()
 				std::cout << "(Esc)";
 				break;
 			case KEY_CTRL1: // look for arrow keys
-				switch (c = getch())
+				switch (c = _getch())
 				{
 					case UP_ARROW:
 						if (!history.size()) break;
