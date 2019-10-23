@@ -57,6 +57,7 @@ struct Account {
 	int banTime; //5c
 		char unk2[112 - 96];
 
+	int getIndex() const;
 	char* getName() {
 		return name;
 	}
@@ -202,6 +203,8 @@ struct Player {
 	}
 	Human* getHuman();
 	Connection* getConnection();
+	Account* getAccount();
+	void setAccount(Account* account);
 
 	void update() const;
 	void updateFinance() const;
@@ -499,6 +502,7 @@ struct Vehicle {
 	void setIsActive(bool b) {
 		active = b;
 	}
+	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
 
 	void updateType() const;

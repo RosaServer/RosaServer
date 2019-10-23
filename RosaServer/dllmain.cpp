@@ -273,12 +273,10 @@ void luaInit(bool redo) {
 		"new", sol::no_constructor,
 		"subRosaID", &Player::subRosaID,
 		"phoneNumber", &Player::phoneNumber,
-		"accountID", &Player::accountID,
 		"money", &Player::money,
 		"team", &Player::team,
 		"teamSwitchTimer", &Player::teamSwitchTimer,
 		"stocks", &Player::stocks,
-		"humanID", &Player::humanID,
 		"menuTab", &Player::menuTab,
 		"gender", &Player::gender,
 		"skinColor", &Player::skinColor,
@@ -299,6 +297,7 @@ void luaInit(bool redo) {
 		"isBot", sol::property(&Player::getIsBot, &Player::setIsBot),
 		"human", sol::property(&Player::getHuman),
 		"connection", sol::property(&Player::getConnection),
+		"account", sol::property(&Player::getAccount, &Player::setAccount),
 
 		"update", &Player::update,
 		"updateFinance", &Player::updateFinance,
@@ -382,11 +381,11 @@ void luaInit(bool redo) {
 		"hasPhysics", sol::property(&Item::getHasPhysics, &Item::setHasPhysics),
 		"physicsSettled", sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled),
 		"rigidBody", sol::property(&Item::getRigidBody),
+		"parentHuman", sol::property(&Item::getParentHuman),
+		"parentItem", sol::property(&Item::getParentItem),
 
 		"update", &Item::update,
 		"remove", &Item::remove,
-		"getParentHuman", &Item::getParentHuman,
-		"getParentItem", &Item::getParentItem,
 		"mountItem", &Item::mountItem,
 		"speak", &Item::speak,
 		"explode", &Item::explode
@@ -397,7 +396,6 @@ void luaInit(bool redo) {
 		"type", &Vehicle::type,
 		"controllableState", &Vehicle::controllableState,
 		"health", &Vehicle::health,
-		"lastDriverPlayerID", &Vehicle::lastDriverPlayerID,
 		"color", &Vehicle::color,
 		"pos", &Vehicle::pos,
 		"pos2", &Vehicle::pos2,
@@ -424,6 +422,7 @@ void luaInit(bool redo) {
 
 		"index", sol::property(&Vehicle::getIndex),
 		"isActive", sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive),
+		"lastDriver", sol::property(&Vehicle::getLastDriver),
 		"rigidBody", sol::property(&Vehicle::getRigidBody),
 
 		"updateType", &Vehicle::updateType,
@@ -499,30 +498,50 @@ void luaInit(bool redo) {
 	(*lua)["players"]["getAll"] = l_players_getAll;
 	(*lua)["players"]["getByPhone"] = l_players_getByPhone;
 	(*lua)["players"]["getNonBots"] = l_players_getNonBots;
-	(*lua)["players"]["getByIndex"] = l_players_getByIndex;
 	(*lua)["players"]["createBot"] = l_players_createBot;
+	{
+		sol::table _meta = lua->create_table();
+		(*lua)["players"][sol::metatable_key] = _meta;
+		_meta["__index"] = l_players_getByIndex;
+	}
 
 	(*lua)["humans"] = lua->create_table();
 	(*lua)["humans"]["getAll"] = l_humans_getAll;
-	(*lua)["humans"]["getByIndex"] = l_humans_getByIndex;
 	(*lua)["humans"]["create"] = l_humans_create;
+	{
+		sol::table _meta = lua->create_table();
+		(*lua)["humans"][sol::metatable_key] = _meta;
+		_meta["__index"] = l_humans_getByIndex;
+	}
 
 	(*lua)["itemTypes"] = lua->create_table();
 	(*lua)["itemTypes"]["getAll"] = l_itemTypes_getAll;
-	(*lua)["itemTypes"]["getByIndex"] = l_itemTypes_getByIndex;
+	{
+		sol::table _meta = lua->create_table();
+		(*lua)["itemTypes"][sol::metatable_key] = _meta;
+		_meta["__index"] = l_itemTypes_getByIndex;
+	}
 
 	(*lua)["items"] = lua->create_table();
 	(*lua)["items"]["getCount"] = l_items_getCount;
 	(*lua)["items"]["getAll"] = l_items_getAll;
-	(*lua)["items"]["getByIndex"] = l_items_getByIndex;
 	(*lua)["items"]["create"] = sol::overload(l_items_create, l_items_createVel);
 	(*lua)["items"]["createRope"] = lua_items_createRope;
+	{
+		sol::table _meta = lua->create_table();
+		(*lua)["items"][sol::metatable_key] = _meta;
+		_meta["__index"] = l_items_getByIndex;
+	}
 
 	(*lua)["vehicles"] = lua->create_table();
 	(*lua)["vehicles"]["getAll"] = l_vehicles_getAll;
-	(*lua)["vehicles"]["getByIndex"] = l_vehicles_getByIndex;
 	(*lua)["vehicles"]["create"] = sol::overload(l_vehicles_create, l_vehicles_createVel);
 	(*lua)["vehicles"]["createTraffic"] = l_vehicles_createTraffic;
+	{
+		sol::table _meta = lua->create_table();
+		(*lua)["vehicles"][sol::metatable_key] = _meta;
+		_meta["__index"] = l_vehicles_getByIndex;
+	}
 
 	(*lua)["bullets"] = lua->create_table();
 	(*lua)["bullets"]["getAll"] = l_bullets_getAll;
@@ -530,7 +549,11 @@ void luaInit(bool redo) {
 	(*lua)["rigidBodies"] = lua->create_table();
 	(*lua)["rigidBodies"]["getCount"] = l_rigidBodies_getCount;
 	(*lua)["rigidBodies"]["getAll"] = l_rigidBodies_getAll;
-	(*lua)["rigidBodies"]["getByIndex"] = l_rigidBodies_getByIndex;
+	{
+		sol::table _meta = lua->create_table();
+		(*lua)["rigidBodies"][sol::metatable_key] = _meta;
+		_meta["__index"] = l_rigidBodies_getByIndex;
+	}
 
 	(*lua)["os"]["setClipboard"] = l_os_setClipboard;
 	(*lua)["os"]["listDirectory"] = l_os_listDirectory;

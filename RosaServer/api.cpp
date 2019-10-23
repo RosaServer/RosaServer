@@ -450,6 +450,10 @@ std::string Connection::getAddress() {
 	return buf;
 }
 
+int Account::getIndex() const {
+	return ((uintptr_t)this - (uintptr_t)accounts) / sizeof(*this);
+}
+
 void Vector::add(Vector* other) {
 	x += other->x;
 	y += other->y;
@@ -534,6 +538,17 @@ Connection* Player::getConnection() {
 			return con;
 	}
 	return nullptr;
+}
+
+Account* Player::getAccount() {
+	return &accounts[accountID];
+}
+
+void Player::setAccount(Account* account) {
+	if (account == nullptr)
+		throw std::runtime_error("Cannot set account to nil value");
+	else
+		accountID = account->getIndex();
 }
 
 int Human::getIndex() const {
@@ -688,6 +703,12 @@ void Vehicle::updateDestruction(int updateType, int partID, Vector* pos, Vector*
 
 void Vehicle::remove() const {
 	deleteobject(getIndex());
+}
+
+Player* Vehicle::getLastDriver() const {
+	if (lastDriverPlayerID == -1)
+		return nullptr;
+	return &players[lastDriverPlayerID];
 }
 
 RigidBody* Vehicle::getRigidBody() const {
