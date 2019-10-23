@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/KEcT0MS.png" width="600">
+<img src="https://i.imgur.com/peKGrAu.png" width="600">
 
 A server scripting API for [Sub Rosa](http://subrosagame.com/).
 
