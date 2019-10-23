@@ -1,4 +1,5 @@
-# RosaServer
+<img src="https://i.imgur.com/KEcT0MS.png" width="600">
+
 A server scripting API for [Sub Rosa](http://subrosagame.com/).
 
 **⚠ Updating to Alpha 36! This is not ready yet.**
