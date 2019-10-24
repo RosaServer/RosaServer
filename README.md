@@ -2,8 +2,6 @@
 
 A server scripting API for [Sub Rosa](http://subrosagame.com/).
 
-**⚠ Updating to Alpha 36! This is not ready yet.**
-
 RosaServer uses [LuaJIT](http://luajit.org/); this means there's no hit to performance while being able to create anything from moderation tools to complex custom games with easy-to-write version agnostic code.
 
 # Documentation
