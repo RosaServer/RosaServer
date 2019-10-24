@@ -23,6 +23,7 @@ static char* password;
 
 int* gameType;
 char* mapName;
+char* loadedMapName;
 int* gameState;
 int* gameTimer;
 
@@ -127,6 +128,9 @@ struct Server {
 	void setLevelName(const char* newName) const {
 		strncpy(mapName, newName, 31);
 	}
+	char* getLoadedLevelName() const {
+		return loadedMapName;
+	}
 	bool getIsLevelLoaded() const {
 		return *isLevelLoaded;
 	}
@@ -206,7 +210,8 @@ void luaInit(bool redo) {
 		"name", sol::property(&Server::getName, &Server::setName),
 		"password", sol::property(&Server::getPassword, &Server::setPassword),
 		"type", sol::property(&Server::getType, &Server::setType),
-		"level", sol::property(&Server::getLevelName, &Server::setLevelName),
+		"levelToLoad", sol::property(&Server::getLevelName, &Server::setLevelName),
+		"loadedLevel", sol::property(&Server::getLoadedLevelName),
 		"isLevelLoaded", sol::property(&Server::getIsLevelLoaded, &Server::setIsLevelLoaded),
 		"state", sol::property(&Server::getState, &Server::setState),
 		"time", sol::property(&Server::getTime, &Server::setTime),
@@ -235,6 +240,8 @@ void luaInit(bool redo) {
 		"phoneNumber", &Account::phoneNumber,
 		"money", &Account::money,
 		"banTime", &Account::banTime,
+
+		"index", sol::property(&Account::getIndex),
 		"name", sol::property(&Account::getName),
 		"steamID", sol::property(&Account::getSteamID)
 	);
@@ -570,8 +577,8 @@ void luaInit(bool redo) {
 	(*lua)["RESET_REASON_LUACALL"] = RESET_REASON_LUACALL;
 
 	(*lua)["STATE_PREGAME"] = 1;
-	(*lua)["STATE_GAME"] = 1;
-	(*lua)["STATE_RESTARTING"] = 1;
+	(*lua)["STATE_GAME"] = 2;
+	(*lua)["STATE_RESTARTING"] = 3;
 
 	(*lua)["TYPE_DRIVING"] = 1;
 	(*lua)["TYPE_RACE"] = 2;
@@ -609,6 +616,7 @@ static BOOL Init(HMODULE& hModule) {
 		password = (char*)(exeBase + 0x8F79ECC);
 		gameType = (int*)(exeBase + 0x8F7A248);
 		mapName = (char*)(exeBase + 0x8F7A24C);
+		loadedMapName = (char*)(exeBase + 0x1339BB24);
 		gameState = (int*)(exeBase + 0x8F7A464);
 		gameTimer = (int*)(exeBase + 0x8F7A46C);
 		isLevelLoaded = (BOOL*)(exeBase + 0x1339BB20);

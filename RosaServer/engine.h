@@ -9,6 +9,7 @@ struct Version {
 
 extern int* gameType;
 extern char* mapName;
+extern char* loadedMapName;
 extern int* gameState;
 extern int* gameTimer;
 
