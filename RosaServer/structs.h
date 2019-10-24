@@ -1,5 +1,6 @@
 #pragma once
 
+#define MAXNUMOFACCOUNTS 32768
 #define MAXNUMOFPLAYERS 256
 #define MAXNUMOFHUMANS 256
 #define MAXNUMOFITEMTYPES 38
@@ -154,7 +155,14 @@ struct Player {
 	int menuTab; //158
 		char unk6[0x2d0c - 0x158 - 4];
 	BOOL isBot; //2d0c
-		char unk7[0x379c - 0x2d0c - 4];
+		char unk7a[0x2d28 - 0x2d0c - 4];
+	BOOL botHasDestination; //2d28
+	Vector botDestination; //2d2c
+		char unk7[0x354c - 0x2d2c - 12];
+	int botState; //354c
+		int unk8;
+	int botEnemyID; //3554
+		char unk9[0x379c - 0x3554 - 4];
 	int gender; //379c
 	int skinColor; //37a0
 	int hairColor; //37a4
@@ -165,10 +173,10 @@ struct Player {
 	int suitColor; //37b4
 	//0 = no tie
 	int tieColor; //37b8
-		int unk8; //37bc
+		int unk10; //37bc
 	int head; //37c0
 	int necklace; //37c4
-		char unk9[14372 - 14280];
+		char unk11[14372 - 14280];
 
 	int getIndex() const;
 	bool getIsActive() const {
@@ -205,6 +213,8 @@ struct Player {
 	Connection* getConnection();
 	Account* getAccount();
 	void setAccount(Account* account);
+	const Vector* getBotDestination() const;
+	void setBotDestination(Vector* vec);
 
 	void update() const;
 	void updateFinance() const;

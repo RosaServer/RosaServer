@@ -317,6 +317,12 @@ Account* l_accounts_getByPhone(int phone) {
 	return nullptr;
 }
 
+Account* l_accounts_getByIndex(sol::table self, unsigned int idx) {
+	if (idx >= MAXNUMOFACCOUNTS)
+		throw std::runtime_error("Index out of range");
+	return &accounts[idx];
+}
+
 int l_players_getCount() {
 	int count = 0;
 	for (int i = 0; i < MAXNUMOFPLAYERS; i++) {
@@ -591,6 +597,21 @@ void Player::setAccount(Account* account) {
 		throw std::runtime_error("Cannot set account to nil value");
 	else
 		accountID = account->getIndex();
+}
+
+const Vector* Player::getBotDestination() const {
+	if (!botHasDestination)
+		return nullptr;
+	return &botDestination;
+}
+
+void Player::setBotDestination(Vector* vec) {
+	if (vec == nullptr)
+		botHasDestination = false;
+	else {
+		botHasDestination = true;
+		botDestination = *vec;
+	}
 }
 
 int Human::getIndex() const {

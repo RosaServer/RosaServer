@@ -305,6 +305,7 @@ void luaInit(bool redo) {
 		"human", sol::property(&Player::getHuman),
 		"connection", sol::property(&Player::getConnection),
 		"account", sol::property(&Player::getAccount, &Player::setAccount),
+		"botDestination", sol::property(&Player::getBotDestination, &Player::setBotDestination),
 
 		"update", &Player::update,
 		"updateFinance", &Player::updateFinance,
@@ -501,6 +502,11 @@ void luaInit(bool redo) {
 	(*lua)["accounts"]["getCount"] = l_accounts_getCount;
 	(*lua)["accounts"]["getAll"] = l_accounts_getAll;
 	(*lua)["accounts"]["getByPhone"] = l_accounts_getByPhone;
+	{
+		sol::table _meta = lua->create_table();
+		(*lua)["accounts"][sol::metatable_key] = _meta;
+		_meta["__index"] = l_accounts_getByIndex;
+	}
 
 	(*lua)["players"] = lua->create_table();
 	(*lua)["players"]["getCount"] = l_players_getCount;

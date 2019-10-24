@@ -86,6 +86,7 @@ void l_chat_addRaw(int type, const char* message, int speakerID, int distance);
 int l_accounts_getCount();
 sol::table l_accounts_getAll();
 Account* l_accounts_getByPhone(int phone);
+Account* l_accounts_getByIndex(sol::table self, unsigned int idx);
 
 int l_players_getCount();
 sol::table l_players_getAll();
