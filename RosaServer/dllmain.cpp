@@ -467,6 +467,7 @@ void luaInit(bool redo) {
 	(*lua)["RotMatrix"] = l_RotMatrix;
 
 	(*lua)["http"] = lua->create_table();
+	(*lua)["http"]["get"] = l_http_get;
 	(*lua)["http"]["post"] = l_http_post;
 
 	(*lua)["event"] = lua->create_table();
