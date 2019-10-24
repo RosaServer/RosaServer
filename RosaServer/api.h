@@ -61,18 +61,20 @@ sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA, Vector* posB);
 sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB);
 void l_physics_garbageCollectBullets();
 
+int l_itemTypes_getCount();
 sol::table l_itemTypes_getAll();
-ItemType* l_itemTypes_getByIndex(unsigned int idx);
+ItemType* l_itemTypes_getByIndex(sol::table self, unsigned int idx);
 
 int l_items_getCount();
 sol::table l_items_getAll();
-Item* l_items_getByIndex(unsigned int idx);
+Item* l_items_getByIndex(sol::table self, unsigned int idx);
 Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot);
 Item* l_items_createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot);
 void lua_items_createRope(Vector* pos, RotMatrix* rot);
 
+int l_vehicles_getCount();
 sol::table l_vehicles_getAll();
-Vehicle* l_vehicles_getByIndex(unsigned int idx);
+Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx);
 Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color);
 Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
 void l_vehicles_createTraffic(int density);
@@ -81,24 +83,28 @@ void l_chat_announce(const char* message);
 void l_chat_tellAdmins(const char* message);
 void l_chat_addRaw(int type, const char* message, int speakerID, int distance);
 
+int l_accounts_getCount();
 sol::table l_accounts_getAll();
 Account* l_accounts_getByPhone(int phone);
 
+int l_players_getCount();
 sol::table l_players_getAll();
 Player* l_players_getByPhone(int phone);
 sol::table l_players_getNonBots();
-Player* l_players_getByIndex(unsigned int idx);
+Player* l_players_getByIndex(sol::table self, unsigned int idx);
 Player* l_players_createBot();
 
+int l_humans_getCount();
 sol::table l_humans_getAll();
-Human* l_humans_getByIndex(unsigned int idx);
+Human* l_humans_getByIndex(sol::table self, unsigned int idx);
 Human* l_humans_create(Vector* pos, RotMatrix* rot, Player* ply);
 
+unsigned int l_bullets_getCount();
 sol::table l_bullets_getAll();
 
 int l_rigidBodies_getCount();
 sol::table l_rigidBodies_getAll();
-RigidBody* l_rigidBodies_getByIndex(unsigned int idx);
+RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx);
 
 void l_os_setClipboard(std::string s);
 sol::table l_os_listDirectory(const char* path);

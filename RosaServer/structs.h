@@ -165,9 +165,9 @@ struct Player {
 	int suitColor; //37b4
 	//0 = no tie
 	int tieColor; //37b8
-		int unk8; //37b4
-	int head; //37b8
-	int necklace; //37bc
+		int unk8; //37bc
+	int head; //37c0
+	int necklace; //37c4
 		char unk9[14372 - 14280];
 
 	int getIndex() const;

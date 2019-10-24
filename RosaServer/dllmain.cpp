@@ -491,10 +491,12 @@ void luaInit(bool redo) {
 	(*lua)["chat"]["addRaw"] = l_chat_addRaw;
 
 	(*lua)["accounts"] = lua->create_table();
+	(*lua)["accounts"]["getCount"] = l_accounts_getCount;
 	(*lua)["accounts"]["getAll"] = l_accounts_getAll;
 	(*lua)["accounts"]["getByPhone"] = l_accounts_getByPhone;
 
 	(*lua)["players"] = lua->create_table();
+	(*lua)["players"]["getCount"] = l_players_getCount;
 	(*lua)["players"]["getAll"] = l_players_getAll;
 	(*lua)["players"]["getByPhone"] = l_players_getByPhone;
 	(*lua)["players"]["getNonBots"] = l_players_getNonBots;
@@ -506,6 +508,7 @@ void luaInit(bool redo) {
 	}
 
 	(*lua)["humans"] = lua->create_table();
+	(*lua)["humans"]["getCount"] = l_humans_getCount;
 	(*lua)["humans"]["getAll"] = l_humans_getAll;
 	(*lua)["humans"]["create"] = l_humans_create;
 	{
@@ -515,6 +518,7 @@ void luaInit(bool redo) {
 	}
 
 	(*lua)["itemTypes"] = lua->create_table();
+	(*lua)["itemTypes"]["getCount"] = l_itemTypes_getCount;
 	(*lua)["itemTypes"]["getAll"] = l_itemTypes_getAll;
 	{
 		sol::table _meta = lua->create_table();
@@ -534,6 +538,7 @@ void luaInit(bool redo) {
 	}
 
 	(*lua)["vehicles"] = lua->create_table();
+	(*lua)["vehicles"]["getCount"] = l_vehicles_getCount;
 	(*lua)["vehicles"]["getAll"] = l_vehicles_getAll;
 	(*lua)["vehicles"]["create"] = sol::overload(l_vehicles_create, l_vehicles_createVel);
 	(*lua)["vehicles"]["createTraffic"] = l_vehicles_createTraffic;
@@ -544,6 +549,7 @@ void luaInit(bool redo) {
 	}
 
 	(*lua)["bullets"] = lua->create_table();
+	(*lua)["bullets"]["getCount"] = l_bullets_getCount;
 	(*lua)["bullets"]["getAll"] = l_bullets_getAll;
 
 	(*lua)["rigidBodies"] = lua->create_table();

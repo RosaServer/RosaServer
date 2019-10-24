@@ -180,6 +180,10 @@ void l_physics_garbageCollectBullets() {
 	bullettimetolive();
 }
 
+int l_itemTypes_getCount() {
+	return MAXNUMOFITEMTYPES;
+}
+
 sol::table l_itemTypes_getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < MAXNUMOFITEMTYPES; i++) {
@@ -188,7 +192,7 @@ sol::table l_itemTypes_getAll() {
 	return arr;
 }
 
-ItemType* l_itemTypes_getByIndex(unsigned int idx) {
+ItemType* l_itemTypes_getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= MAXNUMOFITEMTYPES)
 		throw std::runtime_error("Index out of range");
 	return &itemTypes[idx];
@@ -212,7 +216,7 @@ sol::table l_items_getAll() {
 	return arr;
 }
 
-Item* l_items_getByIndex(unsigned int idx) {
+Item* l_items_getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= MAXNUMOFITEMS)
 		throw std::runtime_error("Index out of range");
 	return &items[idx];
@@ -233,6 +237,14 @@ void lua_items_createRope(Vector* pos, RotMatrix* rot) {
 	printf("createrope => %i\n", x);
 }
 
+int l_vehicles_getCount() {
+	int count = 0;
+	for (int i = 0; i < MAXNUMOFVEHICLES; i++) {
+		if ((&vehicles[i])->active) count++;
+	}
+	return count;
+}
+
 sol::table l_vehicles_getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < MAXNUMOFVEHICLES; i++) {
@@ -243,7 +255,7 @@ sol::table l_vehicles_getAll() {
 	return arr;
 }
 
-Vehicle* l_vehicles_getByIndex(unsigned int idx) {
+Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= MAXNUMOFVEHICLES)
 		throw std::runtime_error("Index out of range");
 	return &vehicles[idx];
@@ -275,6 +287,16 @@ void l_chat_addRaw(int type, const char* message, int speakerID, int distance) {
 	createevent_message(type, (char*)message, speakerID, distance);
 }
 
+int l_accounts_getCount() {
+	int count = 0;
+	while (true) {
+		Account* acc = &accounts[count];
+		if (!acc->subRosaID) break;
+		count++;
+	}
+	return count;
+}
+
 sol::table l_accounts_getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; ; i++) {
@@ -293,6 +315,14 @@ Account* l_accounts_getByPhone(int phone) {
 			return acc;
 	}
 	return nullptr;
+}
+
+int l_players_getCount() {
+	int count = 0;
+	for (int i = 0; i < MAXNUMOFPLAYERS; i++) {
+		if ((&players[i])->active) count++;
+	}
+	return count;
 }
 
 sol::table l_players_getAll() {
@@ -325,7 +355,7 @@ sol::table l_players_getNonBots() {
 	return arr;
 }
 
-Player* l_players_getByIndex(unsigned int idx) {
+Player* l_players_getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= MAXNUMOFPLAYERS)
 		throw std::runtime_error("Index out of range");
 	return &players[idx];
@@ -342,6 +372,14 @@ Player* l_players_createBot() {
 	return ply;
 }
 
+int l_humans_getCount() {
+	int count = 0;
+	for (int i = 0; i < MAXNUMOFHUMANS; i++) {
+		if ((&humans[i])->active) count++;
+	}
+	return count;
+}
+
 sol::table l_humans_getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < MAXNUMOFHUMANS; i++) {
@@ -352,7 +390,7 @@ sol::table l_humans_getAll() {
 	return arr;
 }
 
-Human* l_humans_getByIndex(unsigned int idx) {
+Human* l_humans_getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= MAXNUMOFHUMANS)
 		throw std::runtime_error("Index out of range");
 	return &humans[idx];
@@ -369,6 +407,10 @@ Human* l_humans_create(Vector* pos, RotMatrix* rot, Player* ply) {
 	man->playerID = playerID;
 	ply->humanID = humanID;
 	return man;
+}
+
+unsigned int l_bullets_getCount() {
+	return *numBullets;
 }
 
 sol::table l_bullets_getAll() {
@@ -398,7 +440,7 @@ sol::table l_rigidBodies_getAll() {
 	return arr;
 }
 
-RigidBody* l_rigidBodies_getByIndex(unsigned int idx) {
+RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= MAXNUMOFRIGIDBODIES)
 		throw std::runtime_error("Index out of range");
 	return &bodies[idx];
