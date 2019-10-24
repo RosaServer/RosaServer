@@ -564,6 +564,23 @@ void luaInit(bool redo) {
 	(*lua)["os"]["setClipboard"] = l_os_setClipboard;
 	(*lua)["os"]["listDirectory"] = l_os_listDirectory;
 
+	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;
+	(*lua)["RESET_REASON_ENGINECALL"] = RESET_REASON_ENGINECALL;
+	(*lua)["RESET_REASON_LUARESET"] = RESET_REASON_LUARESET;
+	(*lua)["RESET_REASON_LUACALL"] = RESET_REASON_LUACALL;
+
+	(*lua)["STATE_PREGAME"] = 1;
+	(*lua)["STATE_GAME"] = 1;
+	(*lua)["STATE_RESTARTING"] = 1;
+
+	(*lua)["TYPE_DRIVING"] = 1;
+	(*lua)["TYPE_RACE"] = 2;
+	(*lua)["TYPE_ROUND"] = 3;
+	(*lua)["TYPE_WORLD"] = 4;
+	(*lua)["TYPE_TERMINATOR"] = 5;
+	(*lua)["TYPE_COOP"] = 6;
+	(*lua)["TYPE_VERSUS"] = 7;
+
 	printf("[Lua] Running main.lua...\n");
 	SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
