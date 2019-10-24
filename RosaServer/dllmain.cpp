@@ -202,273 +202,260 @@ void luaInit(bool redo) {
 	lua->open_libraries(sol::lib::ffi);
 	lua->open_libraries(sol::lib::jit);
 
-	lua->new_usertype<Server>("Server",
-		"new", sol::no_constructor,
-		"TPS", &Server::TPS,
+	{
+		auto meta = lua->new_usertype<Server>("new", sol::no_constructor);
+		meta["TPS"] = &Server::TPS;
 
-		"port", sol::property(&Server::getPort),
-		"name", sol::property(&Server::getName, &Server::setName),
-		"password", sol::property(&Server::getPassword, &Server::setPassword),
-		"type", sol::property(&Server::getType, &Server::setType),
-		"levelToLoad", sol::property(&Server::getLevelName, &Server::setLevelName),
-		"loadedLevel", sol::property(&Server::getLoadedLevelName),
-		"isLevelLoaded", sol::property(&Server::getIsLevelLoaded, &Server::setIsLevelLoaded),
-		"state", sol::property(&Server::getState, &Server::setState),
-		"time", sol::property(&Server::getTime, &Server::setTime),
-		"sunTime", sol::property(&Server::getSunTime, &Server::setSunTime),
-		"version", sol::property(&Server::getVersion),
-		"consoleTitle", sol::property(&Server::getConsoleTitle, &Server::setConsoleTitle),
+		meta["port"] = sol::property(&Server::getPort);
+		meta["name"] = sol::property(&Server::getName, &Server::setName);
+		meta["password"] = sol::property(&Server::getPassword, &Server::setPassword);
+		meta["type"] = sol::property(&Server::getType, &Server::setType);
+		meta["levelToLoad"] = sol::property(&Server::getLevelName, &Server::setLevelName);
+		meta["loadedLevel"] = sol::property(&Server::getLoadedLevelName);
+		meta["isLevelLoaded"] = sol::property(&Server::getIsLevelLoaded, &Server::setIsLevelLoaded);
+		meta["state"] = sol::property(&Server::getState, &Server::setState);
+		meta["time"] = sol::property(&Server::getTime, &Server::setTime);
+		meta["sunTime"] = sol::property(&Server::getSunTime, &Server::setSunTime);
+		meta["version"] = sol::property(&Server::getVersion);
+		meta["consoleTitle"] = sol::property(&Server::getConsoleTitle, &Server::setConsoleTitle);
 
-		"reset", &Server::reset
-	);
+		meta["reset"] = &Server::reset;
+	}
 
 	server = new Server();
 	(*lua)["server"] = server;
 
-	lua->new_usertype<Connection>("Connection",
-		"new", sol::no_constructor,
-		"port", &Connection::port,
-		"timeoutTime", &Connection::timeoutTime,
+	{
+		auto meta = lua->new_usertype<Connection>("new", sol::no_constructor);
+		meta["port"] = &Connection::port;
+		meta["timeoutTime"] = &Connection::timeoutTime;
 
-		"address", sol::property(&Connection::getAddress),
-		"adminVisible", sol::property(&Connection::getAdminVisible, &Connection::setAdminVisible)
-	);
+		meta["address"] = sol::property(&Connection::getAddress);
+		meta["adminVisible"] = sol::property(&Connection::getAdminVisible, &Connection::setAdminVisible);
+	}
 
-	lua->new_usertype<Account>("Account",
-		"new", sol::no_constructor,
-		"subRosaID", &Account::subRosaID,
-		"phoneNumber", &Account::phoneNumber,
-		"money", &Account::money,
-		"banTime", &Account::banTime,
+	{
+		auto meta = lua->new_usertype<Account>("new", sol::no_constructor);
+		meta["subRosaID"] = &Account::subRosaID;
+		meta["phoneNumber"] = &Account::phoneNumber;
+		meta["money"] = &Account::money;
+		meta["banTime"] = &Account::banTime;
 
-		"index", sol::property(&Account::getIndex),
-		"name", sol::property(&Account::getName),
-		"steamID", sol::property(&Account::getSteamID)
-	);
+		meta["index"] = sol::property(&Account::getIndex);
+		meta["name"] = sol::property(&Account::getName);
+		meta["steamID"] = sol::property(&Account::getSteamID);
+	}
 
-	lua->new_usertype<Vector>("Vector",
-		"new", sol::no_constructor,
-		"x", &Vector::x,
-		"y", &Vector::y,
-		"z", &Vector::z,
+	{
+		auto meta = lua->new_usertype<Vector>("new", sol::no_constructor);
+		meta["x"] = &Vector::x;
+		meta["y"] = &Vector::y;
+		meta["z"] = &Vector::z;
 
-		"add", &Vector::add,
-		"mult", &Vector::mult,
-		"set", &Vector::set,
-		"clone", &Vector::clone,
-		"dist", &Vector::dist,
-		"distSquare", &Vector::distSquare
-	);
+		meta["add"] = &Vector::add;
+		meta["mult"] = &Vector::mult;
+		meta["set"] = &Vector::set;
+		meta["clone"] = &Vector::clone;
+		meta["dist"] = &Vector::dist;
+		meta["distSquare"] = &Vector::distSquare;
+	}
 
-	lua->new_usertype<RotMatrix>("RotMatrix",
-		"new", sol::no_constructor,
-		"x1", &RotMatrix::x1,
-		"y1", &RotMatrix::y1,
-		"z1", &RotMatrix::z1,
-		"x2", &RotMatrix::x2,
-		"y2", &RotMatrix::y2,
-		"z2", &RotMatrix::z2,
-		"x3", &RotMatrix::x3,
-		"y3", &RotMatrix::y3,
-		"z3", &RotMatrix::z3,
+	{
+		auto meta = lua->new_usertype<RotMatrix>("new", sol::no_constructor);
+		meta["x1"] = &RotMatrix::x1;
+		meta["y1"] = &RotMatrix::y1;
+		meta["z1"] = &RotMatrix::z1;
+		meta["x2"] = &RotMatrix::x2;
+		meta["y2"] = &RotMatrix::y2;
+		meta["z2"] = &RotMatrix::z2;
+		meta["x3"] = &RotMatrix::x3;
+		meta["y3"] = &RotMatrix::y3;
+		meta["z3"] = &RotMatrix::z3;
 
-		"set", &RotMatrix::set,
-		"clone", &RotMatrix::clone
-	);
+		meta["set"] = &RotMatrix::set;
+		meta["clone"] = &RotMatrix::clone;
+	}
 
-	lua->new_usertype<Player>("Player",
-		"new", sol::no_constructor,
-		"subRosaID", &Player::subRosaID,
-		"phoneNumber", &Player::phoneNumber,
-		"money", &Player::money,
-		"team", &Player::team,
-		"teamSwitchTimer", &Player::teamSwitchTimer,
-		"stocks", &Player::stocks,
-		"menuTab", &Player::menuTab,
-		"gender", &Player::gender,
-		"skinColor", &Player::skinColor,
-		"hairColor", &Player::hairColor,
-		"hair", &Player::hair,
-		"eyeColor", &Player::eyeColor,
-		"model", &Player::model,
-		"suitColor", &Player::suitColor,
-		"tieColor", &Player::tieColor,
-		"head", &Player::head,
-		"necklace", &Player::necklace,
+	{
+		auto meta = lua->new_usertype<Player>("new", sol::no_constructor);
+		meta["subRosaID"] = &Player::subRosaID;
+		meta["phoneNumber"] = &Player::phoneNumber;
+		meta["money"] = &Player::money;
+		meta["team"] = &Player::team;
+		meta["teamSwitchTimer"] = &Player::teamSwitchTimer;
+		meta["stocks"] = &Player::stocks;
+		meta["menuTab"] = &Player::menuTab;
+		meta["gender"] = &Player::gender;
+		meta["skinColor"] = &Player::skinColor;
+		meta["hairColor"] = &Player::hairColor;
+		meta["hair"] = &Player::hair;
+		meta["eyeColor"] = &Player::eyeColor;
+		meta["model"] = &Player::model;
+		meta["suitColor"] = &Player::suitColor;
+		meta["tieColor"] = &Player::tieColor;
+		meta["head"] = &Player::head;
+		meta["necklace"] = &Player::necklace;
 
-		"index", sol::property(&Player::getIndex),
-		"isActive", sol::property(&Player::getIsActive, &Player::setIsActive),
-		"name", sol::property(&Player::getName, &Player::setName),
-		"isAdmin", sol::property(&Player::getIsAdmin, &Player::setIsAdmin),
-		"isReady", sol::property(&Player::getIsReady, &Player::setIsReady),
-		"isBot", sol::property(&Player::getIsBot, &Player::setIsBot),
-		"human", sol::property(&Player::getHuman),
-		"connection", sol::property(&Player::getConnection),
-		"account", sol::property(&Player::getAccount, &Player::setAccount),
-		"botDestination", sol::property(&Player::getBotDestination, &Player::setBotDestination),
+		meta["index"] = sol::property(&Player::getIndex);
+		meta["isActive"] = sol::property(&Player::getIsActive, &Player::setIsActive);
+		meta["name"] = sol::property(&Player::getName, &Player::setName);
+		meta["isAdmin"] = sol::property(&Player::getIsAdmin, &Player::setIsAdmin);
+		meta["isReady"] = sol::property(&Player::getIsReady, &Player::setIsReady);
+		meta["isBot"] = sol::property(&Player::getIsBot, &Player::setIsBot);
+		meta["human"] = sol::property(&Player::getHuman);
+		meta["connection"] = sol::property(&Player::getConnection);
+		meta["account"] = sol::property(&Player::getAccount, &Player::setAccount);
+		meta["botDestination"] = sol::property(&Player::getBotDestination, &Player::setBotDestination);
 
-		"update", &Player::update,
-		"updateFinance", &Player::updateFinance,
-		"remove", &Player::remove
-	);
+		meta["update"] = &Player::update;
+		meta["updateFinance"] = &Player::updateFinance;
+		meta["remove"] = &Player::remove;
+	}
 
-	lua->new_usertype<Human>("Human",
-		"new", sol::no_constructor,
-		"vehicleSeat", &Human::vehicleSeat,
-		"despawnTime", &Human::despawnTime,
-		"damage", &Human::damage,
-		"viewYaw", &Human::viewYaw,
-		"viewPitch", &Human::viewPitch,
-		"strafeInput", &Human::strafeInput,
-		"walkInput", &Human::walkInput,
-		"inputFlags", &Human::inputFlags,
-		"lastInputFlags", &Human::lastInputFlags,
-		"health", &Human::health,
-		"bloodLevel", &Human::bloodLevel,
-		"chestHP", &Human::chestHP,
-		"headHP", &Human::headHP,
-		"leftArmHP", &Human::leftArmHP,
-		"rightArmHP", &Human::rightArmHP,
-		"leftLegHP", &Human::leftLegHP,
-		"rightLegHP", &Human::rightLegHP,
-		"gender", &Human::gender,
-		"head", &Human::head,
-		"skinColor", &Human::skinColor,
-		"hairColor", &Human::hairColor,
-		"hair", &Human::hair,
-		"eyeColor", &Human::eyeColor,
+	{
+		auto meta = lua->new_usertype<Human>("new", sol::no_constructor);
+		meta["vehicleSeat"] = &Human::vehicleSeat;
+		meta["despawnTime"] = &Human::despawnTime;
+		meta["damage"] = &Human::damage;
+		meta["viewYaw"] = &Human::viewYaw;
+		meta["viewPitch"] = &Human::viewPitch;
+		meta["strafeInput"] = &Human::strafeInput;
+		meta["walkInput"] = &Human::walkInput;
+		meta["inputFlags"] = &Human::inputFlags;
+		meta["lastInputFlags"] = &Human::lastInputFlags;
+		meta["health"] = &Human::health;
+		meta["bloodLevel"] = &Human::bloodLevel;
+		meta["chestHP"] = &Human::chestHP;
+		meta["headHP"] = &Human::headHP;
+		meta["leftArmHP"] = &Human::leftArmHP;
+		meta["rightArmHP"] = &Human::rightArmHP;
+		meta["leftLegHP"] = &Human::leftLegHP;
+		meta["rightLegHP"] = &Human::rightLegHP;
+		meta["gender"] = &Human::gender;
+		meta["head"] = &Human::head;
+		meta["skinColor"] = &Human::skinColor;
+		meta["hairColor"] = &Human::hairColor;
+		meta["hair"] = &Human::hair;
+		meta["eyeColor"] = &Human::eyeColor;
 
-		"index", sol::property(&Human::getIndex),
-		"isActive", sol::property(&Human::getIsActive, &Human::setIsActive),
-		"isAlive", sol::property(&Human::getIsAlive, &Human::setIsAlive),
-		"isImmortal", sol::property(&Human::getIsImmortal, &Human::setIsImmortal),
-		"isOnGround", sol::property(&Human::getIsOnGround),
-		"isStanding", sol::property(&Human::getIsStanding),
-		"isBleeding", sol::property(&Human::getIsBleeding, &Human::setIsBleeding),
-		"player", sol::property(&Human::getPlayer),
-		"vehicle", sol::property(&Human::getVehicle, &Human::setVehicle),
+		meta["index"] = sol::property(&Human::getIndex);
+		meta["isActive"] = sol::property(&Human::getIsActive, &Human::setIsActive);
+		meta["isAlive"] = sol::property(&Human::getIsAlive, &Human::setIsAlive);
+		meta["isImmortal"] = sol::property(&Human::getIsImmortal, &Human::setIsImmortal);
+		meta["isOnGround"] = sol::property(&Human::getIsOnGround);
+		meta["isStanding"] = sol::property(&Human::getIsStanding);
+		meta["isBleeding"] = sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
+		meta["player"] = sol::property(&Human::getPlayer);
+		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
 
-		"remove", &Human::remove,
-		"getPos", &Human::getPos,
-		"setPos", &Human::setPos,
-		"speak", &Human::speak,
-		"arm", &Human::arm,
-		"getBone", &Human::getBone,
-		"getRigidBody", &Human::getRigidBody,
-		"setVelocity", &Human::setVelocity,
-		"addVelocity", &Human::addVelocity,
-		"mountItem", &Human::mountItem,
-		"applyDamage", &Human::applyDamage
-	);
+		meta["remove"] = &Human::remove;
+		meta["getPos"] = &Human::getPos;
+		meta["setPos"] = &Human::setPos;
+		meta["speak"] = &Human::speak;
+		meta["arm"] = &Human::arm;
+		meta["getBone"] = &Human::getBone;
+		meta["getRigidBody"] = &Human::getRigidBody;
+		meta["setVelocity"] = &Human::setVelocity;
+		meta["addVelocity"] = &Human::addVelocity;
+		meta["mountItem"] = &Human::mountItem;
+		meta["applyDamage"] = &Human::applyDamage;
+	}
 
-	lua->new_usertype<ItemType>("ItemType",
-		"new", sol::no_constructor,
-		"price", &ItemType::price,
-		"mass", &ItemType::mass,
-		"fireRate", &ItemType::fireRate,
-		"bulletType", &ItemType::bulletType,
-		"bulletVelocity", &ItemType::bulletVelocity,
-		"bulletSpread", &ItemType::bulletSpread,
+	{
+		auto meta = lua->new_usertype<ItemType>("new", sol::no_constructor);
+		meta["price"] = &ItemType::price;
+		meta["mass"] = &ItemType::mass;
+		meta["fireRate"] = &ItemType::fireRate;
+		meta["bulletType"] = &ItemType::bulletType;
+		meta["bulletVelocity"] = &ItemType::bulletVelocity;
+		meta["bulletSpread"] = &ItemType::bulletSpread;
 
-		"index", sol::property(&ItemType::getIndex),
-		"name", sol::property(&ItemType::getName, &ItemType::setName),
-		"isGun", sol::property(&ItemType::getIsGun, &ItemType::setIsGun)
-	);
+		meta["index"] = sol::property(&ItemType::getIndex);
+		meta["name"] = sol::property(&ItemType::getName, &ItemType::setName);
+		meta["isGun"] = sol::property(&ItemType::getIsGun, &ItemType::setIsGun);
+	}
 
-	lua->new_usertype<Item>("Item",
-		"new", sol::no_constructor,
-		"type", &Item::type,
-		"parentSlot", &Item::parentSlot,
-		"pos", &Item::pos,
-		"vel", &Item::vel,
-		"rot", &Item::rot,
-		"bullets", &Item::bullets,
+	{
+		auto meta = lua->new_usertype<Item>("new", sol::no_constructor);
+		meta["type"] = &Item::type;
+		meta["parentSlot"] = &Item::parentSlot;
+		meta["pos"] = &Item::pos;
+		meta["vel"] = &Item::vel;
+		meta["rot"] = &Item::rot;
+		meta["bullets"] = &Item::bullets;
 
-		"index", sol::property(&Item::getIndex),
-		"isActive", sol::property(&Item::getIsActive, &Item::setIsActive),
-		"hasPhysics", sol::property(&Item::getHasPhysics, &Item::setHasPhysics),
-		"physicsSettled", sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled),
-		"rigidBody", sol::property(&Item::getRigidBody),
-		"parentHuman", sol::property(&Item::getParentHuman),
-		"parentItem", sol::property(&Item::getParentItem),
+		meta["index"] = sol::property(&Item::getIndex);
+		meta["isActive"] = sol::property(&Item::getIsActive, &Item::setIsActive);
+		meta["hasPhysics"] = sol::property(&Item::getHasPhysics, &Item::setHasPhysics);
+		meta["physicsSettled"] = sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
+		meta["rigidBody"] = sol::property(&Item::getRigidBody);
+		meta["parentHuman"] = sol::property(&Item::getParentHuman);
+		meta["parentItem"] = sol::property(&Item::getParentItem);
 
-		"update", &Item::update,
-		"remove", &Item::remove,
-		"mountItem", &Item::mountItem,
-		"speak", &Item::speak,
-		"explode", &Item::explode
-	);
+		meta["update"] = &Item::update;
+		meta["remove"] = &Item::remove;
+		meta["mountItem"] = &Item::mountItem;
+		meta["speak"] = &Item::speak;
+		meta["explode"] = &Item::explode;
+	}
 
-	lua->new_usertype<Vehicle>("Vehicle",
-		"new", sol::no_constructor,
-		"type", &Vehicle::type,
-		"controllableState", &Vehicle::controllableState,
-		"health", &Vehicle::health,
-		"color", &Vehicle::color,
-		"pos", &Vehicle::pos,
-		"pos2", &Vehicle::pos2,
-		"rot", &Vehicle::rot,
-		"vel", &Vehicle::vel,
-		/*"windowState0", &Vehicle::windowState0,
-		"windowState1", &Vehicle::windowState1,
-		"windowState2", &Vehicle::windowState2,
-		"windowState3", &Vehicle::windowState3,
-		"windowState4", &Vehicle::windowState4,
-		"windowState5", &Vehicle::windowState5,
-		"windowState6", &Vehicle::windowState6,
-		"windowState7", &Vehicle::windowState7,*/
-		"gearX", &Vehicle::gearX,
-		"steerControl", &Vehicle::steerControl,
-		"gearY", &Vehicle::gearY,
-		"gasControl", &Vehicle::gasControl,
-		/*"numWheels", &Vehicle::numWheels,
-		"wheelBodyID0", &Vehicle::wheelBodyID0,
-		"wheelBodyID1", &Vehicle::wheelBodyID1,
-		"wheelBodyID2", &Vehicle::wheelBodyID2,
-		"wheelBodyID3", &Vehicle::wheelBodyID3,*/
-		"bladeBodyID", &Vehicle::bladeBodyID,
+	{
+		auto meta = lua->new_usertype<Vehicle>("new", sol::no_constructor);
+		meta["type"] = &Vehicle::type;
+		meta["controllableState"] = &Vehicle::controllableState;
+		meta["health"] = &Vehicle::health;
+		meta["color"] = &Vehicle::color;
+		meta["pos"] = &Vehicle::pos;
+		meta["pos2"] = &Vehicle::pos2;
+		meta["rot"] = &Vehicle::rot;
+		meta["vel"] = &Vehicle::vel;
+		meta["gearX"] = &Vehicle::gearX;
+		meta["steerControl"] = &Vehicle::steerControl;
+		meta["gearY"] = &Vehicle::gearY;
+		meta["gasControl"] = &Vehicle::gasControl;
+		meta["bladeBodyID"] = &Vehicle::bladeBodyID;
 
-		"index", sol::property(&Vehicle::getIndex),
-		"isActive", sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive),
-		"lastDriver", sol::property(&Vehicle::getLastDriver),
-		"rigidBody", sol::property(&Vehicle::getRigidBody),
+		meta["index"] = sol::property(&Vehicle::getIndex);
+		meta["isActive"] = sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
+		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
+		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);
 
-		"updateType", &Vehicle::updateType,
-		"updateDestruction", &Vehicle::updateDestruction,
-		"remove", &Vehicle::remove
-	);
+		meta["updateType"] = &Vehicle::updateType;
+		meta["updateDestruction"] = &Vehicle::updateDestruction;
+		meta["remove"] = &Vehicle::remove;
+	}
 
-	lua->new_usertype<Bullet>("Bullet",
-		"new", sol::no_constructor,
-		"type", &Bullet::type,
-		"time", &Bullet::time,
-		"lastPos", &Bullet::lastPos,
-		"pos", &Bullet::pos,
-		"vel", &Bullet::vel,
+	{
+		auto meta = lua->new_usertype<Bullet>("new", sol::no_constructor);
+		meta["type"] = &Bullet::type;
+		meta["time"] = &Bullet::time;
+		meta["lastPos"] = &Bullet::lastPos;
+		meta["pos"] = &Bullet::pos;
+		meta["vel"] = &Bullet::vel;
 
-		"player", sol::property(&Bullet::getPlayer)
-	);
+		meta["player"] = sol::property(&Bullet::getPlayer);
+	}
 
-	lua->new_usertype<Bone>("Bone",
-		"new", sol::no_constructor,
-		"pos", &Bone::pos,
-		"pos2", &Bone::pos2
-	);
+	{
+		auto meta = lua->new_usertype<Bone>("new", sol::no_constructor);
+		meta["pos"] = &Bone::pos;
+		meta["pos2"] = &Bone::pos2;
+	}
 
-	lua->new_usertype<RigidBody>("RigidBody",
-		"new", sol::no_constructor,
-		"type", &RigidBody::type,
-		"unk0", &RigidBody::unk0,
-		"mass", &RigidBody::mass,
-		"pos", &RigidBody::pos,
-		"vel", &RigidBody::vel,
-		"rot", &RigidBody::rot,
-		"rot2", &RigidBody::rot2,
+	{
+		auto meta = lua->new_usertype<RigidBody>("new", sol::no_constructor);
+		meta["type"] = &RigidBody::type;
+		meta["unk0"] = &RigidBody::unk0;
+		meta["mass"] = &RigidBody::mass;
+		meta["pos"] = &RigidBody::pos;
+		meta["vel"] = &RigidBody::vel;
+		meta["rot"] = &RigidBody::rot;
+		meta["rot2"] = &RigidBody::rot2;
 
-		"index", sol::property(&RigidBody::getIndex),
-		"isActive", sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive),
-		"isSettled", sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled)
-	);
+		meta["index"] = sol::property(&RigidBody::getIndex);
+		meta["isActive"] = sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
+		meta["isSettled"] = sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
+	}
 
 	(*lua)["printAppend"] = l_printAppend;
 	(*lua)["flagStateForReset"] = l_flagStateForReset;
