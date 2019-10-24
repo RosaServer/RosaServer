@@ -85,9 +85,9 @@ void l_http_get(const char* host, int port, const char* path, sol::table headers
 		LuaRequestType::get,
 		host,
 		(unsigned short)port,
-		path
+		path,
+		callback
 	};
-	request.callback = callback;
 
 	for (const auto& pair : headers)
 		request.headers.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
@@ -95,12 +95,13 @@ void l_http_get(const char* host, int port, const char* path, sol::table headers
 	requestQueue.push(request);
 }
 
-void l_http_post(const char* host, int port, const char* path, sol::table headers, const char* body, const char* contentType) {
+void l_http_post(const char* host, int port, const char* path, sol::table headers, const char* body, const char* contentType, sol::protected_function callback) {
 	LuaHTTPRequest request {
 		LuaRequestType::post,
 		host,
 		(unsigned short)port,
 		path,
+		callback,
 		contentType,
 		body
 	};
@@ -118,13 +119,20 @@ DWORD WINAPI HTTPThread(HMODULE hModule) {
 
 			httplib::Client client(req.host.c_str(), req.port);
 
-			switch (req.type) {
-				case get:
-				{
-					// Make sure the state hasn't been reset or something before and after the request
-					if (!req.callback.valid()) break;
-					auto res = client.Get(req.path.c_str(), req.headers);
-					if (!req.callback.valid()) break;
+			// Make sure the state hasn't been reset or something before and after the request
+			if (req.callback.valid()) {
+				std::shared_ptr<httplib::Response> res;
+
+				switch (req.type) {
+					case get:
+						res = client.Get(req.path.c_str(), req.headers);
+						break;
+					case post:
+						res = client.Post(req.path.c_str(), req.headers, req.body.c_str(), req.contentType.c_str());
+						break;
+				}
+
+				if (req.callback.valid()) {
 					if (res) {
 						sol::table table = lua->create_table();
 						table["status"] = res->status;
@@ -137,16 +145,11 @@ DWORD WINAPI HTTPThread(HMODULE hModule) {
 
 						auto callResponse = req.callback(table);
 						noLuaCallError(&callResponse);
-					} else {
+					}
+					else {
 						auto callResponse = req.callback();
 						noLuaCallError(&callResponse);
 					}
-					break;
-				}
-				case post:
-				{
-					auto res = client.Post(req.path.c_str(), req.headers, req.body.c_str(), req.contentType.c_str());
-					break;
 				}
 			}
 
