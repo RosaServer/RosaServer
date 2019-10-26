@@ -468,6 +468,30 @@ void __cdecl h_logicsimulation() {
 		}
 		consoleQueue.pop();
 	}
+
+	while (!responseQueue.empty()) {
+		if (func != sol::nil) {
+			auto res = responseQueue.front();
+			if (res.responded) {
+				sol::table table = lua->create_table();
+				table["status"] = res.status;
+				table["body"] = res.body;
+
+				sol::table headers = lua->create_table();
+				for (const auto& h : res.headers)
+					headers[h.first] = h.second;
+				table["headers"] = headers;
+
+				auto resf = func("HTTPResponse", res.identifier, table);
+				noLuaCallError(&resf);
+			}
+			else {
+				auto resf = func("HTTPResponse", res.identifier);
+				noLuaCallError(&resf);
+			}
+		}
+		responseQueue.pop();
+	}
 }
 
 void __cdecl h_logicsimulation_race() {

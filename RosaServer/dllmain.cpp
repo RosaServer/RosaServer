@@ -13,6 +13,7 @@ std::string hookMode = "";
 
 std::queue<std::string> consoleQueue;
 std::queue<LuaHTTPRequest> requestQueue;
+std::queue<LuaHTTPResponse> responseQueue;
 
 static Version* version;
 static char* serverName;
@@ -180,12 +181,12 @@ void luaInit(bool redo) {
 	auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(handle, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	if (redo) {
-		printf("\n[Lua] Resetting state...\n");
+		printf("\n[RS] Resetting state...\n");
 		delete server;
 		delete lua;
 	}
 	else {
-		printf("\n[Lua] Initializing state...\n");
+		printf("\n[RS] Initializing state...\n");
 	}
 
 	lua = new sol::state();
@@ -316,6 +317,8 @@ void luaInit(bool redo) {
 		auto meta = lua->new_usertype<Human>("new", sol::no_constructor);
 		meta["vehicleSeat"] = &Human::vehicleSeat;
 		meta["despawnTime"] = &Human::despawnTime;
+		meta["movementState"] = &Human::movementState;
+		meta["zoomLevel"] = &Human::zoomLevel;
 		meta["damage"] = &Human::damage;
 		meta["viewYaw"] = &Human::viewYaw;
 		meta["viewPitch"] = &Human::viewPitch;
@@ -582,7 +585,7 @@ void luaInit(bool redo) {
 	(*lua)["TYPE_COOP"] = 6;
 	(*lua)["TYPE_VERSUS"] = 7;
 
-	printf("[Lua] Running main.lua...\n");
+	printf("[RS] Running main.lua...\n");
 	SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
 	sol::load_result load = lua->load_file("lua/main.lua");
@@ -590,7 +593,7 @@ void luaInit(bool redo) {
 		sol::protected_function_result res = load();
 		if (noLuaCallError(&res)) {
 			SetConsoleTextAttribute(handle, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-			printf("[Lua] No problems.\n");
+			printf("[RS] Ready!\n");
 			SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 		}
 	}

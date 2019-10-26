@@ -80,13 +80,13 @@ RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2, float z2
 	return RotMatrix{ x1, y1, z1, x2, y2, z2, x3, y3, z3 };
 }
 
-void l_http_get(const char* host, int port, const char* path, sol::table headers, sol::protected_function callback) {
+void l_http_get(const char* host, int port, const char* path, sol::table headers, const char* identifier) {
 	LuaHTTPRequest request{
 		LuaRequestType::get,
 		host,
 		(unsigned short)port,
 		path,
-		callback
+		identifier
 	};
 
 	for (const auto& pair : headers)
@@ -95,13 +95,13 @@ void l_http_get(const char* host, int port, const char* path, sol::table headers
 	requestQueue.push(request);
 }
 
-void l_http_post(const char* host, int port, const char* path, sol::table headers, const char* body, const char* contentType, sol::protected_function callback) {
+void l_http_post(const char* host, int port, const char* path, sol::table headers, const char* body, const char* contentType, const char* identifier) {
 	LuaHTTPRequest request {
 		LuaRequestType::post,
 		host,
 		(unsigned short)port,
 		path,
-		callback,
+		identifier,
 		contentType,
 		body
 	};
@@ -119,38 +119,33 @@ DWORD WINAPI HTTPThread(HMODULE hModule) {
 
 			httplib::Client client(req.host.c_str(), req.port);
 
-			// Make sure the state hasn't been reset or something before and after the request
-			if (req.callback.valid()) {
-				std::shared_ptr<httplib::Response> res;
+			std::shared_ptr<httplib::Response> res;
 
-				switch (req.type) {
-					case get:
-						res = client.Get(req.path.c_str(), req.headers);
-						break;
-					case post:
-						res = client.Post(req.path.c_str(), req.headers, req.body.c_str(), req.contentType.c_str());
-						break;
-				}
+			switch (req.type) {
+				case get:
+					res = client.Get(req.path.c_str(), req.headers);
+					break;
+				case post:
+					res = client.Post(req.path.c_str(), req.headers, req.body.c_str(), req.contentType.c_str());
+					break;
+			}
 
-				if (req.callback.valid()) {
-					if (res) {
-						sol::table table = lua->create_table();
-						table["status"] = res->status;
-						table["body"] = res->body;
-
-						sol::table headers = lua->create_table();
-						for (const auto& h : res->headers)
-							headers[h.first] = h.second;
-						table["headers"] = headers;
-
-						auto callResponse = req.callback(table);
-						noLuaCallError(&callResponse);
-					}
-					else {
-						auto callResponse = req.callback();
-						noLuaCallError(&callResponse);
-					}
-				}
+			if (res) {
+				LuaHTTPResponse response{
+					req.identifier,
+					true,
+					res->status,
+					res->body,
+					res->headers
+				};
+				responseQueue.push(response);
+			}
+			else {
+				LuaHTTPResponse response{
+					req.identifier,
+					false
+				};
+				responseQueue.push(response);
 			}
 
 			requestQueue.pop();
