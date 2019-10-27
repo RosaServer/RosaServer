@@ -381,6 +381,7 @@ void luaInit(bool redo) {
 	{
 		auto meta = lua->new_usertype<Item>("new", sol::no_constructor);
 		meta["type"] = &Item::type;
+		meta["despawnTime"] = &Item::despawnTime;
 		meta["parentSlot"] = &Item::parentSlot;
 		meta["pos"] = &Item::pos;
 		meta["vel"] = &Item::vel;

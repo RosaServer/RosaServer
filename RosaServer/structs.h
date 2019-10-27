@@ -421,7 +421,7 @@ struct Item {
 		int unk1; //0c
 	int type; //10
 		int unk2; //14
-		int unk3; //18
+	int despawnTime; //18
 		int unk4; //1c
 	int parentHumanID; //20
 	int parentItemID; //24
