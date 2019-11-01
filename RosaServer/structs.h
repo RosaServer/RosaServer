@@ -369,6 +369,8 @@ struct Human {
 	void setVehicle(Vehicle* vcl);
 	Bone* getBone(unsigned int idx);
 	RigidBody* getRigidBody(unsigned int idx) const;
+	Item* getRightHandItem() const;
+	Item* getLeftHandItem() const;
 
 	void remove() const;
 	Vector getPos() const;

@@ -724,6 +724,18 @@ RigidBody* Human::getRigidBody(unsigned int idx) const {
 	return &bodies[bones[idx].bodyID];
 }
 
+Item* Human::getRightHandItem() const {
+	if (!rightHandOccupied)
+		return nullptr;
+	return &items[rightHandItemID];
+}
+
+Item* Human::getLeftHandItem() const {
+	if (!leftHandOccupied)
+		return nullptr;
+	return &items[leftHandItemID];
+}
+
 void Human::setVelocity(Vector* vel) const {
 	for (int i = 0; i < 16; i++) {
 		auto body = getRigidBody(i);
