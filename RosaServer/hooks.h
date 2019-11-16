@@ -1,41 +1,75 @@
 #pragma once
-#include "pch.h"
+#include "subhook.h"
 #include "structs.h"
 
-void __cdecl h_createlevel();
-int __cdecl h_createplayer();
-void __cdecl h_deleteplayer(int playerID);
-int __cdecl h_createhuman(Vector* pos, RotMatrix* rot, int playerID);
-void __cdecl h_deletehuman(int humanID);
-BOOL __cdecl h_linkitem(int itemID, int childItemID, int parentHumanID, int slot);
-int __cdecl h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot);
-int __cdecl h_createvehicle(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
-void __cdecl h_grenadeexplosion(int itemID);
-void __cdecl h_playerdeathtax(int playerID);
-void __cdecl h_human_applydamage(int humanID, int bone, int unk, int damage);
-int __cdecl h_chat(int playerID, char* message);
-void __cdecl h_createevent_message(int type, char* message, int speakerID, int distance);
-void __cdecl h_createevent_updateitem(int id);
-void __cdecl h_createevent_updateplayer(int id);
-void __cdecl h_createevent_updateplayer_finance(int id);
-void __cdecl h_createevent_updateobject(int vehicleID, int updateType, int partID, Vector* pos, Vector* normal);
-void __cdecl h_createevent_sound(int soundType, Vector* pos, float volume, float pitch);
-void __cdecl h_createevent_updatedoor(int team, BOOL isOpen);
-void __cdecl h_createevent_bullethit(int unk, int hitType, Vector* pos, Vector* normal);
-void __cdecl h_playerai(int playerID);
-void __cdecl h_rigidbodysimulation();
-void __cdecl h_objectsimulation();
-void __cdecl h_itemsimulation();
-void __cdecl h_humansimulation();
-void __cdecl h_logicsimulation();
-void __cdecl h_logicsimulation_race();
-void __cdecl h_logicsimulation_round();
-void __cdecl h_logicsimulation_world();
-void __cdecl h_logicsimulation_terminator();
-void __cdecl h_logicsimulation_coop();
-void __cdecl h_logicsimulation_versus();
-int __cdecl h_recvpacket();
-void __cdecl h_sendpacket();
-void __cdecl h_bulletsimulation();
-void __cdecl h_resetgame();
-void __cdecl h_scenario_createtraffic3(int density);
+extern subhook::Hook resetgame_hook;
+void h_resetgame();
+
+extern subhook::Hook logicsimulation_hook;
+void h_logicsimulation();
+extern subhook::Hook logicsimulation_race_hook;
+void h_logicsimulation_race();
+extern subhook::Hook logicsimulation_round_hook;
+void h_logicsimulation_round();
+extern subhook::Hook logicsimulation_world_hook;
+void h_logicsimulation_world();
+extern subhook::Hook logicsimulation_terminator_hook;
+void h_logicsimulation_terminator();
+extern subhook::Hook logicsimulation_coop_hook;
+void h_logicsimulation_coop();
+extern subhook::Hook logicsimulation_versus_hook;
+void h_logicsimulation_versus();
+
+extern subhook::Hook physicssimulation_hook;
+void h_physicssimulation();
+extern subhook::Hook recvpacket_hook;
+int h_recvpacket();
+extern subhook::Hook sendpacket_hook;
+void h_sendpacket();
+extern subhook::Hook bulletsimulation_hook;
+void h_bulletsimulation();
+
+extern subhook::Hook createplayer_hook;
+int h_createplayer();
+extern subhook::Hook deleteplayer_hook;
+void h_deleteplayer(int playerID);
+extern subhook::Hook createhuman_hook;
+int h_createhuman(Vector* pos, RotMatrix* rot, int playerID);
+extern subhook::Hook deletehuman_hook;
+void h_deletehuman(int humanID);
+extern subhook::Hook createitem_hook;
+int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot);
+extern subhook::Hook deleteitem_hook;
+void h_deleteitem(int itemID);
+extern subhook::Hook createobject_hook;
+int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
+extern subhook::Hook deleteobject_hook;
+void h_deleteobject(int vehicleID);
+
+extern subhook::Hook linkitem_hook;
+int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot);
+extern subhook::Hook human_applydamage_hook;
+void h_human_applydamage(int humanID, int bone, int unk, int damage);
+extern subhook::Hook grenadeexplosion_hook;
+void h_grenadeexplosion(int itemID);
+extern subhook::Hook chat_hook;
+int h_chat(int playerID, char* message);
+extern subhook::Hook playerai_hook;
+void h_playerai(int playerID);
+extern subhook::Hook playerdeathtax_hook;
+void h_playerdeathtax(int playerID);
+
+extern subhook::Hook createevent_message_hook;
+void h_createevent_message(int speakerType, char* message, int speakerID, int distance);
+extern subhook::Hook createevent_updateplayer_hook;
+void h_createevent_updateplayer(int id);
+extern subhook::Hook createevent_updateplayer_finance_hook;
+void h_createevent_updateplayer_finance(int id);
+//extern subhook::Hook createevent_updateitem_hook;
+//void h_createevent_updateitem(int id);
+extern subhook::Hook createevent_updateobject_hook;
+void h_createevent_updateobject(int vehicleID, int updateType, int partID, Vector* pos, Vector* normal);
+//extern subhook::Hook createevent_sound_hook;
+//void h_createevent_sound(int soundType, Vector* pos, float volume, float pitch);
+extern subhook::Hook createevent_bullethit_hook;
+void h_createevent_bullethit(int unk, int hitType, Vector* pos, Vector* normal);

@@ -1,12 +1,10 @@
-#include "pch.h"
-
 #include "api.h"
+#include "tinycon.h"
+#include <experimental/filesystem>
+#include <chrono>
 
 void printLuaError(sol::error* err) {
-	auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_INTENSITY);
-	printf("Lua error:\n%s\n\n", err->what());
-	SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	printf("\033[1;31mLua error:\n%s\033[0m\n\n", err->what());
 }
 
 bool noLuaCallError(sol::protected_function_result* res) {
@@ -32,7 +30,10 @@ void hookAndReset(int reason) {
 			noParent = (bool)res;
 	}
 	if (!noParent) {
-		resetgame();
+		{
+			subhook::ScopedHookRemove remove(&resetgame_hook);
+			resetgame();
+		}
 		if (func != sol::nil) {
 			auto res = func("PostResetGame", reason);
 			noLuaCallError(&res);
@@ -52,11 +53,10 @@ public:
 	}
 };
 
-DWORD WINAPI ConsoleThread(HMODULE hModule) {
+
+void consoleThread() {
 	tcon console;
 	console.run();
-
-	return 0;
 }
 
 void l_printAppend(const char* str) {
@@ -96,7 +96,7 @@ void l_http_get(const char* host, int port, const char* path, sol::table headers
 }
 
 void l_http_post(const char* host, int port, const char* path, sol::table headers, const char* body, const char* contentType, const char* identifier) {
-	LuaHTTPRequest request {
+	LuaHTTPRequest request{
 		LuaRequestType::post,
 		host,
 		(unsigned short)port,
@@ -112,23 +112,27 @@ void l_http_post(const char* host, int port, const char* path, sol::table header
 	requestQueue.push(request);
 }
 
-DWORD WINAPI HTTPThread(HMODULE hModule) {
+
+void HTTPThread() {
 	while (true) {
 		while (!requestQueue.empty()) {
 			auto req = requestQueue.front();
+			//printf("new http request\n");
 
-			httplib::Client client(req.host.c_str(), req.port);
+			httplib::Client client(req.host.c_str(), req.port, 6L);
 
 			std::shared_ptr<httplib::Response> res;
 
 			switch (req.type) {
-				case get:
-					res = client.Get(req.path.c_str(), req.headers);
-					break;
-				case post:
-					res = client.Post(req.path.c_str(), req.headers, req.body.c_str(), req.contentType.c_str());
-					break;
+			case get:
+				res = client.Get(req.path.c_str(), req.headers);
+				break;
+			case post:
+				res = client.Post(req.path.c_str(), req.headers, req.body.c_str(), req.contentType.c_str());
+				break;
 			}
+
+			//printf("yup\n");
 
 			if (res) {
 				LuaHTTPResponse response{
@@ -149,18 +153,20 @@ DWORD WINAPI HTTPThread(HMODULE hModule) {
 			}
 
 			requestQueue.pop();
-		}
-		Sleep(16);
-	}
 
-	return 0;
+			//printf("popped\n");
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+	}
 }
 
 void l_event_sound(int soundType, Vector* pos, float volume, float pitch) {
+	//subhook::ScopedHookRemove remove(&createevent_sound_hook);
 	createevent_sound(soundType, pos, volume, pitch);
 }
 
 void l_event_soundSimple(int soundType, Vector* pos) {
+	//subhook::ScopedHookRemove remove(&createevent_sound_hook);
 	createevent_sound(soundType, pos, 1.0f, 1.0f);
 }
 
@@ -169,12 +175,13 @@ void l_event_explosion(Vector* pos) {
 }
 
 void l_event_bulletHit(int hitType, Vector* pos, Vector* normal) {
+	subhook::ScopedHookRemove remove(&createevent_bullethit_hook);
 	createevent_bullethit(0, hitType, pos, normal);
 }
 
 sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
-	BOOL res = lineintersectlevel(posA, posB);
+	int res = lineintersectlevel(posA, posB);
 	if (res) {
 		table["pos"] = lineIntersectResult->pos;
 		table["normal"] = lineIntersectResult->normal;
@@ -186,7 +193,7 @@ sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB) {
 
 sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
-	BOOL res = lineintersecthuman(man->getIndex(), posA, posB);
+	int res = lineintersecthuman(man->getIndex(), posA, posB);
 	if (res) {
 		table["pos"] = lineIntersectResult->pos;
 		table["normal"] = lineIntersectResult->normal;
@@ -199,7 +206,7 @@ sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA, Vector* posB) 
 
 sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
-	BOOL res = lineintersectobject(vcl->getIndex(), posA, posB);
+	int res = lineintersectobject(vcl->getIndex(), posA, posB);
 	if (res) {
 		table["pos"] = lineIntersectResult->pos;
 		table["normal"] = lineIntersectResult->normal;
@@ -257,19 +264,21 @@ Item* l_items_getByIndex(sol::table self, unsigned int idx) {
 }
 
 Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot) {
+	subhook::ScopedHookRemove remove(&createitem_hook);
 	int id = createitem(itemType, pos, nullptr, rot);
 	return id == -1 ? nullptr : &items[id];
 }
 
 Item* l_items_createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot) {
+	subhook::ScopedHookRemove remove(&createitem_hook);
 	int id = createitem(itemType, pos, vel, rot);
 	return id == -1 ? nullptr : &items[id];
 }
 
-void lua_items_createRope(Vector* pos, RotMatrix* rot) {
+/*void lua_items_createRope(Vector* pos, RotMatrix* rot) {
 	int x = createrope(pos, rot);
 	printf("createrope => %i\n", x);
-}
+}*/
 
 int l_vehicles_getCount() {
 	int count = 0;
@@ -296,28 +305,33 @@ Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx) {
 }
 
 Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color) {
-	int id = createvehicle(type, pos, nullptr, rot, color);
+	subhook::ScopedHookRemove remove(&createobject_hook);
+	int id = createobject(type, pos, nullptr, rot, color);
 	return id == -1 ? nullptr : &vehicles[id];
 }
 
 Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color) {
-	int id = createvehicle(type, pos, vel, rot, color);
+	subhook::ScopedHookRemove remove(&createobject_hook);
+	int id = createobject(type, pos, vel, rot, color);
 	return id == -1 ? nullptr : &vehicles[id];
 }
 
-void l_vehicles_createTraffic(int density) {
+/*void l_vehicles_createTraffic(int density) {
 	scenario_createtraffic3(density);
-}
+}*/
 
 void l_chat_announce(const char* message) {
+	subhook::ScopedHookRemove remove(&createevent_message_hook);
 	createevent_message(0, (char*)message, -1, 0);
 }
 
 void l_chat_tellAdmins(const char* message) {
+	subhook::ScopedHookRemove remove(&createevent_message_hook);
 	createevent_message(4, (char*)message, -1, 0);
 }
 
 void l_chat_addRaw(int type, const char* message, int speakerID, int distance) {
+	subhook::ScopedHookRemove remove(&createevent_message_hook);
 	createevent_message(type, (char*)message, speakerID, distance);
 }
 
@@ -402,11 +416,12 @@ Player* l_players_getByIndex(sol::table self, unsigned int idx) {
 }
 
 Player* l_players_createBot() {
+	subhook::ScopedHookRemove remove(&createplayer_hook);
 	int playerID = createplayer();
 	if (playerID == -1) return nullptr;
 	auto ply = &players[playerID];
 	ply->subRosaID = 0;
-	ply->isBot = TRUE;
+	ply->isBot = 1;
 	ply->team = 6;
 	ply->setName("Bot");
 	return ply;
@@ -438,9 +453,15 @@ Human* l_humans_getByIndex(sol::table self, unsigned int idx) {
 
 Human* l_humans_create(Vector* pos, RotMatrix* rot, Player* ply) {
 	int playerID = ply->getIndex();
-	if (ply->humanID != -1)
+	if (ply->humanID != -1) {
+		subhook::ScopedHookRemove remove(&deletehuman_hook);
 		deletehuman(ply->humanID);
-	int humanID = createhuman(pos, rot, playerID);
+	}
+	int humanID;
+	{
+		subhook::ScopedHookRemove remove(&createhuman_hook);
+		humanID = createhuman(pos, rot, playerID);
+	}
 	if (humanID == -1)
 		return nullptr;
 	auto man = &humans[humanID];
@@ -486,39 +507,26 @@ RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx) {
 	return &bodies[idx];
 }
 
-//dumbass false positive
-#pragma warning( push )
-#pragma warning( disable : 6387 )
-void l_os_setClipboard(std::string s) {
-	if (s.length() > 0 && OpenClipboard(0)) {
-		EmptyClipboard();
-		HGLOBAL hg = GlobalAlloc(GMEM_MOVEABLE, s.size() + 1);
-		if (hg != NULL) {
-			memcpy(GlobalLock(hg), s.c_str(), s.size() + 1);
-			GlobalUnlock(hg);
-			SetClipboardData(CF_TEXT, hg);
-			CloseClipboard();
-			GlobalFree(hg);
-		}
-		else {
-			CloseClipboard();
-			return;
-		}
-	}
-}
-#pragma warning( pop ) 
-
 sol::table l_os_listDirectory(const char* path) {
 	auto arr = lua->create_table();
-	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+	for (const auto& entry : std::experimental::filesystem::directory_iterator(path)) {
 		auto table = lua->create_table();
-		table["isDirectory"] = entry.is_directory();
-		table["name"] = entry.path().filename().string();
-		table["stem"] = entry.path().stem().string();
-		table["extension"] = entry.path().extension().string();
+		auto path = entry.path();
+		table["isDirectory"] = std::experimental::filesystem::is_directory(path);
+		table["name"] = path.filename().string();
+		table["stem"] = path.stem().string();
+		table["extension"] = path.extension().string();
 		arr.add(table);
 	}
 	return arr;
+}
+
+double l_os_clock() {
+	auto now = std::chrono::steady_clock::now();
+	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+	auto epoch = ms.time_since_epoch();
+	auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+	return value.count() / 1000.;
 }
 
 std::string Connection::getAddress() {
@@ -587,7 +595,7 @@ void RotMatrix::set(RotMatrix* other) {
 }
 
 RotMatrix RotMatrix::clone() const {
-	return RotMatrix{x1, y1, z1, x2, y2, z2, x3, y3, z3};
+	return RotMatrix{ x1, y1, z1, x2, y2, z2, x3, y3, z3 };
 }
 
 int Player::getIndex() const {
@@ -595,15 +603,23 @@ int Player::getIndex() const {
 }
 
 void Player::update() const {
+	subhook::ScopedHookRemove remove(&createevent_updateplayer_hook);
 	createevent_updateplayer(getIndex());
 }
 
 void Player::updateFinance() const {
+	subhook::ScopedHookRemove remove(&createevent_updateplayer_finance_hook);
 	createevent_updateplayer_finance(getIndex());
 }
 
 void Player::remove() const {
+	subhook::ScopedHookRemove remove(&deleteplayer_hook);
 	deleteplayer(getIndex());
+}
+
+void Player::sendMessage(const char* message) const {
+	subhook::ScopedHookRemove remove(&createevent_message_hook);
+	createevent_message(6, (char*)message, getIndex(), 0);
 }
 
 Human* Player::getHuman() {
@@ -653,6 +669,7 @@ int Human::getIndex() const {
 }
 
 void Human::remove() const {
+	subhook::ScopedHookRemove remove(&deletehuman_hook);
 	deletehuman(getIndex());
 }
 
@@ -703,6 +720,7 @@ void Human::setPos(Vector* vec) {
 };
 
 void Human::speak(const char* message, int distance) const {
+	subhook::ScopedHookRemove remove(&createevent_message_hook);
 	createevent_message(1, (char*)message, getIndex(), distance);
 }
 
@@ -751,10 +769,12 @@ void Human::addVelocity(Vector* vel) const {
 }
 
 bool Human::mountItem(Item* childItem, unsigned int slot) const {
+	subhook::ScopedHookRemove remove(&linkitem_hook);
 	return linkitem(childItem->getIndex(), -1, getIndex(), slot);
 }
 
 void Human::applyDamage(int bone, int damage) const {
+	subhook::ScopedHookRemove remove(&human_applydamage_hook);
 	human_applydamage(getIndex(), bone, 0, damage);
 }
 
@@ -766,11 +786,8 @@ int Item::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)items) / sizeof(*this);
 }
 
-void Item::update() const {
-	createevent_updateitem(getIndex());
-}
-
 void Item::remove() const {
+	subhook::ScopedHookRemove remove(&deleteitem_hook);
 	deleteitem(getIndex());
 }
 
@@ -787,14 +804,17 @@ RigidBody* Item::getRigidBody() const {
 }
 
 bool Item::mountItem(Item* childItem, unsigned int slot) const {
+	subhook::ScopedHookRemove remove(&linkitem_hook);
 	return linkitem(getIndex(), childItem->getIndex(), -1, slot);
 }
 
 void Item::speak(const char* message, int distance) const {
+	subhook::ScopedHookRemove remove(&createevent_message_hook);
 	createevent_message(2, (char*)message, getIndex(), distance);
 }
 
 void Item::explode() const {
+	subhook::ScopedHookRemove remove(&grenadeexplosion_hook);
 	grenadeexplosion(getIndex());
 }
 
@@ -807,6 +827,7 @@ void Vehicle::updateType() const {
 }
 
 void Vehicle::updateDestruction(int updateType, int partID, Vector* pos, Vector* normal) const {
+	subhook::ScopedHookRemove remove(&createevent_updateobject_hook);
 	createevent_updateobject(getIndex(), updateType, partID, pos, normal);
 }
 
@@ -829,7 +850,6 @@ Player* Bullet::getPlayer() const {
 		return nullptr;
 	return &players[playerID];
 }
-
 
 int RigidBody::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)bodies) / sizeof(*this);

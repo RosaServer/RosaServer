@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <cstring>
+
 #define MAXNUMOFACCOUNTS 32768
 #define MAXNUMOFPLAYERS 256
 #define MAXNUMOFHUMANS 256
@@ -25,10 +28,10 @@
 
 //159120 bytes (26D90)
 struct Connection {
-	uint8_t address[4];
+	unsigned char address[4];
 	unsigned int port; //04
 		int unk0; //08
-	BOOL adminVisible; //0c
+	int adminVisible; //0c
 	int playerID; //10
 		int unk1; //14
 	int bandwidth; //18
@@ -69,6 +72,7 @@ struct Account {
 
 struct Vector {
 	float x, y, z;
+
 	void add(Vector* other);
 	void mult(float scalar);
 	void set(Vector* other);
@@ -81,14 +85,9 @@ struct RotMatrix {
 	float x1, y1, z1;
 	float x2, y2, z2;
 	float x3, y3, z3;
+
 	void set(RotMatrix* other);
 	RotMatrix clone() const;
-};
-
-struct SpecCam {
-	Vector position;
-	float yaw, pitch;
-	float smoothZoom, actualZoom;
 };
 
 struct RayCastResult {
@@ -131,17 +130,17 @@ struct RigidBody;
 
 //14372 bytes (0x3824)
 struct Player {
-	BOOL active;
+	int active;
 	char name[32]; //04
 		int unk0; //24
 		int unk1; //28
 	unsigned int subRosaID; //2c
 	unsigned int phoneNumber; //30
-	BOOL isAdmin; //34
+	int isAdmin; //34
 	unsigned int adminAttempts; //38
 	unsigned int accountID; //3C
 		char unk2[0x48 - 0x3C - 4];
-	BOOL isReady; //48
+	int isReady; //48
 	int money; //4C
 	int corporateRating; //50
 	int criminalRating; //54
@@ -154,9 +153,9 @@ struct Player {
 		char unk5[0x158 - 0x90 - 4];
 	int menuTab; //158
 		char unk6[0x2d0c - 0x158 - 4];
-	BOOL isBot; //2d0c
+	int isBot; //2d0c
 		char unk7a[0x2d28 - 0x2d0c - 4];
-	BOOL botHasDestination; //2d28
+	int botHasDestination; //2d28
 	Vector botDestination; //2d2c
 		char unk7[0x354c - 0x2d2c - 12];
 	int botState; //354c
@@ -189,7 +188,7 @@ struct Player {
 		return name;
 	}
 	void setName(const char* newName) {
-		strncpy(name, newName, 31);
+		std::strncpy(name, newName, 31);
 	}
 	bool getIsAdmin() const {
 		return isAdmin;
@@ -219,6 +218,7 @@ struct Player {
 	void update() const;
 	void updateFinance() const;
 	void remove() const;
+	void sendMessage(const char* message) const;
 };
 
 //312 bytes (138)
@@ -234,7 +234,7 @@ struct Bone {
 
 //14152 bytes (3748)
 struct Human {
-	BOOL active;
+	int active;
 		unsigned int unk00; //04
 	int playerID; //08
 		int unk0; //0c
@@ -249,12 +249,13 @@ struct Human {
 	//counts down after death
 	unsigned int despawnTime; //30
 	unsigned int oldHealth; //34
-	BOOL isImmortal; //38
+	//eliminator
+	int isImmortal; //38
 		int unk10; //3c
 		int unk11; //40
 		int unk12; //44
 	unsigned int spawnProtection; //48
-	BOOL isOnGround; //4c
+	int isOnGround; //4c
 	/*
 	0=normal
 	1=jumping/falling
@@ -271,7 +272,7 @@ struct Human {
 		int unk18; //6c
 	//max 60
 	int damage; //70
-	BOOL isStanding; //74
+	int isStanding; //74
 	Vector pos; //78
 	Vector pos2; //84
 	float viewYaw; //90
@@ -309,7 +310,7 @@ struct Human {
 		char unk25[0x34a4 - 0x3268 - 4];
 	int health; //34a4
 	int bloodLevel; //34a8
-	BOOL isBleeding; //34ac
+	int isBleeding; //34ac
 	int chestHP; //34b0
 		int unk26; //34b4
 	int headHP; //34b8
@@ -383,29 +384,29 @@ struct Human {
 	void applyDamage(int bone, int damage) const;
 };
 
-//3748 bytes (EA4)
+//3944 bytes (F68)
 struct ItemType {
 	int price;
 	float mass; //04
-	BOOL isGun; //08
-	BOOL fuckedUpAiming; //0c
+	int isGun; //08
+	int fuckedUpAiming; //0c
 	//in ticks per bullet
 	int fireRate; //10
 	//?
 	int bulletType; //14
-	int unk0; //18
-	int unk1; //1c
+		int unk0; //18
+		int unk1; //1c
 	float bulletVelocity; //20
 	float bulletSpread; //24
 	char name[64]; //28
-	char unk2[3748 - 104];
+		char unk2[3944 - 104];
 
 	int getIndex() const;
 	char* getName() {
 		return name;
 	}
 	void setName(const char* newName) {
-		strncpy(name, newName, 63);
+		std::strncpy(name, newName, 63);
 	}
 	bool getIsGun() const {
 		return isGun;
@@ -417,9 +418,9 @@ struct ItemType {
 
 //592 bytes (250)
 struct Item {
-	BOOL active;
-	BOOL physicsSim; //04
-	BOOL physicsSettled; //08
+	int active;
+	int physicsSim; //04
+	int physicsSettled; //08
 		int unk1; //0c
 	int type; //10
 		int unk2; //14
@@ -461,7 +462,6 @@ struct Item {
 		physicsSettled = b;
 	}
 
-	void update() const;
 	void remove() const;
 	Human* getParentHuman() const;
 	Item* getParentItem() const;
@@ -473,7 +473,7 @@ struct Item {
 
 //20548 bytes (5044)
 struct Vehicle {
-	BOOL active;
+	int active;
 	unsigned int type; //04
 	int controllableState; //08
 	//default 100
@@ -484,14 +484,12 @@ struct Vehicle {
 	//-1 = won't despawn
 	short despawnTime; //1c
 	short spawnedState; //1e
-	BOOL isLocked; //20
+	int isLocked; //20
 		int unk3; //24
 	int bodyID; //28
 	Vector pos; //2c
 	Vector pos2; //38
 	RotMatrix rot; //44
-		float unk4; //54
-	RotMatrix rot2; //58
 	Vector vel; //68
 		char unk5[0x35c4 - 0x68 - 12];
 	float gearX; //35c4
@@ -500,7 +498,7 @@ struct Vehicle {
 	float gasControl; //35d0
 		char unk6[0x4e88 - 0x35d0 - 4];
 	int bladeBodyID; //4e88
-		char unk7[20548 - 20148];
+		char unk7[20548 - 20108];
 
 	int getIndex() const;
 	bool getIsActive() const {
@@ -534,7 +532,7 @@ struct Bullet {
 
 //172 bytes (AC)
 struct RigidBody {
-	BOOL active;
+	int active;
 	/*
 	0 = human bone
 	1 = car body
@@ -542,15 +540,15 @@ struct RigidBody {
 	3 = item
 	*/
 	int type; //04
-	BOOL settled; //08
-	int unk0; //0c
+	int settled; //08
+		int unk0; //0c
 	float mass; //10
 	Vector pos; //14
 	Vector vel; //20
 	Vector startVel; //? 2C
 	RotMatrix rot; //38
 	RotMatrix rot2; //5c
-	char unk3[172 - 128];
+		char unk3[172 - 128];
 
 	int getIndex() const;
 	bool getIsActive() const {

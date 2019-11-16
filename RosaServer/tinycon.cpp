@@ -27,10 +27,10 @@ int _getch ()
 	newt.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 	
-	ch = _getchar();	
+	ch = getchar();	
 	if(ch == ESC)
 	{
-		ch = _getchar();
+		ch = getchar();
 		if(ch == 91)
 		{
 			ch = KEY_CTRL1;

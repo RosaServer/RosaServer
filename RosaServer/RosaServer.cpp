@@ -1,15 +1,10 @@
-#include "pch.h"
-
-#include "api.h"
-#include "hooks.h"
-
-HMODULE DllHandle;
+﻿#include "RosaServer.h"
 
 bool initialized = false;
 bool shouldReset = false;
 
 sol::state* lua;
-std::string hookMode = "";
+std::string hookMode;
 
 std::queue<std::string> consoleQueue;
 std::queue<LuaHTTPRequest> requestQueue;
@@ -19,7 +14,7 @@ static Version* version;
 static char* serverName;
 static unsigned int* serverPort;
 
-static BOOL* isPassworded;
+static int* isPassworded;
 static char* password;
 
 int* gameType;
@@ -27,12 +22,10 @@ char* mapName;
 char* loadedMapName;
 int* gameState;
 int* gameTimer;
-
-static BOOL* isLevelLoaded;
+unsigned int* sunTime;
+static int* isLevelLoaded;
 
 RayCastResult* lineIntersectResult;
-
-unsigned int* sunTime;
 
 Connection* connections;
 Account* accounts;
@@ -47,56 +40,103 @@ RigidBody* bodies;
 unsigned int* numConnections;
 unsigned int* numBullets;
 
-playerai_func playerai;
-recvpacket_func recvpacket;
-void_func rigidbodysimulation;
-void_func objectsimulation;
-void_func itemsimulation;
-void_func humansimulation;
+/*static subhook::Hook _test_hook;
+typedef int(*_test_func)(Vector*, Vector*);
+static _test_func _test;
+
+int h__test(Vector* x, Vector* y) {
+	printf("_test %f %f => ", x->x, y->x);
+	fflush(stdout);
+	int ret;
+	{
+		subhook::ScopedHookRemove remove(&_test_hook);
+		ret = _test(x, y);
+	}
+	printf("%i\n", ret);
+	return ret;
+}*/
+
+subhook::Hook resetgame_hook;
+void_func resetgame;
+
+subhook::Hook logicsimulation_hook;
 void_func logicsimulation;
+subhook::Hook logicsimulation_race_hook;
 void_func logicsimulation_race;
+subhook::Hook logicsimulation_round_hook;
 void_func logicsimulation_round;
+subhook::Hook logicsimulation_world_hook;
 void_func logicsimulation_world;
+subhook::Hook logicsimulation_terminator_hook;
 void_func logicsimulation_terminator;
+subhook::Hook logicsimulation_coop_hook;
 void_func logicsimulation_coop;
+subhook::Hook logicsimulation_versus_hook;
 void_func logicsimulation_versus;
+
+subhook::Hook physicssimulation_hook;
+void_func physicssimulation;
+subhook::Hook recvpacket_hook;
+recvpacket_func recvpacket;
+subhook::Hook sendpacket_hook;
 void_func sendpacket;
+subhook::Hook bulletsimulation_hook;
 void_func bulletsimulation;
 void_func bullettimetolive;
-void_func resetgame;
-void_index_func scenario_createtraffic3;
-armhuman_func scenario_armhuman;
-grabitem_func linkitem;
-chat_func chat;
-void_func createlevel;
-createplayer_func createplayer;
-void_index_func deleteplayer;
-void_index_func playerdeathtax;
-createhuman_func createhuman;
-void_index_func deletehuman;
+
+scenario_armhuman_func scenario_armhuman;
+subhook::Hook linkitem_hook;
+linkitem_func linkitem;
+subhook::Hook human_applydamage_hook;
 human_applydamage_func human_applydamage;
-createitem_func createitem;
-void_index_func deleteitem;
-createrope_func createrope;
-createvehicle_func createvehicle;
-void_index_func deleteobject;
+subhook::Hook grenadeexplosion_hook;
 void_index_func grenadeexplosion;
+subhook::Hook chat_hook;
+chat_func chat;
+subhook::Hook playerai_hook;
+void_index_func playerai;
+subhook::Hook playerdeathtax_hook;
+void_index_func playerdeathtax;
+
+subhook::Hook createplayer_hook;
+createplayer_func createplayer;
+subhook::Hook deleteplayer_hook;
+void_index_func deleteplayer;
+subhook::Hook createhuman_hook;
+createhuman_func createhuman;
+subhook::Hook deletehuman_hook;
+void_index_func deletehuman;
+subhook::Hook createitem_hook;
+createitem_func createitem;
+subhook::Hook deleteitem_hook;
+void_index_func deleteitem;
+subhook::Hook createobject_hook;
+createobject_func createobject;
+subhook::Hook deleteobject_hook;
+void_index_func deleteobject;
+
+subhook::Hook createevent_message_hook;
 createevent_message_func createevent_message;
+subhook::Hook createevent_updateplayer_hook;
 void_index_func createevent_updateplayer;
+subhook::Hook createevent_updateplayer_finance_hook;
 void_index_func createevent_updateplayer_finance;
-void_index_func createevent_updateitem;
+//subhook::Hook createevent_updateitem_hook;
+//void_index_func createevent_updateitem;
 void_index_func createevent_createobject;
+subhook::Hook createevent_updateobject_hook;
 createevent_updateobject_func createevent_updateobject;
+//subhook::Hook createevent_sound_hook;
 createevent_sound_func createevent_sound;
 createevent_explosion_func createevent_explosion;
-createevent_updatedoor_func createevent_updatedoor;
+subhook::Hook createevent_bullethit_hook;
 createevent_bullethit_func createevent_bullethit;
+
 lineintersectlevel_func lineintersectlevel;
 lineintersecthuman_func lineintersecthuman;
 lineintersectobject_func lineintersectobject;
 
-#pragma warning( push )
-#pragma warning( disable : 26444 )
+#define HOOK_FLAGS subhook::HookFlags::HookFlag64BitOffset
 
 struct Server {
 	const int TPS = 60;
@@ -161,16 +201,10 @@ struct Server {
 		stream << version->major << (char)(version->build + 97);
 		return stream.str();
 	}
-	const char* getConsoleTitle() const {
-		LPSTR buffer = "";
-		DWORD size = 0;
-		GetConsoleTitleA(buffer, size);
-		return buffer;
-	}
-	void setConsoleTitle(const char* title) const {
-		SetConsoleTitleA((char*)title);
-	}
 
+	void setConsoleTitle(const char* title) const {
+		printf("\033]0;%s\007", title);
+	}
 	static void reset() {
 		hookAndReset(RESET_REASON_LUACALL);
 	}
@@ -178,8 +212,7 @@ struct Server {
 static Server* server;
 
 void luaInit(bool redo) {
-	auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(handle, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	printf("\033[36m");
 	if (redo) {
 		printf("\n[RS] Resetting state...\n");
 		delete server;
@@ -218,8 +251,8 @@ void luaInit(bool redo) {
 		meta["time"] = sol::property(&Server::getTime, &Server::setTime);
 		meta["sunTime"] = sol::property(&Server::getSunTime, &Server::setSunTime);
 		meta["version"] = sol::property(&Server::getVersion);
-		meta["consoleTitle"] = sol::property(&Server::getConsoleTitle, &Server::setConsoleTitle);
 
+		meta["setConsoleTitle"] = &Server::setConsoleTitle;
 		meta["reset"] = &Server::reset;
 	}
 
@@ -311,6 +344,7 @@ void luaInit(bool redo) {
 		meta["update"] = &Player::update;
 		meta["updateFinance"] = &Player::updateFinance;
 		meta["remove"] = &Player::remove;
+		meta["sendMessage"] = &Player::sendMessage;
 	}
 
 	{
@@ -398,7 +432,6 @@ void luaInit(bool redo) {
 		meta["parentHuman"] = sol::property(&Item::getParentHuman);
 		meta["parentItem"] = sol::property(&Item::getParentItem);
 
-		meta["update"] = &Item::update;
 		meta["remove"] = &Item::remove;
 		meta["mountItem"] = &Item::mountItem;
 		meta["speak"] = &Item::speak;
@@ -537,7 +570,7 @@ void luaInit(bool redo) {
 	(*lua)["items"]["getCount"] = l_items_getCount;
 	(*lua)["items"]["getAll"] = l_items_getAll;
 	(*lua)["items"]["create"] = sol::overload(l_items_create, l_items_createVel);
-	(*lua)["items"]["createRope"] = lua_items_createRope;
+	//(*lua)["items"]["createRope"] = lua_items_createRope;
 	{
 		sol::table _meta = lua->create_table();
 		(*lua)["items"][sol::metatable_key] = _meta;
@@ -548,7 +581,7 @@ void luaInit(bool redo) {
 	(*lua)["vehicles"]["getCount"] = l_vehicles_getCount;
 	(*lua)["vehicles"]["getAll"] = l_vehicles_getAll;
 	(*lua)["vehicles"]["create"] = sol::overload(l_vehicles_create, l_vehicles_createVel);
-	(*lua)["vehicles"]["createTraffic"] = l_vehicles_createTraffic;
+	//(*lua)["vehicles"]["createTraffic"] = l_vehicles_createTraffic;
 	{
 		sol::table _meta = lua->create_table();
 		(*lua)["vehicles"][sol::metatable_key] = _meta;
@@ -568,8 +601,9 @@ void luaInit(bool redo) {
 		_meta["__index"] = l_rigidBodies_getByIndex;
 	}
 
-	(*lua)["os"]["setClipboard"] = l_os_setClipboard;
+	//(*lua)["os"]["setClipboard"] = l_os_setClipboard;
 	(*lua)["os"]["listDirectory"] = l_os_listDirectory;
+	(*lua)["os"]["clock"] = l_os_clock;
 
 	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;
 	(*lua)["RESET_REASON_ENGINECALL"] = RESET_REASON_ENGINECALL;
@@ -588,184 +622,163 @@ void luaInit(bool redo) {
 	(*lua)["TYPE_COOP"] = 6;
 	(*lua)["TYPE_VERSUS"] = 7;
 
-	printf("[RS] Running main.lua...\n");
-	SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	printf("[RS] Running main.lua...\033[0m\n");
 
 	sol::load_result load = lua->load_file("lua/main.lua");
 	if (noLuaCallError(&load)) {
 		sol::protected_function_result res = load();
 		if (noLuaCallError(&res)) {
-			SetConsoleTextAttribute(handle, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-			printf("[RS] Ready!\n");
-			SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+			printf("\033[32m[RS] Ready!\033[0m\n");
 		}
 	}
 }
 
-static BOOL Init(HMODULE& hModule) {
-	DllHandle = hModule;
+static void Attach() {
+	printf("[RS] Assuming 36b...\n");
 
-	{
-		DWORD exeBase = (DWORD)GetModuleHandle(NULL);
+	std::ifstream file("/proc/self/maps");
+	std::string line;
+	// First line
+	std::getline(file, line);
+	auto pos = line.find("-");
+	auto truncated = line.substr(0, pos);
 
-		version = (Version*)(exeBase + 0x971B8);
+	printf("[RS] Base address is 0x%s...\n", truncated.c_str());
 
-		serverName = (char*)(exeBase + 0x8BBB254);
-		serverPort = (unsigned int*)(exeBase + 0x8BBB660);
-		isPassworded = (BOOL*)(exeBase + 0x8BBB664);
-		password = (char*)(exeBase + 0x8F79ECC);
-		gameType = (int*)(exeBase + 0x8F7A248);
-		mapName = (char*)(exeBase + 0x8F7A24C);
-		loadedMapName = (char*)(exeBase + 0x1339BB24);
-		gameState = (int*)(exeBase + 0x8F7A464);
-		gameTimer = (int*)(exeBase + 0x8F7A46C);
-		isLevelLoaded = (BOOL*)(exeBase + 0x1339BB20);
+	auto base = std::stoul(truncated, nullptr, 16);
 
-		lineIntersectResult = (RayCastResult*)(exeBase + 0x1A0515E0);
-		sunTime = (unsigned int*)(exeBase + 0x351EAEA0);
+	// Locate everything
 
-		connections = (Connection*)(exeBase + 0x1ED22060);
-		accounts = (Account*)(exeBase + 0x17B0DAF0);
-		players = (Player*)(exeBase + 0x13AFCE60);
-		humans = (Human*)(exeBase + 0x5CC3C8);
-		vehicles = (Vehicle*)(exeBase + 0x81B23E0);
-		itemTypes = (ItemType*)(exeBase + 0x1A0639C0);
-		items = (Item*)(exeBase + 0x90331E0);
-		bullets = (Bullet*)(exeBase + 0x24F860);
-		bodies = (RigidBody*)(exeBase + 0x9B940);
+	version = (Version*)(base + 0x2BED08);
+	serverName = (char*)(base + 0x1D158694);
+	serverPort = (unsigned int*)(base + 0x1D158AA0);
+	isPassworded = (int*)(base + 0x1D158AA4);
+	password = (char*)(base + 0x14F24CEC);
 
-		numConnections = (unsigned int*)(exeBase + 0x9D33E0);
-		numBullets = (unsigned int*)(exeBase + 0x27DE2C20);
+	gameType = (int*)(base + 0x314CBDA8);
+	mapName = (char*)(base + 0x314CBDAC);
+	loadedMapName = (char*)(base + 0x2FD6E424);
+	gameState = (int*)(base + 0x314CBFC4);
+	gameTimer = (int*)(base + 0x314CBFCC);
+	sunTime = (unsigned int*)(base + 0xC5D6AA0);
+	isLevelLoaded = (int*)(base + 0x2FD6E420);
 
-		playerai = (playerai_func)(exeBase + 0x79D50);
-		rigidbodysimulation = (void_func)(exeBase + 0x11060);
-		objectsimulation = (void_func)(exeBase + 0x82040);
-		itemsimulation = (void_func)(exeBase + 0x7F760);
-		humansimulation = (void_func)(exeBase + 0x8E0A0);
+	lineIntersectResult = (RayCastResult*)(base + 0x39B5B460);
 
-		logicsimulation = (void_func)(exeBase + 0x91E10);
-		logicsimulation_race = (void_func)(exeBase + 0x89BE0);
-		logicsimulation_round = (void_func)(exeBase + 0x8C9C0);
-		logicsimulation_world = (void_func)(exeBase + 0x8D8C0);
-		logicsimulation_terminator = (void_func)(exeBase + 0x8A380);
-		logicsimulation_coop = (void_func)(exeBase + 0x898A0);
-		logicsimulation_versus = (void_func)(exeBase + 0x8B820);
+	connections = (Connection*)(base + 0x36F640);
+	accounts = (Account*)(base + 0x2A6F3F0);
+	players = (Player*)(base + 0x11E82140);
+	humans = (Human*)(base + 0x7226328);
+	vehicles = (Vehicle*)(base + 0x190A6B80);
+	itemTypes = (ItemType*)(base + 0x3DD351E0);
+	items = (Item*)(base + 0x6CF6FE0);
+	bullets = (Bullet*)(base + 0x307376A0);
+	bodies = (RigidBody*)(base + 0x2C3620);
 
-		recvpacket = (recvpacket_func)(exeBase + 0x781E0);
-		sendpacket = (void_func)(exeBase + 0x77530);
-		bulletsimulation = (void_func)(exeBase + 0x64620);
-		bullettimetolive = (void_func)(exeBase + 0x1C9E0);
+	numConnections = (unsigned int*)(base + 0x32255B68);
+	numBullets = (unsigned int*)(base + 0x32255940);
 
-		resetgame = (void_func)(exeBase + 0x85180);
-		scenario_createtraffic3 = (void_index_func)(exeBase + 0x773D0);
+	//_test = (_test_func)(base + 0x6D680);
 
-		scenario_armhuman = (armhuman_func)(exeBase + 0x544A0);
+	resetgame = (void_func)(base + 0x9D4C0);
 
-		linkitem = (grabitem_func)(exeBase + 0x4A5B0);
-		chat = (chat_func)(exeBase + 0x65420);
+	logicsimulation = (void_func)(base + 0xA39C0);
+	logicsimulation_race = (void_func)(base + 0x9F750);
+	logicsimulation_round = (void_func)(base + 0x9FEC0);
+	logicsimulation_world = (void_func)(base + 0xA3270);
+	logicsimulation_terminator = (void_func)(base + 0xA0E20);
+	logicsimulation_coop = (void_func)(base + 0x9F510);
+	logicsimulation_versus = (void_func)(base + 0xA26D0);
 
-		createlevel = (void_func)(exeBase + 0x7FDE0);
+	physicssimulation = (void_func)(base + 0x932A0);
+	recvpacket = (recvpacket_func)(base + 0xAC0C0);
+	sendpacket = (void_func)(base + 0xA9360);
+	bulletsimulation = (void_func)(base + 0x870A0);
+	bullettimetolive = (void_func)(base + 0x15E90);
 
-		createplayer = (createplayer_func)(exeBase + 0x34530);
-		createhuman = (createhuman_func)(exeBase + 0x7CE40);
-		createitem = (createitem_func)(exeBase + 0x49CE0);
-		createrope = (createrope_func)(exeBase + 0x4AF60);
-		createvehicle = (createvehicle_func)(exeBase + 0x4E940);
+	scenario_armhuman = (scenario_armhuman_func)(base + 0x46030);
+	linkitem = (linkitem_func)(base + 0x23520);
+	human_applydamage = (human_applydamage_func)(base + 0x1B010);
+	grenadeexplosion = (void_index_func)(base + 0x22F20);
+	chat = (chat_func)(base + 0x94160);
+	playerai = (void_index_func)(base + 0x85610);
+	playerdeathtax = (void_index_func)(base + 0x29D0);
 
-		playerdeathtax = (void_index_func)(exeBase + 0x1EB80);
-		human_applydamage = (human_applydamage_func)(exeBase + 0x9130);
+	createplayer = (createplayer_func)(base + 0x3A5E0);
+	deleteplayer = (void_index_func)(base + 0x3A890);
+	createhuman = (createhuman_func)(base + 0x58DE0);
+	deletehuman = (void_index_func)(base + 0x3750);
+	createitem = (createitem_func)(base + 0x457F0);
+	deleteitem = (void_index_func)(base + 0x23820);
+	createobject = (createobject_func)(base + 0x48E00);
+	deleteobject = (void_index_func)(base + 0x39B0);
 
-		deleteplayer = (void_index_func)(exeBase + 0xFCB0);
-		deletehuman = (void_index_func)(exeBase + 0x416C0);
-		deleteitem = (void_index_func)(exeBase + 0x4A080);
-		deleteobject = (void_index_func)(exeBase + 0x2C340);
-		grenadeexplosion = (void_index_func)(exeBase + 0x251E0);
+	createevent_message = (createevent_message_func)(base + 0x2550);
+	createevent_updateplayer = (void_index_func)(base + 0x2850);
+	createevent_updateplayer_finance = (void_index_func)(base + 0x2960);
+	//createevent_updateitem = (void_index_func)(base + 0x27B0);
+	createevent_createobject = (void_index_func)(base + 0x2670);
+	createevent_updateobject = (createevent_updateobject_func)(base + 0x26D0);
+	createevent_sound = (createevent_sound_func)(base + 0x2AA0);
+	createevent_explosion = (createevent_explosion_func)(base + 0x3110);
+	createevent_bullethit = (createevent_bullethit_func)(base + 0x24A0);
 
-		createevent_message = (createevent_message_func)(exeBase + 0x7700);
-		createevent_updateplayer = (void_index_func)(exeBase + 0x78C0);
-		createevent_updateplayer_finance = (void_index_func)(exeBase + 0x79E0);
-		createevent_updateitem = (void_index_func)(exeBase + 0x7820);
-		createevent_createobject = (void_index_func)(exeBase + 0x77B0);
-		createevent_updateobject = (createevent_updateobject_func)(exeBase + 0x1EEC0);
-		createevent_sound = (createevent_sound_func)(exeBase + 0x1EF90);
-		createevent_explosion = (createevent_explosion_func)(exeBase + 0x1F0F0);
-		createevent_updatedoor = (createevent_updatedoor_func)(exeBase + 0x7AD0);
-		createevent_bullethit = (createevent_bullethit_func)(exeBase + 0x1EE20);
+	lineintersecthuman = (lineintersecthuman_func)(base + 0x20B70);
+	lineintersectlevel = (lineintersectlevel_func)(base + 0x6D680);
+	lineintersectobject = (lineintersectobject_func)(base + 0x83C20);
 
-		lineintersecthuman = (lineintersecthuman_func)(exeBase + 0x41890);
-		lineintersectlevel = (lineintersectlevel_func)(exeBase + 0x4B440);
-		lineintersectobject = (lineintersectobject_func)(exeBase + 0x2EE00);
+	// Hooks
+
+	//_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
+	resetgame_hook.Install((void*)resetgame, (void*)h_resetgame, HOOK_FLAGS);
+
+	logicsimulation_hook.Install((void*)logicsimulation, (void*)h_logicsimulation, HOOK_FLAGS);
+	logicsimulation_race_hook.Install((void*)logicsimulation_race, (void*)h_logicsimulation_race, HOOK_FLAGS);
+	logicsimulation_round_hook.Install((void*)logicsimulation_round, (void*)h_logicsimulation_round, HOOK_FLAGS);
+	logicsimulation_world_hook.Install((void*)logicsimulation_world, (void*)h_logicsimulation_world, HOOK_FLAGS);
+	logicsimulation_terminator_hook.Install((void*)logicsimulation_terminator, (void*)h_logicsimulation_terminator, HOOK_FLAGS);
+	logicsimulation_coop_hook.Install((void*)logicsimulation_coop, (void*)h_logicsimulation_coop, HOOK_FLAGS);
+	logicsimulation_versus_hook.Install((void*)logicsimulation_versus, (void*)h_logicsimulation_versus, HOOK_FLAGS);
+
+	physicssimulation_hook.Install((void*)physicssimulation, (void*)h_physicssimulation, HOOK_FLAGS);
+	recvpacket_hook.Install((void*)recvpacket, (void*)h_recvpacket, HOOK_FLAGS);
+	sendpacket_hook.Install((void*)sendpacket, (void*)h_sendpacket, HOOK_FLAGS);
+	bulletsimulation_hook.Install((void*)bulletsimulation, (void*)h_bulletsimulation, HOOK_FLAGS);
+
+	linkitem_hook.Install((void*)linkitem, (void*)h_linkitem, HOOK_FLAGS);
+	human_applydamage_hook.Install((void*)human_applydamage, (void*)h_human_applydamage, HOOK_FLAGS);
+	grenadeexplosion_hook.Install((void*)grenadeexplosion, (void*)h_grenadeexplosion, HOOK_FLAGS);
+	chat_hook.Install((void*)chat, (void*)h_chat, HOOK_FLAGS);
+	playerai_hook.Install((void*)playerai, (void*)h_playerai, HOOK_FLAGS);
+	playerdeathtax_hook.Install((void*)playerdeathtax, (void*)h_playerdeathtax, HOOK_FLAGS);
+
+	createplayer_hook.Install((void*)createplayer, (void*)h_createplayer, HOOK_FLAGS);
+	deleteplayer_hook.Install((void*)deleteplayer, (void*)h_deleteplayer, HOOK_FLAGS);
+	createhuman_hook.Install((void*)createhuman, (void*)h_createhuman, HOOK_FLAGS);
+	deletehuman_hook.Install((void*)deletehuman, (void*)h_deletehuman, HOOK_FLAGS);
+	createitem_hook.Install((void*)createitem, (void*)h_createitem, HOOK_FLAGS);
+	deleteitem_hook.Install((void*)deleteitem, (void*)h_deleteitem, HOOK_FLAGS);
+	createobject_hook.Install((void*)createobject, (void*)h_createobject, HOOK_FLAGS);
+	deleteobject_hook.Install((void*)deleteobject, (void*)h_deleteobject, HOOK_FLAGS);
+
+	createevent_message_hook.Install((void*)createevent_message, (void*)h_createevent_message, HOOK_FLAGS);
+	createevent_updateplayer_hook.Install((void*)createevent_updateplayer, (void*)h_createevent_updateplayer, HOOK_FLAGS);
+	createevent_updateplayer_finance_hook.Install((void*)createevent_updateplayer_finance, (void*)h_createevent_updateplayer_finance, HOOK_FLAGS);
+	//createevent_updateitem_hook.Install((void*)createevent_updateitem, (void*)h_createevent_updateitem, HOOK_FLAGS);
+	createevent_updateobject_hook.Install((void*)createevent_updateobject, (void*)h_createevent_updateobject, HOOK_FLAGS);
+	//createevent_sound_hook.Install((void*)createevent_sound, (void*)h_createevent_sound, HOOK_FLAGS);
+	createevent_bullethit_hook.Install((void*)createevent_bullethit, (void*)h_createevent_bullethit, HOOK_FLAGS);
+}
+
+int __attribute__((constructor)) Entry() {
+	std::thread mainThread(Attach);
+	mainThread.detach();
+	return 0;
+}
+
+int __attribute__((destructor)) Destroy() {
+	if (lua != nullptr) {
+		delete lua;
+		lua = nullptr;
 	}
-
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-
-	DetourAttach((PVOID*)(&playerai), h_playerai);
-	DetourAttach((PVOID*)(&rigidbodysimulation), h_rigidbodysimulation);
-	DetourAttach((PVOID*)(&objectsimulation), h_objectsimulation);
-	DetourAttach((PVOID*)(&itemsimulation), h_itemsimulation);
-	DetourAttach((PVOID*)(&humansimulation), h_humansimulation);
-
-	DetourAttach((PVOID*)(&logicsimulation), h_logicsimulation);
-	DetourAttach((PVOID*)(&logicsimulation_race), h_logicsimulation_race);
-	DetourAttach((PVOID*)(&logicsimulation_round), h_logicsimulation_round);
-	DetourAttach((PVOID*)(&logicsimulation_world), h_logicsimulation_world);
-	DetourAttach((PVOID*)(&logicsimulation_terminator), h_logicsimulation_terminator);
-	DetourAttach((PVOID*)(&logicsimulation_coop), h_logicsimulation_coop);
-	DetourAttach((PVOID*)(&logicsimulation_versus), h_logicsimulation_versus);
-
-	DetourAttach((PVOID*)(&recvpacket), h_recvpacket);
-	DetourAttach((PVOID*)(&sendpacket), h_sendpacket);
-	DetourAttach((PVOID*)(&bulletsimulation), h_bulletsimulation);
-
-	DetourAttach((PVOID*)(&resetgame), h_resetgame);
-	DetourAttach((PVOID*)(&scenario_createtraffic3), h_scenario_createtraffic3);
-
-	DetourAttach((PVOID*)(&linkitem), h_linkitem);
-	DetourAttach((PVOID*)(&chat), h_chat);
-
-	DetourAttach((PVOID*)(&createlevel), h_createlevel);
-
-	DetourAttach((PVOID*)(&createplayer), h_createplayer);
-	DetourAttach((PVOID*)(&deleteplayer), h_deleteplayer);
-	DetourAttach((PVOID*)(&createhuman), h_createhuman);
-	DetourAttach((PVOID*)(&deletehuman), h_deletehuman);
-	DetourAttach((PVOID*)(&createitem), h_createitem);
-	DetourAttach((PVOID*)(&createvehicle), h_createvehicle);
-	DetourAttach((PVOID*)(&grenadeexplosion), h_grenadeexplosion);
-
-	DetourAttach((PVOID*)(&playerdeathtax), h_playerdeathtax);
-	DetourAttach((PVOID*)(&human_applydamage), h_human_applydamage);
-
-	DetourAttach((PVOID*)(&createevent_message), h_createevent_message);
-	DetourAttach((PVOID*)(&createevent_updateitem), h_createevent_updateitem);
-	DetourAttach((PVOID*)(&createevent_updateplayer), h_createevent_updateplayer);
-	DetourAttach((PVOID*)(&createevent_updateplayer_finance), h_createevent_updateplayer_finance);
-	DetourAttach((PVOID*)(&createevent_updateobject), h_createevent_updateobject);
-	DetourAttach((PVOID*)(&createevent_sound), h_createevent_sound);
-	DetourAttach((PVOID*)(&createevent_updatedoor), h_createevent_updatedoor);
-	DetourAttach((PVOID*)(&createevent_bullethit), h_createevent_bullethit);
-
-	DetourTransactionCommit();
-	
-	return TRUE;
 }
-
-static BOOL Destroy(HMODULE& hModule) {
-	if (lua != nullptr) delete lua;
-
-	return TRUE;
-}
-
-#pragma warning( pop )
-
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved) {
-	if (dwReason == DLL_PROCESS_ATTACH)
-		return Init(hModule);
-	if (dwReason == DLL_PROCESS_DETACH)
-		return Destroy(hModule);
-	return TRUE;
-}
-
-// Allows load table patching
-extern "C" void __declspec(dllexport) __cdecl loader() {}

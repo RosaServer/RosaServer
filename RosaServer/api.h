@@ -1,12 +1,16 @@
 #pragma once
 #include "engine.h"
+#include "hooks.h"
+#include "sol.hpp"
+
+#include <queue>
+#include <thread>
+#include "httplib.h"
 
 #define RESET_REASON_BOOT 0
 #define RESET_REASON_ENGINECALL 1
 #define RESET_REASON_LUARESET 2
 #define RESET_REASON_LUACALL 3
-
-extern HMODULE DllHandle;
 
 extern bool initialized;
 extern bool shouldReset;
@@ -43,14 +47,14 @@ struct LuaHTTPResponse {
 extern std::queue<LuaHTTPRequest> requestQueue;
 extern std::queue<LuaHTTPResponse> responseQueue;
 
-DWORD WINAPI HTTPThread(HMODULE hModule);
+void HTTPThread();
 
 void printLuaError(sol::error* err);
 bool noLuaCallError(sol::protected_function_result* res);
 bool noLuaCallError(sol::load_result* res);
 void hookAndReset(int reason);
 
-DWORD WINAPI ConsoleThread(HMODULE hModule);
+void consoleThread();
 void luaInit(bool redo = false);
 
 void l_printAppend(const char* str);
@@ -82,14 +86,14 @@ sol::table l_items_getAll();
 Item* l_items_getByIndex(sol::table self, unsigned int idx);
 Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot);
 Item* l_items_createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot);
-void lua_items_createRope(Vector* pos, RotMatrix* rot);
+//void lua_items_createRope(Vector* pos, RotMatrix* rot);
 
 int l_vehicles_getCount();
 sol::table l_vehicles_getAll();
 Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx);
 Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color);
 Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
-void l_vehicles_createTraffic(int density);
+//void l_vehicles_createTraffic(int density);
 
 void l_chat_announce(const char* message);
 void l_chat_tellAdmins(const char* message);
@@ -119,5 +123,6 @@ int l_rigidBodies_getCount();
 sol::table l_rigidBodies_getAll();
 RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx);
 
-void l_os_setClipboard(std::string s);
+//void l_os_setClipboard(std::string s);
 sol::table l_os_listDirectory(const char* path);
+double l_os_clock();
