@@ -17,6 +17,6 @@ If you want to build RosaServer yourself and contribute, you can use Visual Stud
 
 Thanks to these open source libraries:
 - [Sol3](https://github.com/ThePhD/sol2)
-- [Detours](https://github.com/microsoft/Detours)
+- [SubHook](https://github.com/Zeex/subhook)
 - [cpp-httplib](https://github.com/yhirose/cpp-httplib)
 - [TinyCon](https://github.com/unix-ninja/hackersandbox)
