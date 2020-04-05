@@ -193,6 +193,7 @@ sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB) {
 
 sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
+	subhook::ScopedHookRemove remove(&lineintersecthuman_hook);
 	int res = lineintersecthuman(man->getIndex(), posA, posB);
 	if (res) {
 		table["pos"] = lineIntersectResult->pos;
@@ -754,6 +755,38 @@ Item* Human::getLeftHandItem() const {
 	return &items[leftHandItemID];
 }
 
+Human* Human::getRightHandGrab() const {
+	if (!isGrabbingRight)
+		return nullptr;
+	return &humans[grabbingRightHumanID];
+}
+
+void Human::setRightHandGrab(Human* man) {
+	if (man == nullptr)
+		isGrabbingRight = 0;
+	else {
+		isGrabbingRight = 1;
+		grabbingRightHumanID = man->getIndex();
+		grabbingRightBone = 0;
+	}
+}
+
+Human* Human::getLeftHandGrab() const {
+	if (!isGrabbingLeft)
+		return nullptr;
+	return &humans[grabbingLeftHumanID];
+}
+
+void Human::setLeftHandGrab(Human* man) {
+	if (man == nullptr)
+		isGrabbingLeft = 0;
+	else {
+		isGrabbingLeft = 1;
+		grabbingLeftHumanID = man->getIndex();
+		grabbingLeftBone = 0;
+	}
+}
+
 void Human::setVelocity(Vector* vel) const {
 	for (int i = 0; i < 16; i++) {
 		auto body = getRigidBody(i);
@@ -806,6 +839,11 @@ RigidBody* Item::getRigidBody() const {
 bool Item::mountItem(Item* childItem, unsigned int slot) const {
 	subhook::ScopedHookRemove remove(&linkitem_hook);
 	return linkitem(getIndex(), childItem->getIndex(), -1, slot);
+}
+
+bool Item::unmount() const {
+	subhook::ScopedHookRemove remove(&linkitem_hook);
+	return linkitem(getIndex(), -1, -1, 0);
 }
 
 void Item::speak(const char* message, int distance) const {

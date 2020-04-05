@@ -50,6 +50,10 @@ extern subhook::Hook linkitem_hook;
 int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot);
 extern subhook::Hook human_applydamage_hook;
 void h_human_applydamage(int humanID, int bone, int unk, int damage);
+extern subhook::Hook human_collisionvehicle_hook;
+void h_human_collisionvehicle(int humanID, int vehicleID);
+extern subhook::Hook human_grabbing_hook;
+void h_human_grabbing(int humanID);
 extern subhook::Hook grenadeexplosion_hook;
 void h_grenadeexplosion(int itemID);
 extern subhook::Hook chat_hook;
@@ -73,3 +77,6 @@ void h_createevent_updateobject(int vehicleID, int updateType, int partID, Vecto
 //void h_createevent_sound(int soundType, Vector* pos, float volume, float pitch);
 extern subhook::Hook createevent_bullethit_hook;
 void h_createevent_bullethit(int unk, int hitType, Vector* pos, Vector* normal);
+
+extern subhook::Hook lineintersecthuman_hook;
+int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB);

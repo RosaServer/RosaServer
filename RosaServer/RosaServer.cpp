@@ -1,4 +1,9 @@
 ﻿#include "RosaServer.h"
+#include <sys/mman.h>
+#include <cerrno>
+
+#define handle_error(msg) \
+    do { std::cout << __LINE__ << std::endl ;perror(msg); exit(EXIT_FAILURE); } while (0)
 
 bool initialized = false;
 bool shouldReset = false;
@@ -24,6 +29,8 @@ int* gameState;
 int* gameTimer;
 unsigned int* sunTime;
 static int* isLevelLoaded;
+static float* gravity;
+static float originalGravity;
 
 RayCastResult* lineIntersectResult;
 
@@ -40,20 +47,41 @@ RigidBody* bodies;
 unsigned int* numConnections;
 unsigned int* numBullets;
 
+static void pryMemory(void* address, size_t numPages) {
+	size_t pageSize = sysconf(_SC_PAGE_SIZE);
+
+	uintptr_t page = (uintptr_t)address;
+	page -= (page % pageSize);
+
+	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0) {
+		printf("[RS] Successfully pried open page at %p\n", (void*)page);
+	} else {
+		handle_error("mprotect");
+	}
+}
+
 /*static subhook::Hook _test_hook;
-typedef int(*_test_func)(Vector*, Vector*);
+typedef void(*_test_func)(int humanID);
 static _test_func _test;
 
-int h__test(Vector* x, Vector* y) {
-	printf("_test %f %f => ", x->x, y->x);
-	fflush(stdout);
-	int ret;
-	{
-		subhook::ScopedHookRemove remove(&_test_hook);
-		ret = _test(x, y);
+void h__test(int humanID) {
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil) {
+		auto res = func("HumanGrabbing", &humans[humanID]);
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
 	}
-	printf("%i\n", ret);
-	return ret;
+	if (!noParent) {
+		{
+			subhook::ScopedHookRemove remove(&_test_hook);
+			_test(humanID);
+		}
+		if (func != sol::nil) {
+			auto res = func("PostHumanGrabbing", &humans[humanID]);
+			noLuaCallError(&res);
+		}
+	}
 }*/
 
 subhook::Hook resetgame_hook;
@@ -89,6 +117,10 @@ subhook::Hook linkitem_hook;
 linkitem_func linkitem;
 subhook::Hook human_applydamage_hook;
 human_applydamage_func human_applydamage;
+subhook::Hook human_collisionvehicle_hook;
+human_collisionvehicle_func human_collisionvehicle;
+subhook::Hook human_grabbing_hook;
+void_index_func human_grabbing;
 subhook::Hook grenadeexplosion_hook;
 void_index_func grenadeexplosion;
 subhook::Hook chat_hook;
@@ -133,6 +165,7 @@ subhook::Hook createevent_bullethit_hook;
 createevent_bullethit_func createevent_bullethit;
 
 lineintersectlevel_func lineintersectlevel;
+subhook::Hook lineintersecthuman_hook;
 lineintersecthuman_func lineintersecthuman;
 lineintersectobject_func lineintersectobject;
 
@@ -178,6 +211,15 @@ struct Server {
 	void setIsLevelLoaded(bool b) const {
 		*isLevelLoaded = b;
 	}
+	float getGravity() const {
+		return *gravity;
+	}
+	void setGravity(float g) const {
+		*gravity = g;
+	}
+	float getDefaultGravity() const {
+		return originalGravity;
+	}
 	int getState() const {
 		return *gameState;
 	}
@@ -205,7 +247,7 @@ struct Server {
 	void setConsoleTitle(const char* title) const {
 		printf("\033]0;%s\007", title);
 	}
-	static void reset() {
+	void reset() const {
 		hookAndReset(RESET_REASON_LUACALL);
 	}
 };
@@ -247,6 +289,8 @@ void luaInit(bool redo) {
 		meta["levelToLoad"] = sol::property(&Server::getLevelName, &Server::setLevelName);
 		meta["loadedLevel"] = sol::property(&Server::getLoadedLevelName);
 		meta["isLevelLoaded"] = sol::property(&Server::getIsLevelLoaded, &Server::setIsLevelLoaded);
+		meta["gravity"] = sol::property(&Server::getGravity, &Server::setGravity);
+		meta["defaultGravity"] = sol::property(&Server::getDefaultGravity);
 		meta["state"] = sol::property(&Server::getState, &Server::setState);
 		meta["time"] = sol::property(&Server::getTime, &Server::setTime);
 		meta["sunTime"] = sol::property(&Server::getSunTime, &Server::setSunTime);
@@ -273,6 +317,8 @@ void luaInit(bool redo) {
 		meta["subRosaID"] = &Account::subRosaID;
 		meta["phoneNumber"] = &Account::phoneNumber;
 		meta["money"] = &Account::money;
+		meta["corporateRating"] = &Account::corporateRating;
+		meta["criminalRating"] = &Account::criminalRating;
 		meta["banTime"] = &Account::banTime;
 
 		meta["index"] = sol::property(&Account::getIndex);
@@ -315,6 +361,8 @@ void luaInit(bool redo) {
 		meta["subRosaID"] = &Player::subRosaID;
 		meta["phoneNumber"] = &Player::phoneNumber;
 		meta["money"] = &Player::money;
+		meta["corporateRating"] = &Player::corporateRating;
+		meta["criminalRating"] = &Player::criminalRating;
 		meta["team"] = &Player::team;
 		meta["teamSwitchTimer"] = &Player::teamSwitchTimer;
 		meta["stocks"] = &Player::stocks;
@@ -386,6 +434,8 @@ void luaInit(bool redo) {
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
 		meta["rightHandItem"] = sol::property(&Human::getRightHandItem);
 		meta["leftHandItem"] = sol::property(&Human::getLeftHandItem);
+		meta["rightHandGrab"] = sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
+		meta["leftHandGrab"] = sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
 
 		meta["remove"] = &Human::remove;
 		meta["getPos"] = &Human::getPos;
@@ -434,6 +484,7 @@ void luaInit(bool redo) {
 
 		meta["remove"] = &Item::remove;
 		meta["mountItem"] = &Item::mountItem;
+		meta["unmount"] = &Item::unmount;
 		meta["speak"] = &Item::speak;
 		meta["explode"] = &Item::explode;
 	}
@@ -448,6 +499,15 @@ void luaInit(bool redo) {
 		meta["pos2"] = &Vehicle::pos2;
 		meta["rot"] = &Vehicle::rot;
 		meta["vel"] = &Vehicle::vel;
+		// Messy but faster than using a table or some shit
+		meta["windowState0"] = &Vehicle::windowState0;
+		meta["windowState1"] = &Vehicle::windowState1;
+		meta["windowState2"] = &Vehicle::windowState2;
+		meta["windowState3"] = &Vehicle::windowState3;
+		meta["windowState4"] = &Vehicle::windowState4;
+		meta["windowState5"] = &Vehicle::windowState5;
+		meta["windowState6"] = &Vehicle::windowState6;
+		meta["windowState7"] = &Vehicle::windowState7;
 		meta["gearX"] = &Vehicle::gearX;
 		meta["steerControl"] = &Vehicle::steerControl;
 		meta["gearY"] = &Vehicle::gearY;
@@ -662,6 +722,9 @@ static void Attach() {
 	gameTimer = (int*)(base + 0x314CBFCC);
 	sunTime = (unsigned int*)(base + 0xC5D6AA0);
 	isLevelLoaded = (int*)(base + 0x2FD6E420);
+	gravity = (float*)(base + 0xB1F04);
+	pryMemory(gravity, 1);
+	originalGravity = *gravity;
 
 	lineIntersectResult = (RayCastResult*)(base + 0x39B5B460);
 
@@ -678,7 +741,7 @@ static void Attach() {
 	numConnections = (unsigned int*)(base + 0x32255B68);
 	numBullets = (unsigned int*)(base + 0x32255940);
 
-	//_test = (_test_func)(base + 0x6D680);
+	//_test = (_test_func)(base + 0x6BB30);
 
 	resetgame = (void_func)(base + 0x9D4C0);
 
@@ -699,6 +762,8 @@ static void Attach() {
 	scenario_armhuman = (scenario_armhuman_func)(base + 0x46030);
 	linkitem = (linkitem_func)(base + 0x23520);
 	human_applydamage = (human_applydamage_func)(base + 0x1B010);
+	human_collisionvehicle = (human_collisionvehicle_func)(base + 0x699E0);
+	human_grabbing = (void_index_func)(base + 0x6BB30);
 	grenadeexplosion = (void_index_func)(base + 0x22F20);
 	chat = (chat_func)(base + 0x94160);
 	playerai = (void_index_func)(base + 0x85610);
@@ -716,6 +781,7 @@ static void Attach() {
 	createevent_message = (createevent_message_func)(base + 0x2550);
 	createevent_updateplayer = (void_index_func)(base + 0x2850);
 	createevent_updateplayer_finance = (void_index_func)(base + 0x2960);
+	//pryMemory(&createevent_updateplayer_finance, 2);
 	//createevent_updateitem = (void_index_func)(base + 0x27B0);
 	createevent_createobject = (void_index_func)(base + 0x2670);
 	createevent_updateobject = (createevent_updateobject_func)(base + 0x26D0);
@@ -747,6 +813,8 @@ static void Attach() {
 
 	linkitem_hook.Install((void*)linkitem, (void*)h_linkitem, HOOK_FLAGS);
 	human_applydamage_hook.Install((void*)human_applydamage, (void*)h_human_applydamage, HOOK_FLAGS);
+	human_collisionvehicle_hook.Install((void*)human_collisionvehicle, (void*)h_human_collisionvehicle, HOOK_FLAGS);
+	human_grabbing_hook.Install((void*)human_grabbing, (void*)h_human_grabbing, HOOK_FLAGS);
 	grenadeexplosion_hook.Install((void*)grenadeexplosion, (void*)h_grenadeexplosion, HOOK_FLAGS);
 	chat_hook.Install((void*)chat, (void*)h_chat, HOOK_FLAGS);
 	playerai_hook.Install((void*)playerai, (void*)h_playerai, HOOK_FLAGS);
@@ -763,11 +831,13 @@ static void Attach() {
 
 	createevent_message_hook.Install((void*)createevent_message, (void*)h_createevent_message, HOOK_FLAGS);
 	createevent_updateplayer_hook.Install((void*)createevent_updateplayer, (void*)h_createevent_updateplayer, HOOK_FLAGS);
-	createevent_updateplayer_finance_hook.Install((void*)createevent_updateplayer_finance, (void*)h_createevent_updateplayer_finance, HOOK_FLAGS);
+	//createevent_updateplayer_finance_hook.Install((void*)createevent_updateplayer_finance, (void*)h_createevent_updateplayer_finance, HOOK_FLAGS);
 	//createevent_updateitem_hook.Install((void*)createevent_updateitem, (void*)h_createevent_updateitem, HOOK_FLAGS);
 	createevent_updateobject_hook.Install((void*)createevent_updateobject, (void*)h_createevent_updateobject, HOOK_FLAGS);
 	//createevent_sound_hook.Install((void*)createevent_sound, (void*)h_createevent_sound, HOOK_FLAGS);
 	createevent_bullethit_hook.Install((void*)createevent_bullethit, (void*)h_createevent_bullethit, HOOK_FLAGS);
+
+	lineintersecthuman_hook.Install((void*)lineintersecthuman, (void*)h_lineintersecthuman, HOOK_FLAGS);
 }
 
 int __attribute__((constructor)) Entry() {

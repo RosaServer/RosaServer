@@ -151,6 +151,7 @@ struct Player {
 		int unk4[2];
 	int humanID; //90
 		char unk5[0x158 - 0x90 - 4];
+	//0 = none, 1-19 = shop, 2X = base
 	int menuTab; //158
 		char unk6[0x2d0c - 0x158 - 4];
 	int isBot; //2d0c
@@ -248,7 +249,7 @@ struct Human {
 	int lastVehicleCooldown; //2c
 	//counts down after death
 	unsigned int despawnTime; //30
-	unsigned int oldHealth; //34
+	int oldHealth; //34
 	//eliminator
 	int isImmortal; //38
 		int unk10; //3c
@@ -307,7 +308,17 @@ struct Human {
 		char unk24[0x3264 - 0x3240 - 4];
 	int leftHandOccupied; //3264
 	int leftHandItemID; //3268
-		char unk25[0x34a4 - 0x3268 - 4];
+		char unk25[0x338c - 0x3268 - 4];
+	int isGrabbingRight; //338c
+	int grabbingRightHumanID; //3390
+		int unk26_1;
+	int grabbingRightBone; //3398
+		char unk26_2[0x33b8 - 0x3398 - 4];
+	int isGrabbingLeft; //33b8
+	int grabbingLeftHumanID; //33bc
+		int unk26_3;
+	int grabbingLeftBone; //33c4
+		char unk26_4[0x34a4 - 0x33c4 - 4];
 	int health; //34a4
 	int bloodLevel; //34a8
 	int isBleeding; //34ac
@@ -342,7 +353,7 @@ struct Human {
 		active = b;
 	}
 	bool getIsAlive() const {
-		return oldHealth != 0;
+		return oldHealth > 0;
 	}
 	void setIsAlive(bool b) {
 		oldHealth = b ? 100 : 0;
@@ -372,6 +383,10 @@ struct Human {
 	RigidBody* getRigidBody(unsigned int idx) const;
 	Item* getRightHandItem() const;
 	Item* getLeftHandItem() const;
+	Human* getRightHandGrab() const;
+	void setRightHandGrab(Human* man);
+	Human* getLeftHandGrab() const;
+	void setLeftHandGrab(Human* man);
 
 	void remove() const;
 	Vector getPos() const;
@@ -467,6 +482,7 @@ struct Item {
 	Item* getParentItem() const;
 	RigidBody* getRigidBody() const;
 	bool mountItem(Item* childItem, unsigned int slot) const;
+	bool unmount() const;
 	void speak(const char* message, int distance) const;
 	void explode() const;
 };
@@ -491,14 +507,23 @@ struct Vehicle {
 	Vector pos2; //38
 	RotMatrix rot; //44
 	Vector vel; //68
-		char unk5[0x35c4 - 0x68 - 12];
+		char unk5[0x27c0 - 0x68 - 12];
+	int windowState0; //27c0
+	int windowState1; //27c4
+	int windowState2; //27c8
+	int windowState3; //27cc
+	int windowState4; //27d0
+	int windowState5; //27d4
+	int windowState6; //27d8
+	int windowState7; //27dc
+		char unk6[0x35c4 - 0x27dc - 4];
 	float gearX; //35c4
 	float steerControl; //35c8
 	float gearY; //35cc
 	float gasControl; //35d0
-		char unk6[0x4e88 - 0x35d0 - 4];
+		char unk7[0x4e88 - 0x35d0 - 4];
 	int bladeBodyID; //4e88
-		char unk7[20548 - 20108];
+		char unk8[20548 - 20108];
 
 	int getIndex() const;
 	bool getIsActive() const {

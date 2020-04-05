@@ -499,6 +499,46 @@ void h_human_applydamage(int humanID, int bone, int unk, int damage) {
 	}
 }
 
+void h_human_collisionvehicle(int humanID, int vehicleID) {
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil) {
+		auto res = func("HumanCollisionVehicle", &humans[humanID], &vehicles[vehicleID]);
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
+	}
+	if (!noParent) {
+		{
+			subhook::ScopedHookRemove remove(&human_collisionvehicle_hook);
+			human_collisionvehicle(humanID, vehicleID);
+		}
+		if (func != sol::nil) {
+			auto res = func("PostHumanCollisionVehicle", &humans[humanID], &vehicles[vehicleID]);
+			noLuaCallError(&res);
+		}
+	}
+}
+
+void h_human_grabbing(int humanID) {
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil) {
+		auto res = func("HumanGrabbing", &humans[humanID]);
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
+	}
+	if (!noParent) {
+		{
+			subhook::ScopedHookRemove remove(&human_grabbing_hook);
+			human_grabbing(humanID);
+		}
+		if (func != sol::nil) {
+			auto res = func("PostHumanGrabbing", &humans[humanID]);
+			noLuaCallError(&res);
+		}
+	}
+}
+
 void h_grenadeexplosion(int itemID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
@@ -724,4 +764,19 @@ void h_createevent_bullethit(int unk, int hitType, Vector* pos, Vector* normal) 
 			noLuaCallError(&res);
 		}
 	}
+}
+
+int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB) {
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil) {
+		auto res = func("LineIntersectHuman", &humans[humanID], posA, posB);
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
+	}
+	if (!noParent) {
+		subhook::ScopedHookRemove remove(&lineintersecthuman_hook);
+		return lineintersecthuman(humanID, posA, posB);
+	}
+	return 0;
 }

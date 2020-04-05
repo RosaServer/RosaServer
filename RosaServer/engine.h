@@ -61,6 +61,11 @@ extern linkitem_func linkitem;
 typedef void(* human_applydamage_func)(int humanID, int bone, int unk, int damage);
 extern human_applydamage_func human_applydamage;
 
+typedef void(* human_collisionvehicle_func)(int humanID, int vehicleID);
+extern human_collisionvehicle_func human_collisionvehicle;
+
+extern void_index_func human_grabbing;
+
 extern void_index_func grenadeexplosion;
 
 typedef int(* chat_func)(int playerID, char* message);
