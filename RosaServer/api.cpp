@@ -119,9 +119,13 @@ void HTTPThread() {
 			auto req = requestQueue.front();
 			//printf("new http request\n");
 
-			httplib::Client client(req.host.c_str(), req.port, 6L);
+			httplib::Client client(req.host.c_str(), req.port);
+			client.set_timeout_sec(6);
+			client.set_keep_alive_max_count(0);
 
 			std::shared_ptr<httplib::Response> res;
+
+			req.headers.emplace("Connection", "close");
 
 			switch (req.type) {
 			case get:
