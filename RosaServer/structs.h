@@ -414,7 +414,11 @@ struct ItemType {
 	float bulletVelocity; //20
 	float bulletSpread; //24
 	char name[64]; //28
-		char unk2[3944 - 104];
+		char unk2[0x74 - 0x28 - 64];
+	int numHands; //74
+	Vector rightHandPos; //78
+	Vector leftHandPos; //84
+		char unk3[3944 - 0x84 - 12];
 
 	int getIndex() const;
 	char* getName() {

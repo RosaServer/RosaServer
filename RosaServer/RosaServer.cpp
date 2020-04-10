@@ -459,6 +459,9 @@ void luaInit(bool redo) {
 		meta["bulletType"] = &ItemType::bulletType;
 		meta["bulletVelocity"] = &ItemType::bulletVelocity;
 		meta["bulletSpread"] = &ItemType::bulletSpread;
+		meta["numHands"] = &ItemType::numHands;
+		meta["rightHandPos"] = &ItemType::rightHandPos;
+		meta["leftHandPos"] = &ItemType::leftHandPos;
 
 		meta["index"] = sol::property(&ItemType::getIndex);
 		meta["name"] = sol::property(&ItemType::getName, &ItemType::setName);
