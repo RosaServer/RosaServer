@@ -280,10 +280,10 @@ Item* l_items_createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot) 
 	return id == -1 ? nullptr : &items[id];
 }
 
-/*void lua_items_createRope(Vector* pos, RotMatrix* rot) {
-	int x = createrope(pos, rot);
-	printf("createrope => %i\n", x);
-}*/
+Item* l_items_createRope(Vector* pos, RotMatrix* rot) {
+	int id = createrope(pos, rot);
+	return id == -1 ? nullptr : &items[id];
+}
 
 int l_vehicles_getCount() {
 	int count = 0;

@@ -142,6 +142,7 @@ subhook::Hook createitem_hook;
 createitem_func createitem;
 subhook::Hook deleteitem_hook;
 void_index_func deleteitem;
+createrope_func createrope;
 subhook::Hook createobject_hook;
 createobject_func createobject;
 subhook::Hook deleteobject_hook;
@@ -630,7 +631,7 @@ void luaInit(bool redo) {
 	(*lua)["items"]["getCount"] = l_items_getCount;
 	(*lua)["items"]["getAll"] = l_items_getAll;
 	(*lua)["items"]["create"] = sol::overload(l_items_create, l_items_createVel);
-	//(*lua)["items"]["createRope"] = lua_items_createRope;
+	(*lua)["items"]["createRope"] = l_items_createRope;
 	{
 		sol::table _meta = lua->create_table();
 		(*lua)["items"][sol::metatable_key] = _meta;
@@ -775,6 +776,7 @@ static void Attach() {
 	deletehuman = (void_index_func)(base + 0x3750);
 	createitem = (createitem_func)(base + 0x457F0);
 	deleteitem = (void_index_func)(base + 0x23820);
+	createrope = (createrope_func)(base + 0x45CD0);
 	createobject = (createobject_func)(base + 0x48E00);
 	deleteobject = (void_index_func)(base + 0x39B0);
 

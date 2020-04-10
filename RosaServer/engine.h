@@ -89,6 +89,9 @@ typedef int(* createitem_func)(int type, Vector* pos, Vector* vel, RotMatrix* ro
 extern createitem_func createitem;
 extern void_index_func deleteitem;
 
+typedef int(*createrope_func)(Vector* pos, RotMatrix* rot);
+extern createrope_func createrope;
+
 typedef int(* createobject_func)(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
 extern createobject_func createobject;
 extern void_index_func deleteobject;

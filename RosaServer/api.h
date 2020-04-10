@@ -86,7 +86,7 @@ sol::table l_items_getAll();
 Item* l_items_getByIndex(sol::table self, unsigned int idx);
 Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot);
 Item* l_items_createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot);
-//void lua_items_createRope(Vector* pos, RotMatrix* rot);
+Item* l_items_createRope(Vector* pos, RotMatrix* rot);
 
 int l_vehicles_getCount();
 sol::table l_vehicles_getAll();
