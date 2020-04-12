@@ -28,7 +28,7 @@
 
 //159120 bytes (26D90)
 struct Connection {
-	unsigned char address[4];
+	unsigned int address;
 	unsigned int port; //04
 		int unk0; //08
 	int adminVisible; //0c
@@ -61,6 +61,7 @@ struct Account {
 	int banTime; //5c
 		char unk2[112 - 96];
 
+	std::string __tostring() const;
 	int getIndex() const;
 	char* getName() {
 		return name;
@@ -73,6 +74,7 @@ struct Account {
 struct Vector {
 	float x, y, z;
 
+	std::string __tostring() const;
 	void add(Vector* other);
 	void mult(float scalar);
 	void set(Vector* other);
@@ -86,6 +88,7 @@ struct RotMatrix {
 	float x2, y2, z2;
 	float x3, y3, z3;
 
+	std::string __tostring() const;
 	void set(RotMatrix* other);
 	RotMatrix clone() const;
 };
@@ -178,6 +181,7 @@ struct Player {
 	int necklace; //37c4
 		char unk11[14372 - 14280];
 
+	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
 		return active;
@@ -345,6 +349,7 @@ struct Human {
 	int tieColor; //36f4
 		char unk32[14152 - 0x36f4 - 4];
 
+	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
 		return active;
@@ -420,6 +425,7 @@ struct ItemType {
 	Vector leftHandPos; //84
 		char unk3[3944 - 0x84 - 12];
 
+	std::string __tostring() const;
 	int getIndex() const;
 	char* getName() {
 		return name;
@@ -461,6 +467,7 @@ struct Item {
 	int bullets; //124
 		char unk7[592 - 296];
 
+	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
 		return active;
@@ -529,6 +536,7 @@ struct Vehicle {
 	int bladeBodyID; //4e88
 		char unk8[20548 - 20108];
 
+	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
 		return active;
@@ -579,6 +587,7 @@ struct RigidBody {
 	RotMatrix rot2; //5c
 		char unk3[172 - 128];
 
+	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
 		return active;

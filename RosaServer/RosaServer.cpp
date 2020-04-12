@@ -60,12 +60,23 @@ static void pryMemory(void* address, size_t numPages) {
 	}
 }
 
-/*static subhook::Hook _test_hook;
-typedef void(*_test_func)(int humanID);
+static subhook::Hook _test_hook;
+typedef int(*_test_func)(int, int);
 static _test_func _test;
 
-void h__test(int humanID) {
-	bool noParent = false;
+// int createaccount_jointicket(int identifier)
+int h__test(int x, int y) {
+	printf("test %i %i\n", x, y);
+	printf("removing\n");
+	subhook::ScopedHookRemove remove(&_test_hook);
+	printf("calling\n");
+	int ret = _test(x, y);
+	printf("done %i\n", ret);
+	return ret;
+
+
+
+	/*bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
 		auto res = func("HumanGrabbing", &humans[humanID]);
@@ -81,8 +92,8 @@ void h__test(int humanID) {
 			auto res = func("PostHumanGrabbing", &humans[humanID]);
 			noLuaCallError(&res);
 		}
-	}
-}*/
+	}*/
+}
 
 subhook::Hook resetgame_hook;
 void_func resetgame;
@@ -111,6 +122,9 @@ void_func sendpacket;
 subhook::Hook bulletsimulation_hook;
 void_func bulletsimulation;
 void_func bullettimetolive;
+
+// Alex Austin's typo
+server_sendconnectreponse_func server_sendconnectreponse;
 
 scenario_armhuman_func scenario_armhuman;
 subhook::Hook linkitem_hook;
@@ -322,6 +336,7 @@ void luaInit(bool redo) {
 		meta["criminalRating"] = &Account::criminalRating;
 		meta["banTime"] = &Account::banTime;
 
+		meta["__tostring"] = &Account::__tostring;
 		meta["index"] = sol::property(&Account::getIndex);
 		meta["name"] = sol::property(&Account::getName);
 		meta["steamID"] = sol::property(&Account::getSteamID);
@@ -333,6 +348,7 @@ void luaInit(bool redo) {
 		meta["y"] = &Vector::y;
 		meta["z"] = &Vector::z;
 
+		meta["__tostring"] = &Vector::__tostring;
 		meta["add"] = &Vector::add;
 		meta["mult"] = &Vector::mult;
 		meta["set"] = &Vector::set;
@@ -353,6 +369,7 @@ void luaInit(bool redo) {
 		meta["y3"] = &RotMatrix::y3;
 		meta["z3"] = &RotMatrix::z3;
 
+		meta["__tostring"] = &RotMatrix::__tostring;
 		meta["set"] = &RotMatrix::set;
 		meta["clone"] = &RotMatrix::clone;
 	}
@@ -379,6 +396,7 @@ void luaInit(bool redo) {
 		meta["head"] = &Player::head;
 		meta["necklace"] = &Player::necklace;
 
+		meta["__tostring"] = &Player::__tostring;
 		meta["index"] = sol::property(&Player::getIndex);
 		meta["isActive"] = sol::property(&Player::getIsActive, &Player::setIsActive);
 		meta["name"] = sol::property(&Player::getName, &Player::setName);
@@ -424,6 +442,7 @@ void luaInit(bool redo) {
 		meta["hair"] = &Human::hair;
 		meta["eyeColor"] = &Human::eyeColor;
 
+		meta["__tostring"] = &Human::__tostring;
 		meta["index"] = sol::property(&Human::getIndex);
 		meta["isActive"] = sol::property(&Human::getIsActive, &Human::setIsActive);
 		meta["isAlive"] = sol::property(&Human::getIsAlive, &Human::setIsAlive);
@@ -463,6 +482,7 @@ void luaInit(bool redo) {
 		meta["rightHandPos"] = &ItemType::rightHandPos;
 		meta["leftHandPos"] = &ItemType::leftHandPos;
 
+		meta["__tostring"] = &ItemType::__tostring;
 		meta["index"] = sol::property(&ItemType::getIndex);
 		meta["name"] = sol::property(&ItemType::getName, &ItemType::setName);
 		meta["isGun"] = sol::property(&ItemType::getIsGun, &ItemType::setIsGun);
@@ -478,6 +498,7 @@ void luaInit(bool redo) {
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
 
+		meta["__tostring"] = &Item::__tostring;
 		meta["index"] = sol::property(&Item::getIndex);
 		meta["isActive"] = sol::property(&Item::getIsActive, &Item::setIsActive);
 		meta["hasPhysics"] = sol::property(&Item::getHasPhysics, &Item::setHasPhysics);
@@ -518,6 +539,7 @@ void luaInit(bool redo) {
 		meta["gasControl"] = &Vehicle::gasControl;
 		meta["bladeBodyID"] = &Vehicle::bladeBodyID;
 
+		meta["__tostring"] = &Vehicle::__tostring;
 		meta["index"] = sol::property(&Vehicle::getIndex);
 		meta["isActive"] = sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
@@ -555,6 +577,7 @@ void luaInit(bool redo) {
 		meta["rot"] = &RigidBody::rot;
 		meta["rot2"] = &RigidBody::rot2;
 
+		meta["__tostring"] = &RigidBody::__tostring;
 		meta["index"] = sol::property(&RigidBody::getIndex);
 		meta["isActive"] = sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
 		meta["isSettled"] = sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
@@ -745,7 +768,8 @@ static void Attach() {
 	numConnections = (unsigned int*)(base + 0x32255B68);
 	numBullets = (unsigned int*)(base + 0x32255940);
 
-	//_test = (_test_func)(base + 0x6BB30);
+	_test = (_test_func)(base + 0x5b20);
+	//pryMemory(&_test, 2);
 
 	resetgame = (void_func)(base + 0x9D4C0);
 
@@ -762,6 +786,8 @@ static void Attach() {
 	sendpacket = (void_func)(base + 0xA9360);
 	bulletsimulation = (void_func)(base + 0x870A0);
 	bullettimetolive = (void_func)(base + 0x15E90);
+
+	server_sendconnectreponse = (server_sendconnectreponse_func)(base + 0xa4bd0);
 
 	scenario_armhuman = (scenario_armhuman_func)(base + 0x46030);
 	linkitem = (linkitem_func)(base + 0x23520);
@@ -800,7 +826,7 @@ static void Attach() {
 
 	// Hooks
 
-	//_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
+	_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
 	resetgame_hook.Install((void*)resetgame, (void*)h_resetgame, HOOK_FLAGS);
 
 	logicsimulation_hook.Install((void*)logicsimulation, (void*)h_logicsimulation, HOOK_FLAGS);

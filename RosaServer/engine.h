@@ -52,6 +52,9 @@ extern void_func sendpacket;
 extern void_func bulletsimulation;
 extern void_func bullettimetolive;
 
+typedef void(*server_sendconnectreponse_func)(unsigned int address, unsigned int port, const char* message);
+extern server_sendconnectreponse_func server_sendconnectreponse;
+
 typedef void(*scenario_armhuman_func)(int human, int weapon, int magCount);
 extern scenario_armhuman_func scenario_armhuman;
 

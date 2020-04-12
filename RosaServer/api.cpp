@@ -535,18 +535,33 @@ double l_os_clock() {
 }
 
 std::string Connection::getAddress() {
+	unsigned char* bytes = (unsigned char*)(&address);
+
 	char buf[16];
 	sprintf(buf, "%i.%i.%i.%i",
-		(int)address[3],
-		(int)address[2],
-		(int)address[1],
-		(int)address[0]
+		(int)bytes[3],
+		(int)bytes[2],
+		(int)bytes[1],
+		(int)bytes[0]
 	);
+
+	return buf;
+}
+
+std::string Account::__tostring() const {
+	char buf[32];
+	sprintf(buf, "Account(%i)", getIndex());
 	return buf;
 }
 
 int Account::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)accounts) / sizeof(*this);
+}
+
+std::string Vector::__tostring() const {
+	char buf[64];
+	sprintf(buf, "Vector(%f, %f, %f)", x, y, z);
+	return buf;
 }
 
 void Vector::add(Vector* other) {
@@ -585,6 +600,12 @@ float Vector::distSquare(Vector* other) const {
 	return dx * dx + dy * dy + dz * dz;
 }
 
+std::string RotMatrix::__tostring() const {
+	char buf[256];
+	sprintf(buf, "RotMatrix(%f, %f, %f, %f, %f, %f, %f, %f, %f)", x1, y1, z1, x2, y2, z2, x3, y3, z3);
+	return buf;
+}
+
 void RotMatrix::set(RotMatrix* other) {
 	x1 = other->x1;
 	y1 = other->y1;
@@ -601,6 +622,12 @@ void RotMatrix::set(RotMatrix* other) {
 
 RotMatrix RotMatrix::clone() const {
 	return RotMatrix{ x1, y1, z1, x2, y2, z2, x3, y3, z3 };
+}
+
+std::string Player::__tostring() const {
+	char buf[16];
+	sprintf(buf, "Player(%i)", getIndex());
+	return buf;
 }
 
 int Player::getIndex() const {
@@ -667,6 +694,12 @@ void Player::setBotDestination(Vector* vec) {
 		botHasDestination = true;
 		botDestination = *vec;
 	}
+}
+
+std::string Human::__tostring() const {
+	char buf[16];
+	sprintf(buf, "Human(%i)", getIndex());
+	return buf;
 }
 
 int Human::getIndex() const {
@@ -815,8 +848,20 @@ void Human::applyDamage(int bone, int damage) const {
 	human_applydamage(getIndex(), bone, 0, damage);
 }
 
+std::string ItemType::__tostring() const {
+	char buf[16];
+	sprintf(buf, "ItemType(%i)", getIndex());
+	return buf;
+}
+
 int ItemType::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)itemTypes) / sizeof(*this);
+}
+
+std::string Item::__tostring() const {
+	char buf[16];
+	sprintf(buf, "Item(%i)", getIndex());
+	return buf;
 }
 
 int Item::getIndex() const {
@@ -860,6 +905,12 @@ void Item::explode() const {
 	grenadeexplosion(getIndex());
 }
 
+std::string Vehicle::__tostring() const {
+	char buf[16];
+	sprintf(buf, "Vehicle(%i)", getIndex());
+	return buf;
+}
+
 int Vehicle::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)vehicles) / sizeof(*this);
 }
@@ -891,6 +942,12 @@ Player* Bullet::getPlayer() const {
 	if (playerID == -1)
 		return nullptr;
 	return &players[playerID];
+}
+
+std::string RigidBody::__tostring() const {
+	char buf[16];
+	sprintf(buf, "RigidBody(%i)", getIndex());
+	return buf;
 }
 
 int RigidBody::getIndex() const {
