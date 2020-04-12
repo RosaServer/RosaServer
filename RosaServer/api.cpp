@@ -53,7 +53,6 @@ public:
 	}
 };
 
-
 void consoleThread() {
 	tcon console;
 	console.run();
