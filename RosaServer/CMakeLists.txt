@@ -3,11 +3,16 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
+# Strip debug symbols
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+
 add_compile_definitions(
 	SUBHOOK_SEPARATE_SOURCE_FILES
 	SUBHOOK_IMPLEMENTATION
 )
 
+# Allow threading
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
