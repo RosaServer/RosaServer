@@ -111,7 +111,6 @@ void l_http_post(const char* host, int port, const char* path, sol::table header
 	requestQueue.push(request);
 }
 
-
 void HTTPThread() {
 	while (true) {
 		while (!requestQueue.empty()) {
