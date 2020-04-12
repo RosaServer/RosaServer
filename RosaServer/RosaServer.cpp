@@ -189,6 +189,9 @@ lineintersectobject_func lineintersectobject;
 struct Server {
 	const int TPS = 60;
 
+	const char* getClass() const {
+		return "Server";
+	}
 	int getPort() const {
 		return *serverPort;
 	}
@@ -297,6 +300,7 @@ void luaInit(bool redo) {
 		auto meta = lua->new_usertype<Server>("new", sol::no_constructor);
 		meta["TPS"] = &Server::TPS;
 
+		meta["class"] = sol::property(&Server::getClass);
 		meta["port"] = sol::property(&Server::getPort);
 		meta["name"] = sol::property(&Server::getName, &Server::setName);
 		meta["password"] = sol::property(&Server::getPassword, &Server::setPassword);
@@ -323,6 +327,7 @@ void luaInit(bool redo) {
 		meta["port"] = &Connection::port;
 		meta["timeoutTime"] = &Connection::timeoutTime;
 
+		meta["class"] = sol::property(&Connection::getClass);
 		meta["address"] = sol::property(&Connection::getAddress);
 		meta["adminVisible"] = sol::property(&Connection::getAdminVisible, &Connection::setAdminVisible);
 	}
@@ -336,6 +341,7 @@ void luaInit(bool redo) {
 		meta["criminalRating"] = &Account::criminalRating;
 		meta["banTime"] = &Account::banTime;
 
+		meta["class"] = sol::property(&Account::getClass);
 		meta["__tostring"] = &Account::__tostring;
 		meta["index"] = sol::property(&Account::getIndex);
 		meta["name"] = sol::property(&Account::getName);
@@ -348,6 +354,7 @@ void luaInit(bool redo) {
 		meta["y"] = &Vector::y;
 		meta["z"] = &Vector::z;
 
+		meta["class"] = sol::property(&Vector::getClass);
 		meta["__tostring"] = &Vector::__tostring;
 		meta["add"] = &Vector::add;
 		meta["mult"] = &Vector::mult;
@@ -369,6 +376,7 @@ void luaInit(bool redo) {
 		meta["y3"] = &RotMatrix::y3;
 		meta["z3"] = &RotMatrix::z3;
 
+		meta["class"] = sol::property(&RotMatrix::getClass);
 		meta["__tostring"] = &RotMatrix::__tostring;
 		meta["set"] = &RotMatrix::set;
 		meta["clone"] = &RotMatrix::clone;
@@ -396,6 +404,7 @@ void luaInit(bool redo) {
 		meta["head"] = &Player::head;
 		meta["necklace"] = &Player::necklace;
 
+		meta["class"] = sol::property(&Player::getClass);
 		meta["__tostring"] = &Player::__tostring;
 		meta["index"] = sol::property(&Player::getIndex);
 		meta["isActive"] = sol::property(&Player::getIsActive, &Player::setIsActive);
@@ -442,6 +451,7 @@ void luaInit(bool redo) {
 		meta["hair"] = &Human::hair;
 		meta["eyeColor"] = &Human::eyeColor;
 
+		meta["class"] = sol::property(&Human::getClass);
 		meta["__tostring"] = &Human::__tostring;
 		meta["index"] = sol::property(&Human::getIndex);
 		meta["isActive"] = sol::property(&Human::getIsActive, &Human::setIsActive);
@@ -482,6 +492,7 @@ void luaInit(bool redo) {
 		meta["rightHandPos"] = &ItemType::rightHandPos;
 		meta["leftHandPos"] = &ItemType::leftHandPos;
 
+		meta["class"] = sol::property(&ItemType::getClass);
 		meta["__tostring"] = &ItemType::__tostring;
 		meta["index"] = sol::property(&ItemType::getIndex);
 		meta["name"] = sol::property(&ItemType::getName, &ItemType::setName);
@@ -498,6 +509,7 @@ void luaInit(bool redo) {
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
 
+		meta["class"] = sol::property(&Item::getClass);
 		meta["__tostring"] = &Item::__tostring;
 		meta["index"] = sol::property(&Item::getIndex);
 		meta["isActive"] = sol::property(&Item::getIsActive, &Item::setIsActive);
@@ -539,6 +551,7 @@ void luaInit(bool redo) {
 		meta["gasControl"] = &Vehicle::gasControl;
 		meta["bladeBodyID"] = &Vehicle::bladeBodyID;
 
+		meta["class"] = sol::property(&Vehicle::getClass);
 		meta["__tostring"] = &Vehicle::__tostring;
 		meta["index"] = sol::property(&Vehicle::getIndex);
 		meta["isActive"] = sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
@@ -558,6 +571,7 @@ void luaInit(bool redo) {
 		meta["pos"] = &Bullet::pos;
 		meta["vel"] = &Bullet::vel;
 
+		meta["class"] = sol::property(&Bullet::getClass);
 		meta["player"] = sol::property(&Bullet::getPlayer);
 	}
 
@@ -565,6 +579,8 @@ void luaInit(bool redo) {
 		auto meta = lua->new_usertype<Bone>("new", sol::no_constructor);
 		meta["pos"] = &Bone::pos;
 		meta["pos2"] = &Bone::pos2;
+
+		meta["class"] = sol::property(&Bone::getClass);
 	}
 
 	{
@@ -577,6 +593,7 @@ void luaInit(bool redo) {
 		meta["rot"] = &RigidBody::rot;
 		meta["rot2"] = &RigidBody::rot2;
 
+		meta["class"] = sol::property(&RigidBody::getClass);
 		meta["__tostring"] = &RigidBody::__tostring;
 		meta["index"] = sol::property(&RigidBody::getIndex);
 		meta["isActive"] = sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);

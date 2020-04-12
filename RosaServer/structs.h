@@ -38,6 +38,9 @@ struct Connection {
 	int timeoutTime; //1c
 		char unk2[159120 - 32];
 
+	const char* getClass() const {
+		return "Connection";
+	}
 	std::string getAddress();
 	bool getAdminVisible() const {
 		return adminVisible;
@@ -61,6 +64,9 @@ struct Account {
 	int banTime; //5c
 		char unk2[112 - 96];
 
+	const char* getClass() const {
+		return "Account";
+	}
 	std::string __tostring() const;
 	int getIndex() const;
 	char* getName() {
@@ -74,6 +80,9 @@ struct Account {
 struct Vector {
 	float x, y, z;
 
+	const char* getClass() const {
+		return "Vector";
+	}
 	std::string __tostring() const;
 	void add(Vector* other);
 	void mult(float scalar);
@@ -88,6 +97,9 @@ struct RotMatrix {
 	float x2, y2, z2;
 	float x3, y3, z3;
 
+	const char* getClass() const {
+		return "RotMatrix";
+	}
 	std::string __tostring() const;
 	void set(RotMatrix* other);
 	RotMatrix clone() const;
@@ -181,6 +193,9 @@ struct Player {
 	int necklace; //37c4
 		char unk11[14372 - 14280];
 
+	const char* getClass() const {
+		return "Player";
+	}
 	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
@@ -235,6 +250,10 @@ struct Bone {
 	Vector vel2;
 	RotMatrix rot;
 		char unk[312 - 88];
+
+	const char* getClass() const {
+		return "Bone";
+	}
 };
 
 //14152 bytes (3748)
@@ -349,6 +368,9 @@ struct Human {
 	int tieColor; //36f4
 		char unk32[14152 - 0x36f4 - 4];
 
+	const char* getClass() const {
+		return "Human";
+	}
 	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
@@ -425,6 +447,9 @@ struct ItemType {
 	Vector leftHandPos; //84
 		char unk3[3944 - 0x84 - 12];
 
+	const char* getClass() const {
+		return "ItemType";
+	}
 	std::string __tostring() const;
 	int getIndex() const;
 	char* getName() {
@@ -467,6 +492,9 @@ struct Item {
 	int bullets; //124
 		char unk7[592 - 296];
 
+	const char* getClass() const {
+		return "Item";
+	}
 	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
@@ -536,6 +564,9 @@ struct Vehicle {
 	int bladeBodyID; //4e88
 		char unk8[20548 - 20108];
 
+	const char* getClass() const {
+		return "Vehicle";
+	}
 	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
@@ -564,6 +595,9 @@ struct Bullet {
 	Vector vel; //2c
 	char unk2[92 - 56];
 
+	const char* getClass() const {
+		return "Bullet";
+	}
 	Player* getPlayer() const;
 };
 
@@ -587,6 +621,9 @@ struct RigidBody {
 	RotMatrix rot2; //5c
 		char unk3[172 - 128];
 
+	const char* getClass() const {
+		return "RigidBody";
+	}
 	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const {
