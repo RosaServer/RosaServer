@@ -29,6 +29,9 @@ void h_sendpacket();
 extern subhook::Hook bulletsimulation_hook;
 void h_bulletsimulation();
 
+extern subhook::Hook server_sendconnectreponse_hook;
+void h_server_sendconnectreponse(unsigned int address, unsigned int port, const char* message);
+
 extern subhook::Hook createplayer_hook;
 int h_createplayer();
 extern subhook::Hook deleteplayer_hook;

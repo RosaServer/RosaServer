@@ -532,7 +532,7 @@ double l_os_clock() {
 	return value.count() / 1000.;
 }
 
-std::string Connection::getAddress() {
+std::string addressFromInteger(unsigned int address) {
 	unsigned char* bytes = (unsigned char*)(&address);
 
 	char buf[16];
@@ -544,6 +544,10 @@ std::string Connection::getAddress() {
 	);
 
 	return buf;
+}
+
+std::string Connection::getAddress() {
+	return addressFromInteger(address);
 }
 
 std::string Account::__tostring() const {

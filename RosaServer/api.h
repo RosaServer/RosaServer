@@ -126,3 +126,5 @@ RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx);
 //void l_os_setClipboard(std::string s);
 sol::table l_os_listDirectory(const char* path);
 double l_os_clock();
+
+std::string addressFromInteger(unsigned int address);

@@ -284,6 +284,36 @@ void h_bulletsimulation() {
 	}
 }
 
+void h_server_sendconnectreponse(unsigned int address, unsigned int port, const char* message) {
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+
+	auto addressString = addressFromInteger(address);
+
+	auto data = lua->create_table();
+	data["message"] = message;
+	std::string newMessage;
+
+	if (func != sol::nil) {
+		auto res = func("SendConnectResponse", addressString, port, data);
+		if (noLuaCallError(&res)) {
+			noParent = (bool)res;
+			newMessage = data["message"];
+			message = newMessage.c_str();
+		}
+	}
+	if (!noParent) {
+		{
+			subhook::ScopedHookRemove remove(&server_sendconnectreponse_hook);
+			server_sendconnectreponse(address, port, message);
+		}
+		if (func != sol::nil) {
+			auto res = func("PostSendConnectResponse", addressString, port, data);
+			noLuaCallError(&res);
+		}
+	}
+}
+
 int h_createplayer() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];

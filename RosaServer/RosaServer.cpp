@@ -124,6 +124,7 @@ void_func bulletsimulation;
 void_func bullettimetolive;
 
 // Alex Austin's typo
+subhook::Hook server_sendconnectreponse_hook;
 server_sendconnectreponse_func server_sendconnectreponse;
 
 scenario_armhuman_func scenario_armhuman;
@@ -858,6 +859,8 @@ static void Attach() {
 	recvpacket_hook.Install((void*)recvpacket, (void*)h_recvpacket, HOOK_FLAGS);
 	sendpacket_hook.Install((void*)sendpacket, (void*)h_sendpacket, HOOK_FLAGS);
 	bulletsimulation_hook.Install((void*)bulletsimulation, (void*)h_bulletsimulation, HOOK_FLAGS);
+
+	server_sendconnectreponse_hook.Install((void*)server_sendconnectreponse, (void*)h_server_sendconnectreponse, HOOK_FLAGS);
 
 	linkitem_hook.Install((void*)linkitem, (void*)h_linkitem, HOOK_FLAGS);
 	human_applydamage_hook.Install((void*)human_applydamage, (void*)h_human_applydamage, HOOK_FLAGS);
