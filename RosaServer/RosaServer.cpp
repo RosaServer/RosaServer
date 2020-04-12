@@ -60,7 +60,7 @@ static void pryMemory(void* address, size_t numPages) {
 	}
 }
 
-static subhook::Hook _test_hook;
+/*static subhook::Hook _test_hook;
 typedef int(*_test_func)(int, int);
 static _test_func _test;
 
@@ -73,27 +73,7 @@ int h__test(int x, int y) {
 	int ret = _test(x, y);
 	printf("done %i\n", ret);
 	return ret;
-
-
-
-	/*bool noParent = false;
-	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
-		auto res = func("HumanGrabbing", &humans[humanID]);
-		if (noLuaCallError(&res))
-			noParent = (bool)res;
-	}
-	if (!noParent) {
-		{
-			subhook::ScopedHookRemove remove(&_test_hook);
-			_test(humanID);
-		}
-		if (func != sol::nil) {
-			auto res = func("PostHumanGrabbing", &humans[humanID]);
-			noLuaCallError(&res);
-		}
-	}*/
-}
+}*/
 
 subhook::Hook resetgame_hook;
 void_func resetgame;
@@ -123,6 +103,8 @@ subhook::Hook bulletsimulation_hook;
 void_func bulletsimulation;
 void_func bullettimetolive;
 
+subhook::Hook createaccount_jointicket_hook;
+createaccount_jointicket_func createaccount_jointicket;
 // Alex Austin's typo
 subhook::Hook server_sendconnectreponse_hook;
 server_sendconnectreponse_func server_sendconnectreponse;
@@ -786,7 +768,7 @@ static void Attach() {
 	numConnections = (unsigned int*)(base + 0x32255B68);
 	numBullets = (unsigned int*)(base + 0x32255940);
 
-	_test = (_test_func)(base + 0x5b20);
+	//_test = (_test_func)(base + 0x5b20);
 	//pryMemory(&_test, 2);
 
 	resetgame = (void_func)(base + 0x9D4C0);
@@ -805,6 +787,7 @@ static void Attach() {
 	bulletsimulation = (void_func)(base + 0x870A0);
 	bullettimetolive = (void_func)(base + 0x15E90);
 
+	createaccount_jointicket = (createaccount_jointicket_func)(base + 0x5b20);
 	server_sendconnectreponse = (server_sendconnectreponse_func)(base + 0xa4bd0);
 
 	scenario_armhuman = (scenario_armhuman_func)(base + 0x46030);
@@ -844,7 +827,7 @@ static void Attach() {
 
 	// Hooks
 
-	_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
+	//_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
 	resetgame_hook.Install((void*)resetgame, (void*)h_resetgame, HOOK_FLAGS);
 
 	logicsimulation_hook.Install((void*)logicsimulation, (void*)h_logicsimulation, HOOK_FLAGS);
@@ -860,6 +843,7 @@ static void Attach() {
 	sendpacket_hook.Install((void*)sendpacket, (void*)h_sendpacket, HOOK_FLAGS);
 	bulletsimulation_hook.Install((void*)bulletsimulation, (void*)h_bulletsimulation, HOOK_FLAGS);
 
+	createaccount_jointicket_hook.Install((void*)createaccount_jointicket, (void*)h_createaccount_jointicket, HOOK_FLAGS);
 	server_sendconnectreponse_hook.Install((void*)server_sendconnectreponse, (void*)h_server_sendconnectreponse, HOOK_FLAGS);
 
 	linkitem_hook.Install((void*)linkitem, (void*)h_linkitem, HOOK_FLAGS);

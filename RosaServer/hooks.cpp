@@ -284,6 +284,29 @@ void h_bulletsimulation() {
 	}
 }
 
+int h_createaccount_jointicket(int identifier, unsigned int ticket) {
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil) {
+		auto res = func("AccountTicket", identifier, ticket);
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
+	}
+	if (!noParent) {
+		int id;
+		{
+			subhook::ScopedHookRemove remove(&createaccount_jointicket_hook);
+			id = createaccount_jointicket(identifier, ticket);
+		}
+		if (func != sol::nil && id != -1) {
+			auto res = func("PostAccountTicket", &accounts[id]);
+			noLuaCallError(&res);
+		}
+		return id;
+	}
+	return -1;
+}
+
 void h_server_sendconnectreponse(unsigned int address, unsigned int port, const char* message) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
