@@ -61,12 +61,12 @@ static void pryMemory(void* address, size_t numPages) {
 }
 
 /*static subhook::Hook _test_hook;
-typedef int(*_test_func)(int, int);
+typedef int(*_test_func)(void*, int);
 static _test_func _test;
 
-// int createaccount_jointicket(int identifier)
-int h__test(int x, int y) {
-	printf("test %i %i\n", x, y);
+//3f40
+int h__test(void* x, int y) {
+	printf("test %p %i\n", x, y);
 	printf("removing\n");
 	subhook::ScopedHookRemove remove(&_test_hook);
 	printf("calling\n");
@@ -709,9 +709,9 @@ void luaInit(bool redo) {
 	(*lua)["TYPE_COOP"] = 6;
 	(*lua)["TYPE_VERSUS"] = 7;
 
-	printf("[RS] Running main.lua...\033[0m\n");
+	printf("[RS] Running init.lua...\033[0m\n");
 
-	sol::load_result load = lua->load_file("lua/main.lua");
+	sol::load_result load = lua->load_file("main/init.lua");
 	if (noLuaCallError(&load)) {
 		sol::protected_function_result res = load();
 		if (noLuaCallError(&res)) {
@@ -768,7 +768,7 @@ static void Attach() {
 	numConnections = (unsigned int*)(base + 0x32255B68);
 	numBullets = (unsigned int*)(base + 0x32255940);
 
-	//_test = (_test_func)(base + 0x5b20);
+	//_test = (_test_func)(base + 0x3f40);
 	//pryMemory(&_test, 2);
 
 	resetgame = (void_func)(base + 0x9D4C0);
