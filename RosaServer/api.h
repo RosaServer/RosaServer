@@ -20,12 +20,14 @@ extern std::string hookMode;
 
 extern std::queue<std::string> consoleQueue;
 
-enum LuaRequestType {
+enum LuaRequestType
+{
 	get,
 	post
 };
 
-struct LuaHTTPRequest {
+struct LuaHTTPRequest
+{
 	LuaRequestType type;
 	std::string host;
 	unsigned short port;
@@ -36,7 +38,8 @@ struct LuaHTTPRequest {
 	httplib::Headers headers;
 };
 
-struct LuaHTTPResponse {
+struct LuaHTTPResponse
+{
 	std::string identifier;
 	bool responded;
 	int status;

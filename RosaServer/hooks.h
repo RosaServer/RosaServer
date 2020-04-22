@@ -1,6 +1,6 @@
 #pragma once
-#include "subhook.h"
 #include "structs.h"
+#include "subhook.h"
 
 extern subhook::Hook resetgame_hook;
 void h_resetgame();

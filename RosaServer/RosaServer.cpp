@@ -2,8 +2,13 @@
 #include <sys/mman.h>
 #include <cerrno>
 
-#define handle_error(msg) \
-    do { std::cout << __LINE__ << std::endl ;perror(msg); exit(EXIT_FAILURE); } while (0)
+#define handle_error(msg)               \
+	do                                    \
+	{                                     \
+		std::cout << __LINE__ << std::endl; \
+		perror(msg);                        \
+		exit(EXIT_FAILURE);                 \
+	} while (0)
 
 bool initialized = false;
 bool shouldReset = false;
@@ -47,15 +52,19 @@ RigidBody* bodies;
 unsigned int* numConnections;
 unsigned int* numBullets;
 
-static void pryMemory(void* address, size_t numPages) {
+static void pryMemory(void* address, size_t numPages)
+{
 	size_t pageSize = sysconf(_SC_PAGE_SIZE);
 
 	uintptr_t page = (uintptr_t)address;
 	page -= (page % pageSize);
 
-	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0) {
+	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0)
+	{
 		printf("[RS] Successfully pried open page at %p\n", (void*)page);
-	} else {
+	}
+	else
+	{
 		handle_error("mprotect");
 	}
 }
@@ -169,99 +178,128 @@ lineintersectobject_func lineintersectobject;
 
 #define HOOK_FLAGS subhook::HookFlags::HookFlag64BitOffset
 
-struct Server {
+struct Server
+{
 	const int TPS = 60;
 
-	const char* getClass() const {
+	const char* getClass() const
+	{
 		return "Server";
 	}
-	int getPort() const {
+	int getPort() const
+	{
 		return *serverPort;
 	}
-	char* getName() const {
+	char* getName() const
+	{
 		return serverName;
 	}
-	void setName(const char* newName) const {
+	void setName(const char* newName) const
+	{
 		strncpy(serverName, newName, 31);
 	}
-	char* getPassword() const {
+	char* getPassword() const
+	{
 		return password;
 	}
-	void setPassword(const char* newPassword) const {
+	void setPassword(const char* newPassword) const
+	{
 		strncpy(password, newPassword, 31);
 		*isPassworded = newPassword[0] != 0;
 	}
-	int getType() const {
+	int getType() const
+	{
 		return *gameType;
 	}
-	void setType(int type) const {
+	void setType(int type) const
+	{
 		*gameType = type;
 	}
-	char* getLevelName() const {
+	char* getLevelName() const
+	{
 		return mapName;
 	}
-	void setLevelName(const char* newName) const {
+	void setLevelName(const char* newName) const
+	{
 		strncpy(mapName, newName, 31);
 	}
-	char* getLoadedLevelName() const {
+	char* getLoadedLevelName() const
+	{
 		return loadedMapName;
 	}
-	bool getIsLevelLoaded() const {
+	bool getIsLevelLoaded() const
+	{
 		return *isLevelLoaded;
 	}
-	void setIsLevelLoaded(bool b) const {
+	void setIsLevelLoaded(bool b) const
+	{
 		*isLevelLoaded = b;
 	}
-	float getGravity() const {
+	float getGravity() const
+	{
 		return *gravity;
 	}
-	void setGravity(float g) const {
+	void setGravity(float g) const
+	{
 		*gravity = g;
 	}
-	float getDefaultGravity() const {
+	float getDefaultGravity() const
+	{
 		return originalGravity;
 	}
-	int getState() const {
+	int getState() const
+	{
 		return *gameState;
 	}
-	void setState(int state) const {
+	void setState(int state) const
+	{
 		*gameState = state;
 	}
-	int getTime() const {
+	int getTime() const
+	{
 		return *gameTimer;
 	}
-	void setTime(int time) const {
+	void setTime(int time) const
+	{
 		*gameTimer = time;
 	}
-	int getSunTime() const {
+	int getSunTime() const
+	{
 		return *sunTime;
 	}
-	void setSunTime(int time) const {
+	void setSunTime(int time) const
+	{
 		*sunTime = time % 5184000;
 	}
-	std::string getVersion() const {
+	std::string getVersion() const
+	{
 		std::ostringstream stream;
 		stream << version->major << (char)(version->build + 97);
 		return stream.str();
 	}
 
-	void setConsoleTitle(const char* title) const {
+	void setConsoleTitle(const char* title) const
+	{
 		printf("\033]0;%s\007", title);
 	}
-	void reset() const {
+	void reset() const
+	{
 		hookAndReset(RESET_REASON_LUACALL);
 	}
 };
 static Server* server;
 
-void luaInit(bool redo) {
+void luaInit(bool redo)
+{
 	printf("\033[36m");
-	if (redo) {
+	if (redo)
+	{
 		printf("\n[RS] Resetting state...\n");
 		delete server;
 		delete lua;
 	}
-	else {
+	else
+	{
 		printf("\n[RS] Initializing state...\n");
 	}
 
@@ -712,15 +750,18 @@ void luaInit(bool redo) {
 	printf("[RS] Running init.lua...\033[0m\n");
 
 	sol::load_result load = lua->load_file("main/init.lua");
-	if (noLuaCallError(&load)) {
+	if (noLuaCallError(&load))
+	{
 		sol::protected_function_result res = load();
-		if (noLuaCallError(&res)) {
+		if (noLuaCallError(&res))
+		{
 			printf("\033[32m[RS] Ready!\033[0m\n");
 		}
 	}
 }
 
-static void Attach() {
+static void Attach()
+{
 	printf("[RS] Assuming 36b...\n");
 
 	std::ifstream file("/proc/self/maps");
@@ -875,14 +916,17 @@ static void Attach() {
 	lineintersecthuman_hook.Install((void*)lineintersecthuman, (void*)h_lineintersecthuman, HOOK_FLAGS);
 }
 
-int __attribute__((constructor)) Entry() {
+int __attribute__((constructor)) Entry()
+{
 	std::thread mainThread(Attach);
 	mainThread.detach();
 	return 0;
 }
 
-int __attribute__((destructor)) Destroy() {
-	if (lua != nullptr) {
+int __attribute__((destructor)) Destroy()
+{
+	if (lua != nullptr)
+	{
 		delete lua;
 		lua = nullptr;
 	}

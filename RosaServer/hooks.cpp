@@ -1,8 +1,10 @@
 #include "hooks.h"
 #include "api.h"
 
-void h_resetgame() {
-	if (!initialized) {
+void h_resetgame()
+{
+	if (!initialized)
+	{
 		initialized = true;
 		luaInit();
 
@@ -17,13 +19,16 @@ void h_resetgame() {
 
 		hookAndReset(RESET_REASON_BOOT);
 	}
-	else {
+	else
+	{
 		hookAndReset(RESET_REASON_ENGINECALL);
 	}
 }
 
-void h_logicsimulation() {
-	if (shouldReset) {
+void h_logicsimulation()
+{
+	if (shouldReset)
+	{
 		shouldReset = false;
 		luaInit(true);
 
@@ -32,34 +37,42 @@ void h_logicsimulation() {
 
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("Logic");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&logicsimulation_hook);
 			logicsimulation();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostLogic");
 			noLuaCallError(&res);
 		}
 	}
 
-	while (!consoleQueue.empty()) {
-		if (func != sol::nil) {
+	while (!consoleQueue.empty())
+	{
+		if (func != sol::nil)
+		{
 			auto res = func("ConsoleInput", consoleQueue.front());
 			noLuaCallError(&res);
 		}
 		consoleQueue.pop();
 	}
 
-	while (!responseQueue.empty()) {
-		if (func != sol::nil) {
+	while (!responseQueue.empty())
+	{
+		if (func != sol::nil)
+		{
 			auto res = responseQueue.front();
-			if (res.responded) {
+			if (res.responded)
+			{
 				sol::table table = lua->create_table();
 				table["status"] = res.status;
 				table["body"] = res.body;
@@ -72,7 +85,8 @@ void h_logicsimulation() {
 				auto resf = func("HTTPResponse", res.identifier, table);
 				noLuaCallError(&resf);
 			}
-			else {
+			else
+			{
 				auto resf = func("HTTPResponse", res.identifier);
 				noLuaCallError(&resf);
 			}
@@ -81,161 +95,193 @@ void h_logicsimulation() {
 	}
 }
 
-void h_logicsimulation_race() {
+void h_logicsimulation_race()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("LogicRace");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&logicsimulation_race_hook);
 			logicsimulation_race();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostLogicRace");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_logicsimulation_round() {
+void h_logicsimulation_round()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("LogicRound");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&logicsimulation_round_hook);
 			logicsimulation_round();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostLogicRound");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_logicsimulation_world() {
+void h_logicsimulation_world()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("LogicWorld");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&logicsimulation_world_hook);
 			logicsimulation_world();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostLogicWorld");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_logicsimulation_terminator() {
+void h_logicsimulation_terminator()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("LogicTerminator");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&logicsimulation_terminator_hook);
 			logicsimulation_terminator();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostLogicTerminator");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_logicsimulation_coop() {
+void h_logicsimulation_coop()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("LogicCoop");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&logicsimulation_coop_hook);
 			logicsimulation_coop();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostLogicCoop");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_logicsimulation_versus() {
+void h_logicsimulation_versus()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("LogicVersus");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&logicsimulation_versus_hook);
 			logicsimulation_versus();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostLogicVersus");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_physicssimulation() {
+void h_physicssimulation()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("Physics");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&physicssimulation_hook);
 			physicssimulation();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostPhysics");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_recvpacket() {
+int h_recvpacket()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("InPacket");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		int ret;
 		{
 			subhook::ScopedHookRemove remove(&recvpacket_hook);
 			ret = recvpacket();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostInPacket");
 			noLuaCallError(&res);
 		}
@@ -244,61 +290,73 @@ int h_recvpacket() {
 	return -1;
 }
 
-void h_sendpacket() {
+void h_sendpacket()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("SendPacket");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&sendpacket_hook);
 			sendpacket();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostSendPacket");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_bulletsimulation() {
+void h_bulletsimulation()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("PhysicsBullets");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&bulletsimulation_hook);
 			bulletsimulation();
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostPhysicsBullets");
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_createaccount_jointicket(int identifier, unsigned int ticket) {
+int h_createaccount_jointicket(int identifier, unsigned int ticket)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("AccountTicket", identifier, ticket);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		int id;
 		{
 			subhook::ScopedHookRemove remove(&createaccount_jointicket_hook);
 			id = createaccount_jointicket(identifier, ticket);
 		}
-		if (func != sol::nil && id != -1) {
+		if (func != sol::nil && id != -1)
+		{
 			auto res = func("PostAccountTicket", &accounts[id]);
 			noLuaCallError(&res);
 		}
@@ -307,7 +365,8 @@ int h_createaccount_jointicket(int identifier, unsigned int ticket) {
 	return -1;
 }
 
-void h_server_sendconnectreponse(unsigned int address, unsigned int port, const char* message) {
+void h_server_sendconnectreponse(unsigned int address, unsigned int port, const char* message)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 
@@ -317,41 +376,49 @@ void h_server_sendconnectreponse(unsigned int address, unsigned int port, const 
 	data["message"] = message;
 	std::string newMessage;
 
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("SendConnectResponse", addressString, port, data);
-		if (noLuaCallError(&res)) {
+		if (noLuaCallError(&res))
+		{
 			noParent = (bool)res;
 			newMessage = data["message"];
 			message = newMessage.c_str();
 		}
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&server_sendconnectreponse_hook);
 			server_sendconnectreponse(address, port, message);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostSendConnectResponse", addressString, port, data);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_createplayer() {
+int h_createplayer()
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("PlayerCreate");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		int id;
 		{
 			subhook::ScopedHookRemove remove(&createplayer_hook);
 			id = createplayer();
 		}
-		if (func != sol::nil && id != -1) {
+		if (func != sol::nil && id != -1)
+		{
 			auto res = func("PostPlayerCreate", &players[id]);
 			noLuaCallError(&res);
 		}
@@ -360,41 +427,49 @@ int h_createplayer() {
 	return -1;
 }
 
-void h_deleteplayer(int playerID) {
+void h_deleteplayer(int playerID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("PlayerDelete", &players[playerID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&deleteplayer_hook);
 			deleteplayer(playerID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostPlayerDelete", &players[playerID]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_createhuman(Vector* pos, RotMatrix* rot, int playerID) {
+int h_createhuman(Vector* pos, RotMatrix* rot, int playerID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("HumanCreate", pos, rot, &players[playerID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		int id;
 		{
 			subhook::ScopedHookRemove remove(&createhuman_hook);
 			id = createhuman(pos, rot, playerID);
 		}
-		if (func != sol::nil && id != -1) {
+		if (func != sol::nil && id != -1)
+		{
 			auto res = func("PostHumanCreate", &humans[id]);
 			noLuaCallError(&res);
 		}
@@ -403,41 +478,49 @@ int h_createhuman(Vector* pos, RotMatrix* rot, int playerID) {
 	return -1;
 }
 
-void h_deletehuman(int humanID) {
+void h_deletehuman(int humanID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("HumanDelete", &humans[humanID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&deletehuman_hook);
 			deletehuman(humanID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostHumanDelete", &humans[humanID]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot) {
+int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("ItemCreate", type, pos, rot);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		int id;
 		{
 			subhook::ScopedHookRemove remove(&createitem_hook);
 			id = createitem(type, pos, vel, rot);
 		}
-		if (id != -1 && func != sol::nil) {
+		if (id != -1 && func != sol::nil)
+		{
 			auto res = func("PostItemCreate", &items[id]);
 			noLuaCallError(&res);
 		}
@@ -446,41 +529,49 @@ int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot) {
 	return -1;
 }
 
-void h_deleteitem(int itemID) {
+void h_deleteitem(int itemID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("ItemDelete", &items[itemID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&deleteitem_hook);
 			deleteitem(itemID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostItemDelete", &items[itemID]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color) {
+int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("VehicleCreate", type, pos, rot, color);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		int id;
 		{
 			subhook::ScopedHookRemove remove(&createobject_hook);
 			id = createobject(type, pos, vel, rot, color);
 		}
-		if (id != -1 && func != sol::nil) {
+		if (id != -1 && func != sol::nil)
+		{
 			auto res = func("PostVehicleCreate", &vehicles[id]);
 			noLuaCallError(&res);
 		}
@@ -489,41 +580,49 @@ int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color
 	return -1;
 }
 
-void h_deleteobject(int vehicleID) {
+void h_deleteobject(int vehicleID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("VehicleDelete", &vehicles[vehicleID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&deleteobject_hook);
 			deleteobject(vehicleID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostVehicleDelete", &vehicles[vehicleID]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot) {
+int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("ItemLink", &items[itemID], childItemID == -1 ? nullptr : &items[childItemID], parentHumanID == -1 ? nullptr : &humans[parentHumanID], slot);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		int worked;
 		{
 			subhook::ScopedHookRemove remove(&linkitem_hook);
 			worked = linkitem(itemID, childItemID, parentHumanID, slot);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostItemLink", &items[itemID], childItemID == -1 ? nullptr : &items[childItemID], parentHumanID == -1 ? nullptr : &humans[parentHumanID], slot, (bool)worked);
 			noLuaCallError(&res);
 		}
@@ -532,135 +631,162 @@ int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot) {
 	return 0;
 }
 
-void h_human_applydamage(int humanID, int bone, int unk, int damage) {
+void h_human_applydamage(int humanID, int bone, int unk, int damage)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("HumanDamage", &humans[humanID], bone, damage);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&human_applydamage_hook);
 			human_applydamage(humanID, bone, unk, damage);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostHumanDamage", &humans[humanID], bone, damage);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_human_collisionvehicle(int humanID, int vehicleID) {
+void h_human_collisionvehicle(int humanID, int vehicleID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("HumanCollisionVehicle", &humans[humanID], &vehicles[vehicleID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&human_collisionvehicle_hook);
 			human_collisionvehicle(humanID, vehicleID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostHumanCollisionVehicle", &humans[humanID], &vehicles[vehicleID]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_human_grabbing(int humanID) {
+void h_human_grabbing(int humanID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("HumanGrabbing", &humans[humanID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&human_grabbing_hook);
 			human_grabbing(humanID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostHumanGrabbing", &humans[humanID]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_grenadeexplosion(int itemID) {
+void h_grenadeexplosion(int itemID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("GrenadeExplode", &items[itemID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&grenadeexplosion_hook);
 			grenadeexplosion(itemID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostGrenadeExplode", &items[itemID]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_chat(int playerID, char* message) {
+int h_chat(int playerID, char* message)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("PlayerChat", &players[playerID], message);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		subhook::ScopedHookRemove remove(&chat_hook);
 		return chat(playerID, message);
 	}
 	return 1;
 }
 
-void h_playerai(int playerID) {
+void h_playerai(int playerID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("PlayerAI", &players[playerID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&playerai_hook);
 			playerai(playerID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostPlayerAI", &players[playerID]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_playerdeathtax(int playerID) {
+void h_playerdeathtax(int playerID)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("PlayerDeathTax", &players[playerID]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&playerdeathtax_hook);
 			playerdeathtax(playerID);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostPlayerDeathTax", &players[playerID]);
 			noLuaCallError(&res);
 		}
@@ -677,60 +803,72 @@ Type:
 5 = Billboard
 6 = To Player (Crim)
 */
-void h_createevent_message(int speakerType, char* message, int speakerID, int distance) {
+void h_createevent_message(int speakerType, char* message, int speakerID, int distance)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("EventMessage", speakerType, message, speakerID, distance);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&createevent_message_hook);
 			createevent_message(speakerType, message, speakerID, distance);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostEventMessage", speakerType, message, speakerID, distance);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_createevent_updateplayer(int id) {
+void h_createevent_updateplayer(int id)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("EventUpdatePlayer", &players[id]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&createevent_updateplayer_hook);
 			createevent_updateplayer(id);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostEventUpdatePlayer", &players[id]);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-void h_createevent_updateplayer_finance(int id) {
+void h_createevent_updateplayer_finance(int id)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("EventUpdatePlayerFinance", &players[id]);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&createevent_updateplayer_finance_hook);
 			createevent_updateplayer_finance(id);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostEventUpdatePlayerFinance", &players[id]);
 			noLuaCallError(&res);
 		}
@@ -758,20 +896,24 @@ void h_createevent_updateplayer_finance(int id) {
 	}
 }*/
 
-void h_createevent_updateobject(int vehicleID, int updateType, int partID, Vector* pos, Vector* normal) {
+void h_createevent_updateobject(int vehicleID, int updateType, int partID, Vector* pos, Vector* normal)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("EventUpdateVehicle", &vehicles[vehicleID], updateType, partID, pos, normal);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&createevent_updateobject_hook);
 			createevent_updateobject(vehicleID, updateType, partID, pos, normal);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostEventUpdateVehicle", &vehicles[vehicleID], updateType, partID, pos, normal);
 			noLuaCallError(&res);
 		}
@@ -799,35 +941,42 @@ void h_createevent_updateobject(int vehicleID, int updateType, int partID, Vecto
 	}
 }*/
 
-void h_createevent_bullethit(int unk, int hitType, Vector* pos, Vector* normal) {
+void h_createevent_bullethit(int unk, int hitType, Vector* pos, Vector* normal)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("EventBulletHit", hitType, pos, normal);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		{
 			subhook::ScopedHookRemove remove(&createevent_bullethit_hook);
 			createevent_bullethit(unk, hitType, pos, normal);
 		}
-		if (func != sol::nil) {
+		if (func != sol::nil)
+		{
 			auto res = func("PostEventBulletHit", hitType, pos, normal);
 			noLuaCallError(&res);
 		}
 	}
 }
 
-int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB) {
+int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB)
+{
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
+	if (func != sol::nil)
+	{
 		auto res = func("LineIntersectHuman", &humans[humanID], posA, posB);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent) {
+	if (!noParent)
+	{
 		subhook::ScopedHookRemove remove(&lineintersecthuman_hook);
 		return lineintersecthuman(humanID, posA, posB);
 	}
