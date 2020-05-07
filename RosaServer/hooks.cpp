@@ -344,7 +344,7 @@ int h_createaccount_jointicket(int identifier, unsigned int ticket)
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil)
 	{
-		auto res = func("AccountTicket", identifier, ticket);
+		auto res = func("AccountTicketBegin", identifier, ticket);
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
@@ -355,10 +355,20 @@ int h_createaccount_jointicket(int identifier, unsigned int ticket)
 			subhook::ScopedHookRemove remove(&createaccount_jointicket_hook);
 			id = createaccount_jointicket(identifier, ticket);
 		}
-		if (func != sol::nil && id != -1)
+		if (func != sol::nil)
 		{
-			auto res = func("PostAccountTicket", &accounts[id]);
-			noLuaCallError(&res);
+			auto res = func("AccountTicketFound", id == -1 ? nullptr : &accounts[id]);
+			noParent = false;
+			if (noLuaCallError(&res))
+				noParent = (bool)res;
+
+			if (!noParent)
+			{
+				auto res = func("PostAccountTicket", id == -1 ? nullptr : &accounts[id]);
+				noLuaCallError(&res);
+				return id;
+			}
+			return -1;
 		}
 		return id;
 	}
