@@ -930,4 +930,5 @@ int __attribute__((destructor)) Destroy()
 		delete lua;
 		lua = nullptr;
 	}
+	return 0;
 }
