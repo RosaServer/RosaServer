@@ -762,7 +762,7 @@ void luaInit(bool redo)
 
 static void Attach()
 {
-	printf("[RS] Assuming 36b...\n");
+	printf("[RS] Assuming 37c...\n");
 
 	std::ifstream file("/proc/self/maps");
 	std::string line;
@@ -777,94 +777,94 @@ static void Attach()
 
 	// Locate everything
 
-	version = (Version*)(base + 0x2BED08);
-	serverName = (char*)(base + 0x1D158694);
-	serverPort = (unsigned int*)(base + 0x1D158AA0);
-	isPassworded = (int*)(base + 0x1D158AA4);
-	password = (char*)(base + 0x14F24CEC);
+	version = (Version*)(base + 0xD52E440);
+	serverName = (char*)(base + 0x24EE4234);
+	serverPort = (unsigned int*)(base + 0x24EE4640);
+	isPassworded = (int*)(base + 0x24EE4644);
+	password = (char*)(base + 0x1CC6D48C);
 
-	gameType = (int*)(base + 0x314CBDA8);
-	mapName = (char*)(base + 0x314CBDAC);
-	loadedMapName = (char*)(base + 0x2FD6E424);
-	gameState = (int*)(base + 0x314CBFC4);
-	gameTimer = (int*)(base + 0x314CBFCC);
-	sunTime = (unsigned int*)(base + 0xC5D6AA0);
-	isLevelLoaded = (int*)(base + 0x2FD6E420);
-	gravity = (float*)(base + 0xB1F04);
+	gameType = (int*)(base + 0x443F3988);
+	mapName = (char*)(base + 0x443F398C);
+	loadedMapName = (char*)(base + 0x3C2EEFE4);
+	gameState = (int*)(base + 0x443F3BA4);
+	gameTimer = (int*)(base + 0x443F3BAC);
+	sunTime = (unsigned int*)(base + 0x9846CC0);
+	isLevelLoaded = (int*)(base + 0x3C2EEFE0);
+	gravity = (float*)(base + 0xC72AC);
 	pryMemory(gravity, 1);
 	originalGravity = *gravity;
 
-	lineIntersectResult = (RayCastResult*)(base + 0x39B5B460);
+	lineIntersectResult = (RayCastResult*)(base + 0x55E44E00);
 
-	connections = (Connection*)(base + 0x36F640);
-	accounts = (Account*)(base + 0x2A6F3F0);
-	players = (Player*)(base + 0x11E82140);
-	humans = (Human*)(base + 0x7226328);
-	vehicles = (Vehicle*)(base + 0x190A6B80);
-	itemTypes = (ItemType*)(base + 0x3DD351E0);
-	items = (Item*)(base + 0x6CF6FE0);
-	bullets = (Bullet*)(base + 0x307376A0);
-	bodies = (RigidBody*)(base + 0x2C3620);
+	connections = (Connection*)(base + 0x43ACE0);
+	accounts = (Account*)(base + 0x334F6D0);
+	players = (Player*)(base + 0x19BC9CC0);
+	humans = (Human*)(base + 0x8B1D4A8);
+	vehicles = (Vehicle*)(base + 0x20DEF320);
+	itemTypes = (ItemType*)(base + 0x5A088680);
+	items = (Item*)(base + 0x7FE2160);
+	bullets = (Bullet*)(base + 0x4355E260);
+	bodies = (RigidBody*)(base + 0x2DACC0);
 
-	numConnections = (unsigned int*)(base + 0x32255B68);
-	numBullets = (unsigned int*)(base + 0x32255940);
+	numConnections = (unsigned int*)(base + 0x4532F468);
+	numBullets = (unsigned int*)(base + 0x4532F240);
 
 	//_test = (_test_func)(base + 0x3f40);
 	//pryMemory(&_test, 2);
 
-	resetgame = (void_func)(base + 0x9D4C0);
+	resetgame = (void_func)(base + 0xB10B0);
 
-	logicsimulation = (void_func)(base + 0xA39C0);
-	logicsimulation_race = (void_func)(base + 0x9F750);
-	logicsimulation_round = (void_func)(base + 0x9FEC0);
-	logicsimulation_world = (void_func)(base + 0xA3270);
-	logicsimulation_terminator = (void_func)(base + 0xA0E20);
-	logicsimulation_coop = (void_func)(base + 0x9F510);
-	logicsimulation_versus = (void_func)(base + 0xA26D0);
+	logicsimulation = (void_func)(base + 0xB7BF0);
+	logicsimulation_race = (void_func)(base + 0xB3650);
+	logicsimulation_round = (void_func)(base + 0xB3DD0);
+	logicsimulation_world = (void_func)(base + 0xB71A0);
+	logicsimulation_terminator = (void_func)(base + 0xB4D50);
+	logicsimulation_coop = (void_func)(base + 0xB3410);
+	logicsimulation_versus = (void_func)(base + 0xB65F0);
 
-	physicssimulation = (void_func)(base + 0x932A0);
-	recvpacket = (recvpacket_func)(base + 0xAC0C0);
-	sendpacket = (void_func)(base + 0xA9360);
-	bulletsimulation = (void_func)(base + 0x870A0);
-	bullettimetolive = (void_func)(base + 0x15E90);
+	physicssimulation = (void_func)(base + 0xA6CC0);
+	recvpacket = (recvpacket_func)(base + 0xC0BB0);
+	sendpacket = (void_func)(base + 0xBDBA0);
+	bulletsimulation = (void_func)(base + 0x98960);
+	bullettimetolive = (void_func)(base + 0x181B0);
 
-	createaccount_jointicket = (createaccount_jointicket_func)(base + 0x5b20);
-	server_sendconnectreponse = (server_sendconnectreponse_func)(base + 0xa4bd0);
+	createaccount_jointicket = (createaccount_jointicket_func)(base + 0x65D0);
+	server_sendconnectreponse = (server_sendconnectreponse_func)(base + 0xB8FD0);
 
-	scenario_armhuman = (scenario_armhuman_func)(base + 0x46030);
-	linkitem = (linkitem_func)(base + 0x23520);
-	human_applydamage = (human_applydamage_func)(base + 0x1B010);
-	human_collisionvehicle = (human_collisionvehicle_func)(base + 0x699E0);
-	human_grabbing = (void_index_func)(base + 0x6BB30);
-	grenadeexplosion = (void_index_func)(base + 0x22F20);
-	chat = (chat_func)(base + 0x94160);
-	playerai = (void_index_func)(base + 0x85610);
-	playerdeathtax = (void_index_func)(base + 0x29D0);
+	scenario_armhuman = (scenario_armhuman_func)(base + 0x4FDD0);
+	linkitem = (linkitem_func)(base + 0x2B060);
+	human_applydamage = (human_applydamage_func)(base + 0x1E1D0);
+	human_collisionvehicle = (human_collisionvehicle_func)(base + 0x7AF50);
+	human_grabbing = (void_index_func)(base + 0xA16D0);
+	grenadeexplosion = (void_index_func)(base + 0x2A990);
+	chat = (chat_func)(base + 0xA7B80);
+	playerai = (void_index_func)(base + 0x96F80);
+	playerdeathtax = (void_index_func)(base + 0x2D70);
 
-	createplayer = (createplayer_func)(base + 0x3A5E0);
-	deleteplayer = (void_index_func)(base + 0x3A890);
-	createhuman = (createhuman_func)(base + 0x58DE0);
-	deletehuman = (void_index_func)(base + 0x3750);
-	createitem = (createitem_func)(base + 0x457F0);
-	deleteitem = (void_index_func)(base + 0x23820);
-	createrope = (createrope_func)(base + 0x45CD0);
-	createobject = (createobject_func)(base + 0x48E00);
-	deleteobject = (void_index_func)(base + 0x39B0);
+	createplayer = (createplayer_func)(base + 0x40EE0);
+	deleteplayer = (void_index_func)(base + 0x411D0);
+	createhuman = (createhuman_func)(base + 0x66D10);
+	deletehuman = (void_index_func)(base + 0x3EB0);
+	createitem = (createitem_func)(base + 0x4DDE0);
+	deleteitem = (void_index_func)(base + 0x2C180);
+	createrope = (createrope_func)(base + 0x4F150);
+	createobject = (createobject_func)(base + 0x4CEA0);
+	deleteobject = (void_index_func)(base + 0x42A0);
 
-	createevent_message = (createevent_message_func)(base + 0x2550);
-	createevent_updateplayer = (void_index_func)(base + 0x2850);
-	createevent_updateplayer_finance = (void_index_func)(base + 0x2960);
+	createevent_message = (createevent_message_func)(base + 0x29C0);
+	createevent_updateplayer = (void_index_func)(base + 0x2BE0);
+	createevent_updateplayer_finance = (void_index_func)(base + 0x2D00);
 	//pryMemory(&createevent_updateplayer_finance, 2);
-	//createevent_updateitem = (void_index_func)(base + 0x27B0);
-	createevent_createobject = (void_index_func)(base + 0x2670);
-	createevent_updateobject = (createevent_updateobject_func)(base + 0x26D0);
-	createevent_sound = (createevent_sound_func)(base + 0x2AA0);
-	createevent_explosion = (createevent_explosion_func)(base + 0x3110);
-	createevent_bullethit = (createevent_bullethit_func)(base + 0x24A0);
+	//createevent_updateitem = (void_index_func)(base + 0x27B0);//
+	createevent_createobject = (void_index_func)(base + 0x2AE0);
+	createevent_updateobject = (createevent_updateobject_func)(base + 0x41C0);
+	createevent_sound = (createevent_sound_func)(base + 0x3CC0);
+	createevent_explosion = (createevent_explosion_func)(base + 0x45A0);
+	createevent_bullethit = (createevent_bullethit_func)(base + 0x4110);
 
-	lineintersecthuman = (lineintersecthuman_func)(base + 0x20B70);
-	lineintersectlevel = (lineintersectlevel_func)(base + 0x6D680);
-	lineintersectobject = (lineintersectobject_func)(base + 0x83C20);
+	lineintersecthuman = (lineintersecthuman_func)(base + 0x23AB0);
+	lineintersectlevel = (lineintersectlevel_func)(base + 0x7C470);
+	lineintersectobject = (lineintersectobject_func)(base + 0x95590);
 
 	// Hooks
 

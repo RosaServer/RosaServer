@@ -6,10 +6,10 @@
 #define MAXNUMOFACCOUNTS 32768
 #define MAXNUMOFPLAYERS 256
 #define MAXNUMOFHUMANS 256
-#define MAXNUMOFITEMTYPES 38
+#define MAXNUMOFITEMTYPES 45
 #define MAXNUMOFITEMS 1024
 #define MAXNUMOFVEHICLES 512
-#define MAXNUMOFRIGIDBODIES 2048
+#define MAXNUMOFRIGIDBODIES 8192
 
 /*
 	Event types:
@@ -26,7 +26,7 @@
 	0x14	20	explosion
 */
 
-//159120 bytes (26D90)
+//188888 bytes (2E1D8)
 struct Connection
 {
 	unsigned int address;
@@ -37,7 +37,7 @@ struct Connection
 	int unk1;						//14
 	int bandwidth;			//18
 	int timeoutTime;		//1c
-	char unk2[159120 - 32];
+	char unk2[188888 - 32];
 
 	const char* getClass() const
 	{
@@ -65,9 +65,12 @@ struct Account
 	int money;						//34
 	int corporateRating;	//38
 	int criminalRating;		//3c
-	char unk1[0x5c - 0x3c - 4];
-	int banTime;	//5c
-	char unk2[112 - 96];
+	int spawnTimer; //40
+	//in-game minutes
+	int playTime; //44
+	char unk1[0x60 - 0x44 - 4];
+	int banTime;	//60
+	char unk2[112 - 104];
 
 	const char* getClass() const
 	{
@@ -156,56 +159,59 @@ struct Vehicle;
 struct Item;
 struct RigidBody;
 
-//14372 bytes (0x3824)
+//14384 bytes (0x3830)
 struct Player
 {
 	int active;
 	char name[32];							 //04
-	int unk0;										 //24
-	int unk1;										 //28
+		int unk0;										 //24
+		int unk1;										 //28
 	unsigned int subRosaID;			 //2c
 	unsigned int phoneNumber;		 //30
 	int isAdmin;								 //34
 	unsigned int adminAttempts;	 //38
 	unsigned int accountID;			 //3C
-	char unk2[0x48 - 0x3C - 4];
+		char unk2[0x48 - 0x3C - 4];
 	int isReady;					//48
 	int money;						//4C
-	int corporateRating;	//50
-	int criminalRating;		//54
-	char unk3[0x7C - 0x54 - 4];
-	unsigned int team;						 //7C
-	unsigned int teamSwitchTimer;	 //80
-	int stocks;										 //84
-	int unk4[2];
-	int humanID;	//90
-	char unk5[0x158 - 0x90 - 4];
+		int unk2a; //50
+		int unk2b; //54
+	int corporateRating;	//58
+	int criminalRating;		//5c
+		char unk3[0x84 - 0x5c - 4];
+	unsigned int team; //84
+	unsigned int teamSwitchTimer; //88
+	int stocks; //8c
+		int unk4[3];
+	int humanID;	//9c
+		char unk5[0x164 - 0x9c - 4];
 	//0 = none, 1-19 = shop, 2X = base
-	int menuTab;	//158
-	char unk6[0x2d0c - 0x158 - 4];
-	int isBot;	//2d0c
-	char unk7a[0x2d28 - 0x2d0c - 4];
-	int botHasDestination;	//2d28
-	Vector botDestination;	//2d2c
-	char unk7[0x354c - 0x2d2c - 12];
-	int botState;	 //354c
-	int unk8;
-	int botEnemyID;	 //3554
-	char unk9[0x379c - 0x3554 - 4];
-	int gender;			//379c
-	int skinColor;	//37a0
-	int hairColor;	//37a4
-	int hair;				//37a8
-	int eyeColor;		//37ac
+	int menuTab;	//164
+		char unk6[0x2d18 - 0x164 - 4];
+	int isBot;	//2d18
+		char unk7a[0x2d34 - 0x2d18 - 4];
+	int botHasDestination;	//2d34
+	Vector botDestination;	//2d38
+		char unk7[0x37a8 - 0x2d38 - 12];
+	//int botState;	 //354c
+		//int unk8;
+	//int botEnemyID;	 //3554
+		//char unk9[0x379c - 0x3554 - 4];
+		//char unk9[0x37a8 - 0x2d18 - 4];
+	int gender;			//37a8
+	int skinColor;	//37ac
+	int hairColor;	//37b0
+	int hair;				//37b4
+	int eyeColor;		//37b8
 	//0 = casual, 1 = suit
-	int model;			//37b0
-	int suitColor;	//37b4
+	int model;			//37bc
+	int suitColor;	//37c0
 	//0 = no tie
-	int tieColor;	 //37b8
-	int unk10;		 //37bc
-	int head;			 //37c0
-	int necklace;	 //37c4
-	char unk11[14372 - 14280];
+	int tieColor;	 //37c4
+		int unk10;		 //37c8
+	int head;			 //37cc
+	int necklace;	 //37d0
+		char unk11[14384 - 14292];
 
 	const char* getClass() const
 	{
@@ -283,57 +289,59 @@ struct Bone
 	}
 };
 
-//14152 bytes (3748)
+//14288 bytes (37D0)
 struct Human
 {
 	int active;
-	unsigned int unk00;				//04
+	int physicsSim;				//04
 	int playerID;							//08
-	int unk0;									//0c
-	int unk1;									//10
-	int unk2;									//14
-	int unk3;									//18
-	int unk4;									//1c
-	int vehicleID;						//20
-	int vehicleSeat;					//24
-	int lastVehicleID;				//28
-	int lastVehicleCooldown;	//2c
+		int unk0;									//0c
+		int unk1;									//10
+		int unk2;									//14
+		int unk3;									//18
+	int stamina;									//1c
+	int maxStamina; //20
+		int unk4; //24
+	int vehicleID;						//28
+	int vehicleSeat;					//2c
+	int lastVehicleID;				//30
+	int lastVehicleCooldown;	//34
 	//counts down after death
-	unsigned int despawnTime;	 //30
-	int oldHealth;						 //34
+	unsigned int despawnTime;	 //38
+	int oldHealth;						 //3c
 	//eliminator
-	int isImmortal;								 //38
-	int unk10;										 //3c
-	int unk11;										 //40
-	int unk12;										 //44
-	unsigned int spawnProtection;	 //48
-	int isOnGround;								 //4c
+	int isImmortal;								 //40
+	int unk10;										 //44
+	int unk11;										 //48
+	int unk12;										 //4c
+	unsigned int spawnProtection;	 //50
+	int isOnGround;								 //54
 	/*
 	0=normal
 	1=jumping/falling
 	2=sliding
 	5=getting up?
 	*/
-	int movementState;	//50
-	int unk13;					//54
-	int zoomLevel;			//58
-	int unk14;					//5c
-	int unk15;					//60
-	int unk16;					//64
-	int unk17;					//68
-	int unk18;					//6c
+	int movementState;	//58
+		int unk13;					//5c
+	int zoomLevel;			//60
+		int unk14;					//64
+		int unk15;					//68
+		int unk16;					//6c
+		int unk17;					//70
+		int unk18;					//74
 	//max 60
-	int damage;				//70
-	int isStanding;		//74
-	Vector pos;				//78
-	Vector pos2;			//84
-	float viewYaw;		//90
-	float viewPitch;	//94
-	char unk19[0x124 - 0x94 - 4];
-	float strafeInput;	//124
-	float unk20;
-	float walkInput;	//12c
-	char unk21[0x1f4 - 0x12c - 4];
+	int damage;				//78
+	int isStanding;		//7c
+	Vector pos;				//80
+	Vector pos2;			//8c
+	float viewYaw;		//98
+	float viewPitch;	//9c
+		char unk19[0x12c - 0x9c - 4];
+	float strafeInput;	//12c
+		float unk20; //130
+	float walkInput;	//134
+		char unk21[0x214 - 0x134 - 4];
 	/*
 	mouse1 = 1		1 << 0
 	mouse2 = 2		1 << 1
@@ -349,52 +357,52 @@ struct Human
 	del = 262144	1 << 18
 	z = 524288		1 << 19
 	*/
-	unsigned int inputFlags;			//1f4
-	unsigned int lastInputFlags;	//1f8
-	char unk22[0x200 - 0x1f8 - 4];
-	Bone bones[16];	 //200
-	char unk23[0x323c - (0x200 + (312 * 16))];
-	int rightHandOccupied;	//323c
-	int rightHandItemID;		//3240
-	char unk24[0x3264 - 0x3240 - 4];
-	int leftHandOccupied;	 //3264
-	int leftHandItemID;		 //3268
-	char unk25[0x338c - 0x3268 - 4];
-	int isGrabbingRight;			 //338c
-	int grabbingRightHumanID;	 //3390
-	int unk26_1;
-	int grabbingRightBone;	//3398
-	char unk26_2[0x33b8 - 0x3398 - 4];
-	int isGrabbingLeft;				//33b8
-	int grabbingLeftHumanID;	//33bc
-	int unk26_3;
-	int grabbingLeftBone;	 //33c4
-	char unk26_4[0x34a4 - 0x33c4 - 4];
-	int health;			 //34a4
-	int bloodLevel;	 //34a8
-	int isBleeding;	 //34ac
-	int chestHP;		 //34b0
-	int unk26;			 //34b4
-	int headHP;			 //34b8
-	int unk27;			 //34bc
-	int leftArmHP;	 //34c0
-	int unk28;			 //34c4
-	int rightArmHP;	 //34c8
-	int unk29;			 //34cc
-	int leftLegHP;	 //34d0
-	int unk30;			 //34d4
-	int rightLegHP;	 //34d8
-	char unk31[0x36d4 - 0x34d8 - 4];
-	int gender;			//36d4
-	int head;				//36d8
-	int skinColor;	//36dc
-	int hairColor;	//36e0
-	int hair;				//36e4
-	int eyeColor;		//36e8
-	int model;			//36ec
-	int suitColor;	//36f0
-	int tieColor;		//36f4
-	char unk32[14152 - 0x36f4 - 4];
+	unsigned int inputFlags;			//214
+	unsigned int lastInputFlags;	//218
+		char unk22[0x220 - 0x218 - 4];
+	Bone bones[16];	 //220
+		char unk23[0x32a8 - (0x220 + (312 * 16))];
+	int rightHandOccupied;	//32a8
+	int rightHandItemID;		//32ac
+		char unk24[0x32d0 - 0x32ac - 4];
+	int leftHandOccupied;	 //32d0
+	int leftHandItemID;		 //32d4
+		char unk25[0x33f8 - 0x32d4 - 4];
+	int isGrabbingRight;			 //33f8
+	int grabbingRightHumanID;	 //33fc
+		int unk26_1; //3400
+	int grabbingRightBone;	//3404
+		char unk26_2[0x3430 - 0x3404 - 4];
+	int isGrabbingLeft;				//3430
+	int grabbingLeftHumanID;	//3434
+		int unk26_3; //3438
+	int grabbingLeftBone;	 //343c
+		char unk26_4[0x3528 - 0x343c - 4];
+	int health;			 //3528
+	int bloodLevel;	 //352c
+	int isBleeding;	 //3530
+	int chestHP;		 //33534
+		int unk26;			 //3538
+	int headHP;			 //353c
+		int unk27;			 //3540
+	int leftArmHP;	 //3544
+		int unk28;			 //3548
+	int rightArmHP;	 //354c
+		int unk29;			 //3550
+	int leftLegHP;	 //3554
+		int unk30;			 //3558
+	int rightLegHP;	 //355c
+		char unk31[0x3758 - 0x355c - 4];
+	int gender;			//3758
+	int head;				//375c
+	int skinColor;	//3760
+	int hairColor;	//3764
+	int hair;				//3768
+	int eyeColor;		//376c
+	int model;			//3770
+	int suitColor;	//3774
+	int tieColor;		//3778
+	char unk32[14288 - 0x3778 - 4];
 
 	const char* getClass() const
 	{
@@ -465,27 +473,28 @@ struct Human
 	void applyDamage(int bone, int damage) const;
 };
 
-//3944 bytes (F68)
+//4912 bytes (1330)
 struct ItemType
 {
 	int price;
 	float mass;					 //04
-	int isGun;					 //08
-	int fuckedUpAiming;	 //0c
+	int unk00; //08
+	int isGun;					 //0c
+	int messedUpAiming;	 //10
 	//in ticks per bullet
-	int fireRate;	 //10
+	int fireRate;	 //14
 	//?
-	int bulletType;				 //14
-	int unk0;							 //18
-	int unk1;							 //1c
-	float bulletVelocity;	 //20
-	float bulletSpread;		 //24
-	char name[64];				 //28
-	char unk2[0x74 - 0x28 - 64];
-	int numHands;					//74
-	Vector rightHandPos;	//78
-	Vector leftHandPos;		//84
-	char unk3[3944 - 0x84 - 12];
+	int bulletType;				 //18
+		int unk0;							 //1c
+		int unk1;							 //20
+	float bulletVelocity;	 //24
+	float bulletSpread;		 //28
+	char name[64];				 //2c
+		char unk2[0x78 - 0x2c - 64];
+	int numHands;					//78
+	Vector rightHandPos;	//7c
+	Vector leftHandPos;		//88
+		char unk3[4912 - 0x88 - 12];
 
 	const char* getClass() const
 	{
@@ -511,32 +520,34 @@ struct ItemType
 	}
 };
 
-//592 bytes (250)
+//6784 bytes (1A80)
 struct Item
 {
 	int active;
 	int physicsSim;			 //04
 	int physicsSettled;	 //08
-	int unk1;						 //0c
-	int type;						 //10
-	int unk2;						 //14
-	int despawnTime;		 //18
-	int unk4;						 //1c
-	int parentHumanID;	 //20
-	int parentItemID;		 //24
-	int parentSlot;			 //28
-	char unk5[0x54 - 0x28 - 4];
-	int bodyID;			//54
-	Vector pos;			//58
-	Vector pos2;		//64
-	Vector vel;			//70
-	Vector vel2;		//7c
-	Vector vel3;		//88
-	Vector vel4;		//94
-	RotMatrix rot;	//a0
-	char unk6[0x124 - 0xa0 - 36];
-	int bullets;	//124
-	char unk7[592 - 296];
+	//counts to 60 ticks before settling
+	int physicsSettledTimer; //0c
+		int unk1;						 //10
+	int type;						 //14
+		int unk2;						 //18
+	int despawnTime;		 //1c
+		int unk4;						 //20
+	int parentHumanID;	 //24
+	int parentItemID;		 //28
+	int parentSlot;			 //2c
+		char unk5[0x58 - 0x2c - 4];
+	int bodyID;			//58
+	Vector pos;			//5c
+	Vector pos2;		//68
+	Vector vel;			//74
+	Vector vel2;		//80
+	Vector vel3;		//8c
+	Vector vel4;		//98
+	RotMatrix rot;	//a4
+		char unk6[0x144 - 0xa4 - 36];
+	int bullets;	//144
+		char unk7[6784 - 328];
 
 	const char* getClass() const
 	{
@@ -579,7 +590,7 @@ struct Item
 	void explode() const;
 };
 
-//20548 bytes (5044)
+//20572 bytes (505C)
 struct Vehicle
 {
 	int active;
@@ -587,36 +598,36 @@ struct Vehicle
 	int controllableState;	//08
 	//default 100
 	int health;							 //0c
-	int unk1;								 //10
+		int unk1;								 //10
 	int lastDriverPlayerID;	 //14
 	unsigned int color;			 //18
 	//-1 = won't despawn
 	short despawnTime;	 //1c
 	short spawnedState;	 //1e
 	int isLocked;				 //20
-	int unk3;						 //24
+		int unk3;						 //24
 	int bodyID;					 //28
 	Vector pos;					 //2c
 	Vector pos2;				 //38
 	RotMatrix rot;			 //44
 	Vector vel;					 //68
-	char unk5[0x27c0 - 0x68 - 12];
-	int windowState0;	 //27c0
-	int windowState1;	 //27c4
-	int windowState2;	 //27c8
-	int windowState3;	 //27cc
-	int windowState4;	 //27d0
-	int windowState5;	 //27d4
-	int windowState6;	 //27d8
-	int windowState7;	 //27dc
-	char unk6[0x35c4 - 0x27dc - 4];
-	float gearX;				 //35c4
-	float steerControl;	 //35c8
-	float gearY;				 //35cc
-	float gasControl;		 //35d0
-	char unk7[0x4e88 - 0x35d0 - 4];
-	int bladeBodyID;	//4e88
-	char unk8[20548 - 20108];
+		char unk5[0x27d8 - 0x68 - 12];
+	int windowState0;	 //27d8
+	int windowState1;	 //27dc
+	int windowState2;	 //27e0
+	int windowState3;	 //27e4
+	int windowState4;	 //27e8
+	int windowState5;	 //27ec
+	int windowState6;	 //27f0
+	int windowState7;	 //27f4
+		char unk6[0x35dc - 0x27f4 - 4];
+	float gearX;				 //35dc
+	float steerControl;	 //35e0
+	float gearY;				 //35e4
+	float gasControl;		 //35e8
+		char unk7[0x4ea0 - 0x35e8 - 4];
+	int bladeBodyID;	//4ea0
+		char unk8[20572 - 20132];
 
 	const char* getClass() const
 	{
@@ -660,7 +671,7 @@ struct Bullet
 	Player* getPlayer() const;
 };
 
-//172 bytes (AC)
+//176 bytes (B0)
 struct RigidBody
 {
 	int active;
@@ -672,14 +683,15 @@ struct RigidBody
 	*/
 	int type;					//04
 	int settled;			//08
-	int unk0;					//0c
-	float mass;				//10
-	Vector pos;				//14
-	Vector vel;				//20
-	Vector startVel;	//? 2C
-	RotMatrix rot;		//38
-	RotMatrix rot2;		//5c
-	char unk3[172 - 128];
+		int unk0;					//0c
+		int unk01; //10
+	float mass;				//14
+	Vector pos;				//18
+	Vector vel;				//24
+	Vector startVel;	//? 30
+	RotMatrix rot;		//3c
+	RotMatrix rot2;		//60
+		char unk3[176 - 132];
 
 	const char* getClass() const
 	{
