@@ -70,18 +70,18 @@ static void pryMemory(void* address, size_t numPages)
 }
 
 /*static subhook::Hook _test_hook;
-typedef int(*_test_func)(void*, int);
+typedef void(*_test_func)(int, const char*);
 static _test_func _test;
 
-//3f40
-int h__test(void* x, int y) {
-	printf("test %p %i\n", x, y);
+//25f80
+void h__test(int x, const char* y) {
+	printf("test %i %s\n", x, y);
 	printf("removing\n");
 	subhook::ScopedHookRemove remove(&_test_hook);
 	printf("calling\n");
-	int ret = _test(x, y);
-	printf("done %i\n", ret);
-	return ret;
+	_test(x, y);
+	//printf("done %i\n", ret);
+	//return ret;
 }*/
 
 subhook::Hook resetgame_hook;
@@ -121,6 +121,7 @@ server_sendconnectreponse_func server_sendconnectreponse;
 scenario_armhuman_func scenario_armhuman;
 subhook::Hook linkitem_hook;
 linkitem_func linkitem;
+item_setmemo_func item_setmemo;
 subhook::Hook human_applydamage_hook;
 human_applydamage_func human_applydamage;
 subhook::Hook human_collisionvehicle_hook;
@@ -545,6 +546,7 @@ void luaInit(bool redo)
 		meta["unmount"] = &Item::unmount;
 		meta["speak"] = &Item::speak;
 		meta["explode"] = &Item::explode;
+		meta["setMemo"] = &Item::setMemo;
 	}
 
 	{
@@ -809,7 +811,7 @@ static void Attach()
 	numConnections = (unsigned int*)(base + 0x4532F468);
 	numBullets = (unsigned int*)(base + 0x4532F240);
 
-	//_test = (_test_func)(base + 0x3f40);
+	//_test = (_test_func)(base + 0x25f80);
 	//pryMemory(&_test, 2);
 
 	resetgame = (void_func)(base + 0xB10B0);
@@ -833,6 +835,8 @@ static void Attach()
 
 	scenario_armhuman = (scenario_armhuman_func)(base + 0x4FDD0);
 	linkitem = (linkitem_func)(base + 0x2B060);
+	item_setmemo = (item_setmemo_func)(base + 0x25F80);
+
 	human_applydamage = (human_applydamage_func)(base + 0x1E1D0);
 	human_collisionvehicle = (human_collisionvehicle_func)(base + 0x7AF50);
 	human_grabbing = (void_index_func)(base + 0xA16D0);

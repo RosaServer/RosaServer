@@ -64,6 +64,9 @@ extern scenario_armhuman_func scenario_armhuman;
 typedef int (*linkitem_func)(int itemID, int childItemID, int parentHumanID, int slot);
 extern linkitem_func linkitem;
 
+typedef int (*item_setmemo_func)(int itemID, const char* memo);
+extern item_setmemo_func item_setmemo;
+
 typedef void (*human_applydamage_func)(int humanID, int bone, int unk, int damage);
 extern human_applydamage_func human_applydamage;
 

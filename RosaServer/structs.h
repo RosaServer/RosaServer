@@ -588,6 +588,7 @@ struct Item
 	bool unmount() const;
 	void speak(const char* message, int distance) const;
 	void explode() const;
+	void setMemo(const char* memo) const;
 };
 
 //20572 bytes (505C)

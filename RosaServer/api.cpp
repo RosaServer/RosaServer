@@ -1058,6 +1058,11 @@ void Item::explode() const
 	grenadeexplosion(getIndex());
 }
 
+void Item::setMemo(const char* memo) const
+{
+	item_setmemo(getIndex(), memo);
+}
+
 std::string Vehicle::__tostring() const
 {
 	char buf[16];
