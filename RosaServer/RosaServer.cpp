@@ -361,6 +361,8 @@ void luaInit(bool redo)
 		meta["money"] = &Account::money;
 		meta["corporateRating"] = &Account::corporateRating;
 		meta["criminalRating"] = &Account::criminalRating;
+		meta["spawnTimer"] = &Account::spawnTimer;
+		meta["playTime"] = &Account::playTime;
 		meta["banTime"] = &Account::banTime;
 
 		meta["class"] = sol::property(&Account::getClass);
