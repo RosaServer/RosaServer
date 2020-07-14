@@ -22,10 +22,10 @@ void h_logicsimulation_versus();
 
 extern subhook::Hook physicssimulation_hook;
 void h_physicssimulation();
-extern subhook::Hook recvpacket_hook;
-int h_recvpacket();
-extern subhook::Hook sendpacket_hook;
-void h_sendpacket();
+extern subhook::Hook serverrecv_hook;
+int h_serverrecv();
+extern subhook::Hook serversend_hook;
+void h_serversend();
 extern subhook::Hook bulletsimulation_hook;
 void h_bulletsimulation();
 
@@ -61,8 +61,8 @@ extern subhook::Hook human_grabbing_hook;
 void h_human_grabbing(int humanID);
 extern subhook::Hook grenadeexplosion_hook;
 void h_grenadeexplosion(int itemID);
-extern subhook::Hook chat_hook;
-int h_chat(int playerID, char* message);
+extern subhook::Hook server_playermessage_hook;
+int h_server_playermessage(int playerID, char* message);
 extern subhook::Hook playerai_hook;
 void h_playerai(int playerID);
 extern subhook::Hook playerdeathtax_hook;

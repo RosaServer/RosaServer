@@ -47,9 +47,9 @@ extern void_func logicsimulation_coop;
 extern void_func logicsimulation_versus;
 
 extern void_func physicssimulation;
-typedef int (*recvpacket_func)();
-extern recvpacket_func recvpacket;
-extern void_func sendpacket;
+typedef int (*serverrecv_func)();
+extern serverrecv_func serverrecv;
+extern void_func serversend;
 extern void_func bulletsimulation;
 extern void_func bullettimetolive;
 
@@ -77,8 +77,8 @@ extern void_index_func human_grabbing;
 
 extern void_index_func grenadeexplosion;
 
-typedef int (*chat_func)(int playerID, char* message);
-extern chat_func chat;
+typedef int (*server_playermessage_func)(int playerID, char* message);
+extern server_playermessage_func server_playermessage;
 extern void_index_func playerai;
 extern void_index_func playerdeathtax;
 

@@ -104,10 +104,10 @@ void_func logicsimulation_versus;
 
 subhook::Hook physicssimulation_hook;
 void_func physicssimulation;
-subhook::Hook recvpacket_hook;
-recvpacket_func recvpacket;
-subhook::Hook sendpacket_hook;
-void_func sendpacket;
+subhook::Hook serverrecv_hook;
+serverrecv_func serverrecv;
+subhook::Hook serversend_hook;
+void_func serversend;
 subhook::Hook bulletsimulation_hook;
 void_func bulletsimulation;
 void_func bullettimetolive;
@@ -130,8 +130,8 @@ subhook::Hook human_grabbing_hook;
 void_index_func human_grabbing;
 subhook::Hook grenadeexplosion_hook;
 void_index_func grenadeexplosion;
-subhook::Hook chat_hook;
-chat_func chat;
+subhook::Hook server_playermessage_hook;
+server_playermessage_func server_playermessage;
 subhook::Hook playerai_hook;
 void_index_func playerai;
 subhook::Hook playerdeathtax_hook;
@@ -827,8 +827,8 @@ static void Attach()
 	logicsimulation_versus = (void_func)(base + 0xB65F0);
 
 	physicssimulation = (void_func)(base + 0xA6CC0);
-	recvpacket = (recvpacket_func)(base + 0xC0BB0);
-	sendpacket = (void_func)(base + 0xBDBA0);
+	serverrecv = (serverrecv_func)(base + 0xC0BB0);
+	serversend = (void_func)(base + 0xBDBA0);
 	bulletsimulation = (void_func)(base + 0x98960);
 	bullettimetolive = (void_func)(base + 0x181B0);
 
@@ -843,7 +843,7 @@ static void Attach()
 	human_collisionvehicle = (human_collisionvehicle_func)(base + 0x7AF50);
 	human_grabbing = (void_index_func)(base + 0xA16D0);
 	grenadeexplosion = (void_index_func)(base + 0x2A990);
-	chat = (chat_func)(base + 0xA7B80);
+	server_playermessage = (server_playermessage_func)(base + 0xA7B80);
 	playerai = (void_index_func)(base + 0x96F80);
 	playerdeathtax = (void_index_func)(base + 0x2D70);
 
@@ -886,8 +886,8 @@ static void Attach()
 	logicsimulation_versus_hook.Install((void*)logicsimulation_versus, (void*)h_logicsimulation_versus, HOOK_FLAGS);
 
 	physicssimulation_hook.Install((void*)physicssimulation, (void*)h_physicssimulation, HOOK_FLAGS);
-	recvpacket_hook.Install((void*)recvpacket, (void*)h_recvpacket, HOOK_FLAGS);
-	sendpacket_hook.Install((void*)sendpacket, (void*)h_sendpacket, HOOK_FLAGS);
+	serverrecv_hook.Install((void*)serverrecv, (void*)h_serverrecv, HOOK_FLAGS);
+	serversend_hook.Install((void*)serversend, (void*)h_serversend, HOOK_FLAGS);
 	bulletsimulation_hook.Install((void*)bulletsimulation, (void*)h_bulletsimulation, HOOK_FLAGS);
 
 	createaccount_jointicket_hook.Install((void*)createaccount_jointicket, (void*)h_createaccount_jointicket, HOOK_FLAGS);
@@ -898,7 +898,7 @@ static void Attach()
 	human_collisionvehicle_hook.Install((void*)human_collisionvehicle, (void*)h_human_collisionvehicle, HOOK_FLAGS);
 	human_grabbing_hook.Install((void*)human_grabbing, (void*)h_human_grabbing, HOOK_FLAGS);
 	grenadeexplosion_hook.Install((void*)grenadeexplosion, (void*)h_grenadeexplosion, HOOK_FLAGS);
-	chat_hook.Install((void*)chat, (void*)h_chat, HOOK_FLAGS);
+	server_playermessage_hook.Install((void*)server_playermessage, (void*)h_server_playermessage, HOOK_FLAGS);
 	playerai_hook.Install((void*)playerai, (void*)h_playerai, HOOK_FLAGS);
 	playerdeathtax_hook.Install((void*)playerdeathtax, (void*)h_playerdeathtax, HOOK_FLAGS);
 

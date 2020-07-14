@@ -263,7 +263,7 @@ void h_physicssimulation()
 	}
 }
 
-int h_recvpacket()
+int h_serverrecv()
 {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
@@ -277,8 +277,8 @@ int h_recvpacket()
 	{
 		int ret;
 		{
-			subhook::ScopedHookRemove remove(&recvpacket_hook);
-			ret = recvpacket();
+			subhook::ScopedHookRemove remove(&serverrecv_hook);
+			ret = serverrecv();
 		}
 		if (func != sol::nil)
 		{
@@ -290,7 +290,7 @@ int h_recvpacket()
 	return -1;
 }
 
-void h_sendpacket()
+void h_serversend()
 {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
@@ -303,8 +303,8 @@ void h_sendpacket()
 	if (!noParent)
 	{
 		{
-			subhook::ScopedHookRemove remove(&sendpacket_hook);
-			sendpacket();
+			subhook::ScopedHookRemove remove(&serversend_hook);
+			serversend();
 		}
 		if (func != sol::nil)
 		{
@@ -737,7 +737,7 @@ void h_grenadeexplosion(int itemID)
 	}
 }
 
-int h_chat(int playerID, char* message)
+int h_server_playermessage(int playerID, char* message)
 {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
@@ -749,8 +749,8 @@ int h_chat(int playerID, char* message)
 	}
 	if (!noParent)
 	{
-		subhook::ScopedHookRemove remove(&chat_hook);
-		return chat(playerID, message);
+		subhook::ScopedHookRemove remove(&server_playermessage_hook);
+		return server_playermessage(playerID, message);
 	}
 	return 1;
 }
