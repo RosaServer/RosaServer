@@ -1,12 +1,6 @@
 #pragma once
 #include "structs.h"
 
-struct Version
-{
-	unsigned int major;
-	unsigned int build;
-};
-
 extern int* gameType;
 extern char* mapName;
 extern char* loadedMapName;

@@ -20,7 +20,8 @@ std::queue<std::string> consoleQueue;
 std::queue<LuaHTTPRequest> requestQueue;
 std::queue<LuaHTTPResponse> responseQueue;
 
-static Version* version;
+static unsigned int* version;
+static unsigned int* subVersion;
 static char* serverName;
 static unsigned int* serverPort;
 
@@ -275,8 +276,16 @@ struct Server
 	std::string getVersion() const
 	{
 		std::ostringstream stream;
-		stream << version->major << (char)(version->build + 97);
+		stream << *version << (char)(*subVersion + 97);
 		return stream.str();
+	}
+	unsigned int getVersionMajor() const
+	{
+		return *version;
+	}
+	unsigned int getVersionMinor() const
+	{
+		return *subVersion;
 	}
 
 	void setConsoleTitle(const char* title) const
@@ -336,6 +345,8 @@ void luaInit(bool redo)
 		meta["time"] = sol::property(&Server::getTime, &Server::setTime);
 		meta["sunTime"] = sol::property(&Server::getSunTime, &Server::setSunTime);
 		meta["version"] = sol::property(&Server::getVersion);
+		meta["versionMajor"] = sol::property(&Server::getVersionMajor);
+		meta["versionMinor"] = sol::property(&Server::getVersionMinor);
 
 		meta["setConsoleTitle"] = &Server::setConsoleTitle;
 		meta["reset"] = &Server::reset;
@@ -781,7 +792,8 @@ static void Attach()
 
 	// Locate everything
 
-	version = (Version*)(base + 0xD52E440);
+	version = (unsigned int*)(base + 0x2D5F08);
+	subVersion = (unsigned int*)(base + 0x2D5F04);
 	serverName = (char*)(base + 0x24EE4234);
 	serverPort = (unsigned int*)(base + 0x24EE4640);
 	isPassworded = (int*)(base + 0x24EE4644);
