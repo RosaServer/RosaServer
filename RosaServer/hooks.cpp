@@ -338,6 +338,30 @@ void h_bulletsimulation()
 	}
 }
 
+void h_saveaccountsserver()
+{
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil)
+	{
+		auto res = func("AccountsSave");
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
+	}
+	if (!noParent)
+	{
+		{
+			subhook::ScopedHookRemove remove(&saveaccountsserver_hook);
+			saveaccountsserver();
+		}
+		if (func != sol::nil)
+		{
+			auto res = func("AccountsSave");
+			noLuaCallError(&res);
+		}
+	}
+}
+
 int h_createaccount_jointicket(int identifier, unsigned int ticket)
 {
 	bool noParent = false;

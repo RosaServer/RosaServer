@@ -47,6 +47,8 @@ extern void_func serversend;
 extern void_func bulletsimulation;
 extern void_func bullettimetolive;
 
+extern void_func saveaccountsserver;
+
 typedef int (*createaccount_jointicket_func)(int identifier, unsigned int ticket);
 extern createaccount_jointicket_func createaccount_jointicket;
 typedef void (*server_sendconnectreponse_func)(unsigned int address, unsigned int port, const char* message);

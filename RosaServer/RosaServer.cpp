@@ -113,6 +113,9 @@ subhook::Hook bulletsimulation_hook;
 void_func bulletsimulation;
 void_func bullettimetolive;
 
+subhook::Hook saveaccountsserver_hook;
+void_func saveaccountsserver;
+
 subhook::Hook createaccount_jointicket_hook;
 createaccount_jointicket_func createaccount_jointicket;
 // Alex Austin's typo
@@ -666,6 +669,7 @@ void luaInit(bool redo)
 	(*lua)["chat"]["addRaw"] = l_chat_addRaw;
 
 	(*lua)["accounts"] = lua->create_table();
+	(*lua)["accounts"]["save"] = l_accounts_save;
 	(*lua)["accounts"]["getCount"] = l_accounts_getCount;
 	(*lua)["accounts"]["getAll"] = l_accounts_getAll;
 	(*lua)["accounts"]["getByPhone"] = l_accounts_getByPhone;
@@ -844,6 +848,8 @@ static void Attach()
 	bulletsimulation = (void_func)(base + 0x98960);
 	bullettimetolive = (void_func)(base + 0x181B0);
 
+	saveaccountsserver = (void_func)(base + 0x6CC0);
+
 	createaccount_jointicket = (createaccount_jointicket_func)(base + 0x65D0);
 	server_sendconnectreponse = (server_sendconnectreponse_func)(base + 0xB8FD0);
 
@@ -901,6 +907,8 @@ static void Attach()
 	serverrecv_hook.Install((void*)serverrecv, (void*)h_serverrecv, HOOK_FLAGS);
 	serversend_hook.Install((void*)serversend, (void*)h_serversend, HOOK_FLAGS);
 	bulletsimulation_hook.Install((void*)bulletsimulation, (void*)h_bulletsimulation, HOOK_FLAGS);
+
+	saveaccountsserver_hook.Install((void*)saveaccountsserver, (void*)h_saveaccountsserver, HOOK_FLAGS);
 
 	createaccount_jointicket_hook.Install((void*)createaccount_jointicket, (void*)h_createaccount_jointicket, HOOK_FLAGS);
 	server_sendconnectreponse_hook.Install((void*)server_sendconnectreponse, (void*)h_server_sendconnectreponse, HOOK_FLAGS);

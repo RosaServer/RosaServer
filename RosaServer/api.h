@@ -102,6 +102,7 @@ void l_chat_announce(const char* message);
 void l_chat_tellAdmins(const char* message);
 void l_chat_addRaw(int type, const char* message, int speakerID, int distance);
 
+void l_accounts_save();
 int l_accounts_getCount();
 sol::table l_accounts_getAll();
 Account* l_accounts_getByPhone(int phone);

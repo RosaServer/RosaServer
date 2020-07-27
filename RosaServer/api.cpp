@@ -388,6 +388,12 @@ void l_chat_addRaw(int type, const char* message, int speakerID, int distance)
 	createevent_message(type, (char*)message, speakerID, distance);
 }
 
+void l_accounts_save()
+{
+	subhook::ScopedHookRemove remove(&saveaccountsserver_hook);
+	saveaccountsserver();
+}
+
 int l_accounts_getCount()
 {
 	int count = 0;

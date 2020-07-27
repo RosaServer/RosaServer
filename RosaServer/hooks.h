@@ -29,6 +29,9 @@ void h_serversend();
 extern subhook::Hook bulletsimulation_hook;
 void h_bulletsimulation();
 
+extern subhook::Hook saveaccountsserver_hook;
+void h_saveaccountsserver();
+
 extern subhook::Hook createaccount_jointicket_hook;
 int h_createaccount_jointicket(int identifier, unsigned int ticket);
 extern subhook::Hook server_sendconnectreponse_hook;
