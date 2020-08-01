@@ -5,6 +5,7 @@
 
 #include <queue>
 #include <thread>
+#include <mutex>
 #include "httplib.h"
 
 #define RESET_REASON_BOOT 0
@@ -19,6 +20,7 @@ extern sol::state* lua;
 extern std::string hookMode;
 
 extern std::queue<std::string> consoleQueue;
+extern std::mutex consoleQueueMutex;
 
 enum LuaRequestType
 {
@@ -48,7 +50,9 @@ struct LuaHTTPResponse
 };
 
 extern std::queue<LuaHTTPRequest> requestQueue;
+extern std::mutex requestQueueMutex;
 extern std::queue<LuaHTTPResponse> responseQueue;
+extern std::mutex responseQueueMutex;
 
 void HTTPThread();
 

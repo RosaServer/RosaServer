@@ -56,21 +56,33 @@ void h_logicsimulation()
 		}
 	}
 
-	while (!consoleQueue.empty())
 	{
-		if (func != sol::nil)
+		std::lock_guard<std::mutex> guard(consoleQueueMutex);
+		while (!consoleQueue.empty())
 		{
-			auto res = func("ConsoleInput", consoleQueue.front());
-			noLuaCallError(&res);
+			if (func != sol::nil)
+			{
+				auto res = func("ConsoleInput", consoleQueue.front());
+				noLuaCallError(&res);
+			}
+			consoleQueue.pop();
 		}
-		consoleQueue.pop();
 	}
 
-	while (!responseQueue.empty())
+	while (true)
 	{
+		responseQueueMutex.lock();
+		if (responseQueue.empty())
+		{
+			responseQueueMutex.unlock();
+			break;
+		}
+		auto res = responseQueue.front();
+		responseQueue.pop();
+		responseQueueMutex.unlock();
+
 		if (func != sol::nil)
 		{
-			auto res = responseQueue.front();
 			if (res.responded)
 			{
 				sol::table table = lua->create_table();
@@ -91,7 +103,6 @@ void h_logicsimulation()
 				noLuaCallError(&resf);
 			}
 		}
-		responseQueue.pop();
 	}
 }
 

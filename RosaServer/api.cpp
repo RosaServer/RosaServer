@@ -55,6 +55,7 @@ class tcon : public tinyConsole
 
 	int trigger(std::string s)
 	{
+		std::lock_guard<std::mutex> guard(consoleQueueMutex);
 		consoleQueue.push(s);
 		return 0;
 	}
@@ -104,6 +105,7 @@ void l_http_get(const char* host, int port, const char* path, sol::table headers
 	for (const auto& pair : headers)
 		request.headers.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
 
+	std::lock_guard<std::mutex> guard(requestQueueMutex);
 	requestQueue.push(request);
 }
 
@@ -121,6 +123,7 @@ void l_http_post(const char* host, int port, const char* path, sol::table header
 	for (const auto& pair : headers)
 		request.headers.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
 
+	std::lock_guard<std::mutex> guard(requestQueueMutex);
 	requestQueue.push(request);
 }
 
@@ -128,10 +131,17 @@ void HTTPThread()
 {
 	while (true)
 	{
-		while (!requestQueue.empty())
+		while (true)
 		{
+			requestQueueMutex.lock();
+			if (requestQueue.empty())
+			{
+				requestQueueMutex.unlock();
+				break;
+			}
 			auto req = requestQueue.front();
-			//printf("new http request\n");
+			requestQueue.pop();
+			requestQueueMutex.unlock();
 
 			httplib::Client client(req.host.c_str(), req.port);
 			client.set_timeout_sec(6);
@@ -151,8 +161,6 @@ void HTTPThread()
 					break;
 			}
 
-			//printf("yup\n");
-
 			if (res)
 			{
 				LuaHTTPResponse response{
@@ -161,6 +169,7 @@ void HTTPThread()
 						res->status,
 						res->body,
 						res->headers};
+				std::lock_guard<std::mutex> guard(responseQueueMutex);
 				responseQueue.push(response);
 			}
 			else
@@ -168,12 +177,9 @@ void HTTPThread()
 				LuaHTTPResponse response{
 						req.identifier,
 						false};
+				std::lock_guard<std::mutex> guard(responseQueueMutex);
 				responseQueue.push(response);
 			}
-
-			requestQueue.pop();
-
-			//printf("popped\n");
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}

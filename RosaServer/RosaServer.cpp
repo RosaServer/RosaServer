@@ -17,8 +17,11 @@ sol::state* lua;
 std::string hookMode;
 
 std::queue<std::string> consoleQueue;
+std::mutex consoleQueueMutex;
 std::queue<LuaHTTPRequest> requestQueue;
+std::mutex requestQueueMutex;
 std::queue<LuaHTTPResponse> responseQueue;
+std::mutex responseQueueMutex;
 
 static unsigned int* version;
 static unsigned int* subVersion;
