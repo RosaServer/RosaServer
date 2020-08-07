@@ -862,12 +862,7 @@ void Human::setVehicle(Vehicle* vcl)
 		vehicleID = vcl->getIndex();
 }
 
-Vector Human::getPos() const
-{
-	return pos;
-};
-
-void Human::setPos(Vector* vec)
+void Human::teleport(Vector* vec)
 {
 	float offX = vec->x - pos.x;
 	float offY = vec->y - pos.y;
@@ -1073,6 +1068,25 @@ void Item::explode() const
 void Item::setMemo(const char* memo) const
 {
 	item_setmemo(getIndex(), memo);
+}
+
+void Item::computerTransmitLine(unsigned int line) const
+{
+	item_computertransmitline(getIndex(), line);
+}
+
+void Item::computerSetLine(unsigned int line, const char* newLine)
+{
+	if (line >= 32)
+		throw std::runtime_error("Index out of range");
+	std::strncpy(computerLines[line], newLine, 63);
+}
+
+void Item::computerSetColor(unsigned int line, unsigned int column, unsigned char color)
+{
+	if (line >= 32 || column >= 64)
+		throw std::runtime_error("Index out of range");
+	computerLineColors[line][column] = color;
 }
 
 std::string Vehicle::__tostring() const

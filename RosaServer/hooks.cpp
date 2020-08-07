@@ -676,6 +676,30 @@ int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot)
 	return 0;
 }
 
+void h_item_computerinput(int itemID, unsigned int character)
+{
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil)
+	{
+		auto res = func("ItemComputerInput", &items[itemID], character);
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
+	}
+	if (!noParent)
+	{
+		{
+			subhook::ScopedHookRemove remove(&item_computerinput_hook);
+			item_computerinput(itemID, character);
+		}
+		if (func != sol::nil)
+		{
+			auto res = func("PostItemComputerInput", &items[itemID], character);
+			noLuaCallError(&res);
+		}
+	}
+}
+
 void h_human_applydamage(int humanID, int bone, int unk, int damage)
 {
 	bool noParent = false;

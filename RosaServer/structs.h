@@ -463,8 +463,7 @@ struct Human
 	void setLeftHandGrab(Human* man);
 
 	void remove() const;
-	Vector getPos() const;
-	void setPos(Vector* vec);
+	void teleport(Vector* vec);
 	void speak(const char* message, int distance) const;
 	void arm(int weapon, int magCount) const;
 	void setVelocity(Vector* vel) const;
@@ -547,7 +546,17 @@ struct Item
 	RotMatrix rot;	//a4
 		char unk6[0x144 - 0xa4 - 36];
 	int bullets;	//144
-		char unk7[6784 - 328];
+		char unk7[0x368 - 0x144 - 4];
+	unsigned int computerCurrentLine; //368
+	unsigned int computerTopLine; //36c
+	//-1 for no cursor
+	int computerCursor; //370
+	char computerLines[32][64]; //374
+		char unk8[0xb74 - 0x374 - (64 * 32)];
+	unsigned char computerLineColors[32][64]; //b74
+		char unk9[0x1658 - 0xb74 - (64 * 32)];
+	int computerTeam; //1658
+		char unk10[6784 - 5724];
 
 	const char* getClass() const
 	{
@@ -589,6 +598,9 @@ struct Item
 	void speak(const char* message, int distance) const;
 	void explode() const;
 	void setMemo(const char* memo) const;
+	void computerTransmitLine(unsigned int line) const;
+	void computerSetLine(unsigned int line, const char* newLine);
+	void computerSetColor(unsigned int line, unsigned int column, unsigned char color);
 };
 
 //20572 bytes (505C)

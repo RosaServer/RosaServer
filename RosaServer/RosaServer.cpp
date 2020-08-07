@@ -74,18 +74,13 @@ static void pryMemory(void* address, size_t numPages)
 }
 
 /*static subhook::Hook _test_hook;
-typedef void(*_test_func)(int, const char*);
+typedef void(*_test_func)(int);
 static _test_func _test;
 
-//25f80
-void h__test(int x, const char* y) {
-	printf("test %i %s\n", x, y);
-	printf("removing\n");
-	subhook::ScopedHookRemove remove(&_test_hook);
-	printf("calling\n");
-	_test(x, y);
-	//printf("done %i\n", ret);
-	//return ret;
+void h__test(int x) {
+	printf("test %i\n", x);
+	//subhook::ScopedHookRemove remove(&_test_hook);
+	//_test(x);
 }*/
 
 subhook::Hook resetgame_hook;
@@ -129,6 +124,9 @@ scenario_armhuman_func scenario_armhuman;
 subhook::Hook linkitem_hook;
 linkitem_func linkitem;
 item_setmemo_func item_setmemo;
+item_computertransmitline_func item_computertransmitline;
+subhook::Hook item_computerinput_hook;
+item_computerinput_func item_computerinput;
 subhook::Hook human_applydamage_hook;
 human_applydamage_func human_applydamage;
 subhook::Hook human_collisionvehicle_hook;
@@ -471,6 +469,7 @@ void luaInit(bool redo)
 		meta["movementState"] = &Human::movementState;
 		meta["zoomLevel"] = &Human::zoomLevel;
 		meta["damage"] = &Human::damage;
+		meta["pos"] = &Human::pos;
 		meta["viewYaw"] = &Human::viewYaw;
 		meta["viewPitch"] = &Human::viewPitch;
 		meta["strafeInput"] = &Human::strafeInput;
@@ -509,8 +508,7 @@ void luaInit(bool redo)
 		meta["leftHandGrab"] = sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
 
 		meta["remove"] = &Human::remove;
-		meta["getPos"] = &Human::getPos;
-		meta["setPos"] = &Human::setPos;
+		meta["teleport"] = &Human::teleport;
 		meta["speak"] = &Human::speak;
 		meta["arm"] = &Human::arm;
 		meta["getBone"] = &Human::getBone;
@@ -549,6 +547,9 @@ void luaInit(bool redo)
 		meta["vel"] = &Item::vel;
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
+		meta["computerCurrentLine"] = &Item::computerCurrentLine;
+		meta["computerTopLine"] = &Item::computerTopLine;
+		meta["computerCursor"] = &Item::computerCursor;
 
 		meta["class"] = sol::property(&Item::getClass);
 		meta["__tostring"] = &Item::__tostring;
@@ -566,6 +567,9 @@ void luaInit(bool redo)
 		meta["speak"] = &Item::speak;
 		meta["explode"] = &Item::explode;
 		meta["setMemo"] = &Item::setMemo;
+		meta["computerTransmitLine"] = &Item::computerTransmitLine;
+		meta["computerSetLine"] = &Item::computerSetLine;
+		meta["computerSetColor"] = &Item::computerSetColor;
 	}
 
 	{
@@ -832,7 +836,7 @@ static void Attach()
 	numConnections = (unsigned int*)(base + 0x4532F468);
 	numBullets = (unsigned int*)(base + 0x4532F240);
 
-	//_test = (_test_func)(base + 0x25f80);
+	//_test = (_test_func)(base + 0x263a0);
 	//pryMemory(&_test, 2);
 
 	resetgame = (void_func)(base + 0xB10B0);
@@ -859,6 +863,8 @@ static void Attach()
 	scenario_armhuman = (scenario_armhuman_func)(base + 0x4FDD0);
 	linkitem = (linkitem_func)(base + 0x2B060);
 	item_setmemo = (item_setmemo_func)(base + 0x25F80);
+	item_computertransmitline = (item_computertransmitline_func)(base + 0x26100);
+	item_computerinput = (item_computerinput_func)(base + 0x4e620);
 
 	human_applydamage = (human_applydamage_func)(base + 0x1E1D0);
 	human_collisionvehicle = (human_collisionvehicle_func)(base + 0x7AF50);
@@ -917,6 +923,7 @@ static void Attach()
 	server_sendconnectreponse_hook.Install((void*)server_sendconnectreponse, (void*)h_server_sendconnectreponse, HOOK_FLAGS);
 
 	linkitem_hook.Install((void*)linkitem, (void*)h_linkitem, HOOK_FLAGS);
+	item_computerinput_hook.Install((void*)item_computerinput, (void*)h_item_computerinput, HOOK_FLAGS);
 	human_applydamage_hook.Install((void*)human_applydamage, (void*)h_human_applydamage, HOOK_FLAGS);
 	human_collisionvehicle_hook.Install((void*)human_collisionvehicle, (void*)h_human_collisionvehicle, HOOK_FLAGS);
 	human_grabbing_hook.Install((void*)human_grabbing, (void*)h_human_grabbing, HOOK_FLAGS);

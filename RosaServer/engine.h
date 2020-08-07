@@ -62,6 +62,10 @@ extern linkitem_func linkitem;
 
 typedef int (*item_setmemo_func)(int itemID, const char* memo);
 extern item_setmemo_func item_setmemo;
+typedef int (*item_computertransmitline_func)(int itemID, unsigned int line);
+extern item_computertransmitline_func item_computertransmitline;
+typedef int (*item_computerinput_func)(int itemID, unsigned int character);
+extern item_computerinput_func item_computerinput;
 
 typedef void (*human_applydamage_func)(int humanID, int bone, int unk, int damage);
 extern human_applydamage_func human_applydamage;

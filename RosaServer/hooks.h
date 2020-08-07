@@ -56,6 +56,8 @@ void h_deleteobject(int vehicleID);
 
 extern subhook::Hook linkitem_hook;
 int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot);
+extern subhook::Hook item_computerinput_hook;
+void h_item_computerinput(int itemID, unsigned int character);
 extern subhook::Hook human_applydamage_hook;
 void h_human_applydamage(int humanID, int bone, int unk, int damage);
 extern subhook::Hook human_collisionvehicle_hook;
