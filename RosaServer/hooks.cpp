@@ -461,6 +461,12 @@ int h_createplayer()
 		{
 			subhook::ScopedHookRemove remove(&createplayer_hook);
 			id = createplayer();
+
+			if (id != -1 && playerDataTables[id])
+			{
+				delete playerDataTables[id];
+				playerDataTables[id] = nullptr;
+			}
 		}
 		if (func != sol::nil && id != -1)
 		{
@@ -487,6 +493,12 @@ void h_deleteplayer(int playerID)
 		{
 			subhook::ScopedHookRemove remove(&deleteplayer_hook);
 			deleteplayer(playerID);
+
+			if (playerDataTables[playerID])
+			{
+				delete playerDataTables[playerID];
+				playerDataTables[playerID] = nullptr;
+			}
 		}
 		if (func != sol::nil)
 		{
@@ -512,6 +524,12 @@ int h_createhuman(Vector* pos, RotMatrix* rot, int playerID)
 		{
 			subhook::ScopedHookRemove remove(&createhuman_hook);
 			id = createhuman(pos, rot, playerID);
+
+			if (id != -1 && humanDataTables[id])
+			{
+				delete humanDataTables[id];
+				humanDataTables[id] = nullptr;
+			}
 		}
 		if (func != sol::nil && id != -1)
 		{
@@ -538,6 +556,12 @@ void h_deletehuman(int humanID)
 		{
 			subhook::ScopedHookRemove remove(&deletehuman_hook);
 			deletehuman(humanID);
+
+			if (humanDataTables[humanID])
+			{
+				delete humanDataTables[humanID];
+				humanDataTables[humanID] = nullptr;
+			}
 		}
 		if (func != sol::nil)
 		{
@@ -563,6 +587,12 @@ int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot)
 		{
 			subhook::ScopedHookRemove remove(&createitem_hook);
 			id = createitem(type, pos, vel, rot);
+
+			if (id != -1 && itemDataTables[id])
+			{
+				delete itemDataTables[id];
+				itemDataTables[id] = nullptr;
+			}
 		}
 		if (id != -1 && func != sol::nil)
 		{
@@ -589,6 +619,12 @@ void h_deleteitem(int itemID)
 		{
 			subhook::ScopedHookRemove remove(&deleteitem_hook);
 			deleteitem(itemID);
+
+			if (itemDataTables[itemID])
+			{
+				delete itemDataTables[itemID];
+				itemDataTables[itemID] = nullptr;
+			}
 		}
 		if (func != sol::nil)
 		{
@@ -614,6 +650,12 @@ int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color
 		{
 			subhook::ScopedHookRemove remove(&createobject_hook);
 			id = createobject(type, pos, vel, rot, color);
+
+			if (id != -1 && vehicleDataTables[id])
+			{
+				delete vehicleDataTables[id];
+				vehicleDataTables[id] = nullptr;
+			}
 		}
 		if (id != -1 && func != sol::nil)
 		{
@@ -640,6 +682,12 @@ void h_deleteobject(int vehicleID)
 		{
 			subhook::ScopedHookRemove remove(&deleteobject_hook);
 			deleteobject(vehicleID);
+
+			if (vehicleDataTables[vehicleID])
+			{
+				delete vehicleDataTables[vehicleID];
+				vehicleDataTables[vehicleID] = nullptr;
+			}
 		}
 		if (func != sol::nil)
 		{

@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <string>
+#include "sol.hpp"
 
 #define MAXNUMOFACCOUNTS 32768
 #define MAXNUMOFPLAYERS 256
@@ -227,6 +228,7 @@ struct Player
 	{
 		active = b;
 	}
+	sol::table getDataTable() const;
 	char* getName()
 	{
 		return name;
@@ -418,6 +420,7 @@ struct Human
 	{
 		active = b;
 	}
+	sol::table getDataTable() const;
 	bool getIsAlive() const
 	{
 		return oldHealth > 0;
@@ -572,6 +575,7 @@ struct Item
 	{
 		active = b;
 	}
+	sol::table getDataTable() const;
 	bool getHasPhysics() const
 	{
 		return physicsSim;
@@ -656,6 +660,7 @@ struct Vehicle
 	{
 		active = b;
 	}
+	sol::table getDataTable() const;
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
 

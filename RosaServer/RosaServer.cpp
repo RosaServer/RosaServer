@@ -16,6 +16,11 @@ bool shouldReset = false;
 sol::state* lua;
 std::string hookMode;
 
+sol::table* playerDataTables[MAXNUMOFPLAYERS];
+sol::table* humanDataTables[MAXNUMOFHUMANS];
+sol::table* itemDataTables[MAXNUMOFITEMS];
+sol::table* vehicleDataTables[MAXNUMOFVEHICLES];
+
 std::queue<std::string> consoleQueue;
 std::mutex consoleQueueMutex;
 std::queue<LuaHTTPRequest> requestQueue;
@@ -310,6 +315,43 @@ void luaInit(bool redo)
 	{
 		printf("\n[RS] Resetting state...\n");
 		delete server;
+
+		for (int i = 0; i < MAXNUMOFPLAYERS; i++)
+		{
+			if (playerDataTables[i])
+			{
+				delete playerDataTables[i];
+				playerDataTables[i] = nullptr;
+			}
+		}
+
+		for (int i = 0; i < MAXNUMOFHUMANS; i++)
+		{
+			if (humanDataTables[i])
+			{
+				delete humanDataTables[i];
+				humanDataTables[i] = nullptr;
+			}
+		}
+
+		for (int i = 0; i < MAXNUMOFITEMS; i++)
+		{
+			if (itemDataTables[i])
+			{
+				delete itemDataTables[i];
+				itemDataTables[i] = nullptr;
+			}
+		}
+
+		for (int i = 0; i < MAXNUMOFVEHICLES; i++)
+		{
+			if (vehicleDataTables[i])
+			{
+				delete vehicleDataTables[i];
+				vehicleDataTables[i] = nullptr;
+			}
+		}
+
 		delete lua;
 	}
 	else
@@ -447,6 +489,7 @@ void luaInit(bool redo)
 		meta["__tostring"] = &Player::__tostring;
 		meta["index"] = sol::property(&Player::getIndex);
 		meta["isActive"] = sol::property(&Player::getIsActive, &Player::setIsActive);
+		meta["data"] = sol::property(&Player::getDataTable);
 		meta["name"] = sol::property(&Player::getName, &Player::setName);
 		meta["isAdmin"] = sol::property(&Player::getIsAdmin, &Player::setIsAdmin);
 		meta["isReady"] = sol::property(&Player::getIsReady, &Player::setIsReady);
@@ -495,6 +538,7 @@ void luaInit(bool redo)
 		meta["__tostring"] = &Human::__tostring;
 		meta["index"] = sol::property(&Human::getIndex);
 		meta["isActive"] = sol::property(&Human::getIsActive, &Human::setIsActive);
+		meta["data"] = sol::property(&Human::getDataTable);
 		meta["isAlive"] = sol::property(&Human::getIsAlive, &Human::setIsAlive);
 		meta["isImmortal"] = sol::property(&Human::getIsImmortal, &Human::setIsImmortal);
 		meta["isOnGround"] = sol::property(&Human::getIsOnGround);
@@ -555,6 +599,7 @@ void luaInit(bool redo)
 		meta["__tostring"] = &Item::__tostring;
 		meta["index"] = sol::property(&Item::getIndex);
 		meta["isActive"] = sol::property(&Item::getIsActive, &Item::setIsActive);
+		meta["data"] = sol::property(&Item::getDataTable);
 		meta["hasPhysics"] = sol::property(&Item::getHasPhysics, &Item::setHasPhysics);
 		meta["physicsSettled"] = sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
@@ -601,6 +646,7 @@ void luaInit(bool redo)
 		meta["__tostring"] = &Vehicle::__tostring;
 		meta["index"] = sol::property(&Vehicle::getIndex);
 		meta["isActive"] = sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
+		meta["data"] = sol::property(&Vehicle::getDataTable);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
 		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);
 

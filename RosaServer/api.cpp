@@ -313,6 +313,13 @@ Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot)
 {
 	subhook::ScopedHookRemove remove(&createitem_hook);
 	int id = createitem(itemType, pos, nullptr, rot);
+
+	if (id != -1 && itemDataTables[id])
+	{
+		delete itemDataTables[id];
+		itemDataTables[id] = nullptr;
+	}
+
 	return id == -1 ? nullptr : &items[id];
 }
 
@@ -320,6 +327,13 @@ Item* l_items_createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot)
 {
 	subhook::ScopedHookRemove remove(&createitem_hook);
 	int id = createitem(itemType, pos, vel, rot);
+
+	if (id != -1 && itemDataTables[id])
+	{
+		delete itemDataTables[id];
+		itemDataTables[id] = nullptr;
+	}
+
 	return id == -1 ? nullptr : &items[id];
 }
 
@@ -362,6 +376,13 @@ Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color)
 {
 	subhook::ScopedHookRemove remove(&createobject_hook);
 	int id = createobject(type, pos, nullptr, rot, color);
+
+	if (id != -1 && vehicleDataTables[id])
+	{
+		delete vehicleDataTables[id];
+		vehicleDataTables[id] = nullptr;
+	}
+
 	return id == -1 ? nullptr : &vehicles[id];
 }
 
@@ -369,6 +390,13 @@ Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot
 {
 	subhook::ScopedHookRemove remove(&createobject_hook);
 	int id = createobject(type, pos, vel, rot, color);
+
+	if (id != -1 && vehicleDataTables[id])
+	{
+		delete vehicleDataTables[id];
+		vehicleDataTables[id] = nullptr;
+	}
+
 	return id == -1 ? nullptr : &vehicles[id];
 }
 
@@ -501,6 +529,13 @@ Player* l_players_createBot()
 	subhook::ScopedHookRemove remove(&createplayer_hook);
 	int playerID = createplayer();
 	if (playerID == -1) return nullptr;
+
+	if (playerDataTables[playerID])
+	{
+		delete playerDataTables[playerID];
+		playerDataTables[playerID] = nullptr;
+	}
+
 	auto ply = &players[playerID];
 	ply->subRosaID = 0;
 	ply->isBot = 1;
@@ -553,6 +588,13 @@ Human* l_humans_create(Vector* pos, RotMatrix* rot, Player* ply)
 	}
 	if (humanID == -1)
 		return nullptr;
+
+	if (humanDataTables[humanID])
+	{
+		delete humanDataTables[humanID];
+		humanDataTables[humanID] = nullptr;
+	}
+
 	auto man = &humans[humanID];
 	man->playerID = playerID;
 	ply->humanID = humanID;
@@ -748,6 +790,18 @@ int Player::getIndex() const
 	return ((uintptr_t)this - (uintptr_t)players) / sizeof(*this);
 }
 
+sol::table Player::getDataTable() const
+{
+	int index = getIndex();
+
+	if (!playerDataTables[index])
+	{
+		playerDataTables[index] = new sol::table(lua->lua_state(), sol::create);
+	}
+
+	return *playerDataTables[index];
+}
+
 void Player::update() const
 {
 	subhook::ScopedHookRemove remove(&createevent_updateplayer_hook);
@@ -762,8 +816,16 @@ void Player::updateFinance() const
 
 void Player::remove() const
 {
+	int index = getIndex();
+
 	subhook::ScopedHookRemove remove(&deleteplayer_hook);
-	deleteplayer(getIndex());
+	deleteplayer(index);
+
+	if (playerDataTables[index])
+	{
+		delete playerDataTables[index];
+		playerDataTables[index] = nullptr;
+	}
 }
 
 void Player::sendMessage(const char* message) const
@@ -834,10 +896,30 @@ int Human::getIndex() const
 	return ((uintptr_t)this - (uintptr_t)humans) / sizeof(*this);
 }
 
+sol::table Human::getDataTable() const
+{
+	int index = getIndex();
+
+	if (!humanDataTables[index])
+	{
+		humanDataTables[index] = new sol::table(lua->lua_state(), sol::create);
+	}
+
+	return *humanDataTables[index];
+}
+
 void Human::remove() const
 {
+	int index = getIndex();
+
 	subhook::ScopedHookRemove remove(&deletehuman_hook);
-	deletehuman(getIndex());
+	deletehuman(index);
+
+	if (humanDataTables[index])
+	{
+		delete humanDataTables[index];
+		humanDataTables[index] = nullptr;
+	}
 }
 
 Player* Human::getPlayer() const
@@ -1020,10 +1102,30 @@ int Item::getIndex() const
 	return ((uintptr_t)this - (uintptr_t)items) / sizeof(*this);
 }
 
+sol::table Item::getDataTable() const
+{
+	int index = getIndex();
+
+	if (!itemDataTables[index])
+	{
+		itemDataTables[index] = new sol::table(lua->lua_state(), sol::create);
+	}
+
+	return *itemDataTables[index];
+}
+
 void Item::remove() const
 {
+	int index = getIndex();
+
 	subhook::ScopedHookRemove remove(&deleteitem_hook);
-	deleteitem(getIndex());
+	deleteitem(index);
+
+	if (itemDataTables[index])
+	{
+		delete itemDataTables[index];
+		itemDataTables[index] = nullptr;
+	}
 }
 
 Human* Item::getParentHuman() const
@@ -1101,6 +1203,18 @@ int Vehicle::getIndex() const
 	return ((uintptr_t)this - (uintptr_t)vehicles) / sizeof(*this);
 }
 
+sol::table Vehicle::getDataTable() const
+{
+	int index = getIndex();
+
+	if (!vehicleDataTables[index])
+	{
+		vehicleDataTables[index] = new sol::table(lua->lua_state(), sol::create);
+	}
+
+	return *vehicleDataTables[index];
+}
+
 void Vehicle::updateType() const
 {
 	createevent_createobject(getIndex());
@@ -1114,7 +1228,14 @@ void Vehicle::updateDestruction(int updateType, int partID, Vector* pos, Vector*
 
 void Vehicle::remove() const
 {
-	deleteobject(getIndex());
+	int index = getIndex();
+	deleteobject(index);
+
+	if (vehicleDataTables[index])
+	{
+		delete vehicleDataTables[index];
+		vehicleDataTables[index] = nullptr;
+	}
 }
 
 Player* Vehicle::getLastDriver() const
