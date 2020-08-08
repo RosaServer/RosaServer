@@ -530,7 +530,7 @@ struct Item
 	int physicsSettled;	 //08
 	//counts to 60 ticks before settling
 	int physicsSettledTimer; //0c
-		int unk1;						 //10
+	int isStatic;						 //10
 	int type;						 //14
 		int unk2;						 //18
 	int despawnTime;		 //1c
@@ -591,6 +591,14 @@ struct Item
 	void setPhysicsSettled(bool b)
 	{
 		physicsSettled = b;
+	}
+	bool getIsStatic() const
+	{
+		return isStatic;
+	}
+	void setIsStatic(bool b)
+	{
+		isStatic = b;
 	}
 
 	void remove() const;
