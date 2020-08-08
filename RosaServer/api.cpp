@@ -144,8 +144,8 @@ void HTTPThread()
 			requestQueueMutex.unlock();
 
 			httplib::Client client(req.host.c_str(), req.port);
-			client.set_timeout_sec(6);
-			client.set_keep_alive_max_count(0);
+			client.set_connection_timeout(6);
+			client.set_keep_alive(false);
 
 			std::shared_ptr<httplib::Response> res;
 
