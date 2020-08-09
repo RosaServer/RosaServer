@@ -35,6 +35,7 @@ static unsigned int* serverPort;
 
 static int* isPassworded;
 static char* password;
+static int* maxPlayers;
 
 int* gameType;
 char* mapName;
@@ -218,6 +219,14 @@ struct Server
 		strncpy(password, newPassword, 31);
 		*isPassworded = newPassword[0] != 0;
 	}
+	int getMaxPlayers() const
+	{
+		return *maxPlayers;
+	}
+	void setMaxPlayers(int max) const
+	{
+		*maxPlayers = max;
+	}
 	int getType() const
 	{
 		return *gameType;
@@ -381,6 +390,7 @@ void luaInit(bool redo)
 		meta["port"] = sol::property(&Server::getPort);
 		meta["name"] = sol::property(&Server::getName, &Server::setName);
 		meta["password"] = sol::property(&Server::getPassword, &Server::setPassword);
+		meta["maxPlayers"] = sol::property(&Server::getMaxPlayers, &Server::setMaxPlayers);
 		meta["type"] = sol::property(&Server::getType, &Server::setType);
 		meta["levelToLoad"] = sol::property(&Server::getLevelName, &Server::setLevelName);
 		meta["loadedLevel"] = sol::property(&Server::getLoadedLevelName);
@@ -856,6 +866,7 @@ static void Attach()
 	serverPort = (unsigned int*)(base + 0x24EE4640);
 	isPassworded = (int*)(base + 0x24EE4644);
 	password = (char*)(base + 0x1CC6D48C);
+	maxPlayers = (int*)(base + 0x24EE4648);
 
 	gameType = (int*)(base + 0x443F3988);
 	mapName = (char*)(base + 0x443F398C);
