@@ -884,6 +884,14 @@ void Player::setBotDestination(Vector* vec)
 	}
 }
 
+Action* Player::getAction(unsigned int idx)
+{
+	if (idx > 63)
+		throw std::runtime_error("Index out of range");
+
+	return &actions[idx];
+}
+
 std::string Human::__tostring() const
 {
 	char buf[16];

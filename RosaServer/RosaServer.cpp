@@ -484,6 +484,8 @@ void luaInit(bool redo)
 		meta["teamSwitchTimer"] = &Player::teamSwitchTimer;
 		meta["stocks"] = &Player::stocks;
 		meta["menuTab"] = &Player::menuTab;
+		meta["lastNumActions"] = &Player::lastNumActions;
+		meta["numActions"] = &Player::numActions;
 		meta["gender"] = &Player::gender;
 		meta["skinColor"] = &Player::skinColor;
 		meta["hairColor"] = &Player::hairColor;
@@ -509,6 +511,7 @@ void luaInit(bool redo)
 		meta["account"] = sol::property(&Player::getAccount, &Player::setAccount);
 		meta["botDestination"] = sol::property(&Player::getBotDestination, &Player::setBotDestination);
 
+		meta["getAction"] = &Player::getAction;
 		meta["update"] = &Player::update;
 		meta["updateFinance"] = &Player::updateFinance;
 		meta["remove"] = &Player::remove;
@@ -701,6 +704,17 @@ void luaInit(bool redo)
 		meta["index"] = sol::property(&RigidBody::getIndex);
 		meta["isActive"] = sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
 		meta["isSettled"] = sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
+	}
+
+	{
+		auto meta = lua->new_usertype<Action>("new", sol::no_constructor);
+		meta["type"] = &Action::type;
+		meta["a"] = &Action::a;
+		meta["b"] = &Action::b;
+		meta["c"] = &Action::c;
+		meta["d"] = &Action::d;
+
+		meta["class"] = sol::property(&Action::getClass);
 	}
 
 	(*lua)["printAppend"] = l_printAppend;

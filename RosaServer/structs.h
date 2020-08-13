@@ -160,6 +160,22 @@ struct Vehicle;
 struct Item;
 struct RigidBody;
 
+//84 bytes (54)
+struct Action
+{
+	int type;
+	int a;
+	int b;
+	int c;
+	int d;
+	char text[64];
+
+	const char* getClass() const
+	{
+		return "Action";
+	}
+};
+
 //14384 bytes (0x3830)
 struct Player
 {
@@ -188,7 +204,12 @@ struct Player
 		char unk5[0x164 - 0x9c - 4];
 	//0 = none, 1-19 = shop, 2X = base
 	int menuTab;	//164
-		char unk6[0x2d18 - 0x164 - 4];
+		char unk5_1[0x1b4 - 0x164 - 4];
+	int lastNumActions; //1b4
+	int numActions; //1b8
+		char unk5_2[0x1c8 - 0x1b8 - 4];
+	Action actions[64];	 //1c8
+		char unk6[0x2d18 - (0x1c8 + (sizeof(Action) * 64))];
 	int isBot;	//2d18
 		char unk7a[0x2d34 - 0x2d18 - 4];
 	int botHasDestination;	//2d34
@@ -267,6 +288,7 @@ struct Player
 	void setAccount(Account* account);
 	const Vector* getBotDestination() const;
 	void setBotDestination(Vector* vec);
+	Action* getAction(unsigned int idx);
 
 	void update() const;
 	void updateFinance() const;
@@ -363,7 +385,7 @@ struct Human
 	unsigned int lastInputFlags;	//218
 		char unk22[0x220 - 0x218 - 4];
 	Bone bones[16];	 //220
-		char unk23[0x32a8 - (0x220 + (312 * 16))];
+		char unk23[0x32a8 - (0x220 + (sizeof(Bone) * 16))];
 	int rightHandOccupied;	//32a8
 	int rightHandItemID;		//32ac
 		char unk24[0x32d0 - 0x32ac - 4];
