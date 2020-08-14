@@ -488,6 +488,7 @@ void luaInit(bool redo)
 		meta["menuTab"] = &Player::menuTab;
 		meta["numActions"] = &Player::numActions;
 		meta["lastNumActions"] = &Player::lastNumActions;
+		meta["numMenuButtons"] = &Player::numMenuButtons;
 		meta["gender"] = &Player::gender;
 		meta["skinColor"] = &Player::skinColor;
 		meta["hairColor"] = &Player::hairColor;
@@ -514,6 +515,7 @@ void luaInit(bool redo)
 		meta["botDestination"] = sol::property(&Player::getBotDestination, &Player::setBotDestination);
 
 		meta["getAction"] = &Player::getAction;
+		meta["getMenuButton"] = &Player::getMenuButton;
 		meta["update"] = &Player::update;
 		meta["updateFinance"] = &Player::updateFinance;
 		meta["remove"] = &Player::remove;
@@ -718,6 +720,14 @@ void luaInit(bool redo)
 		meta["d"] = &Action::d;
 
 		meta["class"] = sol::property(&Action::getClass);
+	}
+
+	{
+		auto meta = lua->new_usertype<MenuButton>("new", sol::no_constructor);
+		meta["id"] = &MenuButton::id;
+		meta["text"] = sol::property(&MenuButton::getText, &MenuButton::setText);
+
+		meta["class"] = sol::property(&MenuButton::getClass);
 	}
 
 	(*lua)["printAppend"] = l_printAppend;

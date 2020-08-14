@@ -892,6 +892,14 @@ Action* Player::getAction(unsigned int idx)
 	return &actions[idx];
 }
 
+MenuButton* Player::getMenuButton(unsigned int idx)
+{
+	if (idx > 31)
+		throw std::runtime_error("Index out of range");
+
+	return &menuButtons[idx];
+}
+
 std::string Human::__tostring() const
 {
 	char buf[16];

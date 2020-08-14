@@ -176,6 +176,27 @@ struct Action
 	}
 };
 
+//72 bytes (48)
+struct MenuButton
+{
+	int id;
+	char text[64];
+	int unk;
+
+	const char* getClass() const
+	{
+		return "MenuButton";
+	}
+	char* getText()
+	{
+		return text;
+	}
+	void setText(const char* newText)
+	{
+		std::strncpy(text, newText, 63);
+	}
+};
+
 //14384 bytes (0x3830)
 struct Player
 {
@@ -209,7 +230,10 @@ struct Player
 	int lastNumActions; //1b8
 		char unk5_2[0x1c8 - 0x1b8 - 4];
 	Action actions[64];	 //1c8
-		char unk6[0x2d18 - (0x1c8 + (sizeof(Action) * 64))];
+		char unk6[0x1b14 - (0x1c8 + (sizeof(Action) * 64))];
+	int numMenuButtons; //1b14
+	MenuButton menuButtons[32]; //1b18
+		char unk6_1[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
 	int isBot;	//2d18
 		char unk7a[0x2d34 - 0x2d18 - 4];
 	int botHasDestination;	//2d34
@@ -289,6 +313,7 @@ struct Player
 	const Vector* getBotDestination() const;
 	void setBotDestination(Vector* vec);
 	Action* getAction(unsigned int idx);
+	MenuButton* getMenuButton(unsigned int idx);
 
 	void update() const;
 	void updateFinance() const;
