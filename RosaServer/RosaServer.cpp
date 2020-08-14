@@ -619,6 +619,7 @@ void luaInit(bool redo)
 		meta["physicsSettled"] = sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
 		meta["isStatic"] = sol::property(&Item::getIsStatic, &Item::setIsStatic);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
+		meta["grenadePrimer"] = sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
 		meta["parentHuman"] = sol::property(&Item::getParentHuman);
 		meta["parentItem"] = sol::property(&Item::getParentItem);
 

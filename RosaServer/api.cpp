@@ -1136,6 +1136,16 @@ void Item::remove() const
 	}
 }
 
+Player* Item::getGrenadePrimer() const
+{
+	return grenadePrimerID == -1 ? nullptr : &players[grenadePrimerID];
+}
+
+void Item::setGrenadePrimer(Player* player)
+{
+	grenadePrimerID = player != nullptr ? player->getIndex() : -1;
+}
+
 Human* Item::getParentHuman() const
 {
 	return parentHumanID == -1 ? nullptr : &humans[parentHumanID];

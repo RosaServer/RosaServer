@@ -556,7 +556,7 @@ struct Item
 	int type;						 //14
 		int unk2;						 //18
 	int despawnTime;		 //1c
-		int unk4;						 //20
+	int grenadePrimerID; //20
 	int parentHumanID;	 //24
 	int parentItemID;		 //28
 	int parentSlot;			 //2c
@@ -624,6 +624,8 @@ struct Item
 	}
 
 	void remove() const;
+	Player* getGrenadePrimer() const;
+	void setGrenadePrimer(Player* player);
 	Human* getParentHuman() const;
 	Item* getParentItem() const;
 	RigidBody* getRigidBody() const;
