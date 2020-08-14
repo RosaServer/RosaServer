@@ -39,6 +39,7 @@ extern void_func logicsimulation_world;
 extern void_func logicsimulation_terminator;
 extern void_func logicsimulation_coop;
 extern void_func logicsimulation_versus;
+extern void_index_func logic_playeractions;
 
 extern void_func physicssimulation;
 typedef int (*serverrecv_func)();

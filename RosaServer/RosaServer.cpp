@@ -106,6 +106,8 @@ subhook::Hook logicsimulation_coop_hook;
 void_func logicsimulation_coop;
 subhook::Hook logicsimulation_versus_hook;
 void_func logicsimulation_versus;
+subhook::Hook logic_playeractions_hook;
+void_index_func logic_playeractions;
 
 subhook::Hook physicssimulation_hook;
 void_func physicssimulation;
@@ -484,8 +486,8 @@ void luaInit(bool redo)
 		meta["teamSwitchTimer"] = &Player::teamSwitchTimer;
 		meta["stocks"] = &Player::stocks;
 		meta["menuTab"] = &Player::menuTab;
-		meta["lastNumActions"] = &Player::lastNumActions;
 		meta["numActions"] = &Player::numActions;
+		meta["lastNumActions"] = &Player::lastNumActions;
 		meta["gender"] = &Player::gender;
 		meta["skinColor"] = &Player::skinColor;
 		meta["hairColor"] = &Player::hairColor;
@@ -920,6 +922,7 @@ static void Attach()
 	logicsimulation_terminator = (void_func)(base + 0xB4D50);
 	logicsimulation_coop = (void_func)(base + 0xB3410);
 	logicsimulation_versus = (void_func)(base + 0xB65F0);
+	logic_playeractions = (void_index_func)(base + 0xA93A0);
 
 	physicssimulation = (void_func)(base + 0xA6CC0);
 	serverrecv = (serverrecv_func)(base + 0xC0BB0);
@@ -983,6 +986,7 @@ static void Attach()
 	logicsimulation_terminator_hook.Install((void*)logicsimulation_terminator, (void*)h_logicsimulation_terminator, HOOK_FLAGS);
 	logicsimulation_coop_hook.Install((void*)logicsimulation_coop, (void*)h_logicsimulation_coop, HOOK_FLAGS);
 	logicsimulation_versus_hook.Install((void*)logicsimulation_versus, (void*)h_logicsimulation_versus, HOOK_FLAGS);
+	logic_playeractions_hook.Install((void*)logic_playeractions, (void*)h_logic_playeractions, HOOK_FLAGS);
 
 	physicssimulation_hook.Install((void*)physicssimulation, (void*)h_physicssimulation, HOOK_FLAGS);
 	serverrecv_hook.Install((void*)serverrecv, (void*)h_serverrecv, HOOK_FLAGS);

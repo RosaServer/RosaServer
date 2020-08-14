@@ -250,6 +250,30 @@ void h_logicsimulation_versus()
 	}
 }
 
+void h_logic_playeractions(int playerID)
+{
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil)
+	{
+		auto res = func("PlayerActions", &players[playerID]);
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
+	}
+	if (!noParent)
+	{
+		{
+			subhook::ScopedHookRemove remove(&logic_playeractions_hook);
+			logic_playeractions(playerID);
+		}
+		if (func != sol::nil)
+		{
+			auto res = func("PostPlayerActions", &players[playerID]);
+			noLuaCallError(&res);
+		}
+	}
+}
+
 void h_physicssimulation()
 {
 	bool noParent = false;

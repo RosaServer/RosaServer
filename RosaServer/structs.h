@@ -205,8 +205,8 @@ struct Player
 	//0 = none, 1-19 = shop, 2X = base
 	int menuTab;	//164
 		char unk5_1[0x1b4 - 0x164 - 4];
-	int lastNumActions; //1b4
-	int numActions; //1b8
+	int numActions; //1b4
+	int lastNumActions; //1b8
 		char unk5_2[0x1c8 - 0x1b8 - 4];
 	Action actions[64];	 //1c8
 		char unk6[0x2d18 - (0x1c8 + (sizeof(Action) * 64))];

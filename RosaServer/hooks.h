@@ -19,6 +19,8 @@ extern subhook::Hook logicsimulation_coop_hook;
 void h_logicsimulation_coop();
 extern subhook::Hook logicsimulation_versus_hook;
 void h_logicsimulation_versus();
+extern subhook::Hook logic_playeractions_hook;
+void h_logic_playeractions(int playerID);
 
 extern subhook::Hook physicssimulation_hook;
 void h_physicssimulation();
