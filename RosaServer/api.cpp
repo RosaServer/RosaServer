@@ -1329,6 +1329,11 @@ int RigidBody::bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocal
 	return createbond_rigidbody_rigidbody(getIndex(), other->getIndex(), thisLocalPos, otherLocalPos);
 }
 
+int RigidBody::bondRotTo(RigidBody* other) const
+{
+	return createbond_rigidbody_rot_rigidbody(getIndex(), other->getIndex());
+}
+
 int RigidBody::bondToLevel(Vector* localPos, Vector* globalPos) const
 {
 	return createbond_rigidbody_level(getIndex(), localPos, globalPos);

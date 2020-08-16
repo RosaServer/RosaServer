@@ -86,6 +86,8 @@ extern void_index_func playerdeathtax;
 
 typedef int (*createbond_rigidbody_rigidbody_func)(int aBodyID, int bBodyID, Vector* aLocalPos, Vector* bLocalPos);
 extern createbond_rigidbody_rigidbody_func createbond_rigidbody_rigidbody;
+typedef int (*createbond_rigidbody_rot_rigidbody_func)(int aBodyID, int bBodyID);
+extern createbond_rigidbody_rot_rigidbody_func createbond_rigidbody_rot_rigidbody;
 typedef int (*createbond_rigidbody_level_func)(int bodyID, Vector* localPos, Vector* globalPos);
 extern createbond_rigidbody_level_func createbond_rigidbody_level;
 

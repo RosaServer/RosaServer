@@ -153,6 +153,7 @@ void_index_func playerai;
 subhook::Hook playerdeathtax_hook;
 void_index_func playerdeathtax;
 createbond_rigidbody_rigidbody_func createbond_rigidbody_rigidbody;
+createbond_rigidbody_rot_rigidbody_func createbond_rigidbody_rot_rigidbody;
 createbond_rigidbody_level_func createbond_rigidbody_level;
 
 subhook::Hook createplayer_hook;
@@ -718,6 +719,7 @@ void luaInit(bool redo)
 		meta["isSettled"] = sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
 
 		meta["bondTo"] = &RigidBody::bondTo;
+		meta["bondRotTo"] = &RigidBody::bondRotTo;
 		meta["bondToLevel"] = &RigidBody::bondToLevel;
 	}
 
@@ -993,6 +995,7 @@ static void Attach()
 	playerai = (void_index_func)(base + 0x96F80);
 	playerdeathtax = (void_index_func)(base + 0x2D70);
 	createbond_rigidbody_rigidbody = (createbond_rigidbody_rigidbody_func)(base + 0x12CC0);
+	createbond_rigidbody_rot_rigidbody = (createbond_rigidbody_rot_rigidbody_func)(base + 0x12f70);
 	createbond_rigidbody_level = (createbond_rigidbody_level_func)(base + 0x12B80);
 
 	createplayer = (createplayer_func)(base + 0x40EE0);

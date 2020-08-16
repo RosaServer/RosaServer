@@ -792,6 +792,7 @@ struct RigidBody
 		settled = b;
 	}
 	int bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const;
+	int bondRotTo(RigidBody* other) const;
 	int bondToLevel(Vector* localPos, Vector* globalPos) const;
 };
 
