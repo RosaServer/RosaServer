@@ -19,6 +19,7 @@ extern ItemType* itemTypes;
 extern Item* items;
 extern Bullet* bullets;
 extern RigidBody* bodies;
+extern Bond* bonds;
 
 extern unsigned int* numConnections;
 extern unsigned int* numBullets;
@@ -82,6 +83,11 @@ typedef int (*server_playermessage_func)(int playerID, char* message);
 extern server_playermessage_func server_playermessage;
 extern void_index_func playerai;
 extern void_index_func playerdeathtax;
+
+typedef int (*createbond_rigidbody_rigidbody_func)(int aBodyID, int bBodyID, Vector* aLocalPos, Vector* bLocalPos);
+extern createbond_rigidbody_rigidbody_func createbond_rigidbody_rigidbody;
+typedef int (*createbond_rigidbody_level_func)(int bodyID, Vector* localPos, Vector* globalPos);
+extern createbond_rigidbody_level_func createbond_rigidbody_level;
 
 /*
 	Object Handling

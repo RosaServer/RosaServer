@@ -646,6 +646,35 @@ RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx)
 	return &bodies[idx];
 }
 
+int l_bonds_getCount()
+{
+	int count = 0;
+	for (int i = 0; i < MAXNUMOFBONDS; i++)
+	{
+		if ((&bonds[i])->active) count++;
+	}
+	return count;
+}
+
+sol::table l_bonds_getAll()
+{
+	auto arr = lua->create_table();
+	for (int i = 0; i < MAXNUMOFBONDS; i++)
+	{
+		auto bond = &bonds[i];
+		if (!bond->active) continue;
+		arr.add(bond);
+	}
+	return arr;
+}
+
+Bond* l_bonds_getByIndex(sol::table self, unsigned int idx)
+{
+	if (idx >= MAXNUMOFBONDS)
+		throw std::runtime_error("Index out of range");
+	return &bonds[idx];
+}
+
 sol::table l_os_listDirectory(const char* path)
 {
 	auto arr = lua->create_table();
@@ -1293,4 +1322,36 @@ std::string RigidBody::__tostring() const
 int RigidBody::getIndex() const
 {
 	return ((uintptr_t)this - (uintptr_t)bodies) / sizeof(*this);
+}
+
+int RigidBody::bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const
+{
+	return createbond_rigidbody_rigidbody(getIndex(), other->getIndex(), thisLocalPos, otherLocalPos);
+}
+
+int RigidBody::bondToLevel(Vector* localPos, Vector* globalPos) const
+{
+	return createbond_rigidbody_level(getIndex(), localPos, globalPos);
+}
+
+std::string Bond::__tostring() const
+{
+	char buf[16];
+	sprintf(buf, "Bond(%i)", getIndex());
+	return buf;
+}
+
+int Bond::getIndex() const
+{
+	return ((uintptr_t)this - (uintptr_t)bonds) / sizeof(*this);
+}
+
+RigidBody* Bond::getBody() const
+{
+	return &bodies[bodyID];
+}
+
+RigidBody* Bond::getOtherBody() const
+{
+	return &bodies[otherBodyID];
 }

@@ -136,6 +136,10 @@ int l_rigidBodies_getCount();
 sol::table l_rigidBodies_getAll();
 RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx);
 
+int l_bonds_getCount();
+sol::table l_bonds_getAll();
+Bond* l_bonds_getByIndex(sol::table self, unsigned int idx);
+
 //void l_os_setClipboard(std::string s);
 sol::table l_os_listDirectory(const char* path);
 double l_os_clock();

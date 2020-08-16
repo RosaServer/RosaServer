@@ -58,6 +58,7 @@ ItemType* itemTypes;
 Item* items;
 Bullet* bullets;
 RigidBody* bodies;
+Bond* bonds;
 
 unsigned int* numConnections;
 unsigned int* numBullets;
@@ -80,13 +81,15 @@ static void pryMemory(void* address, size_t numPages)
 }
 
 /*static subhook::Hook _test_hook;
-typedef void(*_test_func)(int);
+typedef int(*_test_func)(int, Vector*, Vector*);
 static _test_func _test;
 
-void h__test(int x) {
-	printf("test %i\n", x);
-	//subhook::ScopedHookRemove remove(&_test_hook);
-	//_test(x);
+int h__test(int a, Vector* c, Vector* d) {
+	printf("test %i (%f, %f, %f) (%f, %f, %f)\n", a, c->x, c->y, c->z, d->x, d->y, d->z);
+	subhook::ScopedHookRemove remove(&_test_hook);
+	int ret = _test(a, c, d);
+	printf("%i\n", ret);
+	return ret;
 }*/
 
 subhook::Hook resetgame_hook;
@@ -149,6 +152,8 @@ subhook::Hook playerai_hook;
 void_index_func playerai;
 subhook::Hook playerdeathtax_hook;
 void_index_func playerdeathtax;
+createbond_rigidbody_rigidbody_func createbond_rigidbody_rigidbody;
+createbond_rigidbody_level_func createbond_rigidbody_level;
 
 subhook::Hook createplayer_hook;
 createplayer_func createplayer;
@@ -524,6 +529,8 @@ void luaInit(bool redo)
 
 	{
 		auto meta = lua->new_usertype<Human>("new", sol::no_constructor);
+		meta["stamina"] = &Human::stamina;
+		meta["maxStamina"] = &Human::maxStamina;
 		meta["vehicleSeat"] = &Human::vehicleSeat;
 		meta["despawnTime"] = &Human::despawnTime;
 		meta["movementState"] = &Human::movementState;
@@ -709,6 +716,22 @@ void luaInit(bool redo)
 		meta["index"] = sol::property(&RigidBody::getIndex);
 		meta["isActive"] = sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
 		meta["isSettled"] = sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
+
+		meta["bondTo"] = &RigidBody::bondTo;
+		meta["bondToLevel"] = &RigidBody::bondToLevel;
+	}
+
+	{
+		auto meta = lua->new_usertype<Bond>("new", sol::no_constructor);
+		meta["type"] = &Bond::type;
+		meta["despawnTime"] = &Bond::despawnTime;
+
+		meta["class"] = sol::property(&Bond::getClass);
+		meta["__tostring"] = &Bond::__tostring;
+		meta["index"] = sol::property(&Bond::getIndex);
+		meta["isActive"] = sol::property(&Bond::getIsActive, &Bond::setIsActive);
+		meta["body"] = sol::property(&Bond::getBody);
+		meta["otherBody"] = sol::property(&Bond::getOtherBody);
 	}
 
 	{
@@ -836,6 +859,15 @@ void luaInit(bool redo)
 		_meta["__index"] = l_rigidBodies_getByIndex;
 	}
 
+	(*lua)["bonds"] = lua->create_table();
+	(*lua)["bonds"]["getCount"] = l_bonds_getCount;
+	(*lua)["bonds"]["getAll"] = l_bonds_getAll;
+	{
+		sol::table _meta = lua->create_table();
+		(*lua)["bonds"][sol::metatable_key] = _meta;
+		_meta["__index"] = l_bonds_getByIndex;
+	}
+
 	//(*lua)["os"]["setClipboard"] = l_os_setClipboard;
 	(*lua)["os"]["listDirectory"] = l_os_listDirectory;
 	(*lua)["os"]["clock"] = l_os_clock;
@@ -917,11 +949,12 @@ static void Attach()
 	items = (Item*)(base + 0x7FE2160);
 	bullets = (Bullet*)(base + 0x4355E260);
 	bodies = (RigidBody*)(base + 0x2DACC0);
+	bonds = (Bond*)(base + 0x24964220);
 
 	numConnections = (unsigned int*)(base + 0x4532F468);
 	numBullets = (unsigned int*)(base + 0x4532F240);
 
-	//_test = (_test_func)(base + 0x263a0);
+	//_test = (_test_func)(base + 0x12B80);
 	//pryMemory(&_test, 2);
 
 	resetgame = (void_func)(base + 0xB10B0);
@@ -959,6 +992,8 @@ static void Attach()
 	server_playermessage = (server_playermessage_func)(base + 0xA7B80);
 	playerai = (void_index_func)(base + 0x96F80);
 	playerdeathtax = (void_index_func)(base + 0x2D70);
+	createbond_rigidbody_rigidbody = (createbond_rigidbody_rigidbody_func)(base + 0x12CC0);
+	createbond_rigidbody_level = (createbond_rigidbody_level_func)(base + 0x12B80);
 
 	createplayer = (createplayer_func)(base + 0x40EE0);
 	deleteplayer = (void_index_func)(base + 0x411D0);

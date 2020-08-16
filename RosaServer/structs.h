@@ -11,6 +11,7 @@
 #define MAXNUMOFITEMS 1024
 #define MAXNUMOFVEHICLES 512
 #define MAXNUMOFRIGIDBODIES 8192
+#define MAXNUMOFBONDS 16384
 
 /*
 	Event types:
@@ -790,4 +791,41 @@ struct RigidBody
 	{
 		settled = b;
 	}
+	int bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const;
+	int bondToLevel(Vector* localPos, Vector* globalPos) const;
+};
+
+//244 bytes (F4)
+struct Bond
+{
+	int active;
+	/*
+	* 4 = rigidbody_level
+	* 7 = rigidbody_rigidbody
+	* 8 = rigidbody_rot_rigidbody
+	*/
+	int type; //04
+		int unk0; //08
+	int despawnTime; //0c
+		char unk1[0x98 - 0x0c - 4];
+	int bodyID; //98
+	int otherBodyID; //9C
+		char unk2[244 - 160];
+		
+	const char* getClass() const
+	{
+		return "Bond";
+	}
+	std::string __tostring() const;
+	int getIndex() const;
+	bool getIsActive() const
+	{
+		return active;
+	}
+	void setIsActive(bool b)
+	{
+		active = b;
+	}
+	RigidBody* getBody() const;
+	RigidBody* getOtherBody() const;
 };
