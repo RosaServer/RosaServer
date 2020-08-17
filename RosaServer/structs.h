@@ -132,7 +132,7 @@ struct RayCastResult
 	int unk2;				 //24
 	int unk3;				 //28
 	int unk4;				 //2c
-	int unk5;				 //30
+	int vehicleFace;		 //30
 	int humanBone;	 //34
 	int unk6;				 //38
 	int unk7;				 //3c
@@ -791,9 +791,9 @@ struct RigidBody
 	{
 		settled = b;
 	}
-	int bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const;
-	int bondRotTo(RigidBody* other) const;
-	int bondToLevel(Vector* localPos, Vector* globalPos) const;
+	Bond* bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const;
+	Bond* bondRotTo(RigidBody* other) const;
+	Bond* bondToLevel(Vector* localPos, Vector* globalPos) const;
 };
 
 //244 bytes (F4)
@@ -808,10 +808,16 @@ struct Bond
 	int type; //04
 		int unk0; //08
 	int despawnTime; //0c
-		char unk1[0x98 - 0x0c - 4];
+		char unk1[0x2c - 0x0c - 4];
+	// for level bonds
+	Vector globalPos; //2c
+	Vector localPos; //38
+	// for non-level bonds
+	Vector otherLocalPos; //44
+		char unk2[0x98 - 0x44 - 12];
 	int bodyID; //98
 	int otherBodyID; //9C
-		char unk2[244 - 160];
+		char unk3[244 - 160];
 		
 	const char* getClass() const
 	{

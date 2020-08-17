@@ -247,7 +247,11 @@ sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* po
 		table["pos"] = lineIntersectResult->pos;
 		table["normal"] = lineIntersectResult->normal;
 		table["fraction"] = lineIntersectResult->fraction;
-		table["bone"] = lineIntersectResult->humanBone;
+
+		if (lineIntersectResult->vehicleFace != -1)
+			table["face"] = lineIntersectResult->vehicleFace;
+		else
+			table["wheel"] = lineIntersectResult->humanBone;
 	}
 	table["hit"] = res != 0;
 	return table;
@@ -1324,19 +1328,22 @@ int RigidBody::getIndex() const
 	return ((uintptr_t)this - (uintptr_t)bodies) / sizeof(*this);
 }
 
-int RigidBody::bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const
+Bond* RigidBody::bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const
 {
-	return createbond_rigidbody_rigidbody(getIndex(), other->getIndex(), thisLocalPos, otherLocalPos);
+	int id = createbond_rigidbody_rigidbody(getIndex(), other->getIndex(), thisLocalPos, otherLocalPos);
+	return id == -1 ? nullptr : &bonds[id];
 }
 
-int RigidBody::bondRotTo(RigidBody* other) const
+Bond* RigidBody::bondRotTo(RigidBody* other) const
 {
-	return createbond_rigidbody_rot_rigidbody(getIndex(), other->getIndex());
+	int id = createbond_rigidbody_rot_rigidbody(getIndex(), other->getIndex());
+	return id == -1 ? nullptr : &bonds[id];
 }
 
-int RigidBody::bondToLevel(Vector* localPos, Vector* globalPos) const
+Bond* RigidBody::bondToLevel(Vector* localPos, Vector* globalPos) const
 {
-	return createbond_rigidbody_level(getIndex(), localPos, globalPos);
+	int id = createbond_rigidbody_level(getIndex(), localPos, globalPos);
+	return id == -1 ? nullptr : &bonds[id];
 }
 
 std::string Bond::__tostring() const

@@ -727,6 +727,9 @@ void luaInit(bool redo)
 		auto meta = lua->new_usertype<Bond>("new", sol::no_constructor);
 		meta["type"] = &Bond::type;
 		meta["despawnTime"] = &Bond::despawnTime;
+		meta["globalPos"] = &Bond::globalPos;
+		meta["localPos"] = &Bond::localPos;
+		meta["otherLocalPos"] = &Bond::otherLocalPos;
 
 		meta["class"] = sol::property(&Bond::getClass);
 		meta["__tostring"] = &Bond::__tostring;
