@@ -160,6 +160,7 @@ struct Human;
 struct Vehicle;
 struct Item;
 struct RigidBody;
+struct Bond;
 
 //84 bytes (54)
 struct Action
