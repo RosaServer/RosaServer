@@ -814,7 +814,7 @@ void luaInit(bool redo)
 
 	{
 		auto playersTable = lua->create_table();
-		(*lua)["players"] = players;
+		(*lua)["players"] = playersTable;
 		playersTable["getCount"] = l_players_getCount;
 		playersTable["getAll"] = l_players_getAll;
 		playersTable["getByPhone"] = l_players_getByPhone;
