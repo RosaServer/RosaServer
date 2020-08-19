@@ -7,6 +7,7 @@
 #include <iostream>
 #include <thread>
 
+#define SOL_ALL_SAFETIES_ON 1
 #include "sol.hpp"
 #include "subhook.h"
 
