@@ -767,113 +767,142 @@ void luaInit(bool redo)
 	(*lua)["Vector"] = sol::overload(l_Vector, l_Vector_3f);
 	(*lua)["RotMatrix"] = l_RotMatrix;
 
-	(*lua)["http"] = lua->create_table();
-	(*lua)["http"]["get"] = l_http_get;
-	(*lua)["http"]["post"] = l_http_post;
-
-	(*lua)["event"] = lua->create_table();
-	(*lua)["event"]["sound"] = sol::overload(l_event_sound, l_event_soundSimple);
-	(*lua)["event"]["explosion"] = l_event_explosion;
-	(*lua)["event"]["bulletHit"] = l_event_bulletHit;
-
-	(*lua)["physics"] = lua->create_table();
-	(*lua)["physics"]["lineIntersectLevel"] = l_physics_lineIntersectLevel;
-	(*lua)["physics"]["lineIntersectHuman"] = l_physics_lineIntersectHuman;
-	(*lua)["physics"]["lineIntersectVehicle"] = l_physics_lineIntersectVehicle;
-	(*lua)["physics"]["garbageCollectBullets"] = l_physics_garbageCollectBullets;
-
-	(*lua)["chat"] = lua->create_table();
-	(*lua)["chat"]["announce"] = l_chat_announce;
-	(*lua)["chat"]["tellAdmins"] = l_chat_tellAdmins;
-	(*lua)["chat"]["addRaw"] = l_chat_addRaw;
-
-	(*lua)["accounts"] = lua->create_table();
-	(*lua)["accounts"]["save"] = l_accounts_save;
-	(*lua)["accounts"]["getCount"] = l_accounts_getCount;
-	(*lua)["accounts"]["getAll"] = l_accounts_getAll;
-	(*lua)["accounts"]["getByPhone"] = l_accounts_getByPhone;
 	{
+		auto httpTable = lua->create_table();
+		(*lua)["http"] = httpTable;
+		httpTable["get"] = l_http_get;
+		httpTable["post"] = l_http_post;
+	}
+
+	{
+		auto eventTable = lua->create_table();
+		(*lua)["event"] = eventTable;
+		eventTable["sound"] = sol::overload(l_event_sound, l_event_soundSimple);
+		eventTable["explosion"] = l_event_explosion;
+		eventTable["bulletHit"] = l_event_bulletHit;
+	}
+
+	{
+		auto physicsTable = lua->create_table();
+		(*lua)["physics"] = physicsTable;
+		physicsTable["lineIntersectLevel"] = l_physics_lineIntersectLevel;
+		physicsTable["lineIntersectHuman"] = l_physics_lineIntersectHuman;
+		physicsTable["lineIntersectVehicle"] = l_physics_lineIntersectVehicle;
+		physicsTable["garbageCollectBullets"] = l_physics_garbageCollectBullets;
+	}
+
+	{
+		auto chatTable = lua->create_table();
+		(*lua)["chat"] = chatTable;
+		chatTable["announce"] = l_chat_announce;
+		chatTable["tellAdmins"] = l_chat_tellAdmins;
+		chatTable["addRaw"] = l_chat_addRaw;
+	}
+
+	{
+		auto accountsTable = lua->create_table();
+		(*lua)["accounts"] = accountsTable;
+		accountsTable["save"] = l_accounts_save;
+		accountsTable["getCount"] = l_accounts_getCount;
+		accountsTable["getAll"] = l_accounts_getAll;
+		accountsTable["getByPhone"] = l_accounts_getByPhone;
+
 		sol::table _meta = lua->create_table();
-		(*lua)["accounts"][sol::metatable_key] = _meta;
+		accountsTable[sol::metatable_key] = _meta;
 		_meta["__index"] = l_accounts_getByIndex;
 	}
 
-	(*lua)["players"] = lua->create_table();
-	(*lua)["players"]["getCount"] = l_players_getCount;
-	(*lua)["players"]["getAll"] = l_players_getAll;
-	(*lua)["players"]["getByPhone"] = l_players_getByPhone;
-	(*lua)["players"]["getNonBots"] = l_players_getNonBots;
-	(*lua)["players"]["createBot"] = l_players_createBot;
 	{
+		auto playersTable = lua->create_table();
+		(*lua)["players"] = players;
+		playersTable["getCount"] = l_players_getCount;
+		playersTable["getAll"] = l_players_getAll;
+		playersTable["getByPhone"] = l_players_getByPhone;
+		playersTable["getNonBots"] = l_players_getNonBots;
+		playersTable["createBot"] = l_players_createBot;
+
 		sol::table _meta = lua->create_table();
-		(*lua)["players"][sol::metatable_key] = _meta;
+		playersTable[sol::metatable_key] = _meta;
 		_meta["__index"] = l_players_getByIndex;
 	}
 
-	(*lua)["humans"] = lua->create_table();
-	(*lua)["humans"]["getCount"] = l_humans_getCount;
-	(*lua)["humans"]["getAll"] = l_humans_getAll;
-	(*lua)["humans"]["create"] = l_humans_create;
 	{
+		auto humansTable = lua->create_table();
+		(*lua)["humans"] = humansTable;
+		humansTable["getCount"] = l_humans_getCount;
+		humansTable["getAll"] = l_humans_getAll;
+		humansTable["create"] = l_humans_create;
+
 		sol::table _meta = lua->create_table();
-		(*lua)["humans"][sol::metatable_key] = _meta;
+		humansTable[sol::metatable_key] = _meta;
 		_meta["__index"] = l_humans_getByIndex;
 	}
 
-	(*lua)["itemTypes"] = lua->create_table();
-	(*lua)["itemTypes"]["getCount"] = l_itemTypes_getCount;
-	(*lua)["itemTypes"]["getAll"] = l_itemTypes_getAll;
 	{
+		auto itemTypesTable = lua->create_table();
+		(*lua)["itemTypes"] = itemTypesTable;
+		itemTypesTable["getCount"] = l_itemTypes_getCount;
+		itemTypesTable["getAll"] = l_itemTypes_getAll;
+
 		sol::table _meta = lua->create_table();
-		(*lua)["itemTypes"][sol::metatable_key] = _meta;
+		itemTypesTable[sol::metatable_key] = _meta;
 		_meta["__index"] = l_itemTypes_getByIndex;
 	}
 
-	(*lua)["items"] = lua->create_table();
-	(*lua)["items"]["getCount"] = l_items_getCount;
-	(*lua)["items"]["getAll"] = l_items_getAll;
-	(*lua)["items"]["create"] = sol::overload(l_items_create, l_items_createVel);
-	(*lua)["items"]["createRope"] = l_items_createRope;
 	{
+		auto itemsTable = lua->create_table();
+		(*lua)["items"] = itemsTable;
+		itemsTable["getCount"] = l_items_getCount;
+		itemsTable["getAll"] = l_items_getAll;
+		itemsTable["create"] = sol::overload(l_items_create, l_items_createVel);
+		itemsTable["createRope"] = l_items_createRope;
+
 		sol::table _meta = lua->create_table();
-		(*lua)["items"][sol::metatable_key] = _meta;
+		itemsTable[sol::metatable_key] = _meta;
 		_meta["__index"] = l_items_getByIndex;
 	}
 
-	(*lua)["vehicles"] = lua->create_table();
-	(*lua)["vehicles"]["getCount"] = l_vehicles_getCount;
-	(*lua)["vehicles"]["getAll"] = l_vehicles_getAll;
-	(*lua)["vehicles"]["create"] = sol::overload(l_vehicles_create, l_vehicles_createVel);
-	//(*lua)["vehicles"]["createTraffic"] = l_vehicles_createTraffic;
 	{
+		auto vehiclesTable = lua->create_table();
+		(*lua)["vehicles"] = vehiclesTable;
+		vehiclesTable["getCount"] = l_vehicles_getCount;
+		vehiclesTable["getAll"] = l_vehicles_getAll;
+		vehiclesTable["create"] = sol::overload(l_vehicles_create, l_vehicles_createVel);
+		
 		sol::table _meta = lua->create_table();
-		(*lua)["vehicles"][sol::metatable_key] = _meta;
+		vehiclesTable[sol::metatable_key] = _meta;
 		_meta["__index"] = l_vehicles_getByIndex;
 	}
 
-	(*lua)["bullets"] = lua->create_table();
-	(*lua)["bullets"]["getCount"] = l_bullets_getCount;
-	(*lua)["bullets"]["getAll"] = l_bullets_getAll;
-
-	(*lua)["rigidBodies"] = lua->create_table();
-	(*lua)["rigidBodies"]["getCount"] = l_rigidBodies_getCount;
-	(*lua)["rigidBodies"]["getAll"] = l_rigidBodies_getAll;
 	{
+		auto bulletsTable = lua->create_table();
+		(*lua)["bullets"] = bulletsTable;
+		bulletsTable["getCount"] = l_bullets_getCount;
+		bulletsTable["getAll"] = l_bullets_getAll;
+	}
+
+	{
+		auto rigidBodiesTable = lua->create_table();
+		(*lua)["rigidBodies"] = rigidBodiesTable;
+		rigidBodiesTable["getCount"] = l_rigidBodies_getCount;
+		rigidBodiesTable["getAll"] = l_rigidBodies_getAll;
+		
 		sol::table _meta = lua->create_table();
-		(*lua)["rigidBodies"][sol::metatable_key] = _meta;
+		rigidBodiesTable[sol::metatable_key] = _meta;
 		_meta["__index"] = l_rigidBodies_getByIndex;
 	}
 
-	(*lua)["bonds"] = lua->create_table();
-	(*lua)["bonds"]["getCount"] = l_bonds_getCount;
-	(*lua)["bonds"]["getAll"] = l_bonds_getAll;
 	{
+		auto bondsTable = lua->create_table();
+		(*lua)["bonds"] = bondsTable;
+		bondsTable["getCount"] = l_bonds_getCount;
+		bondsTable["getAll"] = l_bonds_getAll;
+
 		sol::table _meta = lua->create_table();
-		(*lua)["bonds"][sol::metatable_key] = _meta;
+		bondsTable[sol::metatable_key] = _meta;
 		_meta["__index"] = l_bonds_getByIndex;
 	}
 
-	//(*lua)["os"]["setClipboard"] = l_os_setClipboard;
 	(*lua)["os"]["listDirectory"] = l_os_listDirectory;
 	(*lua)["os"]["clock"] = l_os_clock;
 
