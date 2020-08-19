@@ -99,6 +99,11 @@ struct Vector
 		return "Vector";
 	}
 	std::string __tostring() const;
+	Vector __add(Vector* other) const;
+	Vector __sub(Vector* other) const;
+	Vector __mul(float scalar) const;
+	Vector __div(float scalar) const;
+	Vector __unm() const;
 	void add(Vector* other);
 	void mult(float scalar);
 	void set(Vector* other);

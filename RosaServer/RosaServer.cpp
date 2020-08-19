@@ -455,6 +455,11 @@ void luaInit(bool redo)
 
 		meta["class"] = sol::property(&Vector::getClass);
 		meta["__tostring"] = &Vector::__tostring;
+		meta["__add"] = &Vector::__add;
+		meta["__sub"] = &Vector::__sub;
+		meta["__mul"] = &Vector::__mul;
+		meta["__div"] = &Vector::__div;
+		meta["__unm"] = &Vector::__unm;
 		meta["add"] = &Vector::add;
 		meta["mult"] = &Vector::mult;
 		meta["set"] = &Vector::set;

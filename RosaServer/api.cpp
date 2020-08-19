@@ -742,6 +742,51 @@ std::string Vector::__tostring() const
 	return buf;
 }
 
+Vector Vector::__add(Vector* other) const
+{
+	return Vector{
+		x + other->x,
+		y + other->y,
+		z + other->z
+	};
+}
+
+Vector Vector::__sub(Vector* other) const
+{
+	return Vector{
+		x - other->x,
+		y - other->y,
+		z - other->z
+	};
+}
+
+Vector Vector::__mul(float scalar) const
+{
+	return Vector{
+		x * scalar,
+		y * scalar,
+		z * scalar
+	};
+}
+
+Vector Vector::__div(float scalar) const
+{
+	return Vector{
+		x / scalar,
+		y / scalar,
+		z / scalar
+	};
+}
+
+Vector Vector::__unm() const
+{
+	return Vector{
+		-x,
+		-y,
+		-z
+	};
+}
+
 void Vector::add(Vector* other)
 {
 	x += other->x;
