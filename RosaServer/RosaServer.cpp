@@ -482,6 +482,7 @@ void luaInit(bool redo)
 
 		meta["class"] = sol::property(&RotMatrix::getClass);
 		meta["__tostring"] = &RotMatrix::__tostring;
+		meta["__mul"] = &RotMatrix::__mul;
 		meta["set"] = &RotMatrix::set;
 		meta["clone"] = &RotMatrix::clone;
 	}

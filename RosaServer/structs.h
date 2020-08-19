@@ -126,6 +126,7 @@ struct RotMatrix
 		return "RotMatrix";
 	}
 	std::string __tostring() const;
+	RotMatrix __mul(RotMatrix* other) const;
 	void set(RotMatrix* other);
 	RotMatrix clone() const;
 };

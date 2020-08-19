@@ -744,7 +744,7 @@ std::string Vector::__tostring() const
 
 Vector Vector::__add(Vector* other) const
 {
-	return Vector{
+	return {
 		x + other->x,
 		y + other->y,
 		z + other->z
@@ -753,7 +753,7 @@ Vector Vector::__add(Vector* other) const
 
 Vector Vector::__sub(Vector* other) const
 {
-	return Vector{
+	return {
 		x - other->x,
 		y - other->y,
 		z - other->z
@@ -762,7 +762,7 @@ Vector Vector::__sub(Vector* other) const
 
 Vector Vector::__mul(float scalar) const
 {
-	return Vector{
+	return {
 		x * scalar,
 		y * scalar,
 		z * scalar
@@ -771,7 +771,7 @@ Vector Vector::__mul(float scalar) const
 
 Vector Vector::__mul_RotMatrix(RotMatrix* rot) const
 {
-	return Vector{
+	return {
 		rot->x1 * x + rot->y1 * y + rot->z1 * z,
 		rot->x2 * x + rot->y2 * y + rot->z2 * z,
 		rot->x3 * x + rot->y3 * y + rot->z3 * z
@@ -780,7 +780,7 @@ Vector Vector::__mul_RotMatrix(RotMatrix* rot) const
 
 Vector Vector::__div(float scalar) const
 {
-	return Vector{
+	return {
 		x / scalar,
 		y / scalar,
 		z / scalar
@@ -789,7 +789,7 @@ Vector Vector::__div(float scalar) const
 
 Vector Vector::__unm() const
 {
-	return Vector{
+	return {
 		-x,
 		-y,
 		-z
@@ -843,6 +843,23 @@ std::string RotMatrix::__tostring() const
 	char buf[256];
 	sprintf(buf, "RotMatrix(%f, %f, %f, %f, %f, %f, %f, %f, %f)", x1, y1, z1, x2, y2, z2, x3, y3, z3);
 	return buf;
+}
+
+RotMatrix RotMatrix::__mul(RotMatrix* other) const
+{
+	return {
+		x1 * other->x1 + y1 * other->x2 + z1 * other->x3,
+		x1 * other->y1 + y1 * other->y2 + z1 * other->y3,
+		x1 * other->z1 + y1 * other->z2 + z1 * other->z3,
+
+		x2 * other->x1 + y2 * other->x2 + z2 * other->x3,
+		x2 * other->y1 + y2 * other->y2 + z2 * other->y3,
+		x2 * other->z1 + y2 * other->z2 + z2 * other->z3,
+
+		x3 * other->x1 + y3 * other->x2 + z3 * other->x3,
+		x3 * other->y1 + y3 * other->y2 + z3 * other->y3,
+		x3 * other->z1 + y3 * other->z2 + z3 * other->z3
+	};
 }
 
 void RotMatrix::set(RotMatrix* other)
