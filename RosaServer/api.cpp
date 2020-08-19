@@ -769,6 +769,15 @@ Vector Vector::__mul(float scalar) const
 	};
 }
 
+Vector Vector::__mul_RotMatrix(RotMatrix* rot) const
+{
+	return Vector{
+		rot->x1 * x + rot->y1 * y + rot->z1 * z,
+		rot->x2 * x + rot->y2 * y + rot->z2 * z,
+		rot->x3 * x + rot->y3 * y + rot->z3 * z
+	};
+}
+
 Vector Vector::__div(float scalar) const
 {
 	return Vector{

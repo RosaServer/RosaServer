@@ -90,6 +90,8 @@ struct Account
 	}
 };
 
+struct RotMatrix;
+
 struct Vector
 {
 	float x, y, z;
@@ -102,6 +104,7 @@ struct Vector
 	Vector __add(Vector* other) const;
 	Vector __sub(Vector* other) const;
 	Vector __mul(float scalar) const;
+	Vector __mul_RotMatrix(RotMatrix* rot) const;
 	Vector __div(float scalar) const;
 	Vector __unm() const;
 	void add(Vector* other);

@@ -457,7 +457,7 @@ void luaInit(bool redo)
 		meta["__tostring"] = &Vector::__tostring;
 		meta["__add"] = &Vector::__add;
 		meta["__sub"] = &Vector::__sub;
-		meta["__mul"] = &Vector::__mul;
+		meta["__mul"] = sol::overload(&Vector::__mul, &Vector::__mul_RotMatrix);
 		meta["__div"] = &Vector::__div;
 		meta["__unm"] = &Vector::__unm;
 		meta["add"] = &Vector::add;
