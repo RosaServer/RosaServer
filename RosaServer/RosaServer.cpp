@@ -81,15 +81,14 @@ static void pryMemory(void* address, size_t numPages)
 }
 
 /*static subhook::Hook _test_hook;
-typedef int(*_test_func)(int, Vector*, Vector*);
+typedef void(*_test_func)(int, int, Vector*, Vector*, Vector*, float, float, float, float);
 static _test_func _test;
 
-int h__test(int a, Vector* c, Vector* d) {
-	printf("test %i (%f, %f, %f) (%f, %f, %f)\n", a, c->x, c->y, c->z, d->x, d->y, d->z);
+void h__test(int a, int b, Vector* c, Vector* d, Vector* e, float f, float g, float h, float i) {
+	printf("%i %i (%f %f %f) (%f %f %f) (%f %f %f) %f %f %f %f\n", a, b, c->x, c->y, c->z, d->x, d->y, d->z, e->x, e->y, e->z, f, g, h, i);
+
 	subhook::ScopedHookRemove remove(&_test_hook);
-	int ret = _test(a, c, d);
-	printf("%i\n", ret);
-	return ret;
+	_test(a, b, c, d, e, f, g, h, i);
 }*/
 
 subhook::Hook resetgame_hook;
@@ -155,6 +154,8 @@ void_index_func playerdeathtax;
 createbond_rigidbody_rigidbody_func createbond_rigidbody_rigidbody;
 createbond_rigidbody_rot_rigidbody_func createbond_rigidbody_rot_rigidbody;
 createbond_rigidbody_level_func createbond_rigidbody_level;
+subhook::Hook addcollision_rigidbody_rigidbody_hook;
+addcollision_rigidbody_rigidbody_func addcollision_rigidbody_rigidbody;
 
 subhook::Hook createplayer_hook;
 createplayer_func createplayer;
@@ -994,7 +995,7 @@ static void Attach()
 	numConnections = (unsigned int*)(base + 0x4532F468);
 	numBullets = (unsigned int*)(base + 0x4532F240);
 
-	//_test = (_test_func)(base + 0x12B80);
+	//_test = (_test_func)(base + 0x13070);
 	//pryMemory(&_test, 2);
 
 	resetgame = (void_func)(base + 0xB10B0);
@@ -1035,6 +1036,7 @@ static void Attach()
 	createbond_rigidbody_rigidbody = (createbond_rigidbody_rigidbody_func)(base + 0x12CC0);
 	createbond_rigidbody_rot_rigidbody = (createbond_rigidbody_rot_rigidbody_func)(base + 0x12f70);
 	createbond_rigidbody_level = (createbond_rigidbody_level_func)(base + 0x12B80);
+	addcollision_rigidbody_rigidbody = (addcollision_rigidbody_rigidbody_func)(base + 0x13070);
 
 	createplayer = (createplayer_func)(base + 0x40EE0);
 	deleteplayer = (void_index_func)(base + 0x411D0);
@@ -1094,6 +1096,7 @@ static void Attach()
 	server_playermessage_hook.Install((void*)server_playermessage, (void*)h_server_playermessage, HOOK_FLAGS);
 	playerai_hook.Install((void*)playerai, (void*)h_playerai, HOOK_FLAGS);
 	playerdeathtax_hook.Install((void*)playerdeathtax, (void*)h_playerdeathtax, HOOK_FLAGS);
+	addcollision_rigidbody_rigidbody_hook.Install((void*)addcollision_rigidbody_rigidbody, (void*)h_addcollision_rigidbody_rigidbody, HOOK_FLAGS);
 
 	createplayer_hook.Install((void*)createplayer, (void*)h_createplayer, HOOK_FLAGS);
 	deleteplayer_hook.Install((void*)deleteplayer, (void*)h_deleteplayer, HOOK_FLAGS);

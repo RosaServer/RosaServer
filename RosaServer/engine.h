@@ -91,6 +91,9 @@ extern createbond_rigidbody_rot_rigidbody_func createbond_rigidbody_rot_rigidbod
 typedef int (*createbond_rigidbody_level_func)(int bodyID, Vector* localPos, Vector* globalPos);
 extern createbond_rigidbody_level_func createbond_rigidbody_level;
 
+typedef void (*addcollision_rigidbody_rigidbody_func)(int aBodyID, int bBodyID, Vector* aLocalPos, Vector* bLocalPos, Vector* normal, float, float, float, float);
+extern addcollision_rigidbody_rigidbody_func addcollision_rigidbody_rigidbody;
+
 /*
 	Object Handling
 */

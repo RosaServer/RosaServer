@@ -934,6 +934,23 @@ void h_playerdeathtax(int playerID)
 	}
 }
 
+void h_addcollision_rigidbody_rigidbody(int aBodyID, int bBodyID, Vector* aLocalPos, Vector* bLocalPos, Vector* normal, float a, float b, float c, float d)
+{
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil)
+	{
+		auto res = func("CollideBodies", &bodies[aBodyID], &bodies[bBodyID], aLocalPos, bLocalPos, normal, a, b, c, d);
+		if (noLuaCallError(&res))
+			noParent = (bool)res;
+	}
+	if (!noParent)
+	{
+		subhook::ScopedHookRemove remove(&addcollision_rigidbody_rigidbody_hook);
+		addcollision_rigidbody_rigidbody(aBodyID, bBodyID, aLocalPos, bLocalPos, normal, a, b, c, d);
+	}
+}
+
 /*
 Type:
 0 = Chat

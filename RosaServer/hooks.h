@@ -75,6 +75,9 @@ void h_playerai(int playerID);
 extern subhook::Hook playerdeathtax_hook;
 void h_playerdeathtax(int playerID);
 
+extern subhook::Hook addcollision_rigidbody_rigidbody_hook;
+void h_addcollision_rigidbody_rigidbody(int aBodyID, int bBodyID, Vector* aLocalPos, Vector* bLocalPos, Vector* normal, float, float, float, float);
+
 extern subhook::Hook createevent_message_hook;
 void h_createevent_message(int speakerType, char* message, int speakerID, int distance);
 extern subhook::Hook createevent_updateplayer_hook;
