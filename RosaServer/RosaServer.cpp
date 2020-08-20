@@ -20,6 +20,7 @@ sol::table* playerDataTables[MAXNUMOFPLAYERS];
 sol::table* humanDataTables[MAXNUMOFHUMANS];
 sol::table* itemDataTables[MAXNUMOFITEMS];
 sol::table* vehicleDataTables[MAXNUMOFVEHICLES];
+sol::table* bodyDataTables[MAXNUMOFRIGIDBODIES];
 
 std::queue<std::string> consoleQueue;
 std::mutex consoleQueueMutex;
@@ -81,14 +82,19 @@ static void pryMemory(void* address, size_t numPages)
 }
 
 /*static subhook::Hook _test_hook;
-typedef void(*_test_func)(int, int, Vector*, Vector*, Vector*, float, float, float, float);
+typedef int(*_test_func)(int, Vector*, RotMatrix*, Vector*, Vector*, float);
 static _test_func _test;
 
-void h__test(int a, int b, Vector* c, Vector* d, Vector* e, float f, float g, float h, float i) {
-	printf("%i %i (%f %f %f) (%f %f %f) (%f %f %f) %f %f %f %f\n", a, b, c->x, c->y, c->z, d->x, d->y, d->z, e->x, e->y, e->z, f, g, h, i);
+int h__test(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, float mass) {
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil)
+	{
+		auto res = func("Test", type, pos, rot, vel, scale, mass);
+		noLuaCallError(&res);
+	}
 
 	subhook::ScopedHookRemove remove(&_test_hook);
-	_test(a, b, c, d, e, f, g, h, i);
+	return _test(type, pos, rot, vel, scale, mass);
 }*/
 
 subhook::Hook resetgame_hook;
@@ -174,6 +180,8 @@ subhook::Hook createobject_hook;
 createobject_func createobject;
 subhook::Hook deleteobject_hook;
 void_index_func deleteobject;
+subhook::Hook createrigidbody_hook;
+createrigidbody_func createrigidbody;
 
 subhook::Hook createevent_message_hook;
 createevent_message_func createevent_message;
@@ -367,6 +375,15 @@ void luaInit(bool redo)
 			{
 				delete vehicleDataTables[i];
 				vehicleDataTables[i] = nullptr;
+			}
+		}
+
+		for (int i = 0; i < MAXNUMOFRIGIDBODIES; i++)
+		{
+			if (bodyDataTables[i])
+			{
+				delete bodyDataTables[i];
+				bodyDataTables[i] = nullptr;
 			}
 		}
 
@@ -723,6 +740,7 @@ void luaInit(bool redo)
 		meta["__tostring"] = &RigidBody::__tostring;
 		meta["index"] = sol::property(&RigidBody::getIndex);
 		meta["isActive"] = sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
+		meta["data"] = sol::property(&RigidBody::getDataTable);
 		meta["isSettled"] = sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
 
 		meta["bondTo"] = &RigidBody::bondTo;
@@ -995,7 +1013,7 @@ static void Attach()
 	numConnections = (unsigned int*)(base + 0x4532F468);
 	numBullets = (unsigned int*)(base + 0x4532F240);
 
-	//_test = (_test_func)(base + 0x13070);
+	//_test = (_test_func)(base + 0x4cc90);
 	//pryMemory(&_test, 2);
 
 	resetgame = (void_func)(base + 0xB10B0);
@@ -1047,6 +1065,7 @@ static void Attach()
 	createrope = (createrope_func)(base + 0x4F150);
 	createobject = (createobject_func)(base + 0x4CEA0);
 	deleteobject = (void_index_func)(base + 0x42A0);
+	createrigidbody = (createrigidbody_func)(base + 0x4cc90);
 
 	createevent_message = (createevent_message_func)(base + 0x29C0);
 	createevent_updateplayer = (void_index_func)(base + 0x2BE0);
@@ -1106,6 +1125,7 @@ static void Attach()
 	deleteitem_hook.Install((void*)deleteitem, (void*)h_deleteitem, HOOK_FLAGS);
 	createobject_hook.Install((void*)createobject, (void*)h_createobject, HOOK_FLAGS);
 	deleteobject_hook.Install((void*)deleteobject, (void*)h_deleteobject, HOOK_FLAGS);
+	createrigidbody_hook.Install((void*)createrigidbody, (void*)h_createrigidbody, HOOK_FLAGS);
 
 	createevent_message_hook.Install((void*)createevent_message, (void*)h_createevent_message, HOOK_FLAGS);
 	createevent_updateplayer_hook.Install((void*)createevent_updateplayer, (void*)h_createevent_updateplayer, HOOK_FLAGS);

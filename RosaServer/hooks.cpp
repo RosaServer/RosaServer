@@ -721,6 +721,21 @@ void h_deleteobject(int vehicleID)
 	}
 }
 
+int h_createrigidbody(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, float mass)
+{
+	int id;
+	{
+		subhook::ScopedHookRemove remove(&createrigidbody_hook);
+		id = createrigidbody(type, pos, rot, vel, scale, mass);
+	}
+	if (id != -1 && bodyDataTables[id])
+	{
+		delete bodyDataTables[id];
+		bodyDataTables[id] = nullptr;
+	}
+	return id;
+}
+
 int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot)
 {
 	bool noParent = false;

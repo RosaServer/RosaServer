@@ -55,6 +55,8 @@ extern subhook::Hook createobject_hook;
 int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
 extern subhook::Hook deleteobject_hook;
 void h_deleteobject(int vehicleID);
+extern subhook::Hook createrigidbody_hook;
+int h_createrigidbody(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, float mass);
 
 extern subhook::Hook linkitem_hook;
 int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot);

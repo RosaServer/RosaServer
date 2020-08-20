@@ -1399,6 +1399,18 @@ int RigidBody::getIndex() const
 	return ((uintptr_t)this - (uintptr_t)bodies) / sizeof(*this);
 }
 
+sol::table RigidBody::getDataTable() const
+{
+	int index = getIndex();
+
+	if (!bodyDataTables[index])
+	{
+		bodyDataTables[index] = new sol::table(lua->lua_state(), sol::create);
+	}
+
+	return *bodyDataTables[index];
+}
+
 Bond* RigidBody::bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const
 {
 	int id = createbond_rigidbody_rigidbody(getIndex(), other->getIndex(), thisLocalPos, otherLocalPos);

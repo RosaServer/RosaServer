@@ -793,6 +793,7 @@ struct RigidBody
 	{
 		active = b;
 	}
+	sol::table getDataTable() const;
 	bool getIsSettled() const
 	{
 		return settled;

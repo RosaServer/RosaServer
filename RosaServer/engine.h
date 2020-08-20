@@ -117,6 +117,9 @@ typedef int (*createobject_func)(int type, Vector* pos, Vector* vel, RotMatrix* 
 extern createobject_func createobject;
 extern void_index_func deleteobject;
 
+typedef int (*createrigidbody_func)(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, float mass);
+extern createrigidbody_func createrigidbody;
+
 /*
 	Events
 */
