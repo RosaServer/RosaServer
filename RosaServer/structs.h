@@ -554,7 +554,9 @@ struct ItemType
 	int numHands;					//78
 	Vector rightHandPos;	//7c
 	Vector leftHandPos;		//88
-		char unk3[4912 - 0x88 - 12];
+		char unk3[0x100 - 0x88 - 12];
+	Vector boundsCenter; //100
+		char unk4[4912 - 0x100 - 12];
 
 	const char* getClass() const
 	{

@@ -624,6 +624,7 @@ void luaInit(bool redo)
 		meta["numHands"] = &ItemType::numHands;
 		meta["rightHandPos"] = &ItemType::rightHandPos;
 		meta["leftHandPos"] = &ItemType::leftHandPos;
+		meta["boundsCenter"] = &ItemType::boundsCenter;
 
 		meta["class"] = sol::property(&ItemType::getClass);
 		meta["__tostring"] = &ItemType::__tostring;
