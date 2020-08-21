@@ -634,6 +634,7 @@ void luaInit(bool redo)
 
 	{
 		auto meta = lua->new_usertype<Item>("new", sol::no_constructor);
+		meta["physicsSettledTimer"] = &Item::physicsSettledTimer;
 		meta["type"] = &Item::type;
 		meta["despawnTime"] = &Item::despawnTime;
 		meta["parentSlot"] = &Item::parentSlot;
