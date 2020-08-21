@@ -168,3 +168,6 @@ extern lineintersecthuman_func lineintersecthuman;
 
 typedef int (*lineintersectobject_func)(int vehicleID, Vector* posA, Vector* posB);
 extern lineintersectobject_func lineintersectobject;
+
+typedef int (*lineintersecttriangle_func)(Vector* outPos, Vector* normal, float* outFraction, Vector* posA, Vector* posB, Vector* triA, Vector* triB, Vector* triC);
+extern lineintersecttriangle_func lineintersecttriangle;

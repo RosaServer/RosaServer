@@ -204,6 +204,7 @@ lineintersectlevel_func lineintersectlevel;
 subhook::Hook lineintersecthuman_hook;
 lineintersecthuman_func lineintersecthuman;
 lineintersectobject_func lineintersectobject;
+lineintersecttriangle_func lineintersecttriangle;
 
 #define HOOK_FLAGS subhook::HookFlags::HookFlag64BitOffset
 
@@ -813,6 +814,7 @@ void luaInit(bool redo)
 		physicsTable["lineIntersectLevel"] = l_physics_lineIntersectLevel;
 		physicsTable["lineIntersectHuman"] = l_physics_lineIntersectHuman;
 		physicsTable["lineIntersectVehicle"] = l_physics_lineIntersectVehicle;
+		physicsTable["lineIntersectTriangle"] = l_physics_lineIntersectTriangle;
 		physicsTable["garbageCollectBullets"] = l_physics_garbageCollectBullets;
 	}
 
@@ -1081,6 +1083,7 @@ static void Attach()
 	lineintersecthuman = (lineintersecthuman_func)(base + 0x23AB0);
 	lineintersectlevel = (lineintersectlevel_func)(base + 0x7C470);
 	lineintersectobject = (lineintersectobject_func)(base + 0x95590);
+	lineintersecttriangle = (lineintersecttriangle_func)(base + 0x6aa70);
 
 	// Hooks
 

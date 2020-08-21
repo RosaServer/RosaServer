@@ -88,6 +88,7 @@ void l_event_bulletHit(int hitType, Vector* pos, Vector* normal);
 sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB);
 sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA, Vector* posB);
 sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB);
+sol::object l_physics_lineIntersectTriangle(Vector* outPos, Vector* normal, Vector* posA, Vector* posB, Vector* triA, Vector* triB, Vector* triC, sol::this_state s);
 void l_physics_garbageCollectBullets();
 
 int l_itemTypes_getCount();

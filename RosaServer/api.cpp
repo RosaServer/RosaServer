@@ -257,6 +257,17 @@ sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* po
 	return table;
 }
 
+sol::object l_physics_lineIntersectTriangle(Vector* outPos, Vector* normal, Vector* posA, Vector* posB, Vector* triA, Vector* triB, Vector* triC, sol::this_state s)
+{
+	sol::state_view lua(s);
+
+	float outFraction;
+	int hit = lineintersecttriangle(outPos, normal, &outFraction, posA, posB, triA, triB, triC);
+
+	if (hit) return sol::make_object(lua, outFraction);
+	return sol::make_object(lua, sol::lua_nil);
+}
+
 void l_physics_garbageCollectBullets()
 {
 	bullettimetolive();
