@@ -162,6 +162,7 @@ createbond_rigidbody_rot_rigidbody_func createbond_rigidbody_rot_rigidbody;
 createbond_rigidbody_level_func createbond_rigidbody_level;
 subhook::Hook addcollision_rigidbody_rigidbody_hook;
 addcollision_rigidbody_rigidbody_func addcollision_rigidbody_rigidbody;
+addcollision_rigidbody_level_func addcollision_rigidbody_level;
 
 subhook::Hook createplayer_hook;
 createplayer_func createplayer;
@@ -749,6 +750,7 @@ void luaInit(bool redo)
 		meta["bondTo"] = &RigidBody::bondTo;
 		meta["bondRotTo"] = &RigidBody::bondRotTo;
 		meta["bondToLevel"] = &RigidBody::bondToLevel;
+		meta["collideLevel"] = &RigidBody::collideLevel;
 	}
 
 	{
@@ -1059,6 +1061,7 @@ static void Attach()
 	createbond_rigidbody_rot_rigidbody = (createbond_rigidbody_rot_rigidbody_func)(base + 0x12f70);
 	createbond_rigidbody_level = (createbond_rigidbody_level_func)(base + 0x12B80);
 	addcollision_rigidbody_rigidbody = (addcollision_rigidbody_rigidbody_func)(base + 0x13070);
+	addcollision_rigidbody_level = (addcollision_rigidbody_level_func)(base + 0x13220);
 
 	createplayer = (createplayer_func)(base + 0x40EE0);
 	deleteplayer = (void_index_func)(base + 0x411D0);

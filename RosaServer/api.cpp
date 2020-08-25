@@ -1440,6 +1440,11 @@ Bond* RigidBody::bondToLevel(Vector* localPos, Vector* globalPos) const
 	return id == -1 ? nullptr : &bonds[id];
 }
 
+void RigidBody::collideLevel(Vector* localPos, Vector* normal, float a, float b, float c, float d) const
+{
+	addcollision_rigidbody_level(getIndex(), localPos, normal, a, b, c, d);
+}
+
 std::string Bond::__tostring() const
 {
 	char buf[16];

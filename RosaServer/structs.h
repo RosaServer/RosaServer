@@ -807,6 +807,7 @@ struct RigidBody
 	Bond* bondTo(RigidBody* other, Vector* thisLocalPos, Vector* otherLocalPos) const;
 	Bond* bondRotTo(RigidBody* other) const;
 	Bond* bondToLevel(Vector* localPos, Vector* globalPos) const;
+	void collideLevel(Vector* localPos, Vector* normal, float, float, float, float) const;
 };
 
 //244 bytes (F4)
