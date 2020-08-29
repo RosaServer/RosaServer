@@ -66,6 +66,7 @@ typedef int (*item_setmemo_func)(int itemID, const char* memo);
 extern item_setmemo_func item_setmemo;
 typedef int (*item_computertransmitline_func)(int itemID, unsigned int line);
 extern item_computertransmitline_func item_computertransmitline;
+extern void_index_func item_computerincrementline;
 typedef int (*item_computerinput_func)(int itemID, unsigned int character);
 extern item_computerinput_func item_computerinput;
 

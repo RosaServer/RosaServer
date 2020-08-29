@@ -141,6 +141,7 @@ subhook::Hook linkitem_hook;
 linkitem_func linkitem;
 item_setmemo_func item_setmemo;
 item_computertransmitline_func item_computertransmitline;
+void_index_func item_computerincrementline;
 subhook::Hook item_computerinput_hook;
 item_computerinput_func item_computerinput;
 subhook::Hook human_applydamage_hook;
@@ -668,6 +669,7 @@ void luaInit(bool redo)
 		meta["explode"] = &Item::explode;
 		meta["setMemo"] = &Item::setMemo;
 		meta["computerTransmitLine"] = &Item::computerTransmitLine;
+		meta["computerIncrementLine"] = &Item::computerIncrementLine;
 		meta["computerSetLine"] = &Item::computerSetLine;
 		meta["computerSetColor"] = &Item::computerSetColor;
 	}
@@ -1048,6 +1050,7 @@ static void Attach()
 	linkitem = (linkitem_func)(base + 0x2B060);
 	item_setmemo = (item_setmemo_func)(base + 0x25F80);
 	item_computertransmitline = (item_computertransmitline_func)(base + 0x26100);
+	item_computerincrementline = (void_index_func)(base + 0x263a0);
 	item_computerinput = (item_computerinput_func)(base + 0x4e620);
 
 	human_applydamage = (human_applydamage_func)(base + 0x1E1D0);

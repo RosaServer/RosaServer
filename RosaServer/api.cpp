@@ -1318,6 +1318,11 @@ void Item::computerTransmitLine(unsigned int line) const
 	item_computertransmitline(getIndex(), line);
 }
 
+void Item::computerIncrementLine() const
+{
+	item_computerincrementline(getIndex());
+}
+
 void Item::computerSetLine(unsigned int line, const char* newLine)
 {
 	if (line >= 32)

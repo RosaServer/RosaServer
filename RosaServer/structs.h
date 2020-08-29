@@ -673,6 +673,7 @@ struct Item
 	void explode() const;
 	void setMemo(const char* memo) const;
 	void computerTransmitLine(unsigned int line) const;
+	void computerIncrementLine() const;
 	void computerSetLine(unsigned int line, const char* newLine);
 	void computerSetColor(unsigned int line, unsigned int column, unsigned char color);
 };
