@@ -33,6 +33,7 @@ static unsigned int* version;
 static unsigned int* subVersion;
 static char* serverName;
 static unsigned int* serverPort;
+static unsigned int* numEvents;
 
 static int* isPassworded;
 static char* password;
@@ -325,6 +326,10 @@ struct Server
 	{
 		return *subVersion;
 	}
+	unsigned int getNumEvents() const
+	{
+		return *numEvents;
+	}
 
 	void setConsoleTitle(const char* title) const
 	{
@@ -432,6 +437,7 @@ void luaInit(bool redo)
 		meta["version"] = sol::property(&Server::getVersion);
 		meta["versionMajor"] = sol::property(&Server::getVersionMajor);
 		meta["versionMinor"] = sol::property(&Server::getVersionMinor);
+		meta["numEvents"] = sol::property(&Server::getNumEvents);
 
 		meta["setConsoleTitle"] = &Server::setConsoleTitle;
 		meta["reset"] = &Server::reset;
@@ -990,6 +996,7 @@ static void Attach()
 	subVersion = (unsigned int*)(base + 0x2D5F04);
 	serverName = (char*)(base + 0x24EE4234);
 	serverPort = (unsigned int*)(base + 0x24EE4640);
+	numEvents = (unsigned int*)(base + 0x4532f244);
 	isPassworded = (int*)(base + 0x24EE4644);
 	password = (char*)(base + 0x1CC6D48C);
 	maxPlayers = (int*)(base + 0x24EE4648);
