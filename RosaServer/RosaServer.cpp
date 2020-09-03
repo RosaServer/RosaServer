@@ -796,6 +796,14 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&MenuButton::getClass);
 	}
 
+	{
+		auto meta = lua->new_usertype<Worker>("Worker");
+		meta["start"] = &Worker::start;
+		meta["stop"] = &Worker::stop;
+		meta["sendMessage"] = &Worker::sendMessage;
+		meta["receiveMessage"] = &Worker::receiveMessage;
+	}
+
 	(*lua)["printAppend"] = l_printAppend;
 	(*lua)["flagStateForReset"] = l_flagStateForReset;
 

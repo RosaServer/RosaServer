@@ -27,7 +27,7 @@ add_library (rosaserver SHARED
 	subhook_unix.c
 	subhook_x86.c
 	tinycon.cpp
-)
+ "worker.h" "worker.cpp")
 
 set_property(TARGET rosaserver PROPERTY CXX_STANDARD 17)
 

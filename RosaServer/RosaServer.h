@@ -13,3 +13,4 @@
 #include "api.h"
 #include "engine.h"
 #include "hooks.h"
+#include "worker.h"
