@@ -79,7 +79,11 @@ ChildProcess::ChildProcess(std::string fileName)
 			nullptr
 		};
 
-		execvpe(args[0], args, env);
+		if (execvpe(args[0], args, env) == -1)
+		{
+			perror("execvpe");
+			exit(1);
+		}
 	}
 }
 
