@@ -14,3 +14,4 @@
 #include "engine.h"
 #include "hooks.h"
 #include "worker.h"
+#include "childprocess.h"

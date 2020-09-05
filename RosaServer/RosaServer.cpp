@@ -804,6 +804,15 @@ void luaInit(bool redo)
 		meta["receiveMessage"] = &Worker::receiveMessage;
 	}
 
+	{
+		auto meta = lua->new_usertype<ChildProcess>("ChildProcess", sol::constructors<ChildProcess(std::string)>());
+		meta["isRunning"] = &ChildProcess::isRunning;
+		meta["terminate"] = &ChildProcess::terminate;
+		meta["getExitCode"] = &ChildProcess::getExitCode;
+		meta["receiveMessage"] = &ChildProcess::receiveMessage;
+		meta["sendMessage"] = &ChildProcess::sendMessage;
+	}
+
 	(*lua)["printAppend"] = l_printAppend;
 	(*lua)["flagStateForReset"] = l_flagStateForReset;
 
@@ -985,6 +994,9 @@ void luaInit(bool redo)
 
 static void Attach()
 {
+	// Don't load self into future child processes
+	unsetenv("LD_PRELOAD");
+
 	printf("[RS] Assuming 37c...\n");
 
 	std::ifstream file("/proc/self/maps");
