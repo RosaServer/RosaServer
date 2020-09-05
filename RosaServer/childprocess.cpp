@@ -1,7 +1,6 @@
 #include "childprocess.h"
 
 #include <thread>
-#include <iostream>
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
