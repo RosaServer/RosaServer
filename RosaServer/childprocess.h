@@ -25,4 +25,6 @@ public:
 	void setCPULimit(rlim_t softLimit, rlim_t hardLimit);
 	void setMemoryLimit(rlim_t softLimit, rlim_t hardLimit);
 	void setFileSizeLimit(rlim_t softLimit, rlim_t hardLimit);
+	int getPriority();
+	void setPriority(int nice);
 };

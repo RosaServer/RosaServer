@@ -814,6 +814,8 @@ void luaInit(bool redo)
 		meta["setCPULimit"] = &ChildProcess::setCPULimit;
 		meta["setMemoryLimit"] = &ChildProcess::setMemoryLimit;
 		meta["setFileSizeLimit"] = &ChildProcess::setFileSizeLimit;
+		meta["getPriority"] = &ChildProcess::getPriority;
+		meta["setPriority"] = &ChildProcess::setPriority;
 	}
 
 	(*lua)["printAppend"] = l_printAppend;

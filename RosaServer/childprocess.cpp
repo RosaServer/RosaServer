@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <unistd.h>
+#include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include <fcntl.h>
@@ -130,7 +131,7 @@ void ChildProcess::terminate()
 		else
 		{
 			int status;
-			int retPID = waitpid(pid, &status, WNOHANG);
+			int retPID = waitpid(pid, &status, 0);
 
 			if (retPID == -1)
 			{
@@ -253,4 +254,32 @@ void ChildProcess::setMemoryLimit(rlim_t softLimit, rlim_t hardLimit)
 void ChildProcess::setFileSizeLimit(rlim_t softLimit, rlim_t hardLimit)
 {
 	setLimit(RLIMIT_FSIZE, softLimit, hardLimit);
+}
+
+int ChildProcess::getPriority()
+{
+	if (!isRunning())
+		return 0;
+
+	// Necessary because a return value of -1 isnt always an error for getpriority()
+	errno = 0;
+
+	int nice = getpriority(PRIO_PROCESS, pid);
+	if (nice == -1 && errno != 0)
+	{
+		throw std::runtime_error(strerror(errno));
+	}
+
+	return nice;
+}
+
+void ChildProcess::setPriority(int nice)
+{
+	if (!isRunning())
+		return;
+	
+	if (setpriority(PRIO_PROCESS, pid, nice) == -1)
+	{
+		throw std::runtime_error(strerror(errno));
+	}
 }
