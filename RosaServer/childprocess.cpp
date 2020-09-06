@@ -226,3 +226,31 @@ void ChildProcess::sendMessage(std::string message)
 		}
 	}
 }
+
+void ChildProcess::setLimit(__rlimit_resource resource, rlim_t softLimit, rlim_t hardLimit)
+{
+	if (!isRunning())
+		return;
+	
+	const rlimit limits {softLimit, hardLimit};
+
+	if (prlimit(pid, resource, &limits, nullptr) == -1)
+	{
+		throw std::runtime_error(strerror(errno));
+	}
+}
+
+void ChildProcess::setCPULimit(rlim_t softLimit, rlim_t hardLimit)
+{
+	setLimit(RLIMIT_CPU, softLimit, hardLimit);
+}
+
+void ChildProcess::setMemoryLimit(rlim_t softLimit, rlim_t hardLimit)
+{
+	setLimit(RLIMIT_AS, softLimit, hardLimit);
+}
+
+void ChildProcess::setFileSizeLimit(rlim_t softLimit, rlim_t hardLimit)
+{
+	setLimit(RLIMIT_FSIZE, softLimit, hardLimit);
+}

@@ -811,6 +811,9 @@ void luaInit(bool redo)
 		meta["getExitCode"] = &ChildProcess::getExitCode;
 		meta["receiveMessage"] = &ChildProcess::receiveMessage;
 		meta["sendMessage"] = &ChildProcess::sendMessage;
+		meta["setCPULimit"] = &ChildProcess::setCPULimit;
+		meta["setMemoryLimit"] = &ChildProcess::setMemoryLimit;
+		meta["setFileSizeLimit"] = &ChildProcess::setFileSizeLimit;
 	}
 
 	(*lua)["printAppend"] = l_printAppend;
