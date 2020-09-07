@@ -22,8 +22,6 @@ sol::table* itemDataTables[MAXNUMOFITEMS];
 sol::table* vehicleDataTables[MAXNUMOFVEHICLES];
 sol::table* bodyDataTables[MAXNUMOFRIGIDBODIES];
 
-std::queue<std::string> consoleQueue;
-std::mutex consoleQueueMutex;
 std::queue<LuaHTTPRequest> requestQueue;
 std::mutex requestQueueMutex;
 std::queue<LuaHTTPResponse> responseQueue;
@@ -74,7 +72,9 @@ static void pryMemory(void* address, size_t numPages)
 
 	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0)
 	{
-		printf("[RS] Successfully pried open page at %p\n", (void*)page);
+		char buf[64];
+		sprintf(buf, "[RS] Successfully pried open page at %p\n", (void*)page);
+		Console::log(buf);
 	}
 	else
 	{
@@ -344,10 +344,9 @@ static Server* server;
 
 void luaInit(bool redo)
 {
-	printf("\033[36m");
 	if (redo)
 	{
-		printf("\n[RS] Resetting state...\n");
+		Console::log("\n\033[36m[RS] Resetting state...\033[0m\n");
 		delete server;
 
 		for (int i = 0; i < MAXNUMOFPLAYERS; i++)
@@ -399,7 +398,7 @@ void luaInit(bool redo)
 	}
 	else
 	{
-		printf("\n[RS] Initializing state...\n");
+		Console::log("\n\033[36m[RS] Initializing state...\033[0m\n");
 	}
 
 	lua = new sol::state();
@@ -818,6 +817,7 @@ void luaInit(bool redo)
 		meta["setPriority"] = &ChildProcess::setPriority;
 	}
 
+	(*lua)["print"] = l_print;
 	(*lua)["printAppend"] = l_printAppend;
 	(*lua)["flagStateForReset"] = l_flagStateForReset;
 
@@ -984,7 +984,7 @@ void luaInit(bool redo)
 	(*lua)["TYPE_COOP"] = 6;
 	(*lua)["TYPE_VERSUS"] = 7;
 
-	printf("[RS] Running init.lua...\033[0m\n");
+	Console::log("\033[36m[RS] Running init.lua...\033[0m\n");
 
 	sol::load_result load = lua->load_file("main/init.lua");
 	if (noLuaCallError(&load))
@@ -992,7 +992,7 @@ void luaInit(bool redo)
 		sol::protected_function_result res = load();
 		if (noLuaCallError(&res))
 		{
-			printf("\033[32m[RS] Ready!\033[0m\n");
+			Console::log("\033[32m[RS] Ready!\033[0m\n");
 		}
 	}
 }
@@ -1002,7 +1002,7 @@ static void Attach()
 	// Don't load self into future child processes
 	unsetenv("LD_PRELOAD");
 
-	printf("[RS] Assuming 37c...\n");
+	Console::log("[RS] Assuming 37c...\n");
 
 	std::ifstream file("/proc/self/maps");
 	std::string line;
@@ -1011,7 +1011,11 @@ static void Attach()
 	auto pos = line.find("-");
 	auto truncated = line.substr(0, pos);
 
-	printf("[RS] Base address is 0x%s...\n", truncated.c_str());
+	{
+		char buf[64];
+		sprintf(buf, "[RS] Base address is 0x%s...\n", truncated.c_str());
+		Console::log(buf);
+	}
 
 	auto base = std::stoul(truncated, nullptr, 16);
 

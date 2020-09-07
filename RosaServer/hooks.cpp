@@ -1,5 +1,6 @@
 #include "hooks.h"
 #include "api.h"
+#include "console.h"
 
 void h_resetgame()
 {
@@ -8,10 +9,8 @@ void h_resetgame()
 		initialized = true;
 		luaInit();
 
-		{
-			std::thread thread(consoleThread);
-			thread.detach();
-		}
+		Console::init();
+
 		{
 			std::thread thread(HTTPThread);
 			thread.detach();
@@ -57,15 +56,15 @@ void h_logicsimulation()
 	}
 
 	{
-		std::lock_guard<std::mutex> guard(consoleQueueMutex);
-		while (!consoleQueue.empty())
+		std::lock_guard<std::mutex> guard(Console::commandQueueMutex);
+		while (!Console::commandQueue.empty())
 		{
 			if (func != sol::nil)
 			{
-				auto res = func("ConsoleInput", consoleQueue.front());
+				auto res = func("ConsoleInput", Console::commandQueue.front());
 				noLuaCallError(&res);
 			}
-			consoleQueue.pop();
+			Console::commandQueue.pop();
 		}
 	}
 

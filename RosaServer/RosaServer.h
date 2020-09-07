@@ -15,3 +15,4 @@
 #include "hooks.h"
 #include "worker.h"
 #include "childprocess.h"
+#include "console.h"

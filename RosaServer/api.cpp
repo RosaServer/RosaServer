@@ -1,11 +1,17 @@
 #include "api.h"
 #include <chrono>
 #include <experimental/filesystem>
-#include "tinycon.h"
+#include "console.h"
 
 void printLuaError(sol::error* err)
 {
-	printf("\033[1;31mLua error:\n%s\033[0m\n\n", err->what());
+	std::stringstream stream;
+
+	stream << "\033[1;31mLua error:\n";
+	stream << err->what();
+	stream << "\033[0m\n";
+
+	Console::log(stream.str());
 }
 
 bool noLuaCallError(sol::protected_function_result* res)
@@ -48,28 +54,31 @@ void hookAndReset(int reason)
 	}
 }
 
-class tcon : public tinyConsole
+void l_print(sol::variadic_args args)
 {
- public:
-	tcon() : tinyConsole() { ; }
+	std::stringstream stream;
 
-	int trigger(std::string s)
+	bool doneFirst = false;
+	for (auto arg : args)
 	{
-		std::lock_guard<std::mutex> guard(consoleQueueMutex);
-		consoleQueue.push(s);
-		return 0;
-	}
-};
+		if (doneFirst)
+			stream << '\t';
+		else
+			doneFirst = true;
 
-void consoleThread()
-{
-	tcon console;
-	console.run();
+		std::string str = arg;
+		stream << str;
+	}
+
+	stream << '\n';
+
+	Console::log(stream.str());
 }
 
+// TODO: get rid of this
 void l_printAppend(const char* str)
 {
-	printf("%s", str);
+	Console::appendPrefix(str);
 }
 
 void l_flagStateForReset(const char* mode)

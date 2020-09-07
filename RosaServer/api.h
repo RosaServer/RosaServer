@@ -25,9 +25,6 @@ extern sol::table* itemDataTables[MAXNUMOFITEMS];
 extern sol::table* vehicleDataTables[MAXNUMOFVEHICLES];
 extern sol::table* bodyDataTables[MAXNUMOFRIGIDBODIES];
 
-extern std::queue<std::string> consoleQueue;
-extern std::mutex consoleQueueMutex;
-
 enum LuaRequestType
 {
 	get,
@@ -67,9 +64,10 @@ bool noLuaCallError(sol::protected_function_result* res);
 bool noLuaCallError(sol::load_result* res);
 void hookAndReset(int reason);
 
-void consoleThread();
+// void consoleThread();
 void luaInit(bool redo = false);
 
+void l_print(sol::variadic_args va);
 void l_printAppend(const char* str);
 void l_flagStateForReset(const char* mode);
 

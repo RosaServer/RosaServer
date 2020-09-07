@@ -23,9 +23,9 @@ add_library (rosaserver SHARED
 	subhook.c
 	subhook_unix.c
 	subhook_x86.c
-	tinycon.cpp
 	worker.cpp
 	childprocess.cpp
+	console.cpp
 )
 
 set_property (TARGET rosaserver PROPERTY CXX_STANDARD 17)
