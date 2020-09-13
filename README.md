@@ -34,4 +34,3 @@ Thanks to these open source libraries:
 - [Sol3](https://github.com/ThePhD/sol2)
 - [SubHook](https://github.com/Zeex/subhook)
 - [cpp-httplib](https://github.com/yhirose/cpp-httplib)
-- [TinyCon](https://github.com/unix-ninja/hackersandbox)
