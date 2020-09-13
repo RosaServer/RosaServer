@@ -6,6 +6,8 @@
 #include <queue>
 #include <thread>
 #include <mutex>
+
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "../cpp-httplib/httplib.h"
 
 #define RESET_REASON_BOOT 0

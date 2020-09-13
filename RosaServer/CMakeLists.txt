@@ -16,6 +16,9 @@ add_compile_definitions (
 set (THREADS_PREFER_PTHREAD_FLAG ON)
 find_package (Threads REQUIRED)
 
+set (OPENSSL_USE_STATIC_LIBS TRUE)
+find_package (OpenSSL REQUIRED)
+
 add_library (rosaserver SHARED
 	RosaServer.cpp
 	api.cpp
@@ -32,5 +35,7 @@ set_property (TARGET rosaserver PROPERTY CXX_STANDARD 17)
 
 target_link_libraries (rosaserver Threads::Threads)
 target_link_libraries (rosaserver stdc++fs)
+target_link_libraries (rosaserver OpenSSL::SSL)
+target_link_libraries (rosaserver OpenSSL::Crypto)
 target_link_libraries (rosaserver ${CMAKE_SOURCE_DIR}/LuaJIT/src/libluajit.so)
 include_directories (${CMAKE_SOURCE_DIR}/LuaJIT/src)
