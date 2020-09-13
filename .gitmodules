@@ -1,3 +1,6 @@
 [submodule "LuaJIT"]
 	path = LuaJIT
 	url = https://github.com/LuaJIT/LuaJIT
+[submodule "cpp-httplib"]
+	path = cpp-httplib
+	url = https://github.com/yhirose/cpp-httplib

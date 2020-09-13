@@ -136,6 +136,31 @@ void l_http_post(const char* host, int port, const char* path, sol::table header
 	requestQueue.push(request);
 }
 
+static void handleHTTPResponse(LuaHTTPRequest& req, httplib::Result& res)
+{
+	if (res)
+	{
+		LuaHTTPResponse response{
+			req.identifier,
+			true,
+			res->status,
+			res->body,
+			res->headers
+		};
+		std::lock_guard<std::mutex> guard(responseQueueMutex);
+		responseQueue.push(response);
+	}
+	else
+	{
+		LuaHTTPResponse response{
+			req.identifier,
+			false
+		};
+		std::lock_guard<std::mutex> guard(responseQueueMutex);
+		responseQueue.push(response);
+	}
+}
+
 void HTTPThread()
 {
 	while (true)
@@ -156,38 +181,24 @@ void HTTPThread()
 			client.set_connection_timeout(6);
 			client.set_keep_alive(false);
 
-			std::shared_ptr<httplib::Response> res;
+			httplib::Result* res;
 
 			req.headers.emplace("Connection", "close");
 
 			switch (req.type)
 			{
 				case get:
-					res = client.Get(req.path.c_str(), req.headers);
+					{
+						auto res = client.Get(req.path.c_str(), req.headers);
+						handleHTTPResponse(req, res);
+					}
 					break;
 				case post:
-					res = client.Post(req.path.c_str(), req.headers, req.body.c_str(), req.contentType.c_str());
+					{
+						auto res = client.Post(req.path.c_str(), req.headers, req.body, req.contentType.c_str());
+						handleHTTPResponse(req, res);
+					}
 					break;
-			}
-
-			if (res)
-			{
-				LuaHTTPResponse response{
-						req.identifier,
-						true,
-						res->status,
-						res->body,
-						res->headers};
-				std::lock_guard<std::mutex> guard(responseQueueMutex);
-				responseQueue.push(response);
-			}
-			else
-			{
-				LuaHTTPResponse response{
-						req.identifier,
-						false};
-				std::lock_guard<std::mutex> guard(responseQueueMutex);
-				responseQueue.push(response);
 			}
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));
