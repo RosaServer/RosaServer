@@ -1,4 +1,4 @@
-#include "../RosaServer/sol.hpp"
+#include "sol.hpp"
 
 #include <chrono>
 #include <thread>
