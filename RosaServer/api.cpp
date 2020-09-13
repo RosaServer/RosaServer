@@ -102,12 +102,11 @@ RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2, float z2
 	return RotMatrix{x1, y1, z1, x2, y2, z2, x3, y3, z3};
 }
 
-void l_http_get(const char* host, int port, const char* path, sol::table headers, const char* identifier)
+void l_http_get(const char* scheme, const char* path, sol::table headers, const char* identifier)
 {
 	LuaHTTPRequest request{
 			LuaRequestType::get,
-			host,
-			(unsigned short)port,
+			scheme,
 			path,
 			identifier};
 
@@ -118,12 +117,11 @@ void l_http_get(const char* host, int port, const char* path, sol::table headers
 	requestQueue.push(request);
 }
 
-void l_http_post(const char* host, int port, const char* path, sol::table headers, const char* body, const char* contentType, const char* identifier)
+void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, const char* identifier)
 {
 	LuaHTTPRequest request{
 			LuaRequestType::post,
-			host,
-			(unsigned short)port,
+			scheme,
 			path,
 			identifier,
 			contentType,
@@ -177,7 +175,7 @@ void HTTPThread()
 			requestQueue.pop();
 			requestQueueMutex.unlock();
 
-			httplib::Client client(req.host.c_str(), req.port);
+			httplib::Client client(req.scheme.c_str());
 			client.set_connection_timeout(6);
 			client.set_keep_alive(false);
 
