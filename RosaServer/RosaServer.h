@@ -7,7 +7,7 @@
 #include <iostream>
 #include <thread>
 
-#include "sol.hpp"
+#include "sol/sol.hpp"
 #include "subhook.h"
 
 #include "api.h"

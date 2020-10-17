@@ -1,4 +1,4 @@
-#include "sol.hpp"
+#include "sol/sol.hpp"
 
 #include <chrono>
 #include <thread>

@@ -2,7 +2,7 @@
 
 #include <cstring>
 #include <string>
-#include "sol.hpp"
+#include "sol/sol.hpp"
 
 #define MAXNUMOFACCOUNTS 32768
 #define MAXNUMOFPLAYERS 256

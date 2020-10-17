@@ -1,7 +1,7 @@
 #pragma once
 #include "engine.h"
 #include "hooks.h"
-#include "sol.hpp"
+#include "sol/sol.hpp"
 
 #include <queue>
 #include <thread>
