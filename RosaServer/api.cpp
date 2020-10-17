@@ -56,6 +56,12 @@ void hookAndReset(int reason)
 
 void l_print(sol::variadic_args args)
 {
+	sol::protected_function toString = (*lua)["tostring"];
+	if (toString == sol::nil)
+	{
+		return;
+	}
+
 	std::stringstream stream;
 
 	bool doneFirst = false;
@@ -65,8 +71,15 @@ void l_print(sol::variadic_args args)
 			stream << '\t';
 		else
 			doneFirst = true;
+		
+		auto stringified = toString(arg);
 
-		std::string str = arg;
+		if (!noLuaCallError(&stringified))
+		{
+			return;
+		}
+
+		std::string str = stringified;
 		stream << str;
 	}
 
