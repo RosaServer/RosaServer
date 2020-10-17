@@ -29,6 +29,7 @@ add_library (rosaserver SHARED
 	worker.cpp
 	childprocess.cpp
 	console.cpp
+	image.cpp
 )
 
 set_property (TARGET rosaserver PROPERTY CXX_STANDARD 17)

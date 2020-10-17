@@ -16,3 +16,4 @@
 #include "worker.h"
 #include "childprocess.h"
 #include "console.h"
+#include "image.h"

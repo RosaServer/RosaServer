@@ -817,6 +817,17 @@ void luaInit(bool redo)
 		meta["setPriority"] = &ChildProcess::setPriority;
 	}
 
+	{
+		auto meta = lua->new_usertype<Image>("Image");
+		meta["width"] = sol::property(&Image::getWidth);
+		meta["height"] = sol::property(&Image::getHeight);
+		meta["numChannels"] = sol::property(&Image::getNumChannels);
+		meta["free"] = &Image::free;
+		meta["loadFromFile"] = &Image::loadFromFile;
+		meta["getRGB"] = &Image::getRGB;
+		meta["getRGBA"] = &Image::getRGBA;
+	}
+
 	(*lua)["print"] = l_print;
 	(*lua)["printAppend"] = l_printAppend;
 	(*lua)["flagStateForReset"] = l_flagStateForReset;
