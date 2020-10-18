@@ -41,8 +41,6 @@ void Image::loadFromFile(const char* fileName)
 	}
 }
 
-static constexpr char channelError[] = "Image data has too few channels";
-
 std::tuple<int, int, int> Image::getRGB(unsigned int x, unsigned int y)
 {
 	if (!data)
