@@ -72,9 +72,14 @@ static void pryMemory(void* address, size_t numPages)
 
 	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0)
 	{
-		char buf[64];
-		sprintf(buf, "[RS] Successfully pried open page at %p\n", (void*)page);
-		Console::log(buf);
+		std::stringstream stream;
+
+		stream << "[RS] Successfully pried open page at ";
+		stream << std::showbase << std::hex;
+		stream << static_cast<uintptr_t>(page);
+		stream << "...\n";
+
+		Console::log(stream.str());
 	}
 	else
 	{
@@ -1008,13 +1013,8 @@ void luaInit(bool redo)
 	}
 }
 
-static void Attach()
+static inline unsigned long getBaseAddress()
 {
-	// Don't load self into future child processes
-	unsetenv("LD_PRELOAD");
-
-	Console::log("[RS] Assuming 37c...\n");
-
 	std::ifstream file("/proc/self/maps");
 	std::string line;
 	// First line
@@ -1022,16 +1022,23 @@ static void Attach()
 	auto pos = line.find("-");
 	auto truncated = line.substr(0, pos);
 
-	{
-		char buf[64];
-		sprintf(buf, "[RS] Base address is 0x%s...\n", truncated.c_str());
-		Console::log(buf);
-	}
+	return std::stoul(truncated, nullptr, 16);
+}
 
-	auto base = std::stoul(truncated, nullptr, 16);
+static inline void printBaseAddress(unsigned long base)
+{
+	std::stringstream stream;
 
-	// Locate everything
+	stream << "[RS] Base address is ";
+	stream << std::showbase << std::hex;
+	stream << base;
+	stream << "...\n";
 
+	Console::log(stream.str());
+}
+
+static inline void locateMemory(unsigned long base)
+{
 	version = (unsigned int*)(base + 0x2D5F08);
 	subVersion = (unsigned int*)(base + 0x2D5F04);
 	serverName = (char*)(base + 0x24EE4234);
@@ -1139,9 +1146,10 @@ static void Attach()
 	lineintersectlevel = (lineintersectlevel_func)(base + 0x7C470);
 	lineintersectobject = (lineintersectobject_func)(base + 0x95590);
 	lineintersecttriangle = (lineintersecttriangle_func)(base + 0x6aa70);
+}
 
-	// Hooks
-
+static inline void installHooks()
+{
 	//_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
 	resetgame_hook.Install((void*)resetgame, (void*)h_resetgame, HOOK_FLAGS);
 
@@ -1196,9 +1204,23 @@ static void Attach()
 	lineintersecthuman_hook.Install((void*)lineintersecthuman, (void*)h_lineintersecthuman, HOOK_FLAGS);
 }
 
+static void attach()
+{
+	// Don't load self into future child processes
+	unsetenv("LD_PRELOAD");
+
+	Console::log("[RS] Assuming 37c...\n");
+
+	auto base = getBaseAddress();
+	printBaseAddress(base);
+
+	locateMemory(base);
+	installHooks();
+}
+
 int __attribute__((constructor)) Entry()
 {
-	std::thread mainThread(Attach);
+	std::thread mainThread(attach);
 	mainThread.detach();
 	return 0;
 }
