@@ -20,7 +20,7 @@ set (OPENSSL_USE_STATIC_LIBS TRUE)
 find_package (OpenSSL REQUIRED)
 
 add_library (rosaserver SHARED
-	RosaServer.cpp
+	rosaserver.cpp
 	api.cpp
 	hooks.cpp
 	subhook.c
