@@ -1,6 +1,6 @@
 #include "api.h"
 #include <chrono>
-#include <experimental/filesystem>
+#include <filesystem>
 #include "console.h"
 
 void printLuaError(sol::error* err)
@@ -724,11 +724,11 @@ Bond* l_bonds_getByIndex(sol::table self, unsigned int idx)
 sol::table l_os_listDirectory(const char* path)
 {
 	auto arr = lua->create_table();
-	for (const auto& entry : std::experimental::filesystem::directory_iterator(path))
+	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
 		auto table = lua->create_table();
 		auto path = entry.path();
-		table["isDirectory"] = std::experimental::filesystem::is_directory(path);
+		table["isDirectory"] = std::filesystem::is_directory(path);
 		table["name"] = path.filename().string();
 		table["stem"] = path.stem().string();
 		table["extension"] = path.extension().string();
