@@ -737,6 +737,11 @@ sol::table l_os_listDirectory(const char* path)
 	return arr;
 }
 
+bool l_os_createDirectory(const char* path)
+{
+	return std::filesystem::create_directories(path);
+}
+
 double l_os_clock()
 {
 	auto now = std::chrono::steady_clock::now();

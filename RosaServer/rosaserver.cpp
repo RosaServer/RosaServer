@@ -981,6 +981,7 @@ void luaInit(bool redo)
 	}
 
 	(*lua)["os"]["listDirectory"] = l_os_listDirectory;
+	(*lua)["os"]["createDirectory"] = l_os_createDirectory;
 	(*lua)["os"]["clock"] = l_os_clock;
 
 	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;
