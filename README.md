@@ -13,6 +13,7 @@ RosaServer uses [LuaJIT](http://luajit.org/); this means there's no hit to perfo
 - Build the library or download the latest [Release](https://github.com/RosaServer/RosaServer/releases).
 - Your directory should contain `libluajit.so`, `librosaserver.so`, `subrosadedicated.x64`, and the `data` folder (the last two can be found with your game install).
   - You will also need the `rosaserversatellite` binary if you plan to use the ChildProcess API. Make sure it has execute permissions.
+- There's a 99% chance you'll also want to use [RosaServerCore](https://github.com/RosaServer/RosaServerCore).
 
 ## Running
 
