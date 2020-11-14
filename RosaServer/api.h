@@ -6,6 +6,7 @@
 #include <queue>
 #include <thread>
 #include <mutex>
+#include <memory>
 
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "../cpp-httplib/httplib.h"
@@ -38,7 +39,7 @@ struct LuaHTTPRequest
 	LuaRequestType type;
 	std::string scheme;
 	std::string path;
-	std::string identifier;
+	std::shared_ptr<sol::protected_function> callback;
 	std::string contentType;
 	std::string body;
 	httplib::Headers headers;
@@ -46,13 +47,14 @@ struct LuaHTTPRequest
 
 struct LuaHTTPResponse
 {
-	std::string identifier;
+	std::shared_ptr<sol::protected_function> callback;
 	bool responded;
 	int status;
 	std::string body;
 	httplib::Headers headers;
 };
 
+extern std::mutex stateResetMutex;
 extern std::queue<LuaHTTPRequest> requestQueue;
 extern std::mutex requestQueueMutex;
 extern std::queue<LuaHTTPResponse> responseQueue;
@@ -76,8 +78,8 @@ Vector l_Vector();
 Vector l_Vector_3f(float x, float y, float z);
 RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
-void l_http_get(const char* scheme, const char* path, sol::table headers, const char* identifier);
-void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, const char* identifier);
+void l_http_get(const char* scheme, const char* path, sol::table headers, sol::protected_function callback);
+void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, sol::protected_function callback);
 
 void l_event_sound(int soundType, Vector* pos, float volume, float pitch);
 void l_event_soundSimple(int soundType, Vector* pos);

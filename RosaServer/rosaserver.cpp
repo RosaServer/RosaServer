@@ -22,6 +22,7 @@ sol::table* itemDataTables[MAXNUMOFITEMS];
 sol::table* vehicleDataTables[MAXNUMOFVEHICLES];
 sol::table* bodyDataTables[MAXNUMOFRIGIDBODIES];
 
+std::mutex stateResetMutex;
 std::queue<LuaHTTPRequest> requestQueue;
 std::mutex requestQueueMutex;
 std::queue<LuaHTTPResponse> responseQueue;
@@ -349,6 +350,10 @@ static Server* server;
 
 void luaInit(bool redo)
 {
+	std::lock_guard<std::mutex> guard(stateResetMutex);
+	requestQueue = std::queue<LuaHTTPRequest>();
+	responseQueue = std::queue<LuaHTTPResponse>();
+
 	if (redo)
 	{
 		Console::log("\n\033[36m[RS] Resetting state...\033[0m\n");

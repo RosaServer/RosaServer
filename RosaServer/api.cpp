@@ -115,13 +115,14 @@ RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2, float z2
 	return RotMatrix{x1, y1, z1, x2, y2, z2, x3, y3, z3};
 }
 
-void l_http_get(const char* scheme, const char* path, sol::table headers, const char* identifier)
+void l_http_get(const char* scheme, const char* path, sol::table headers, sol::protected_function callback)
 {
 	LuaHTTPRequest request{
-			LuaRequestType::get,
-			scheme,
-			path,
-			identifier};
+		LuaRequestType::get,
+		scheme,
+		path,
+		std::make_shared<sol::protected_function>(callback)
+	};
 
 	for (const auto& pair : headers)
 		request.headers.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
@@ -130,15 +131,16 @@ void l_http_get(const char* scheme, const char* path, sol::table headers, const 
 	requestQueue.push(request);
 }
 
-void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, const char* identifier)
+void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, sol::protected_function callback)
 {
 	LuaHTTPRequest request{
-			LuaRequestType::post,
-			scheme,
-			path,
-			identifier,
-			contentType,
-			body};
+		LuaRequestType::post,
+		scheme,
+		path,
+		std::make_shared<sol::protected_function>(callback),
+		contentType,
+		body
+	};
 
 	for (const auto& pair : headers)
 		request.headers.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
@@ -152,7 +154,7 @@ static void handleHTTPResponse(LuaHTTPRequest& req, httplib::Result& res)
 	if (res)
 	{
 		LuaHTTPResponse response{
-			req.identifier,
+			req.callback,
 			true,
 			res->status,
 			res->body,
@@ -164,7 +166,7 @@ static void handleHTTPResponse(LuaHTTPRequest& req, httplib::Result& res)
 	else
 	{
 		LuaHTTPResponse response{
-			req.identifier,
+			req.callback,
 			false
 		};
 		std::lock_guard<std::mutex> guard(responseQueueMutex);
@@ -178,6 +180,8 @@ void HTTPThread()
 	{
 		while (true)
 		{
+			std::lock_guard<std::mutex> guard(stateResetMutex);
+
 			requestQueueMutex.lock();
 			if (requestQueue.empty())
 			{

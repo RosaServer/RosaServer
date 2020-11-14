@@ -93,12 +93,12 @@ void h_logicsimulation()
 					headers[h.first] = h.second;
 				table["headers"] = headers;
 
-				auto resf = func("HTTPResponse", res.identifier, table);
+				auto resf = res.callback->call(table);
 				noLuaCallError(&resf);
 			}
 			else
 			{
-				auto resf = func("HTTPResponse", res.identifier);
+				auto resf = res.callback->call();
 				noLuaCallError(&resf);
 			}
 		}
