@@ -103,6 +103,25 @@ void h_logicsimulation()
 			}
 		}
 	}
+
+	if (Console::isAwaitingAutoComplete())
+	{
+		if (func != sol::nil)
+		{
+			auto data = lua->create_table();
+			data["response"] = Console::getAutoCompleteInput();
+
+			auto res = func("ConsoleAutoComplete", data);
+			noLuaCallError(&res);
+
+			std::string response = data["response"];
+			Console::respondToAutoComplete(response);
+		}
+		else
+		{
+			Console::respondToAutoComplete(Console::getAutoCompleteInput());
+		}
+	}
 }
 
 void h_logicsimulation_race()

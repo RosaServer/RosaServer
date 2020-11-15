@@ -14,6 +14,7 @@ namespace Console
 {
 	std::queue<std::string> commandQueue;
 	std::mutex commandQueueMutex;
+	std::mutex autoCompleteMutex;
 
 	// Allows getting characters before newline and disables echo
 	static int _getch ()
@@ -32,6 +33,7 @@ namespace Console
 		return code;
 	}
 
+	static constexpr int CODE_TAB = 9;
 	static constexpr int CODE_NEW_LINE = 10;
 	static constexpr int CODE_ESCAPE = 27;
 	static constexpr int CODE_1 = 49;
@@ -76,6 +78,69 @@ namespace Console
 		std::cout << std::flush;
 	}
 
+	static bool awaitingAutoComplete = false;
+	static std::string autoCompleteInput;
+
+	bool isAwaitingAutoComplete()
+	{
+		std::lock_guard<std::mutex> guard(autoCompleteMutex);
+		return awaitingAutoComplete;
+	}
+
+	std::string getAutoCompleteInput()
+	{
+		std::lock_guard<std::mutex> guard(autoCompleteMutex);
+		return autoCompleteInput;
+	}
+
+	void respondToAutoComplete(std::string newBuffer)
+	{
+		std::lock_guard<std::mutex> guard(autoCompleteMutex);
+		if (!awaitingAutoComplete)
+		{
+			return;
+		}
+
+		awaitingAutoComplete = false;
+
+		buffer.clear();
+		for (int i = 0; i < newBuffer.size(); i++)
+		{
+			buffer.push_back(newBuffer[i]);
+		}
+
+		for (int i = 0; i < cursorCol; i++)
+		{
+			std::cout << "\b \b";
+		}
+
+		cursorCol = buffer.size();
+
+		std::lock_guard<std::mutex> outputGuard(outputMutex);
+		std::cout << newBuffer;
+	}
+
+	static void awaitAutoComplete()
+	{
+		{
+			std::lock_guard<std::mutex> guard(autoCompleteMutex);
+			awaitingAutoComplete = true;
+			autoCompleteInput = getBuffer();
+		}
+
+		while (true)
+		{
+			{
+				std::lock_guard<std::mutex> guard(autoCompleteMutex);
+				if (!awaitingAutoComplete)
+				{
+					break;
+				}
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(32));
+		}
+	}
+
 	void threadMain()
 	{
 		int retryCode = 0;
@@ -95,6 +160,10 @@ namespace Console
 
 			switch (code)
 			{
+			case CODE_TAB:
+				awaitAutoComplete();
+				break;
+
 			case CODE_NEW_LINE:
 				if (buffer.size())
 				{
@@ -174,6 +243,8 @@ namespace Console
 								draft.assign(buffer.begin(), buffer.end());
 							}
 
+							std::lock_guard<std::mutex> guard(outputMutex);
+
 							for (int i = 0; i < cursorCol; i++)
 							{
 								std::cout << "\b \b";
@@ -203,6 +274,8 @@ namespace Console
 					case CODE_B:
 						if (history.size())
 						{
+							std::lock_guard<std::mutex> guard(outputMutex);
+
 							for (int i = 0; i < cursorCol; i++)
 							{
 								std::cout << "\b \b";
@@ -244,6 +317,7 @@ namespace Console
 					case CODE_C:
 						if (cursorCol < buffer.size())
 						{
+							std::lock_guard<std::mutex> guard(outputMutex);
 							std::cout << buffer[cursorCol];
 							cursorCol++;
 						}
@@ -253,6 +327,7 @@ namespace Console
 					case CODE_D:
 						if (cursorCol)
 						{
+							std::lock_guard<std::mutex> guard(outputMutex);
 							std::cout << '\b';
 							cursorCol--;
 						}
@@ -272,6 +347,7 @@ namespace Console
 								{
 									if (cursorCol > 0)
 									{
+										std::lock_guard<std::mutex> guard(outputMutex);
 										for (int i = 0; i < cursorCol; i++)
 										{
 											std::cout << '\b';
@@ -284,6 +360,8 @@ namespace Console
 									if (cursorCol < buffer.size())
 									{
 										buffer.erase(buffer.begin() + cursorCol);
+
+										std::lock_guard<std::mutex> guard(outputMutex);
 
 										for (int i = cursorCol; i < buffer.size(); i++)
 										{
@@ -300,6 +378,8 @@ namespace Console
 								}
 								else if (code == CODE_4)
 								{
+									std::lock_guard<std::mutex> guard(outputMutex);
+
 									for (int i = cursorCol; i < buffer.size(); i++)
 									{
 										std::cout << buffer[i];
