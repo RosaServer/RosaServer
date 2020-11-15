@@ -462,7 +462,10 @@ struct Human
 	int model;			//3770
 	int suitColor;	//3774
 	int tieColor;		//3778
-	char unk32[14288 - 0x3778 - 4];
+		int unk32; //377c
+	int necklace; //3780
+	int isAppearanceDirty; //3784
+		char unk33[14288 - 0x3784 - 4];
 
 	const char* getClass() const
 	{
@@ -510,6 +513,14 @@ struct Human
 	void setIsBleeding(bool b)
 	{
 		isBleeding = b;
+	}
+	bool getIsAppearanceDirty() const
+	{
+		return isAppearanceDirty;
+	}
+	void setIsAppearanceDirty(bool b)
+	{
+		isAppearanceDirty = b;
 	}
 	Player* getPlayer() const;
 	Vehicle* getVehicle() const;

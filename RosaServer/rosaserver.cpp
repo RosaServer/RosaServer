@@ -600,6 +600,10 @@ void luaInit(bool redo)
 		meta["hairColor"] = &Human::hairColor;
 		meta["hair"] = &Human::hair;
 		meta["eyeColor"] = &Human::eyeColor;
+		meta["model"] = &Human::model;
+		meta["suitColor"] = &Human::suitColor;
+		meta["tieColor"] = &Human::tieColor;
+		meta["necklace"] = &Human::necklace;
 
 		meta["class"] = sol::property(&Human::getClass);
 		meta["__tostring"] = &Human::__tostring;
@@ -617,6 +621,7 @@ void luaInit(bool redo)
 		meta["leftHandItem"] = sol::property(&Human::getLeftHandItem);
 		meta["rightHandGrab"] = sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
 		meta["leftHandGrab"] = sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
+		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty, &Human::setIsAppearanceDirty);
 
 		meta["remove"] = &Human::remove;
 		meta["teleport"] = &Human::teleport;
