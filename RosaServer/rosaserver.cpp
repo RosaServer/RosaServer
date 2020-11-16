@@ -60,9 +60,11 @@ Item* items;
 Bullet* bullets;
 RigidBody* bodies;
 Bond* bonds;
+Street* streets;
 
 unsigned int* numConnections;
 unsigned int* numBullets;
+unsigned int* numStreets;
 
 static void pryMemory(void* address, size_t numPages)
 {
@@ -843,6 +845,29 @@ void luaInit(bool redo)
 		meta["getRGBA"] = &Image::getRGBA;
 	}
 
+	{
+		auto meta = lua->new_usertype<StreetLane>("new", sol::no_constructor);
+		meta["direction"] = &StreetLane::direction;
+		meta["posA"] = &StreetLane::posA;
+		meta["posB"] = &StreetLane::posB;
+
+		meta["class"] = sol::property(&StreetLane::getClass);
+	}
+
+	{
+		auto meta = lua->new_usertype<Street>("new", sol::no_constructor);
+		meta["trafficCuboidA"] = &Street::trafficCuboidA;
+		meta["trafficCuboidB"] = &Street::trafficCuboidB;
+		meta["numTraffic"] = &Street::numTraffic;
+
+		meta["class"] = sol::property(&Street::getClass);
+		meta["__tostring"] = &Street::__tostring;
+		meta["name"] = sol::property(&Street::getName);
+		meta["numLanes"] = sol::property(&Street::getNumLanes);
+
+		meta["getLane"] = &Street::getLane;
+	}
+
 	(*lua)["print"] = l_print;
 	(*lua)["printAppend"] = l_printAppend;
 	(*lua)["flagStateForReset"] = l_flagStateForReset;
@@ -990,6 +1015,17 @@ void luaInit(bool redo)
 		_meta["__index"] = l_bonds_getByIndex;
 	}
 
+	{
+		auto streetsTable = lua->create_table();
+		(*lua)["streets"] = streetsTable;
+		streetsTable["getCount"] = l_streets_getCount;
+		streetsTable["getAll"] = l_streets_getAll;
+
+		sol::table _meta = lua->create_table();
+		streetsTable[sol::metatable_key] = _meta;
+		_meta["__index"] = l_streets_getByIndex;
+	}
+
 	(*lua)["os"]["listDirectory"] = l_os_listDirectory;
 	(*lua)["os"]["createDirectory"] = l_os_createDirectory;
 	(*lua)["os"]["clock"] = l_os_clock;
@@ -1082,9 +1118,11 @@ static inline void locateMemory(unsigned long base)
 	bullets = (Bullet*)(base + 0x4355E260);
 	bodies = (RigidBody*)(base + 0x2DACC0);
 	bonds = (Bond*)(base + 0x24964220);
+	streets = (Street*)(base + 0x3C311030);
 
 	numConnections = (unsigned int*)(base + 0x4532F468);
 	numBullets = (unsigned int*)(base + 0x4532F240);
+	numStreets = (unsigned int*)(base + 0x3C31102C);
 
 	//_test = (_test_func)(base + 0x4cc90);
 	//pryMemory(&_test, 2);

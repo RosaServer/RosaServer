@@ -20,9 +20,11 @@ extern Item* items;
 extern Bullet* bullets;
 extern RigidBody* bodies;
 extern Bond* bonds;
+extern Street* streets;
 
 extern unsigned int* numConnections;
 extern unsigned int* numBullets;
+extern unsigned int* numStreets;
 
 /*
 	Misc

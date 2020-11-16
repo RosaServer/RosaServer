@@ -725,6 +725,28 @@ Bond* l_bonds_getByIndex(sol::table self, unsigned int idx)
 	return &bonds[idx];
 }
 
+int l_streets_getCount()
+{
+	return *numStreets;
+}
+
+sol::table l_streets_getAll()
+{
+	auto arr = lua->create_table();
+	for (int i = 0; i < *numStreets; i++)
+	{
+		arr.add(&streets[i]);
+	}
+	return arr;
+}
+
+Street* l_streets_getByIndex(sol::table self, unsigned int idx)
+{
+	if (idx >= *numStreets)
+		throw std::runtime_error("Index out of range");
+	return &streets[idx];
+}
+
 sol::table l_os_listDirectory(const char* path)
 {
 	auto arr = lua->create_table();
@@ -1510,4 +1532,19 @@ RigidBody* Bond::getBody() const
 RigidBody* Bond::getOtherBody() const
 {
 	return &bodies[otherBodyID];
+}
+
+std::string Street::__tostring() const
+{
+	char buf[48];
+	sprintf(buf, "Street('%s')", name);
+	return buf;
+}
+
+StreetLane* Street::getLane(unsigned int idx)
+{
+	if (idx >= numLanes)
+		throw std::runtime_error("Index out of range");
+
+	return &lanes[idx];
 }

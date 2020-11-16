@@ -862,3 +862,46 @@ struct Bond
 	RigidBody* getBody() const;
 	RigidBody* getOtherBody() const;
 };
+
+//28 bytes (1C)
+struct StreetLane
+{
+	int direction;
+	Vector posA;
+	Vector posB;
+
+	const char* getClass() const
+	{
+		return "StreetLane";
+	}
+};
+
+//1580 bytes (62C)
+struct Street
+{
+	char name[32];
+		int unk0[5]; //20
+	int numLanes; //34
+	StreetLane lanes[16]; //38
+		float unk1[6]; //1f8
+	Vector trafficCuboidA; //210
+	Vector trafficCuboidB; //21c
+	int numTraffic; //228
+		char unk2[1580 - 0x228 - 4];
+		
+	const char* getClass() const
+	{
+		return "Street";
+	}
+	std::string __tostring() const;
+	char* getName()
+	{
+		return name;
+	}
+	int getNumLanes()
+	{
+		return numLanes;
+	}
+
+	StreetLane* getLane(unsigned int idx);
+};

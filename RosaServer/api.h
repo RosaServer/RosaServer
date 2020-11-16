@@ -143,6 +143,10 @@ int l_bonds_getCount();
 sol::table l_bonds_getAll();
 Bond* l_bonds_getByIndex(sol::table self, unsigned int idx);
 
+int l_streets_getCount();
+sol::table l_streets_getAll();
+Street* l_streets_getByIndex(sol::table self, unsigned int idx);
+
 sol::table l_os_listDirectory(const char* path);
 bool l_os_createDirectory(const char* path);
 double l_os_clock();
