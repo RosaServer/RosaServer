@@ -79,10 +79,10 @@ static void pryMemory(void* address, size_t numPages)
 	{
 		std::stringstream stream;
 
-		stream << "[RS] Successfully pried open page at ";
+		stream << RS_PREFIX "Successfully pried open page at ";
 		stream << std::showbase << std::hex;
 		stream << static_cast<uintptr_t>(page);
-		stream << "...\n";
+		stream << "\n";
 
 		Console::log(stream.str());
 	}
@@ -107,6 +107,11 @@ int h__test(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, f
 	subhook::ScopedHookRemove remove(&_test_hook);
 	return _test(type, pos, rot, vel, scale, mass);
 }*/
+
+subhook::Hook subrosa_puts_hook;
+subrosa_puts_func subrosa_puts;
+subhook::Hook subrosa___printf_chk_hook;
+subrosa___printf_chk_func subrosa___printf_chk;
 
 subhook::Hook resetgame_hook;
 void_func resetgame;
@@ -218,8 +223,6 @@ subhook::Hook lineintersecthuman_hook;
 lineintersecthuman_func lineintersecthuman;
 lineintersectobject_func lineintersectobject;
 lineintersecttriangle_func lineintersecttriangle;
-
-#define HOOK_FLAGS subhook::HookFlags::HookFlag64BitOffset
 
 struct Server
 {
@@ -360,7 +363,7 @@ void luaInit(bool redo)
 
 	if (redo)
 	{
-		Console::log("\n\033[36m[RS] Resetting state...\033[0m\n");
+		Console::log(LUA_PREFIX "Resetting state...\n");
 		delete server;
 
 		for (int i = 0; i < MAXNUMOFPLAYERS; i++)
@@ -412,7 +415,7 @@ void luaInit(bool redo)
 	}
 	else
 	{
-		Console::log("\n\033[36m[RS] Initializing state...\033[0m\n");
+		Console::log(LUA_PREFIX "Initializing state...\n");
 	}
 
 	lua = new sol::state();
@@ -428,6 +431,8 @@ void luaInit(bool redo)
 	lua->open_libraries(sol::lib::io);
 	lua->open_libraries(sol::lib::ffi);
 	lua->open_libraries(sol::lib::jit);
+
+	Console::log(LUA_PREFIX "Defining usertypes...\n");
 
 	{
 		auto meta = lua->new_usertype<Server>("new", sol::no_constructor);
@@ -893,6 +898,8 @@ void luaInit(bool redo)
 		meta["streetNorth"] = sol::property(&StreetIntersection::getStreetNorth);
 	}
 
+	Console::log(LUA_PREFIX "Defining globals...\n");
+
 	(*lua)["print"] = l_print;
 	(*lua)["printAppend"] = l_printAppend;
 	(*lua)["flagStateForReset"] = l_flagStateForReset;
@@ -1083,15 +1090,15 @@ void luaInit(bool redo)
 	(*lua)["TYPE_COOP"] = 6;
 	(*lua)["TYPE_VERSUS"] = 7;
 
-	Console::log("\033[36m[RS] Running init.lua...\033[0m\n");
+	Console::log(LUA_PREFIX "Running " LUA_ENTRY_FILE "...\n");
 
-	sol::load_result load = lua->load_file("main/init.lua");
+	sol::load_result load = lua->load_file(LUA_ENTRY_FILE);
 	if (noLuaCallError(&load))
 	{
 		sol::protected_function_result res = load();
 		if (noLuaCallError(&res))
 		{
-			Console::log("\033[32m[RS] Ready!\033[0m\n");
+			Console::log(LUA_PREFIX "No problems!\n");
 		}
 	}
 }
@@ -1112,10 +1119,10 @@ static inline void printBaseAddress(unsigned long base)
 {
 	std::stringstream stream;
 
-	stream << "[RS] Base address is ";
+	stream << RS_PREFIX "Base address is ";
 	stream << std::showbase << std::hex;
 	stream << base;
-	stream << "...\n";
+	stream << "\n";
 
 	Console::log(stream.str());
 }
@@ -1164,6 +1171,9 @@ static inline void locateMemory(unsigned long base)
 
 	//_test = (_test_func)(base + 0x4cc90);
 	//pryMemory(&_test, 2);
+
+	subrosa_puts = (subrosa_puts_func)(base + 0x1CF0);
+	subrosa___printf_chk = (subrosa___printf_chk_func)(base + 0x1FE0);
 
 	resetgame = (void_func)(base + 0xB10B0);
 
@@ -1235,60 +1245,84 @@ static inline void locateMemory(unsigned long base)
 	lineintersecttriangle = (lineintersecttriangle_func)(base + 0x6aa70);
 }
 
+static inline void printHookInfo(subhook::Hook& hook, const char* name)
+{
+	std::stringstream stream;
+
+	stream << RS_PREFIX "Hook " << name << ": ";
+	stream << (hook.GetTrampoline() == nullptr ? "\033[33mCopy" : "\033[32mCan Trampoline") << "\033[0m";
+	stream << "\n";
+
+	Console::log(stream.str());
+}
+
+static inline void installHook(
+	const char* name, subhook::Hook& hook,
+	void* source, void* destination,
+	subhook::HookFlags flags = subhook::HookFlags::HookFlag64BitOffset
+	)
+{
+	hook.Install(source, destination, flags);
+	printHookInfo(hook, name);
+}
+
 static inline void installHooks()
 {
 	//_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
-	resetgame_hook.Install((void*)resetgame, (void*)h_resetgame, HOOK_FLAGS);
+	installHook("subrosa_puts_hook", subrosa_puts_hook, (void*)subrosa_puts, (void*)h_subrosa_puts);
+	installHook("subrosa___printf_chk_hook", subrosa___printf_chk_hook, (void*)subrosa___printf_chk, (void*)h_subrosa___printf_chk);
 
-	logicsimulation_hook.Install((void*)logicsimulation, (void*)h_logicsimulation, HOOK_FLAGS);
-	logicsimulation_race_hook.Install((void*)logicsimulation_race, (void*)h_logicsimulation_race, HOOK_FLAGS);
-	logicsimulation_round_hook.Install((void*)logicsimulation_round, (void*)h_logicsimulation_round, HOOK_FLAGS);
-	logicsimulation_world_hook.Install((void*)logicsimulation_world, (void*)h_logicsimulation_world, HOOK_FLAGS);
-	logicsimulation_terminator_hook.Install((void*)logicsimulation_terminator, (void*)h_logicsimulation_terminator, HOOK_FLAGS);
-	logicsimulation_coop_hook.Install((void*)logicsimulation_coop, (void*)h_logicsimulation_coop, HOOK_FLAGS);
-	logicsimulation_versus_hook.Install((void*)logicsimulation_versus, (void*)h_logicsimulation_versus, HOOK_FLAGS);
-	logic_playeractions_hook.Install((void*)logic_playeractions, (void*)h_logic_playeractions, HOOK_FLAGS);
+	installHook("resetgame_hook", resetgame_hook, (void*)resetgame, (void*)h_resetgame);
 
-	physicssimulation_hook.Install((void*)physicssimulation, (void*)h_physicssimulation, HOOK_FLAGS);
-	serverrecv_hook.Install((void*)serverrecv, (void*)h_serverrecv, HOOK_FLAGS);
-	serversend_hook.Install((void*)serversend, (void*)h_serversend, HOOK_FLAGS);
-	bulletsimulation_hook.Install((void*)bulletsimulation, (void*)h_bulletsimulation, HOOK_FLAGS);
+	installHook("logicsimulation_hook", logicsimulation_hook, (void*)logicsimulation, (void*)h_logicsimulation);
+	installHook("logicsimulation_race_hook", logicsimulation_race_hook, (void*)logicsimulation_race, (void*)h_logicsimulation_race);
+	installHook("logicsimulation_round_hook", logicsimulation_round_hook, (void*)logicsimulation_round, (void*)h_logicsimulation_round);
+	installHook("logicsimulation_world_hook", logicsimulation_world_hook, (void*)logicsimulation_world, (void*)h_logicsimulation_world);
+	installHook("logicsimulation_terminator_hook", logicsimulation_terminator_hook, (void*)logicsimulation_terminator, (void*)h_logicsimulation_terminator);
+	installHook("logicsimulation_coop_hook", logicsimulation_coop_hook, (void*)logicsimulation_coop, (void*)h_logicsimulation_coop);
+	installHook("logicsimulation_versus_hook", logicsimulation_versus_hook, (void*)logicsimulation_versus, (void*)h_logicsimulation_versus);
+	installHook("logic_playeractions_hook", logic_playeractions_hook, (void*)logic_playeractions, (void*)h_logic_playeractions);
 
-	saveaccountsserver_hook.Install((void*)saveaccountsserver, (void*)h_saveaccountsserver, HOOK_FLAGS);
+	installHook("physicssimulation_hook", physicssimulation_hook, (void*)physicssimulation, (void*)h_physicssimulation);
+	installHook("serverrecv_hook", serverrecv_hook, (void*)serverrecv, (void*)h_serverrecv);
+	installHook("serversend_hook", serversend_hook, (void*)serversend, (void*)h_serversend);
+	installHook("bulletsimulation_hook", bulletsimulation_hook, (void*)bulletsimulation, (void*)h_bulletsimulation);
 
-	createaccount_jointicket_hook.Install((void*)createaccount_jointicket, (void*)h_createaccount_jointicket, HOOK_FLAGS);
-	server_sendconnectreponse_hook.Install((void*)server_sendconnectreponse, (void*)h_server_sendconnectreponse, HOOK_FLAGS);
+	installHook("saveaccountsserver_hook", saveaccountsserver_hook, (void*)saveaccountsserver, (void*)h_saveaccountsserver);
 
-	linkitem_hook.Install((void*)linkitem, (void*)h_linkitem, HOOK_FLAGS);
-	item_computerinput_hook.Install((void*)item_computerinput, (void*)h_item_computerinput, HOOK_FLAGS);
-	human_applydamage_hook.Install((void*)human_applydamage, (void*)h_human_applydamage, HOOK_FLAGS);
-	human_collisionvehicle_hook.Install((void*)human_collisionvehicle, (void*)h_human_collisionvehicle, HOOK_FLAGS);
-	human_grabbing_hook.Install((void*)human_grabbing, (void*)h_human_grabbing, HOOK_FLAGS);
-	grenadeexplosion_hook.Install((void*)grenadeexplosion, (void*)h_grenadeexplosion, HOOK_FLAGS);
-	server_playermessage_hook.Install((void*)server_playermessage, (void*)h_server_playermessage, HOOK_FLAGS);
-	playerai_hook.Install((void*)playerai, (void*)h_playerai, HOOK_FLAGS);
-	playerdeathtax_hook.Install((void*)playerdeathtax, (void*)h_playerdeathtax, HOOK_FLAGS);
-	addcollision_rigidbody_rigidbody_hook.Install((void*)addcollision_rigidbody_rigidbody, (void*)h_addcollision_rigidbody_rigidbody, HOOK_FLAGS);
+	installHook("createaccount_jointicket_hook", createaccount_jointicket_hook, (void*)createaccount_jointicket, (void*)h_createaccount_jointicket);
+	installHook("server_sendconnectreponse_hook", server_sendconnectreponse_hook, (void*)server_sendconnectreponse, (void*)h_server_sendconnectreponse);
 
-	createplayer_hook.Install((void*)createplayer, (void*)h_createplayer, HOOK_FLAGS);
-	deleteplayer_hook.Install((void*)deleteplayer, (void*)h_deleteplayer, HOOK_FLAGS);
-	createhuman_hook.Install((void*)createhuman, (void*)h_createhuman, HOOK_FLAGS);
-	deletehuman_hook.Install((void*)deletehuman, (void*)h_deletehuman, HOOK_FLAGS);
-	createitem_hook.Install((void*)createitem, (void*)h_createitem, HOOK_FLAGS);
-	deleteitem_hook.Install((void*)deleteitem, (void*)h_deleteitem, HOOK_FLAGS);
-	createobject_hook.Install((void*)createobject, (void*)h_createobject, HOOK_FLAGS);
-	deleteobject_hook.Install((void*)deleteobject, (void*)h_deleteobject, HOOK_FLAGS);
-	createrigidbody_hook.Install((void*)createrigidbody, (void*)h_createrigidbody, HOOK_FLAGS);
+	installHook("linkitem_hook", linkitem_hook, (void*)linkitem, (void*)h_linkitem);
+	installHook("item_computerinput_hook", item_computerinput_hook, (void*)item_computerinput, (void*)h_item_computerinput);
+	installHook("human_applydamage_hook", human_applydamage_hook, (void*)human_applydamage, (void*)h_human_applydamage);
+	installHook("human_collisionvehicle_hook", human_collisionvehicle_hook, (void*)human_collisionvehicle, (void*)h_human_collisionvehicle);
+	installHook("human_grabbing_hook", human_grabbing_hook, (void*)human_grabbing, (void*)h_human_grabbing);
+	installHook("grenadeexplosion_hook", grenadeexplosion_hook, (void*)grenadeexplosion, (void*)h_grenadeexplosion);
+	installHook("server_playermessage_hook", server_playermessage_hook, (void*)server_playermessage, (void*)h_server_playermessage);
+	installHook("playerai_hook", playerai_hook, (void*)playerai, (void*)h_playerai);
+	installHook("playerdeathtax_hook", playerdeathtax_hook, (void*)playerdeathtax, (void*)h_playerdeathtax);
+	installHook("addcollision_rigidbody_rigidbody_hook", addcollision_rigidbody_rigidbody_hook, (void*)addcollision_rigidbody_rigidbody, (void*)h_addcollision_rigidbody_rigidbody);
 
-	createevent_message_hook.Install((void*)createevent_message, (void*)h_createevent_message, HOOK_FLAGS);
-	createevent_updateplayer_hook.Install((void*)createevent_updateplayer, (void*)h_createevent_updateplayer, HOOK_FLAGS);
+	installHook("createplayer_hook", createplayer_hook, (void*)createplayer, (void*)h_createplayer);
+	installHook("deleteplayer_hook", deleteplayer_hook, (void*)deleteplayer, (void*)h_deleteplayer);
+	installHook("createhuman_hook", createhuman_hook, (void*)createhuman, (void*)h_createhuman);
+	installHook("deletehuman_hook", deletehuman_hook, (void*)deletehuman, (void*)h_deletehuman);
+	installHook("createitem_hook", createitem_hook, (void*)createitem, (void*)h_createitem);
+	installHook("deleteitem_hook", deleteitem_hook, (void*)deleteitem, (void*)h_deleteitem);
+	installHook("createobject_hook", createobject_hook, (void*)createobject, (void*)h_createobject);
+	installHook("deleteobject_hook", deleteobject_hook, (void*)deleteobject, (void*)h_deleteobject);
+	installHook("createrigidbody_hook", createrigidbody_hook, (void*)createrigidbody, (void*)h_createrigidbody);
+
+	installHook("createevent_message_hook", createevent_message_hook, (void*)createevent_message, (void*)h_createevent_message);
+	installHook("createevent_updateplayer_hook", createevent_updateplayer_hook, (void*)createevent_updateplayer, (void*)h_createevent_updateplayer);
 	//createevent_updateplayer_finance_hook.Install((void*)createevent_updateplayer_finance, (void*)h_createevent_updateplayer_finance, HOOK_FLAGS);
 	//createevent_updateitem_hook.Install((void*)createevent_updateitem, (void*)h_createevent_updateitem, HOOK_FLAGS);
-	createevent_updateobject_hook.Install((void*)createevent_updateobject, (void*)h_createevent_updateobject, HOOK_FLAGS);
+	installHook("createevent_updateobject_hook", createevent_updateobject_hook, (void*)createevent_updateobject, (void*)h_createevent_updateobject);
 	//createevent_sound_hook.Install((void*)createevent_sound, (void*)h_createevent_sound, HOOK_FLAGS);
-	createevent_bullethit_hook.Install((void*)createevent_bullethit, (void*)h_createevent_bullethit, HOOK_FLAGS);
+	installHook("createevent_bullethit_hook", createevent_bullethit_hook, (void*)createevent_bullethit, (void*)h_createevent_bullethit);
 
-	lineintersecthuman_hook.Install((void*)lineintersecthuman, (void*)h_lineintersecthuman, HOOK_FLAGS);
+	installHook("lineintersecthuman_hook", lineintersecthuman_hook, (void*)lineintersecthuman, (void*)h_lineintersecthuman);
 }
 
 static void attach()
@@ -1296,13 +1330,17 @@ static void attach()
 	// Don't load self into future child processes
 	unsetenv("LD_PRELOAD");
 
-	Console::log("[RS] Assuming 37c...\n");
+	Console::log(RS_PREFIX "Assuming 37c\n");
 
+	Console::log(RS_PREFIX "Locating memory...\n");
 	auto base = getBaseAddress();
 	printBaseAddress(base);
-
 	locateMemory(base);
+
+	Console::log(RS_PREFIX "Installing hooks...\n");
 	installHooks();
+
+	Console::log(RS_PREFIX "Waiting for engine init...\n");
 }
 
 int __attribute__((constructor)) Entry()

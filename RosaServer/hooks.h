@@ -2,6 +2,11 @@
 #include "structs.h"
 #include "subhook.h"
 
+extern subhook::Hook subrosa_puts_hook;
+int h_subrosa_puts(const char* str);
+extern subhook::Hook subrosa___printf_chk_hook;
+int h_subrosa___printf_chk(int flag, const char* format, ...);
+
 extern subhook::Hook resetgame_hook;
 void h_resetgame();
 

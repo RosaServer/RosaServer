@@ -32,6 +32,11 @@ extern unsigned int* numStreetIntersections;
 	Misc
 */
 
+typedef int (*subrosa_puts_func)(const char* str);
+extern subrosa_puts_func subrosa_puts;
+typedef int (*subrosa___printf_chk_func)(int flag, const char* format, ...);
+extern subrosa___printf_chk_func subrosa___printf_chk;
+
 typedef void (*void_func)();
 typedef void (*void_index_func)(int id);
 

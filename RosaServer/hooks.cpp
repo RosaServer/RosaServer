@@ -2,20 +2,58 @@
 #include "api.h"
 #include "console.h"
 
+int h_subrosa_puts(const char* str)
+{
+	std::stringstream stream;
+
+	stream << SUBROSA_PREFIX;
+	stream << str;
+	stream << "\n";
+
+	Console::log(stream.str());
+
+	return 1;
+}
+
+int h_subrosa___printf_chk(int flag, const char* format, ...)
+{
+	va_list arguments;
+	va_start(arguments, format);
+
+	char buffer[256];
+	vsnprintf(buffer, 256, format, arguments);
+
+	std::stringstream stream;
+
+	stream << SUBROSA_PREFIX;
+	stream << buffer;
+
+	Console::log(stream.str());
+
+	va_end(arguments);
+	return 0;
+}
+
 void h_resetgame()
 {
 	if (!initialized)
 	{
 		initialized = true;
+
+		Console::log(RS_PREFIX "Engine ready...\n");
+
 		luaInit();
 
+		Console::log(RS_PREFIX "Initializing input...\n");
 		Console::init();
 
+		Console::log(RS_PREFIX "Starting HTTP thread...\n");
 		{
 			std::thread thread(HTTPThread);
 			thread.detach();
 		}
 
+		Console::log(RS_PREFIX "Ready!\n");
 		hookAndReset(RESET_REASON_BOOT);
 	}
 	else
