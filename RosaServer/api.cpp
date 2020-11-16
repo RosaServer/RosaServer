@@ -747,6 +747,28 @@ Street* l_streets_getByIndex(sol::table self, unsigned int idx)
 	return &streets[idx];
 }
 
+int l_intersections_getCount()
+{
+	return *numStreetIntersections;
+}
+
+sol::table l_intersections_getAll()
+{
+	auto arr = lua->create_table();
+	for (int i = 0; i < *numStreetIntersections; i++)
+	{
+		arr.add(&streetIntersections[i]);
+	}
+	return arr;
+}
+
+StreetIntersection* l_intersections_getByIndex(sol::table self, unsigned int idx)
+{
+	if (idx >= *numStreetIntersections)
+		throw std::runtime_error("Index out of range");
+	return &streetIntersections[idx];
+}
+
 sol::table l_os_listDirectory(const char* path)
 {
 	auto arr = lua->create_table();
@@ -1536,9 +1558,24 @@ RigidBody* Bond::getOtherBody() const
 
 std::string Street::__tostring() const
 {
-	char buf[48];
-	sprintf(buf, "Street('%s')", name);
+	char buf[16];
+	sprintf(buf, "Street(%i)", getIndex());
 	return buf;
+}
+
+int Street::getIndex() const
+{
+	return ((uintptr_t)this - (uintptr_t)streets) / sizeof(*this);
+}
+
+StreetIntersection* Street::getIntersectionA() const
+{
+	return &streetIntersections[intersectionA];
+}
+
+StreetIntersection* Street::getIntersectionB() const
+{
+	return &streetIntersections[intersectionB];
 }
 
 StreetLane* Street::getLane(unsigned int idx)
@@ -1547,4 +1584,36 @@ StreetLane* Street::getLane(unsigned int idx)
 		throw std::runtime_error("Index out of range");
 
 	return &lanes[idx];
+}
+
+std::string StreetIntersection::__tostring() const
+{
+	char buf[32];
+	sprintf(buf, "StreetIntersection(%i)", getIndex());
+	return buf;
+}
+
+int StreetIntersection::getIndex() const
+{
+	return ((uintptr_t)this - (uintptr_t)streetIntersections) / sizeof(*this);
+}
+
+Street* StreetIntersection::getStreetEast() const
+{
+	return streetEast == -1 ? nullptr : &streets[streetEast];
+}
+
+Street* StreetIntersection::getStreetSouth() const
+{
+	return streetSouth == -1 ? nullptr : &streets[streetSouth];
+}
+
+Street* StreetIntersection::getStreetWest() const
+{
+	return streetWest == -1 ? nullptr : &streets[streetWest];
+}
+
+Street* StreetIntersection::getStreetNorth() const
+{
+	return streetNorth == -1 ? nullptr : &streets[streetNorth];
 }

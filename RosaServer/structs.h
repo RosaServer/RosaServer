@@ -170,6 +170,7 @@ struct Vehicle;
 struct Item;
 struct RigidBody;
 struct Bond;
+struct StreetIntersection;
 
 //84 bytes (54)
 struct Action
@@ -880,7 +881,9 @@ struct StreetLane
 struct Street
 {
 	char name[32];
-		int unk0[5]; //20
+	int intersectionA; //20
+	int intersectionB; //24
+		int unk0[3]; //28
 	int numLanes; //34
 	StreetLane lanes[16]; //38
 		float unk1[6]; //1f8
@@ -894,14 +897,48 @@ struct Street
 		return "Street";
 	}
 	std::string __tostring() const;
+	int getIndex() const;
 	char* getName()
 	{
 		return name;
 	}
+	StreetIntersection* getIntersectionA() const;
+	StreetIntersection* getIntersectionB() const;
 	int getNumLanes()
 	{
 		return numLanes;
 	}
 
 	StreetLane* getLane(unsigned int idx);
+};
+
+//136 bytes (88)
+struct StreetIntersection
+{
+		int unk0[3];
+	Vector pos; //0c
+	int streetEast; //18
+	int streetSouth; //2c
+	int streetWest; //20
+	int streetNorth; //24
+		char unk1[0x44 - 0x24 - 4];
+	int lightsState; //44
+	int lightsTimer; //48
+	int lightsTimerMax; //4c
+	int lightEast; //50
+	int lightSouth; //54
+	int lightWest; //58
+	int lightNorth; //5c
+		char unk2[136 - 0x5c - 4];
+	
+	const char* getClass() const
+	{
+		return "StreetIntersection";
+	}
+	std::string __tostring() const;
+	int getIndex() const;
+	Street* getStreetEast() const;
+	Street* getStreetSouth() const;
+	Street* getStreetWest() const;
+	Street* getStreetNorth() const;
 };

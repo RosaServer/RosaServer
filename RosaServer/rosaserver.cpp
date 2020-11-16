@@ -61,10 +61,12 @@ Bullet* bullets;
 RigidBody* bodies;
 Bond* bonds;
 Street* streets;
+StreetIntersection* streetIntersections;
 
 unsigned int* numConnections;
 unsigned int* numBullets;
 unsigned int* numStreets;
+unsigned int* numStreetIntersections;
 
 static void pryMemory(void* address, size_t numPages)
 {
@@ -862,10 +864,33 @@ void luaInit(bool redo)
 
 		meta["class"] = sol::property(&Street::getClass);
 		meta["__tostring"] = &Street::__tostring;
+		meta["index"] = sol::property(&Street::getIndex);
 		meta["name"] = sol::property(&Street::getName);
+		meta["intersectionA"] = sol::property(&Street::getIntersectionA);
+		meta["intersectionB"] = sol::property(&Street::getIntersectionB);
 		meta["numLanes"] = sol::property(&Street::getNumLanes);
 
 		meta["getLane"] = &Street::getLane;
+	}
+
+	{
+		auto meta = lua->new_usertype<StreetIntersection>("new", sol::no_constructor);
+		meta["pos"] = &StreetIntersection::pos;
+		meta["lightsState"] = &StreetIntersection::lightsState;
+		meta["lightsTimer"] = &StreetIntersection::lightsTimer;
+		meta["lightsTimerMax"] = &StreetIntersection::lightsTimerMax;
+		meta["lightEast"] = &StreetIntersection::lightEast;
+		meta["lightSouth"] = &StreetIntersection::lightSouth;
+		meta["lightWest"] = &StreetIntersection::lightWest;
+		meta["lightNorth"] = &StreetIntersection::lightNorth;
+
+		meta["class"] = sol::property(&StreetIntersection::getClass);
+		meta["__tostring"] = &StreetIntersection::__tostring;
+		meta["index"] = sol::property(&StreetIntersection::getIndex);
+		meta["streetEast"] = sol::property(&StreetIntersection::getStreetEast);
+		meta["streetSouth"] = sol::property(&StreetIntersection::getStreetSouth);
+		meta["streetWest"] = sol::property(&StreetIntersection::getStreetWest);
+		meta["streetNorth"] = sol::property(&StreetIntersection::getStreetNorth);
 	}
 
 	(*lua)["print"] = l_print;
@@ -1026,6 +1051,17 @@ void luaInit(bool redo)
 		_meta["__index"] = l_streets_getByIndex;
 	}
 
+	{
+		auto intersectionsTable = lua->create_table();
+		(*lua)["intersections"] = intersectionsTable;
+		intersectionsTable["getCount"] = l_intersections_getCount;
+		intersectionsTable["getAll"] = l_intersections_getAll;
+
+		sol::table _meta = lua->create_table();
+		intersectionsTable[sol::metatable_key] = _meta;
+		_meta["__index"] = l_intersections_getByIndex;
+	}
+
 	(*lua)["os"]["listDirectory"] = l_os_listDirectory;
 	(*lua)["os"]["createDirectory"] = l_os_createDirectory;
 	(*lua)["os"]["clock"] = l_os_clock;
@@ -1119,10 +1155,12 @@ static inline void locateMemory(unsigned long base)
 	bodies = (RigidBody*)(base + 0x2DACC0);
 	bonds = (Bond*)(base + 0x24964220);
 	streets = (Street*)(base + 0x3C311030);
+	streetIntersections = (StreetIntersection*)(base + 0x3C2EF02C);
 
 	numConnections = (unsigned int*)(base + 0x4532F468);
 	numBullets = (unsigned int*)(base + 0x4532F240);
 	numStreets = (unsigned int*)(base + 0x3C31102C);
+	numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);
 
 	//_test = (_test_func)(base + 0x4cc90);
 	//pryMemory(&_test, 2);
