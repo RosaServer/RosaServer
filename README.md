@@ -29,7 +29,23 @@ For complete reference on using the Lua API, go to the [wiki](https://github.com
 
 # Building
 
-If you want to build RosaServer yourself and contribute, you can use Visual Studio and WSL, or use CMake on linux itself. You'll have to run `make` inside ./moonjit first.
+Make sure all submodules are cloned, and run `./build`
+
+## Required Packages
+- `build-essential` on Debian/Ubuntu
+- `cmake`
+- `libssl-dev`
+
+Here's a basic script I use to copy the required files after they're compiled. For example, `./build && ./postbuild`
+```bash
+#!/bin/bash
+
+DEST=~/testing/
+
+cp ./moonjit/src/libluajit.so "$DEST"
+cp ./release/RosaServer/librosaserver.so "$DEST"
+cp ./release/RosaServerSatellite/rosaserversatellite "$DEST"
+```
 
 ---
 
@@ -38,3 +54,4 @@ Thanks to these open source libraries:
 - [Sol3](https://github.com/ThePhD/sol2)
 - [SubHook](https://github.com/Zeex/subhook)
 - [cpp-httplib](https://github.com/yhirose/cpp-httplib)
+- [stb](https://github.com/nothings/stb)
