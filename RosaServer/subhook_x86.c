@@ -63,9 +63,6 @@
 #define JMP64_MOV_SIB    0x24 /* write to [rsp] */
 #define JMP64_MOV_OFFSET 0x04
 
-#define CHECK_INT32_OVERFLOW(x) \
-  ((int64_t)(x) < INT32_MIN || ((int64_t)(x)) > INT32_MAX)
-
 #pragma pack(push, 1)
 
 struct subhook_jmp32 {
@@ -142,14 +139,9 @@ SUBHOOK_EXPORT int SUBHOOK_API subhook_disasm(void *src, int *reloc_op_offset) {
     /* AND r32, r/m32    */ {0x23, 0, MODRM},
     /* CALL rel32        */ {0xE8, 0, IMM32 | RELOC},
     /* CALL r/m32        */ {0xFF, 2, MODRM | REG_OPCODE},
-    /* CMP r/m32, imm8   */ {0x83, 7, MODRM | REG_OPCODE | IMM8},
-    /* CMP r/m32, r32    */ {0x39, 0, MODRM},
-    /* DEC r/m32         */ {0xFF, 1, MODRM | REG_OPCODE},
-    /* DEC r32           */ {0x48, 0, PLUS_R},
+    /* CMP r/m16/32, imm8*/ {0x83, 7, MODRM | REG_OPCODE | IMM8 },
+    /* DEC r/m16/32      */ {0xFF, 1, MODRM | REG_OPCODE },
     /* ENTER imm16, imm8 */ {0xC8, 0, IMM16 | IMM8},
-    /* FLD m32fp         */ {0xD9, 0, MODRM | REG_OPCODE},
-    /* FLD m64fp         */ {0xDD, 0, MODRM | REG_OPCODE},
-    /* FLD m80fp         */ {0xDB, 5, MODRM | REG_OPCODE},
     /* INT 3             */ {0xCC, 0, 0},
     /* JMP rel32         */ {0xE9, 0, IMM32 | RELOC},
     /* JMP r/m32         */ {0xFF, 4, MODRM | REG_OPCODE},
@@ -268,23 +260,17 @@ SUBHOOK_EXPORT int SUBHOOK_API subhook_disasm(void *src, int *reloc_op_offset) {
   }
 
   if (reloc_op_offset != NULL && opcodes[i].flags & RELOC) {
-    /* Either a call or a jump instruction that uses an absolute or relative
-     * 32-bit address.
-     *
-     * Note: We don't support short (8-bit) offsets at the moment, so the
-     * caller can assume the operand will be always 4 bytes.
-     */
-    *reloc_op_offset = len;
+    *reloc_op_offset = len; /* relative call or jump */
   }
 
   if (opcodes[i].flags & MODRM) {
     uint8_t modrm = code[len++]; /* +1 for Mod/RM byte */
     uint8_t mod = modrm >> 6;
-    uint8_t rm = modrm & 0x07;
+    uint8_t rm = modrm & 7; 
 
     if (mod != 3 && rm == 4) {
       uint8_t sib = code[len++]; /* +1 for SIB byte */
-      uint8_t base = sib & 0x07;
+      uint8_t base = sib & 7;
 
       if (base == 5) {
         /* The SIB is followed by a disp32 with no base if the MOD is 00B.
@@ -299,9 +285,8 @@ SUBHOOK_EXPORT int SUBHOOK_API subhook_disasm(void *src, int *reloc_op_offset) {
     }
 
 #ifdef SUBHOOK_X86_64
-    if (reloc_op_offset != NULL && mod == 0 && rm == 5) {
-      /* RIP-relative addressing: target is at [RIP + disp32]. */
-      *reloc_op_offset = (int32_t)len;
+    if (reloc_op_offset != NULL && rm == 5) {
+      *reloc_op_offset = (int32_t)len; /* RIP-relative addressing */
     }
 #endif
 
@@ -346,7 +331,7 @@ static int subhook_make_jmp32(void *src, void *dst) {
 #endif
 
 #ifdef SUBHOOK_X86_64
-  if (CHECK_INT32_OVERFLOW(distance)) {
+  if (distance < INT32_MIN || distance > INT32_MAX) {
     return -EOVERFLOW;
   }
 #endif
@@ -422,27 +407,17 @@ static int subhook_make_trampoline(void *trampoline,
            (void *)(src_addr + orig_size),
            insn_len);
 
-    /* If the operand is a relative address, such as found in calls or jumps,
-     * it needs to be relocated because the original code and the trampoline
-     * reside at different locations in memory.
+    /* If the operand is a relative address, such as found in calls or
+     * jumps, it needs to be relocated because the original code and the
+     * trampoline reside at different locations in memory.
      */
     if (reloc_op_offset > 0) {
-      /* Calculate how far our trampoline is from the source and change the
-       * address accordingly.
+      /* Calculate how far our trampoline is from the source and change
+       * the address accordingly.
        */
-      intptr_t offset = trampoline_addr - src_addr;
-#ifdef SUBHOOK_X86_64
-      if (CHECK_INT32_OVERFLOW(offset)) {
-        /*
-         * Oops! It looks like the two locations are too far away from each
-         * other! This is not going to work...
-         */
-        *trampoline_len = 0;
-        return -EOVERFLOW;
-      }
-#endif
+      int32_t offset = (int32_t)(trampoline_addr - src_addr);
       int32_t *op = (int32_t *)(trampoline_addr + orig_size + reloc_op_offset);
-      *op -= (int32_t)offset;
+      *op -= offset;
     }
 
     orig_size += insn_len;
@@ -462,67 +437,61 @@ SUBHOOK_EXPORT subhook_t SUBHOOK_API subhook_new(void *src,
                                                  void *dst,
                                                  subhook_flags_t flags) {
   subhook_t hook;
-  int error;
 
-  hook = calloc(1, sizeof(*hook));
-  if (hook == NULL) {
+  if ((hook = malloc(sizeof(*hook))) == NULL) {
     return NULL;
   }
 
+  hook->installed = 0;
   hook->src = src;
   hook->dst = dst;
   hook->flags = flags;
   hook->jmp_size = subhook_get_jmp_size(hook->flags);
   hook->trampoline_size = hook->jmp_size * 2 + MAX_INSN_LEN;
+  hook->trampoline_len = 0;
 
-  hook->code = malloc(hook->jmp_size);
-  if (hook->code == NULL) {
-    goto error_exit;
+  if ((hook->code = malloc(hook->jmp_size)) == NULL) {
+    free(hook);
+    return NULL;
   }
 
   memcpy(hook->code, hook->src, hook->jmp_size);
 
-  error = subhook_unprotect(hook->src, hook->jmp_size);
-  if (error != 0) {
-    goto error_exit;
+  if ((hook->trampoline = calloc(1, hook->trampoline_size)) == NULL) {
+    free(hook->code);
+    free(hook);
+    return NULL;
   }
 
-  hook->trampoline = subhook_alloc_code(hook->trampoline_size);
-  if (hook->trampoline == NULL) {
-    goto error_exit;
+  if (subhook_unprotect(hook->src, hook->jmp_size) == NULL
+    || subhook_unprotect(hook->trampoline, hook->trampoline_size) == NULL)
+  {
+    free(hook->trampoline);
+    free(hook->code);
+    free(hook);
+    return NULL;
   }
 
-  error = subhook_make_trampoline(
+  subhook_make_trampoline(
     hook->trampoline,
     hook->src,
     hook->jmp_size,
     &hook->trampoline_len,
     hook->flags);
-  if (error != 0 && error != -EOVERFLOW) {
-    goto error_exit;
-  }
 
   if (hook->trampoline_len == 0) {
-    subhook_free_code(hook->trampoline, hook->trampoline_size);
+    free(hook->trampoline);
     hook->trampoline = NULL;
   }
 
   return hook;
-
-error_exit:
-  subhook_free_code(hook->trampoline, hook->trampoline_size);
-  free(hook->code);
-  free(hook);
-
-  return NULL;
 }
 
 SUBHOOK_EXPORT void SUBHOOK_API subhook_free(subhook_t hook) {
   if (hook == NULL) {
     return;
   }
-
-  subhook_free_code(hook->trampoline, hook->trampoline_size);
+  free(hook->trampoline);
   free(hook->code);
   free(hook);
 }
