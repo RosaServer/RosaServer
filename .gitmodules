@@ -4,3 +4,7 @@
 [submodule "cpp-httplib"]
 	path = cpp-httplib
 	url = https://github.com/yhirose/cpp-httplib
+[submodule "sol2"]
+	path = sol2
+	url = https://github.com/ThePhD/sol2.git
+	branch = main
