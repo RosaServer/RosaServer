@@ -22,6 +22,7 @@ find_package (OpenSSL REQUIRED)
 add_library (rosaserver SHARED
 	rosaserver.cpp
 	api.cpp
+	globals.cpp
 	hooks.cpp
 	subhook.c
 	subhook_unix.c
