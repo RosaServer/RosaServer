@@ -1,4 +1,6 @@
-out/
-.vs/
-build/
-.vscode/
+.vs
+.vscode
+/out
+/release
+/debug
+/postbuild

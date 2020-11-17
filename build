@@ -1,0 +1,16 @@
+#!/bin/bash
+
+STYLE="\e[36;1m\e[1m"
+RESET="\e[0m"
+
+mkdir -p release
+cd release
+
+echo -e "${STYLE}Compiling moonjit...${RESET}"
+pushd ../moonjit/src
+	make
+popd
+
+echo -e "${STYLE}Compiling RosaServer...${RESET}"
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make
