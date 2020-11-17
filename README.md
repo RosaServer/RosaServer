@@ -4,7 +4,7 @@ A linux server scripting API for [Sub Rosa](http://subrosagame.com/).
 
 **⚠ Early in development, APIs can change at any time.**
 
-RosaServer uses [LuaJIT](http://luajit.org/); this means there's no hit to performance while being able to create anything from moderation tools to complex custom games with easy-to-write version agnostic code.
+RosaServer uses LuaJIT/[moonjit](https://github.com/moonjit/moonjit); this means there's no hit to performance while being able to create anything from moderation tools to complex custom games with easy-to-write version agnostic code.
 
 # Getting Started
 
@@ -29,7 +29,7 @@ For complete reference on using the Lua API, go to the [wiki](https://github.com
 
 # Building
 
-If you want to build RosaServer yourself and contribute, you can use Visual Studio and WSL, or use CMake on linux itself. You'll have to run `make` inside ./LuaJIT first.
+If you want to build RosaServer yourself and contribute, you can use Visual Studio and WSL, or use CMake on linux itself. You'll have to run `make` inside ./moonjit first.
 
 ---
 
