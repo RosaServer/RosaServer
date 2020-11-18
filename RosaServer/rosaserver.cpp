@@ -1095,25 +1095,19 @@ static inline void locateMemory(unsigned long base)
 	lineintersecttriangle = (lineintersecttriangle_func)(base + 0x6aa70);
 }
 
-static inline void printHookInfo(subhook::Hook& hook, const char* name)
-{
-	std::stringstream stream;
-
-	stream << RS_PREFIX "Hook " << name << ": ";
-	stream << (hook.GetTrampoline() == nullptr ? "\033[33mCopy" : "\033[32mCan Trampoline") << "\033[0m";
-	stream << "\n";
-
-	Console::log(stream.str());
-}
-
 static inline void installHook(
 	const char* name, subhook::Hook& hook,
 	void* source, void* destination,
 	subhook::HookFlags flags = subhook::HookFlags::HookFlag64BitOffset
 	)
 {
-	hook.Install(source, destination, flags);
-	printHookInfo(hook, name);
+	if (!hook.Install(source, destination, flags))
+	{
+		std::stringstream stream;
+		stream << RS_PREFIX "Hook " << name << " failed to install";
+
+		throw std::runtime_error(stream.str());
+	}
 }
 
 static inline void installHooks()
