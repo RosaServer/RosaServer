@@ -793,6 +793,7 @@ void luaInit(bool redo)
 
 		sol::table _meta = lua->create_table();
 		accountsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_accounts_getCount;
 		_meta["__index"] = l_accounts_getByIndex;
 	}
 
@@ -807,6 +808,7 @@ void luaInit(bool redo)
 
 		sol::table _meta = lua->create_table();
 		playersTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_players_getCount;
 		_meta["__index"] = l_players_getByIndex;
 	}
 
@@ -819,6 +821,7 @@ void luaInit(bool redo)
 
 		sol::table _meta = lua->create_table();
 		humansTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_humans_getCount;
 		_meta["__index"] = l_humans_getByIndex;
 	}
 
@@ -830,6 +833,7 @@ void luaInit(bool redo)
 
 		sol::table _meta = lua->create_table();
 		itemTypesTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_itemTypes_getCount;
 		_meta["__index"] = l_itemTypes_getByIndex;
 	}
 
@@ -843,6 +847,7 @@ void luaInit(bool redo)
 
 		sol::table _meta = lua->create_table();
 		itemsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_items_getCount;
 		_meta["__index"] = l_items_getByIndex;
 	}
 
@@ -855,6 +860,7 @@ void luaInit(bool redo)
 		
 		sol::table _meta = lua->create_table();
 		vehiclesTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_vehicles_getCount;
 		_meta["__index"] = l_vehicles_getByIndex;
 	}
 
@@ -873,6 +879,7 @@ void luaInit(bool redo)
 		
 		sol::table _meta = lua->create_table();
 		rigidBodiesTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_rigidBodies_getCount;
 		_meta["__index"] = l_rigidBodies_getByIndex;
 	}
 
@@ -884,6 +891,7 @@ void luaInit(bool redo)
 
 		sol::table _meta = lua->create_table();
 		bondsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_bonds_getCount;
 		_meta["__index"] = l_bonds_getByIndex;
 	}
 
@@ -895,6 +903,7 @@ void luaInit(bool redo)
 
 		sol::table _meta = lua->create_table();
 		streetsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_streets_getCount;
 		_meta["__index"] = l_streets_getByIndex;
 	}
 
@@ -906,6 +915,7 @@ void luaInit(bool redo)
 
 		sol::table _meta = lua->create_table();
 		intersectionsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = l_intersections_getCount;
 		_meta["__index"] = l_intersections_getByIndex;
 	}
 
