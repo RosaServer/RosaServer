@@ -12,9 +12,9 @@
 #include "../cpp-httplib/httplib.h"
 
 #define LUA_ENTRY_FILE "main/init.lua"
-#define LUA_PREFIX "\033[34;1m[Lua]\033[0m "
-#define RS_PREFIX "\033[35;1m[RosaServer]\033[0m "
-#define SUBROSA_PREFIX "\033[31;1m[Sub Rosa]\033[0m "
+#define LUA_PREFIX "\033[34;1;4m[RosaServer/Lua]\033[0m "
+#define RS_PREFIX "\033[35;1;4m[RosaServer]\033[0m "
+#define SUBROSA_PREFIX "\033[31;1;4m[Sub Rosa]\033[0m "
 
 #define RESET_REASON_BOOT 0
 #define RESET_REASON_ENGINECALL 1
