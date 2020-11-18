@@ -1167,10 +1167,23 @@ static inline void installHooks()
 	installHook("lineintersecthuman_hook", lineintersecthuman_hook, (void*)lineintersecthuman, (void*)h_lineintersecthuman);
 }
 
+static inline void attachSignalHandler()
+{
+	struct sigaction action;
+	action.sa_handler = Console::handleInterruptSignal;
+
+	if (sigaction(SIGINT, &action, nullptr) == -1)
+	{
+		throw std::runtime_error(strerror(errno));
+	}
+}
+
 static void attach()
 {
 	// Don't load self into future child processes
 	unsetenv("LD_PRELOAD");
+
+	attachSignalHandler();
 
 	Console::log(RS_PREFIX "Assuming 37c\n");
 

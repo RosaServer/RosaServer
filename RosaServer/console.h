@@ -3,12 +3,14 @@
 #include <queue>
 #include <string>
 #include <mutex>
+#include <csignal>
 
 namespace Console
 {
 	extern std::queue<std::string> commandQueue;
 	extern std::mutex commandQueueMutex;
 	extern std::mutex autoCompleteMutex;
+	extern std::sig_atomic_t shouldExit;
 
 	bool isAwaitingAutoComplete();
 	std::string getAutoCompleteInput();
@@ -17,4 +19,5 @@ namespace Console
 	void init();
 	void appendPrefix(std::string str);
 	void log(std::string line);
+	void handleInterruptSignal(int signal);
 }

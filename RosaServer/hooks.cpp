@@ -73,10 +73,22 @@ void h_logicsimulation()
 	}
 
 	bool noParent = false;
-	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil)
+	sol::protected_function hookFunc = (*lua)["hook"]["run"];
+
+	if (Console::shouldExit)
 	{
-		auto res = func("Logic");
+		if (hookFunc != sol::nil)
+		{
+			auto res = hookFunc("InterruptSignal");
+			noLuaCallError(&res);
+		}
+		exit(EXIT_SUCCESS);
+		return;
+	}
+
+	if (hookFunc != sol::nil)
+	{
+		auto res = hookFunc("Logic");
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
@@ -86,9 +98,9 @@ void h_logicsimulation()
 			subhook::ScopedHookRemove remove(&logicsimulation_hook);
 			logicsimulation();
 		}
-		if (func != sol::nil)
+		if (hookFunc != sol::nil)
 		{
-			auto res = func("PostLogic");
+			auto res = hookFunc("PostLogic");
 			noLuaCallError(&res);
 		}
 	}
@@ -97,9 +109,9 @@ void h_logicsimulation()
 		std::lock_guard<std::mutex> guard(Console::commandQueueMutex);
 		while (!Console::commandQueue.empty())
 		{
-			if (func != sol::nil)
+			if (hookFunc != sol::nil)
 			{
-				auto res = func("ConsoleInput", Console::commandQueue.front());
+				auto res = hookFunc("ConsoleInput", Console::commandQueue.front());
 				noLuaCallError(&res);
 			}
 			Console::commandQueue.pop();
@@ -118,7 +130,7 @@ void h_logicsimulation()
 		responseQueue.pop();
 		responseQueueMutex.unlock();
 
-		if (func != sol::nil)
+		if (hookFunc != sol::nil)
 		{
 			if (res.responded)
 			{
@@ -144,12 +156,12 @@ void h_logicsimulation()
 
 	if (Console::isAwaitingAutoComplete())
 	{
-		if (func != sol::nil)
+		if (hookFunc != sol::nil)
 		{
 			auto data = lua->create_table();
 			data["response"] = Console::getAutoCompleteInput();
 
-			auto res = func("ConsoleAutoComplete", data);
+			auto res = hookFunc("ConsoleAutoComplete", data);
 			noLuaCallError(&res);
 
 			std::string response = data["response"];

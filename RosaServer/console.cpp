@@ -15,6 +15,7 @@ namespace Console
 	std::queue<std::string> commandQueue;
 	std::mutex commandQueueMutex;
 	std::mutex autoCompleteMutex;
+	std::sig_atomic_t shouldExit = false;
 
 	// Allows getting characters before newline and disables echo
 	static int _getch ()
@@ -473,5 +474,10 @@ namespace Console
 		std::cout << line;
 
 		if (inputInitialized) redrawLine();
+	}
+
+	void handleInterruptSignal(int signal)
+	{
+		shouldExit = true;
 	}
 }
