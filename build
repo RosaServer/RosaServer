@@ -8,7 +8,7 @@ cd release
 
 echo -e "${STYLE}Compiling moonjit...${RESET}"
 pushd ../moonjit/src
-	make
+	make XCFLAGS+=-DLUAJIT_ENABLE_LUA52COMPAT
 popd
 
 echo -e "${STYLE}Compiling RosaServer...${RESET}"
