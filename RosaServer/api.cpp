@@ -7,7 +7,7 @@ void printLuaError(sol::error* err)
 {
 	std::stringstream stream;
 
-	stream << "\033[1;31mLua error:\n";
+	stream << "\033[41;1m Lua error \033[0m\n\033[31m";
 	stream << err->what();
 	stream << "\033[0m\n";
 
