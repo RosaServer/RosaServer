@@ -1081,8 +1081,6 @@ static inline void locateMemory(unsigned long base)
 	createevent_message = (createevent_message_func)(base + 0x29C0);
 	createevent_updateplayer = (void_index_func)(base + 0x2BE0);
 	createevent_updateplayer_finance = (void_index_func)(base + 0x2D00);
-	//pryMemory(&createevent_updateplayer_finance, 2);
-	//createevent_updateitem = (void_index_func)(base + 0x27B0);//
 	createevent_createobject = (void_index_func)(base + 0x2AE0);
 	createevent_updateobject = (createevent_updateobject_func)(base + 0x41C0);
 	createevent_sound = (createevent_sound_func)(base + 0x3CC0);

@@ -1104,27 +1104,6 @@ void h_createevent_updateplayer_finance(int id)
 	}
 }
 
-// Doesn't seem to be necessary anymore
-/*void h_createevent_updateitem(int id) {
-	bool noParent = false;
-	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
-		auto res = func("EventUpdateItem", &items[id]);
-		if (noLuaCallError(&res))
-			noParent = (bool)res;
-	}
-	if (!noParent) {
-		{
-			subhook::ScopedHookRemove remove(&createevent_updateitem_hook);
-			createevent_updateitem(id);
-		}
-		if (func != sol::nil) {
-			auto res = func("PostEventUpdateItem", &items[id]);
-			noLuaCallError(&res);
-		}
-	}
-}*/
-
 void h_createevent_updateobject(int vehicleID, int updateType, int partID, Vector* pos, Vector* normal)
 {
 	bool noParent = false;

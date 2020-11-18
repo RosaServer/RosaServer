@@ -146,8 +146,6 @@ subhook::Hook createevent_updateplayer_hook;
 void_index_func createevent_updateplayer;
 subhook::Hook createevent_updateplayer_finance_hook;
 void_index_func createevent_updateplayer_finance;
-//subhook::Hook createevent_updateitem_hook;
-//void_index_func createevent_updateitem;
 void_index_func createevent_createobject;
 subhook::Hook createevent_updateobject_hook;
 createevent_updateobject_func createevent_updateobject;

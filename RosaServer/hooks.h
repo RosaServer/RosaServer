@@ -91,8 +91,6 @@ extern subhook::Hook createevent_updateplayer_hook;
 void h_createevent_updateplayer(int id);
 extern subhook::Hook createevent_updateplayer_finance_hook;
 void h_createevent_updateplayer_finance(int id);
-//extern subhook::Hook createevent_updateitem_hook;
-//void h_createevent_updateitem(int id);
 extern subhook::Hook createevent_updateobject_hook;
 void h_createevent_updateobject(int vehicleID, int updateType, int partID, Vector* pos, Vector* normal);
 //extern subhook::Hook createevent_sound_hook;
