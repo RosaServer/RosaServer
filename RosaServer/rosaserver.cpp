@@ -33,7 +33,7 @@ static void pryMemory(void* address, size_t numPages)
 
 	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0)
 	{
-		std::stringstream stream;
+		std::ostringstream stream;
 
 		stream << RS_PREFIX "Successfully pried open page at ";
 		stream << std::showbase << std::hex;
@@ -967,7 +967,7 @@ static inline unsigned long getBaseAddress()
 
 static inline void printBaseAddress(unsigned long base)
 {
-	std::stringstream stream;
+	std::ostringstream stream;
 
 	stream << RS_PREFIX "Base address is ";
 	stream << std::showbase << std::hex;
@@ -1101,7 +1101,7 @@ static inline void installHook(
 {
 	if (!hook.Install(source, destination, flags))
 	{
-		std::stringstream stream;
+		std::ostringstream stream;
 		stream << RS_PREFIX "Hook " << name << " failed to install";
 
 		throw std::runtime_error(stream.str());

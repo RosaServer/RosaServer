@@ -4,7 +4,7 @@
 
 int h_subrosa_puts(const char* str)
 {
-	std::stringstream stream;
+	std::ostringstream stream;
 
 	stream << SUBROSA_PREFIX;
 	stream << str;
@@ -23,7 +23,7 @@ int h_subrosa___printf_chk(int flag, const char* format, ...)
 	char buffer[256];
 	vsnprintf(buffer, 256, format, arguments);
 
-	std::stringstream stream;
+	std::ostringstream stream;
 
 	stream << SUBROSA_PREFIX;
 	stream << buffer;

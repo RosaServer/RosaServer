@@ -5,7 +5,7 @@
 
 void printLuaError(sol::error* err)
 {
-	std::stringstream stream;
+	std::ostringstream stream;
 
 	stream << "\033[41;1m Lua error \033[0m\n\033[31m";
 	stream << err->what();
@@ -62,7 +62,7 @@ void l_print(sol::variadic_args args)
 		return;
 	}
 
-	std::stringstream stream;
+	std::ostringstream stream;
 
 	bool doneFirst = false;
 	for (auto arg : args)
