@@ -1156,7 +1156,7 @@ static inline void installHooks()
 
 	installHook("createevent_message_hook", createevent_message_hook, (void*)createevent_message, (void*)h_createevent_message);
 	installHook("createevent_updateplayer_hook", createevent_updateplayer_hook, (void*)createevent_updateplayer, (void*)h_createevent_updateplayer);
-	//createevent_updateplayer_finance_hook.Install((void*)createevent_updateplayer_finance, (void*)h_createevent_updateplayer_finance, HOOK_FLAGS);
+	installHook("createevent_updateplayer_finance_hook", createevent_updateplayer_finance_hook, (void*)createevent_updateplayer_finance, (void*)h_createevent_updateplayer_finance);
 	//createevent_updateitem_hook.Install((void*)createevent_updateitem, (void*)h_createevent_updateitem, HOOK_FLAGS);
 	installHook("createevent_updateobject_hook", createevent_updateobject_hook, (void*)createevent_updateobject, (void*)h_createevent_updateobject);
 	//createevent_sound_hook.Install((void*)createevent_sound, (void*)h_createevent_sound, HOOK_FLAGS);
