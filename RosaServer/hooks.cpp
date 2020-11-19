@@ -459,7 +459,7 @@ void h_saveaccountsserver()
 		}
 		if (func != sol::nil)
 		{
-			auto res = func("AccountsSave");
+			auto res = func("PostAccountsSave");
 			noLuaCallError(&res);
 		}
 	}
