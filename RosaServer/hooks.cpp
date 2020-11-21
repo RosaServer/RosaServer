@@ -1187,6 +1187,17 @@ void h_createevent_bullethit(int unk, int hitType, Vector* pos, Vector* normal)
 
 int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB)
 {
+	int didHit;
+	{
+		subhook::ScopedHookRemove remove(&lineintersecthuman_hook);
+		didHit = lineintersecthuman(humanID, posA, posB);
+	}
+
+	if (!didHit)
+	{
+		return didHit;
+	}
+
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil)
@@ -1195,10 +1206,6 @@ int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB)
 		if (noLuaCallError(&res))
 			noParent = (bool)res;
 	}
-	if (!noParent)
-	{
-		subhook::ScopedHookRemove remove(&lineintersecthuman_hook);
-		return lineintersecthuman(humanID, posA, posB);
-	}
-	return 0;
+	
+	return !noParent;
 }
