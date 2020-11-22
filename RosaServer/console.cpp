@@ -473,7 +473,7 @@ namespace Console
 
 		std::cout << line;
 
-		if (inputInitialized) redrawLine();
+		if (inputInitialized && !shouldExit) redrawLine();
 	}
 
 	void handleInterruptSignal(int signal)
