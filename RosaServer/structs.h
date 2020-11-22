@@ -232,7 +232,8 @@ struct Player
 	unsigned int team; //84
 	unsigned int teamSwitchTimer; //88
 	int stocks; //8c
-		int unk4[3];
+		int unk4[2];
+	int spawnTimer; //98
 	int humanID;	//9c
 		char unk5[0x164 - 0x9c - 4];
 	//0 = none, 1-19 = shop, 2X = base

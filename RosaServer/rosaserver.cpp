@@ -382,6 +382,7 @@ void luaInit(bool redo)
 		meta["team"] = &Player::team;
 		meta["teamSwitchTimer"] = &Player::teamSwitchTimer;
 		meta["stocks"] = &Player::stocks;
+		meta["spawnTimer"] = &Player::spawnTimer;
 		meta["menuTab"] = &Player::menuTab;
 		meta["numActions"] = &Player::numActions;
 		meta["lastNumActions"] = &Player::lastNumActions;
