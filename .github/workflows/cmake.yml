@@ -39,7 +39,7 @@ jobs:
       working-directory: ${{runner.workspace}}/release
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: CXX="g++-8" CC="gcc-8" cmake --build . --config $BUILD_TYPE
+      run: CXX="g++-10" CC="gcc-10" cmake --build . --config $BUILD_TYPE
 
     - name: Test
       working-directory: ${{runner.workspace}}/release
