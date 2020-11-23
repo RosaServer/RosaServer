@@ -33,11 +33,10 @@ jobs:
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
-      working-directory: ${{runner.workspace}}
+      working-directory: ${{runner.workspace}}/release
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      # run: cmake --build . --config $BUILD_TYPE
-      run: ./build
+      run: cmake --build . --config $BUILD_TYPE
 
     - name: Test
       working-directory: ${{runner.workspace}}/release
