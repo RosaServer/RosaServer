@@ -1,6 +1,6 @@
 <img src="https://i.imgur.com/4N3PMTS.png" width="600">
 
-![CMake](https://github.com/RosaServer/RosaServer/workflows/CMake/badge.svg)
+![CMake](https://github.com/RosaServer/RosaServer/workflows/CMake/badge.svg) ![CodeQL](https://github.com/RosaServer/RosaServer/workflows/CodeQL/badge.svg)
 
 A linux server scripting API for [Sub Rosa](http://subrosagame.com/).
 
