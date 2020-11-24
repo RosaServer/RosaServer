@@ -36,13 +36,26 @@ jobs:
     - name: Checkout Submodules
       uses: textbook/git-checkout-submodule-action@2.1.1
     
-    - name: Build
+    - name: Build moonjit
       shell: bash
-      working-directory: ${{runner.workspace}}/RosaServer
+      working-directory: ${{github.workspace}}/moonjit/src
+      run: sudo make XCFLAGS+=-DLUAJIT_ENABLE_LUA52COMPAT
+    
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/release
+    
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/release
       env:
         CXX: g++-10
         CC: gcc-10
-      run: sudo ./build
+      run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+    
+    - name: Build
+      working-directory: ${{github.workspace}}/release
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
