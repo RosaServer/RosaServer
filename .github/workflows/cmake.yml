@@ -24,7 +24,4 @@ jobs:
     - name: Build
       shell: bash
       working-directory: ${{runner.workspace}}/RosaServer
-      env:
-        CXX: g++-10
-        CC: gcc-10
-      run: sudo ./build
+      run: export CXX=g++-10 CC=gcc-10; sudo ./build
