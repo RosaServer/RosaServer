@@ -20,7 +20,7 @@ jobs:
         language: [ 'cpp' ]
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v2
 
     # Initializes the CodeQL tools for scanning.
@@ -33,12 +33,15 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
-    - name: Checkout submodules
+    - name: Checkout Submodules
       uses: textbook/git-checkout-submodule-action@2.1.1
     
     - name: Build
       shell: bash
       working-directory: ${{runner.workspace}}/RosaServer
+      env:
+        CXX: g++-10
+        CC: gcc-10
       run: sudo ./build
 
     - name: Perform CodeQL Analysis
