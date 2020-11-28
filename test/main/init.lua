@@ -20,6 +20,8 @@ local function runTests ()
 	require('tests.bonds')
 	require('tests.streets')
 	require('tests.os')
+	require('tests.worker')
+	require('tests.childProcess')
 end
 
 local function testsPassed ()
@@ -48,11 +50,13 @@ function hook.run (event, ...)
 		if tick == 1 then
 			protectedFailCall(runTests)
 		else
-			local handlersThisTick = handlers
-			handlers = {}
-
-			for _, func in ipairs(handlersThisTick) do
-				protectedFailCall(func)
+			for i = #handlers, 1, -1 do
+				local handler = handlers[i]
+				handler.ticksToWait = handler.ticksToWait - 1
+				if handler.ticksToWait <= 0 then
+					table.remove(handlers, i)
+					protectedFailCall(handler.func)
+				end
 			end
 
 			if #handlers == 0 then
@@ -62,8 +66,12 @@ function hook.run (event, ...)
 	end
 end
 
-function nextTick (func)
-	table.insert(handlers, func)
+function nextTick (func, ticksToWait)
+	ticksToWait = ticksToWait or 1
+	table.insert(handlers, {
+		func = func,
+		ticksToWait = ticksToWait
+	})
 end
 
 function assertAddsEvent (func, message)
