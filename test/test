@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cp ../moonjit/src/libluajit.so .
+cp ../release/RosaServer/librosaserver.so .
+cp ../release/RosaServerSatellite/rosaserversatellite .
+
+taskset -c 0 ./start
+
+rm ./server.srk
+rm ./serverlog.txt
