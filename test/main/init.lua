@@ -21,8 +21,8 @@ local function runTests ()
 	require('tests.streets')
 	require('tests.os')
 	require('tests.worker')
-	require('tests.childProcess')
 	require('tests.server')
+	require('tests.image')
 end
 
 local function testsPassed ()
