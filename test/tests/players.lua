@@ -1,6 +1,7 @@
 assert(#players.getAll() == 0)
 assert(players.getCount() == 0)
 assert(#players == 0)
+assert(players[0])
 
 local testPhone = 2561234
 
@@ -10,6 +11,7 @@ assert(bot.isActive)
 bot.phoneNumber = testPhone
 assert(bot.phoneNumber == testPhone)
 
+assert(players[0] == bot)
 assert(players.getByPhone(testPhone) == bot)
 assert(#players.getNonBots() == 0)
 assert(players.getCount() == 1)

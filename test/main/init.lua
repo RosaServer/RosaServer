@@ -11,6 +11,15 @@ local function runTests ()
 	require('tests.chat')
 	require('tests.accounts')
 	require('tests.players')
+	require('tests.humans')
+	require('tests.itemTypes')
+	require('tests.items')
+	require('tests.vehicles')
+	require('tests.bullets')
+	require('tests.rigidBodies')
+	require('tests.bonds')
+	require('tests.streets')
+	require('tests.os')
 end
 
 local function testsPassed ()
@@ -57,8 +66,10 @@ function nextTick (func)
 	table.insert(handlers, func)
 end
 
-function assertAddsEvent (func)
+function assertAddsEvent (func, message)
 	local numEvents = server.numEvents
 	func()
-	assert(server.numEvents == numEvents + 1)
+	if server.numEvents ~= numEvents + 1 then
+		error(message or 'event assertion failed!', 2)
+	end
 end

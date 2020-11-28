@@ -13,60 +13,64 @@ do
 	assert(ray.fraction == 0.5)
 end
 
-do
-	local man = assert(humans.create(
-		Vector(0, airLevel, 0),
-		RotMatrix(
-			1, 0, 0,
-			0, 1, 0,
-			0, 0, 1
-		),
-		players[0]
-	))
+nextTick(function ()
+	do
+		local bot = players.createBot()
+		local man = assert(humans.create(
+			Vector(0, airLevel, 0),
+			RotMatrix(
+				1, 0, 0,
+				0, 1, 0,
+				0, 0, 1
+			),
+			bot
+		))
 
-	nextTick(function ()
-		local ray = physics.lineIntersectHuman(
-			man,
-			Vector(-10, airLevel, 0),
-			Vector(10, airLevel, 0)
-		)
+		nextTick(function ()
+			local ray = physics.lineIntersectHuman(
+				man,
+				Vector(-10, airLevel, 0),
+				Vector(10, airLevel, 0)
+			)
 
-		assert(ray.hit)
-		assert(ray.pos:dist(Vector(0, airLevel, 0)) < 1)
-		assert(ray.fraction <= 0.5)
-		assert(ray.bone == 5)
+			assert(ray.hit)
+			assert(ray.pos:dist(Vector(0, airLevel, 0)) < 1)
+			assert(ray.fraction <= 0.5)
+			assert(ray.bone == 5)
 
-		man:remove()
-	end)
-end
+			man:remove()
+			bot:remove()
+		end)
+	end
 
-do
-	local vehicle = assert(vehicles.create(
-		0,
-		Vector(0, airLevel, 0),
-		RotMatrix(
-			1, 0, 0,
-			0, 1, 0,
-			0, 0, 1
-		),
-		0
-	))
+	do
+		local vehicle = assert(vehicles.create(
+			0,
+			Vector(0, airLevel, 0),
+			RotMatrix(
+				1, 0, 0,
+				0, 1, 0,
+				0, 0, 1
+			),
+			0
+		))
 
-	nextTick(function ()
-		local ray = physics.lineIntersectVehicle(
-			vehicle,
-			Vector(0, airLevel + 10, 0),
-			Vector(0, airLevel - 10, 0)
-		)
+		nextTick(function ()
+			local ray = physics.lineIntersectVehicle(
+				vehicle,
+				Vector(0, airLevel + 10, 0),
+				Vector(0, airLevel - 10, 0)
+			)
 
-		assert(ray.hit)
-		assert(ray.pos.x == 0)
-		assert(ray.pos.z == 0)
-		assert(ray.normal:dist(Vector(0, 1, 0)) < 0.01)
+			assert(ray.hit)
+			assert(ray.pos.x == 0)
+			assert(ray.pos.z == 0)
+			assert(ray.normal:dist(Vector(0, 1, 0)) < 0.01)
 
-		vehicle:remove()
-	end)
-end
+			vehicle:remove()
+		end)
+	end
+end)
 
 local outPosition = Vector()
 local fraction = assert(physics.lineIntersectTriangle(
