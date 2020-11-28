@@ -36,6 +36,10 @@ assertAddsEvent(function ()
 end)
 
 assertAddsEvent(function ()
+	bot:sendMessage('hello')
+end)
+
+assertAddsEvent(function ()
 	bot:remove()
 end)
 
