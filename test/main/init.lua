@@ -1,5 +1,6 @@
 local function runTests ()
-	assert(server.name == 'Test')
+	require('tests.vector')
+	print('All tests passed')
 end
 
 function hook.run (event, ...)
