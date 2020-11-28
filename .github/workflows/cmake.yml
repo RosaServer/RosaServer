@@ -46,4 +46,4 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/test
       shell: bash
-      run: ./test
+      run: sudo ./test
