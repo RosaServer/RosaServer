@@ -1,0 +1,4 @@
+servername=Test
+serverport=1
+maxnumofplayers=4
+gametype=4
