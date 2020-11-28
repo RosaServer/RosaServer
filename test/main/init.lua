@@ -1,5 +1,6 @@
 local function runTests ()
 	require('tests.vector')
+	require('tests.rotMatrix')
 	print('All tests passed')
 end
 
