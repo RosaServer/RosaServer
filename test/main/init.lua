@@ -22,6 +22,7 @@ local function runTests ()
 	require('tests.os')
 	require('tests.worker')
 	require('tests.server')
+	require('tests.image')
 end
 
 local function testsPassed ()
