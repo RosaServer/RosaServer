@@ -6,5 +6,5 @@ cp ../release/RosaServerSatellite/rosaserversatellite .
 
 taskset -c 0 ./start
 
-rm ./server.srk
-rm ./serverlog.txt
+rm -f ./server.srk
+rm -f ./serverlog.txt
