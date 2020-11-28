@@ -4,7 +4,7 @@ cp ../moonjit/src/libluajit.so .
 cp ../release/RosaServer/librosaserver.so .
 cp ../release/RosaServerSatellite/rosaserversatellite .
 
-taskset -c 0 ./start
+taskset -c 0 ./start || exit $?
 
 rm -f ./server.srk
 rm -f ./serverlog.txt
