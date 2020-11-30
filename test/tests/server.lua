@@ -1,5 +1,6 @@
 assert(server.class == 'Server')
 assert(server.name == 'Test')
+assert(server.port == 1)
 assert(server.type == TYPE_WORLD)
 assert(server.loadedLevel == 'test2')
 assert(server.gravity == server.defaultGravity)
