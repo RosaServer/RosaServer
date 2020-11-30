@@ -983,7 +983,7 @@ static inline void locateMemory(unsigned long base)
 	version = (unsigned int*)(base + 0x2D5F08);
 	subVersion = (unsigned int*)(base + 0x2D5F04);
 	serverName = (char*)(base + 0x24EE4234);
-	serverPort = (unsigned int*)(base + 0x24EE4640);
+	serverPort = (unsigned int*)(base + 0x1CC6CE80);
 	numEvents = (unsigned int*)(base + 0x4532f244);
 	isPassworded = (int*)(base + 0x24EE4644);
 	password = (char*)(base + 0x1CC6D48C);
