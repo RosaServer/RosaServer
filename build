@@ -3,6 +3,8 @@
 STYLE="\e[36;1m\e[1m"
 RESET="\e[0m"
 
+TYPE=${TYPE:-Release}
+
 mkdir -p release
 cd release
 
@@ -11,6 +13,6 @@ pushd ../moonjit/src
 	make XCFLAGS+=-DLUAJIT_ENABLE_LUA52COMPAT
 popd
 
-echo -e "${STYLE}Compiling RosaServer...${RESET}"
-cmake -DCMAKE_BUILD_TYPE=Release ..
+echo -e "${STYLE}Compiling RosaServer (${TYPE})...${RESET}"
+cmake -DCMAKE_BUILD_TYPE=${TYPE} ..
 make
