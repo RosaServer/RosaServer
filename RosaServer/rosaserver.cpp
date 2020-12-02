@@ -687,10 +687,11 @@ void luaInit(bool redo)
 		meta["width"] = sol::property(&Image::getWidth);
 		meta["height"] = sol::property(&Image::getHeight);
 		meta["numChannels"] = sol::property(&Image::getNumChannels);
-		meta["free"] = &Image::free;
+		meta["free"] = &Image::_free;
 		meta["loadFromFile"] = &Image::loadFromFile;
 		meta["getRGB"] = &Image::getRGB;
 		meta["getRGBA"] = &Image::getRGBA;
+		meta["getPNG"] = &Image::getPNG;
 	}
 
 	{

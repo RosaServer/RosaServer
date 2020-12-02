@@ -24,8 +24,9 @@ public:
 	{
 		return numChannels;
 	}
-	void free();
+	void _free();
 	void loadFromFile(const char* fileName);
 	std::tuple<int, int, int> getRGB(unsigned int x, unsigned int y);
 	std::tuple<int, int, int, int> getRGBA(unsigned int x, unsigned int y);
+	std::string getPNG();
 };
