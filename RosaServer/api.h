@@ -84,7 +84,7 @@ Vector l_Vector_3f(float x, float y, float z);
 RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 void l_http_get(const char* scheme, const char* path, sol::table headers, sol::protected_function callback);
-void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, sol::protected_function callback);
+void l_http_post(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::protected_function callback);
 
 void l_event_sound(int soundType, Vector* pos, float volume, float pitch);
 void l_event_soundSimple(int soundType, Vector* pos);

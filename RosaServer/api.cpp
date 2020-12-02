@@ -131,7 +131,7 @@ void l_http_get(const char* scheme, const char* path, sol::table headers, sol::p
 	requestQueue.push(request);
 }
 
-void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, sol::protected_function callback)
+void l_http_post(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::protected_function callback)
 {
 	LuaHTTPRequest request{
 		LuaRequestType::post,
