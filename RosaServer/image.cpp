@@ -9,6 +9,7 @@
 #include <stdexcept>
 
 #define ERR_COULD_NOT_LOAD "Could not load image"
+#define ERR_COULD_NOT_SAVE "Could not save image"
 #define ERR_NO_DATA_LOADED "No image data loaded"
 #define ERR_OUT_OF_RANGE "Coordinates out of range"
 #define ERR_CHANNELS "Too few channels"
@@ -58,7 +59,7 @@ std::tuple<int, int, int> Image::getRGB(unsigned int x, unsigned int y)
 
 	if (x >= width || y >= height)
 	{
-		throw std::runtime_error(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	}
 
 	size_t index = ((y * width) + x) * numChannels;
@@ -78,7 +79,7 @@ std::tuple<int, int, int, int> Image::getRGBA(unsigned int x, unsigned int y)
 
 	if (x >= width || y >= height)
 	{
-		throw std::runtime_error(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	}
 
 	size_t index = ((y * width) + x) * numChannels;
@@ -99,12 +100,12 @@ void Image::setRGB(unsigned int x, unsigned int y, unsigned char r, unsigned cha
 
 	if (x >= width || y >= height)
 	{
-		throw std::runtime_error(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	}
 
 	if (numChannels < 3)
 	{
-		throw std::runtime_error(ERR_CHANNELS);
+		throw std::invalid_argument(ERR_CHANNELS);
 	}
 
 	size_t index = ((y * width) + x) * numChannels;
@@ -126,12 +127,12 @@ void Image::setRGBA(unsigned int x, unsigned int y, unsigned char r, unsigned ch
 
 	if (x >= width || y >= height)
 	{
-		throw std::runtime_error(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	}
 
 	if (numChannels < 4)
 	{
-		throw std::runtime_error(ERR_CHANNELS);
+		throw std::invalid_argument(ERR_CHANNELS);
 	}
 
 	size_t index = ((y * width) + x) * numChannels;
@@ -152,7 +153,7 @@ std::string Image::getPNG()
 	unsigned char* pngBuffer = stbi_write_png_to_mem(reinterpret_cast<const unsigned char*>(data), width * numChannels, width, height, numChannels, &length);
 	if (!pngBuffer)
 	{
-		throw std::runtime_error(ERR_OUT_OF_RANGE);
+		throw std::runtime_error(ERR_COULD_NOT_SAVE);
 	}
 
 	std::string pngString(reinterpret_cast<char*>(pngBuffer), length);
