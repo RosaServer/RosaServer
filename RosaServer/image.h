@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <tuple>
+#include <string>
 
 class Image
 {
