@@ -86,6 +86,9 @@ RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2, float z2
 void l_http_get(const char* scheme, const char* path, sol::table headers, sol::protected_function callback);
 void l_http_post(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::protected_function callback);
 
+sol::object l_http_getSync(const char* scheme, const char* path, sol::table headers, sol::this_state s);
+sol::object l_http_postSync(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::this_state s);
+
 void l_event_sound(int soundType, Vector* pos, float volume, float pitch);
 void l_event_soundSimple(int soundType, Vector* pos);
 void l_event_explosion(Vector* pos);

@@ -758,6 +758,8 @@ void luaInit(bool redo)
 		(*lua)["http"] = httpTable;
 		httpTable["get"] = l_http_get;
 		httpTable["post"] = l_http_post;
+		httpTable["getSync"] = l_http_getSync;
+		httpTable["postSync"] = l_http_postSync;
 	}
 
 	{

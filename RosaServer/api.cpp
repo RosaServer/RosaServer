@@ -151,6 +151,59 @@ void l_http_post(const char* scheme, const char* path, sol::table headers, std::
 	requestQueue.push(request);
 }
 
+static sol::object handleSyncHTTPResponse(httplib::Result& res, sol::this_state s)
+{
+	sol::state_view lua(s);
+
+	if (res)
+	{
+		sol::table table = lua.create_table();
+		table["status"] = res->status;
+		table["body"] = res->body;
+
+		sol::table headers = lua.create_table();
+		for (const auto& h : res->headers)
+			headers[h.first] = h.second;
+		table["headers"] = headers;
+
+		return sol::make_object(lua, table);
+	}
+
+	return sol::make_object(lua, sol::lua_nil);
+}
+
+sol::object l_http_getSync(const char* scheme, const char* path, sol::table headers, sol::this_state s)
+{
+	httplib::Client client(scheme);
+	client.set_connection_timeout(6);
+	client.set_keep_alive(false);
+
+	httplib::Headers httpHeaders;
+	for (const auto& pair : headers)
+		httpHeaders.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
+
+	httpHeaders.emplace("Connection", "close");
+
+	auto res = client.Get(path, httpHeaders);
+	return handleSyncHTTPResponse(res, s);
+}
+
+sol::object l_http_postSync(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::this_state s)
+{
+	httplib::Client client(scheme);
+	client.set_connection_timeout(6);
+	client.set_keep_alive(false);
+
+	httplib::Headers httpHeaders;
+	for (const auto& pair : headers)
+		httpHeaders.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
+
+	httpHeaders.emplace("Connection", "close");
+
+	auto res = client.Post(path, httpHeaders, body, contentType);
+	return handleSyncHTTPResponse(res, s);
+}
+
 static void handleHTTPResponse(LuaHTTPRequest& req, httplib::Result& res)
 {
 	if (res)
@@ -197,8 +250,6 @@ void HTTPThread()
 			httplib::Client client(req.scheme.c_str());
 			client.set_connection_timeout(6);
 			client.set_keep_alive(false);
-
-			httplib::Result* res;
 
 			req.headers.emplace("Connection", "close");
 
