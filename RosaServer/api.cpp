@@ -92,12 +92,6 @@ void l_print(sol::variadic_args args, sol::this_state s)
 	Console::log(stream.str());
 }
 
-// TODO: get rid of this
-void l_printAppend(const char* str)
-{
-	Console::appendPrefix(str);
-}
-
 void l_flagStateForReset(const char* mode)
 {
 	hookMode = mode;

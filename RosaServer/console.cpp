@@ -450,27 +450,12 @@ namespace Console
 		thread.detach();
 	}
 
-	static std::string currentPrefix;
-
-	void appendPrefix(std::string str)
-	{
-		std::lock_guard<std::mutex> guard(outputMutex);
-		currentPrefix += str;
-	}
-
 	void log(std::string line)
 	{
 		std::lock_guard<std::mutex> guard(outputMutex);
 
 		// Erase current line, move cursor to start, print
 		std::cout << "\33[2K\r";
-
-		if (currentPrefix.size())
-		{
-			std::cout << currentPrefix;
-			currentPrefix = "";
-		}
-
 		std::cout << line;
 
 		if (inputInitialized && !shouldExit) redrawLine();

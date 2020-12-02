@@ -264,7 +264,6 @@ void defineThreadSafeAPIs(sol::state* state)
 	}
 
 	(*state)["print"] = l_print;
-	(*state)["printAppend"] = l_printAppend;
 
 	(*state)["Vector"] = sol::overload(l_Vector, l_Vector_3f);
 	(*state)["RotMatrix"] = l_RotMatrix;
