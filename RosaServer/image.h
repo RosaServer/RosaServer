@@ -27,6 +27,7 @@ public:
 	}
 	void _free();
 	void loadFromFile(const char* fileName);
+	void loadBlank(unsigned int width, unsigned int height, unsigned int numChannels);
 	std::tuple<int, int, int> getRGB(unsigned int x, unsigned int y);
 	std::tuple<int, int, int, int> getRGBA(unsigned int x, unsigned int y);
 	void setRGB(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b);

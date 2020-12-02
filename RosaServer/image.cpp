@@ -7,6 +7,7 @@
 #include "stb_image_write.h"
 
 #include <stdexcept>
+#include <cstdlib>
 
 #define ERR_COULD_NOT_LOAD "Could not load image"
 #define ERR_COULD_NOT_SAVE "Could not save image"
@@ -48,6 +49,39 @@ void Image::loadFromFile(const char* fileName)
 		numChannels = 0;
 		throw std::runtime_error(ERR_COULD_NOT_LOAD);
 	}
+}
+
+void Image::loadBlank(unsigned int _width, unsigned int _height, unsigned int _numChannels)
+{
+	if (_numChannels < 1 || _numChannels > 4)
+	{
+		throw std::invalid_argument("Invalid channel count");
+	}
+
+	if (_width == 0)
+	{
+		throw std::invalid_argument("width cannot be 0");
+	}
+
+	if (_height == 0)
+	{
+		throw std::invalid_argument("height cannot be 0");
+	}
+
+	_free();
+
+	data = (uint8_t*)calloc(_width * _height * _numChannels, sizeof(uint8_t));
+	if (!data)
+	{
+		width = 0;
+		height = 0;
+		numChannels = 0;
+		throw std::runtime_error(ERR_COULD_NOT_LOAD);
+	}
+
+	width = _width;
+	height = _height;
+	numChannels = _numChannels;
 }
 
 std::tuple<int, int, int> Image::getRGB(unsigned int x, unsigned int y)
