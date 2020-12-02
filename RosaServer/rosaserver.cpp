@@ -273,6 +273,13 @@ void defineThreadSafeAPIs(sol::state* state)
 	(*state)["os"]["createDirectory"] = l_os_createDirectory;
 
 	(*state)["os"]["realClock"] = l_os_realClock;
+
+	{
+		auto httpTable = state->create_table();
+		(*state)["http"] = httpTable;
+		httpTable["getSync"] = l_http_getSync;
+		httpTable["postSync"] = l_http_postSync;
+	}
 }
 
 void luaInit(bool redo)
@@ -762,14 +769,8 @@ void luaInit(bool redo)
 	(*lua)["hook"] = lua->create_table();
 	(*lua)["hook"]["persistentMode"] = hookMode;
 
-	{
-		auto httpTable = lua->create_table();
-		(*lua)["http"] = httpTable;
-		httpTable["get"] = l_http_get;
-		httpTable["post"] = l_http_post;
-		httpTable["getSync"] = l_http_getSync;
-		httpTable["postSync"] = l_http_postSync;
-	}
+	(*lua)["http"]["get"] = l_http_get;
+	(*lua)["http"]["post"] = l_http_post;
 
 	{
 		auto eventTable = lua->create_table();
