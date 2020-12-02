@@ -818,12 +818,14 @@ StreetIntersection* l_intersections_getByIndex(sol::table self, unsigned int idx
 	return &streetIntersections[idx];
 }
 
-sol::table l_os_listDirectory(const char* path)
+sol::table l_os_listDirectory(const char* path, sol::this_state s)
 {
-	auto arr = lua->create_table();
+	sol::state_view lua(s);
+
+	auto arr = lua.create_table();
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
-		auto table = lua->create_table();
+		auto table = lua.create_table();
 		auto path = entry.path();
 		table["isDirectory"] = std::filesystem::is_directory(path);
 		table["name"] = path.filename().string();

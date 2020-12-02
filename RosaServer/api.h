@@ -158,7 +158,7 @@ int l_intersections_getCount();
 sol::table l_intersections_getAll();
 StreetIntersection* l_intersections_getByIndex(sol::table self, unsigned int idx);
 
-sol::table l_os_listDirectory(const char* path);
+sol::table l_os_listDirectory(const char* path, sol::this_state s);
 bool l_os_createDirectory(const char* path);
 double l_os_realClock();
 
