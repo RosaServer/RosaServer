@@ -843,7 +843,7 @@ bool l_os_createDirectory(const char* path)
 	return std::filesystem::create_directories(path);
 }
 
-double l_os_clock()
+double l_os_realClock()
 {
 	auto now = std::chrono::steady_clock::now();
 	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);

@@ -195,6 +195,86 @@ struct Server
 };
 static Server* server;
 
+void defineThreadSafeAPIs(sol::state* state)
+{
+	state->open_libraries(sol::lib::base);
+	state->open_libraries(sol::lib::package);
+	state->open_libraries(sol::lib::coroutine);
+	state->open_libraries(sol::lib::string);
+	state->open_libraries(sol::lib::os);
+	state->open_libraries(sol::lib::math);
+	state->open_libraries(sol::lib::table);
+	state->open_libraries(sol::lib::debug);
+	state->open_libraries(sol::lib::bit32);
+	state->open_libraries(sol::lib::io);
+	state->open_libraries(sol::lib::ffi);
+	state->open_libraries(sol::lib::jit);
+
+	{
+		auto meta = state->new_usertype<Vector>("new", sol::no_constructor);
+		meta["x"] = &Vector::x;
+		meta["y"] = &Vector::y;
+		meta["z"] = &Vector::z;
+
+		meta["class"] = sol::property(&Vector::getClass);
+		meta["__tostring"] = &Vector::__tostring;
+		meta["__add"] = &Vector::__add;
+		meta["__sub"] = &Vector::__sub;
+		meta["__mul"] = sol::overload(&Vector::__mul, &Vector::__mul_RotMatrix);
+		meta["__div"] = &Vector::__div;
+		meta["__unm"] = &Vector::__unm;
+		meta["add"] = &Vector::add;
+		meta["mult"] = &Vector::mult;
+		meta["set"] = &Vector::set;
+		meta["clone"] = &Vector::clone;
+		meta["dist"] = &Vector::dist;
+		meta["distSquare"] = &Vector::distSquare;
+	}
+
+	{
+		auto meta = state->new_usertype<RotMatrix>("new", sol::no_constructor);
+		meta["x1"] = &RotMatrix::x1;
+		meta["y1"] = &RotMatrix::y1;
+		meta["z1"] = &RotMatrix::z1;
+		meta["x2"] = &RotMatrix::x2;
+		meta["y2"] = &RotMatrix::y2;
+		meta["z2"] = &RotMatrix::z2;
+		meta["x3"] = &RotMatrix::x3;
+		meta["y3"] = &RotMatrix::y3;
+		meta["z3"] = &RotMatrix::z3;
+
+		meta["class"] = sol::property(&RotMatrix::getClass);
+		meta["__tostring"] = &RotMatrix::__tostring;
+		meta["__mul"] = &RotMatrix::__mul;
+		meta["set"] = &RotMatrix::set;
+		meta["clone"] = &RotMatrix::clone;
+	}
+
+	{
+		auto meta = state->new_usertype<Image>("Image");
+		meta["width"] = sol::property(&Image::getWidth);
+		meta["height"] = sol::property(&Image::getHeight);
+		meta["numChannels"] = sol::property(&Image::getNumChannels);
+		meta["free"] = &Image::_free;
+		meta["loadFromFile"] = &Image::loadFromFile;
+		meta["getRGB"] = &Image::getRGB;
+		meta["getRGBA"] = &Image::getRGBA;
+		meta["setPixel"] = sol::overload(&Image::setRGB, &Image::setRGBA);
+		meta["getPNG"] = &Image::getPNG;
+	}
+
+	(*state)["print"] = l_print;
+	(*state)["printAppend"] = l_printAppend;
+
+	(*state)["Vector"] = sol::overload(l_Vector, l_Vector_3f);
+	(*state)["RotMatrix"] = l_RotMatrix;
+
+	(*state)["os"]["listDirectory"] = l_os_listDirectory;
+	(*state)["os"]["createDirectory"] = l_os_createDirectory;
+
+	(*state)["os"]["realClock"] = l_os_realClock;
+}
+
 void luaInit(bool redo)
 {
 	std::lock_guard<std::mutex> guard(stateResetMutex);
@@ -259,20 +339,9 @@ void luaInit(bool redo)
 	}
 
 	lua = new sol::state();
-	lua->open_libraries(sol::lib::base);
-	lua->open_libraries(sol::lib::package);
-	lua->open_libraries(sol::lib::coroutine);
-	lua->open_libraries(sol::lib::string);
-	lua->open_libraries(sol::lib::os);
-	lua->open_libraries(sol::lib::math);
-	lua->open_libraries(sol::lib::table);
-	lua->open_libraries(sol::lib::debug);
-	lua->open_libraries(sol::lib::bit32);
-	lua->open_libraries(sol::lib::io);
-	lua->open_libraries(sol::lib::ffi);
-	lua->open_libraries(sol::lib::jit);
 
-	Console::log(LUA_PREFIX "Defining usertypes...\n");
+	Console::log(LUA_PREFIX "Defining...\n");
+	defineThreadSafeAPIs(lua);
 
 	{
 		auto meta = lua->new_usertype<Server>("new", sol::no_constructor);
@@ -330,46 +399,6 @@ void luaInit(bool redo)
 		meta["index"] = sol::property(&Account::getIndex);
 		meta["name"] = sol::property(&Account::getName);
 		meta["steamID"] = sol::property(&Account::getSteamID);
-	}
-
-	{
-		auto meta = lua->new_usertype<Vector>("new", sol::no_constructor);
-		meta["x"] = &Vector::x;
-		meta["y"] = &Vector::y;
-		meta["z"] = &Vector::z;
-
-		meta["class"] = sol::property(&Vector::getClass);
-		meta["__tostring"] = &Vector::__tostring;
-		meta["__add"] = &Vector::__add;
-		meta["__sub"] = &Vector::__sub;
-		meta["__mul"] = sol::overload(&Vector::__mul, &Vector::__mul_RotMatrix);
-		meta["__div"] = &Vector::__div;
-		meta["__unm"] = &Vector::__unm;
-		meta["add"] = &Vector::add;
-		meta["mult"] = &Vector::mult;
-		meta["set"] = &Vector::set;
-		meta["clone"] = &Vector::clone;
-		meta["dist"] = &Vector::dist;
-		meta["distSquare"] = &Vector::distSquare;
-	}
-
-	{
-		auto meta = lua->new_usertype<RotMatrix>("new", sol::no_constructor);
-		meta["x1"] = &RotMatrix::x1;
-		meta["y1"] = &RotMatrix::y1;
-		meta["z1"] = &RotMatrix::z1;
-		meta["x2"] = &RotMatrix::x2;
-		meta["y2"] = &RotMatrix::y2;
-		meta["z2"] = &RotMatrix::z2;
-		meta["x3"] = &RotMatrix::x3;
-		meta["y3"] = &RotMatrix::y3;
-		meta["z3"] = &RotMatrix::z3;
-
-		meta["class"] = sol::property(&RotMatrix::getClass);
-		meta["__tostring"] = &RotMatrix::__tostring;
-		meta["__mul"] = &RotMatrix::__mul;
-		meta["set"] = &RotMatrix::set;
-		meta["clone"] = &RotMatrix::clone;
 	}
 
 	{
@@ -683,19 +712,6 @@ void luaInit(bool redo)
 	}
 
 	{
-		auto meta = lua->new_usertype<Image>("Image");
-		meta["width"] = sol::property(&Image::getWidth);
-		meta["height"] = sol::property(&Image::getHeight);
-		meta["numChannels"] = sol::property(&Image::getNumChannels);
-		meta["free"] = &Image::_free;
-		meta["loadFromFile"] = &Image::loadFromFile;
-		meta["getRGB"] = &Image::getRGB;
-		meta["getRGBA"] = &Image::getRGBA;
-		meta["setPixel"] = sol::overload(&Image::setRGB, &Image::setRGBA);
-		meta["getPNG"] = &Image::getPNG;
-	}
-
-	{
 		auto meta = lua->new_usertype<StreetLane>("new", sol::no_constructor);
 		meta["direction"] = &StreetLane::direction;
 		meta["posA"] = &StreetLane::posA;
@@ -741,17 +757,10 @@ void luaInit(bool redo)
 		meta["streetNorth"] = sol::property(&StreetIntersection::getStreetNorth);
 	}
 
-	Console::log(LUA_PREFIX "Defining globals...\n");
-
-	(*lua)["print"] = l_print;
-	(*lua)["printAppend"] = l_printAppend;
 	(*lua)["flagStateForReset"] = l_flagStateForReset;
 
 	(*lua)["hook"] = lua->create_table();
 	(*lua)["hook"]["persistentMode"] = hookMode;
-
-	(*lua)["Vector"] = sol::overload(l_Vector, l_Vector_3f);
-	(*lua)["RotMatrix"] = l_RotMatrix;
 
 	{
 		auto httpTable = lua->create_table();
@@ -923,10 +932,6 @@ void luaInit(bool redo)
 		_meta["__len"] = l_intersections_getCount;
 		_meta["__index"] = l_intersections_getByIndex;
 	}
-
-	(*lua)["os"]["listDirectory"] = l_os_listDirectory;
-	(*lua)["os"]["createDirectory"] = l_os_createDirectory;
-	(*lua)["os"]["clock"] = l_os_clock;
 
 	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;
 	(*lua)["RESET_REASON_ENGINECALL"] = RESET_REASON_ENGINECALL;

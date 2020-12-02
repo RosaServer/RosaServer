@@ -19,20 +19,7 @@ void Worker::runThread(const char* fileName)
 	std::atomic_bool* _stopped = stopped;
 
 	sol::state lua;
-	lua.open_libraries(sol::lib::base);
-	lua.open_libraries(sol::lib::package);
-	lua.open_libraries(sol::lib::coroutine);
-	lua.open_libraries(sol::lib::string);
-	lua.open_libraries(sol::lib::os);
-	lua.open_libraries(sol::lib::math);
-	lua.open_libraries(sol::lib::table);
-	lua.open_libraries(sol::lib::debug);
-	lua.open_libraries(sol::lib::bit32);
-	lua.open_libraries(sol::lib::io);
-	lua.open_libraries(sol::lib::ffi);
-	lua.open_libraries(sol::lib::jit);
-
-	lua["os"]["realClock"] = l_os_clock;
+	defineThreadSafeAPIs(&lua);
 
 	lua["sendMessage"] = [this](std::string message) {
 		this->l_sendMessage(message);

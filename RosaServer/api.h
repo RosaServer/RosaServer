@@ -72,7 +72,7 @@ bool noLuaCallError(sol::protected_function_result* res);
 bool noLuaCallError(sol::load_result* res);
 void hookAndReset(int reason);
 
-// void consoleThread();
+void defineThreadSafeAPIs(sol::state* state);
 void luaInit(bool redo = false);
 
 void l_print(sol::variadic_args va);
@@ -161,6 +161,6 @@ StreetIntersection* l_intersections_getByIndex(sol::table self, unsigned int idx
 
 sol::table l_os_listDirectory(const char* path);
 bool l_os_createDirectory(const char* path);
-double l_os_clock();
+double l_os_realClock();
 
 std::string addressFromInteger(unsigned int address);
