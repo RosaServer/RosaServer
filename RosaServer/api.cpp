@@ -56,9 +56,11 @@ void hookAndReset(int reason)
 	}
 }
 
-void l_print(sol::variadic_args args)
+void l_print(sol::variadic_args args, sol::this_state s)
 {
-	sol::protected_function toString = (*lua)["tostring"];
+	sol::state_view lua(s);
+
+	sol::protected_function toString = lua["tostring"];
 	if (toString == sol::nil)
 	{
 		return;

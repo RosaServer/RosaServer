@@ -75,7 +75,7 @@ void hookAndReset(int reason);
 void defineThreadSafeAPIs(sol::state* state);
 void luaInit(bool redo = false);
 
-void l_print(sol::variadic_args va);
+void l_print(sol::variadic_args va, sol::this_state s);
 void l_printAppend(const char* str);
 void l_flagStateForReset(const char* mode);
 
