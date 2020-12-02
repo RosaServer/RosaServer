@@ -9,7 +9,7 @@
 static int fdFromParent;
 static int fdToParent;
 
-static double l_os_clock()
+static double l_os_realClock()
 {
 	auto now = std::chrono::steady_clock::now();
 	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
@@ -101,7 +101,7 @@ int main(int argc, const char* argv[])
 	lua.open_libraries(sol::lib::ffi);
 	lua.open_libraries(sol::lib::jit);
 
-	lua["os"]["realClock"] = l_os_clock;
+	lua["os"]["realClock"] = l_os_realClock;
 
 	lua["receiveMessage"] = [](sol::this_state s) {
 		return l_receiveMessage(s);
