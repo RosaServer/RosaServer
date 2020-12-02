@@ -691,6 +691,7 @@ void luaInit(bool redo)
 		meta["loadFromFile"] = &Image::loadFromFile;
 		meta["getRGB"] = &Image::getRGB;
 		meta["getRGBA"] = &Image::getRGBA;
+		meta["setPixel"] = sol::overload(&Image::setRGB, &Image::setRGBA);
 		meta["getPNG"] = &Image::getPNG;
 	}
 

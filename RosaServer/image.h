@@ -29,5 +29,7 @@ public:
 	void loadFromFile(const char* fileName);
 	std::tuple<int, int, int> getRGB(unsigned int x, unsigned int y);
 	std::tuple<int, int, int, int> getRGBA(unsigned int x, unsigned int y);
+	void setRGB(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b);
+	void setRGBA(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 	std::string getPNG();
 };
