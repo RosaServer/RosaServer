@@ -3,6 +3,8 @@
 #include <filesystem>
 #include "console.h"
 
+#define ERR_OUT_OF_RANGE "Index out of range"
+
 void printLuaError(sol::error* err)
 {
 	std::ostringstream stream;
@@ -326,7 +328,7 @@ sol::table l_itemTypes_getAll()
 ItemType* l_itemTypes_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFITEMTYPES)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &itemTypes[idx];
 }
 
@@ -355,7 +357,7 @@ sol::table l_items_getAll()
 Item* l_items_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFITEMS)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &items[idx];
 }
 
@@ -418,7 +420,7 @@ sol::table l_vehicles_getAll()
 Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFVEHICLES)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &vehicles[idx];
 }
 
@@ -517,7 +519,7 @@ Account* l_accounts_getByPhone(int phone)
 Account* l_accounts_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFACCOUNTS)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &accounts[idx];
 }
 
@@ -570,7 +572,7 @@ sol::table l_players_getNonBots()
 Player* l_players_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFPLAYERS)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &players[idx];
 }
 
@@ -619,7 +621,7 @@ sol::table l_humans_getAll()
 Human* l_humans_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFHUMANS)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &humans[idx];
 }
 
@@ -692,7 +694,7 @@ sol::table l_rigidBodies_getAll()
 RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFRIGIDBODIES)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &bodies[idx];
 }
 
@@ -721,7 +723,7 @@ sol::table l_bonds_getAll()
 Bond* l_bonds_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFBONDS)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &bonds[idx];
 }
 
@@ -743,7 +745,7 @@ sol::table l_streets_getAll()
 Street* l_streets_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= *numStreets)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &streets[idx];
 }
 
@@ -765,7 +767,7 @@ sol::table l_intersections_getAll()
 StreetIntersection* l_intersections_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= *numStreetIntersections)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &streetIntersections[idx];
 }
 
@@ -1086,7 +1088,7 @@ void Player::setBotDestination(Vector* vec)
 Action* Player::getAction(unsigned int idx)
 {
 	if (idx > 63)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &actions[idx];
 }
@@ -1094,7 +1096,7 @@ Action* Player::getAction(unsigned int idx)
 MenuButton* Player::getMenuButton(unsigned int idx)
 {
 	if (idx > 31)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &menuButtons[idx];
 }
@@ -1198,7 +1200,7 @@ void Human::arm(int weapon, int magCount) const
 Bone* Human::getBone(unsigned int idx)
 {
 	if (idx > 15)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &bones[idx];
 }
@@ -1206,7 +1208,7 @@ Bone* Human::getBone(unsigned int idx)
 RigidBody* Human::getRigidBody(unsigned int idx) const
 {
 	if (idx > 15)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &bodies[bones[idx].bodyID];
 }
@@ -1410,14 +1412,14 @@ void Item::computerIncrementLine() const
 void Item::computerSetLine(unsigned int line, const char* newLine)
 {
 	if (line >= 32)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	std::strncpy(computerLines[line], newLine, 63);
 }
 
 void Item::computerSetColor(unsigned int line, unsigned int column, unsigned char color)
 {
 	if (line >= 32 || column >= 64)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	computerLineColors[line][column] = color;
 }
 
@@ -1581,7 +1583,7 @@ StreetIntersection* Street::getIntersectionB() const
 StreetLane* Street::getLane(unsigned int idx)
 {
 	if (idx >= numLanes)
-		throw std::invalid_argument("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &lanes[idx];
 }
