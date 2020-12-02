@@ -4,8 +4,12 @@
 #include <iostream>
 #include <thread>
 
-Worker::Worker()
+Worker::Worker(std::string fileName)
 {
+	stopped = new std::atomic_bool(false);
+
+	std::thread thread(&Worker::runThread, this, fileName);
+	thread.detach();
 }
 
 Worker::~Worker()
@@ -14,7 +18,7 @@ Worker::~Worker()
 	stop();
 }
 
-void Worker::runThread(const char* fileName)
+void Worker::runThread(std::string fileName)
 {
 	std::atomic_bool* _stopped = stopped;
 
@@ -89,18 +93,6 @@ sol::object Worker::l_receiveMessage(sol::this_state s)
 	return sol::make_object(lua, message);
 }
 
-void Worker::start(const char* fileName)
-{
-	if (!started && (!stopped || !*stopped))
-	{
-		started = true;
-		stopped = new std::atomic_bool(false);
-
-		std::thread thread(&Worker::runThread, this, fileName);
-		thread.detach();
-	}
-}
-
 void Worker::stop()
 {
 	if (stopped && !*stopped)
@@ -111,7 +103,7 @@ void Worker::stop()
 
 void Worker::sendMessage(std::string message)
 {
-	if (!started || (stopped && *stopped)) return;
+	if (stopped && *stopped) return;
 
 	std::lock_guard<std::mutex> guard(sendMessageQueueMutex);
 	sendMessageQueue.push(message);
