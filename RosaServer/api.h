@@ -72,11 +72,10 @@ bool noLuaCallError(sol::protected_function_result* res);
 bool noLuaCallError(sol::load_result* res);
 void hookAndReset(int reason);
 
-// void consoleThread();
+void defineThreadSafeAPIs(sol::state* state);
 void luaInit(bool redo = false);
 
-void l_print(sol::variadic_args va);
-void l_printAppend(const char* str);
+void l_print(sol::variadic_args va, sol::this_state s);
 void l_flagStateForReset(const char* mode);
 
 Vector l_Vector();
@@ -84,7 +83,10 @@ Vector l_Vector_3f(float x, float y, float z);
 RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 void l_http_get(const char* scheme, const char* path, sol::table headers, sol::protected_function callback);
-void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, sol::protected_function callback);
+void l_http_post(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::protected_function callback);
+
+sol::object l_http_getSync(const char* scheme, const char* path, sol::table headers, sol::this_state s);
+sol::object l_http_postSync(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::this_state s);
 
 void l_event_sound(int soundType, Vector* pos, float volume, float pitch);
 void l_event_soundSimple(int soundType, Vector* pos);
@@ -156,8 +158,8 @@ int l_intersections_getCount();
 sol::table l_intersections_getAll();
 StreetIntersection* l_intersections_getByIndex(sol::table self, unsigned int idx);
 
-sol::table l_os_listDirectory(const char* path);
+sol::table l_os_listDirectory(const char* path, sol::this_state s);
 bool l_os_createDirectory(const char* path);
-double l_os_clock();
+double l_os_realClock();
 
 std::string addressFromInteger(unsigned int address);

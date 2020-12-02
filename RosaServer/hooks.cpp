@@ -2,6 +2,8 @@
 #include "api.h"
 #include "console.h"
 
+static constexpr int httpThreadCount = 2;
+
 int h_subrosa_puts(const char* str)
 {
 	std::ostringstream stream;
@@ -47,7 +49,8 @@ void h_resetgame()
 		Console::log(RS_PREFIX "Initializing input...\n");
 		Console::init();
 
-		Console::log(RS_PREFIX "Starting HTTP thread...\n");
+		Console::log(RS_PREFIX "Starting HTTP threads...\n");
+		for (int i = 0; i < httpThreadCount; i++)
 		{
 			std::thread thread(HTTPThread);
 			thread.detach();

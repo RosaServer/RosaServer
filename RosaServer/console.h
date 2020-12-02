@@ -17,7 +17,6 @@ namespace Console
 	void respondToAutoComplete(std::string newBuffer);
 	void threadMain();
 	void init();
-	void appendPrefix(std::string str);
 	void log(std::string line);
 	void handleInterruptSignal(int signal);
 }

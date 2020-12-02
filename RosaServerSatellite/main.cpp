@@ -4,10 +4,12 @@
 #include <thread>
 #include <unistd.h>
 
+#define ERR_WRITING_MESSAGE "Couldn't write full message to pipe"
+
 static int fdFromParent;
 static int fdToParent;
 
-static double l_os_clock()
+static double l_os_realClock()
 {
 	auto now = std::chrono::steady_clock::now();
 	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
@@ -61,7 +63,7 @@ static void l_sendMessage(std::string message)
 	}
 	else if (bytesWritten != sizeof(length))
 	{
-		throw std::runtime_error("Couldn't write full message to pipe");
+		throw std::runtime_error(ERR_WRITING_MESSAGE);
 	}
 	else
 	{
@@ -72,7 +74,7 @@ static void l_sendMessage(std::string message)
 		}
 		else if (bytesWritten != length)
 		{
-			throw std::runtime_error("Couldn't write full message to pipe");
+			throw std::runtime_error(ERR_WRITING_MESSAGE);
 		}
 	}
 }
@@ -99,7 +101,7 @@ int main(int argc, const char* argv[])
 	lua.open_libraries(sol::lib::ffi);
 	lua.open_libraries(sol::lib::jit);
 
-	lua["os"]["realClock"] = l_os_clock;
+	lua["os"]["realClock"] = l_os_realClock;
 
 	lua["receiveMessage"] = [](sol::this_state s) {
 		return l_receiveMessage(s);

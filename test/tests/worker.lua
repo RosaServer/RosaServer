@@ -1,6 +1,4 @@
-local worker = assert(Worker.new())
-
-worker:start('tests/worker.worker.lua')
+local worker = assert(Worker.new('tests/worker.worker.lua'))
 
 assert(not worker:receiveMessage())
 worker:sendMessage('hi')

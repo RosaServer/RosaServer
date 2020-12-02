@@ -3,6 +3,8 @@
 #include <filesystem>
 #include "console.h"
 
+#define ERR_OUT_OF_RANGE "Index out of range"
+
 void printLuaError(sol::error* err)
 {
 	std::ostringstream stream;
@@ -54,9 +56,11 @@ void hookAndReset(int reason)
 	}
 }
 
-void l_print(sol::variadic_args args)
+void l_print(sol::variadic_args args, sol::this_state s)
 {
-	sol::protected_function toString = (*lua)["tostring"];
+	sol::state_view lua(s);
+
+	sol::protected_function toString = lua["tostring"];
 	if (toString == sol::nil)
 	{
 		return;
@@ -86,12 +90,6 @@ void l_print(sol::variadic_args args)
 	stream << '\n';
 
 	Console::log(stream.str());
-}
-
-// TODO: get rid of this
-void l_printAppend(const char* str)
-{
-	Console::appendPrefix(str);
 }
 
 void l_flagStateForReset(const char* mode)
@@ -131,7 +129,7 @@ void l_http_get(const char* scheme, const char* path, sol::table headers, sol::p
 	requestQueue.push(request);
 }
 
-void l_http_post(const char* scheme, const char* path, sol::table headers, const char* body, const char* contentType, sol::protected_function callback)
+void l_http_post(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::protected_function callback)
 {
 	LuaHTTPRequest request{
 		LuaRequestType::post,
@@ -147,6 +145,59 @@ void l_http_post(const char* scheme, const char* path, sol::table headers, const
 
 	std::lock_guard<std::mutex> guard(requestQueueMutex);
 	requestQueue.push(request);
+}
+
+static sol::object handleSyncHTTPResponse(httplib::Result& res, sol::this_state s)
+{
+	sol::state_view lua(s);
+
+	if (res)
+	{
+		sol::table table = lua.create_table();
+		table["status"] = res->status;
+		table["body"] = res->body;
+
+		sol::table headers = lua.create_table();
+		for (const auto& h : res->headers)
+			headers[h.first] = h.second;
+		table["headers"] = headers;
+
+		return sol::make_object(lua, table);
+	}
+
+	return sol::make_object(lua, sol::lua_nil);
+}
+
+sol::object l_http_getSync(const char* scheme, const char* path, sol::table headers, sol::this_state s)
+{
+	httplib::Client client(scheme);
+	client.set_connection_timeout(6);
+	client.set_keep_alive(false);
+
+	httplib::Headers httpHeaders;
+	for (const auto& pair : headers)
+		httpHeaders.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
+
+	httpHeaders.emplace("Connection", "close");
+
+	auto res = client.Get(path, httpHeaders);
+	return handleSyncHTTPResponse(res, s);
+}
+
+sol::object l_http_postSync(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::this_state s)
+{
+	httplib::Client client(scheme);
+	client.set_connection_timeout(6);
+	client.set_keep_alive(false);
+
+	httplib::Headers httpHeaders;
+	for (const auto& pair : headers)
+		httpHeaders.emplace(pair.first.as<std::string>(), pair.second.as<std::string>());
+
+	httpHeaders.emplace("Connection", "close");
+
+	auto res = client.Post(path, httpHeaders, body, contentType);
+	return handleSyncHTTPResponse(res, s);
 }
 
 static void handleHTTPResponse(LuaHTTPRequest& req, httplib::Result& res)
@@ -195,8 +246,6 @@ void HTTPThread()
 			httplib::Client client(req.scheme.c_str());
 			client.set_connection_timeout(6);
 			client.set_keep_alive(false);
-
-			httplib::Result* res;
 
 			req.headers.emplace("Connection", "close");
 
@@ -326,7 +375,7 @@ sol::table l_itemTypes_getAll()
 ItemType* l_itemTypes_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFITEMTYPES)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &itemTypes[idx];
 }
 
@@ -355,7 +404,7 @@ sol::table l_items_getAll()
 Item* l_items_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFITEMS)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &items[idx];
 }
 
@@ -418,7 +467,7 @@ sol::table l_vehicles_getAll()
 Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFVEHICLES)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &vehicles[idx];
 }
 
@@ -517,7 +566,7 @@ Account* l_accounts_getByPhone(int phone)
 Account* l_accounts_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFACCOUNTS)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &accounts[idx];
 }
 
@@ -570,7 +619,7 @@ sol::table l_players_getNonBots()
 Player* l_players_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFPLAYERS)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &players[idx];
 }
 
@@ -619,7 +668,7 @@ sol::table l_humans_getAll()
 Human* l_humans_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFHUMANS)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &humans[idx];
 }
 
@@ -692,7 +741,7 @@ sol::table l_rigidBodies_getAll()
 RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFRIGIDBODIES)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &bodies[idx];
 }
 
@@ -721,7 +770,7 @@ sol::table l_bonds_getAll()
 Bond* l_bonds_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= MAXNUMOFBONDS)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &bonds[idx];
 }
 
@@ -743,7 +792,7 @@ sol::table l_streets_getAll()
 Street* l_streets_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= *numStreets)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &streets[idx];
 }
 
@@ -765,16 +814,18 @@ sol::table l_intersections_getAll()
 StreetIntersection* l_intersections_getByIndex(sol::table self, unsigned int idx)
 {
 	if (idx >= *numStreetIntersections)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	return &streetIntersections[idx];
 }
 
-sol::table l_os_listDirectory(const char* path)
+sol::table l_os_listDirectory(const char* path, sol::this_state s)
 {
-	auto arr = lua->create_table();
+	sol::state_view lua(s);
+
+	auto arr = lua.create_table();
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
-		auto table = lua->create_table();
+		auto table = lua.create_table();
 		auto path = entry.path();
 		table["isDirectory"] = std::filesystem::is_directory(path);
 		table["name"] = path.filename().string();
@@ -790,7 +841,7 @@ bool l_os_createDirectory(const char* path)
 	return std::filesystem::create_directories(path);
 }
 
-double l_os_clock()
+double l_os_realClock()
 {
 	auto now = std::chrono::steady_clock::now();
 	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
@@ -1060,7 +1111,7 @@ Account* Player::getAccount()
 void Player::setAccount(Account* account)
 {
 	if (account == nullptr)
-		throw std::runtime_error("Cannot set account to nil value");
+		throw std::invalid_argument("Cannot set account to nil value");
 	else
 		accountID = account->getIndex();
 }
@@ -1086,7 +1137,7 @@ void Player::setBotDestination(Vector* vec)
 Action* Player::getAction(unsigned int idx)
 {
 	if (idx > 63)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &actions[idx];
 }
@@ -1094,7 +1145,7 @@ Action* Player::getAction(unsigned int idx)
 MenuButton* Player::getMenuButton(unsigned int idx)
 {
 	if (idx > 31)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &menuButtons[idx];
 }
@@ -1198,7 +1249,7 @@ void Human::arm(int weapon, int magCount) const
 Bone* Human::getBone(unsigned int idx)
 {
 	if (idx > 15)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &bones[idx];
 }
@@ -1206,7 +1257,7 @@ Bone* Human::getBone(unsigned int idx)
 RigidBody* Human::getRigidBody(unsigned int idx) const
 {
 	if (idx > 15)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &bodies[bones[idx].bodyID];
 }
@@ -1410,14 +1461,14 @@ void Item::computerIncrementLine() const
 void Item::computerSetLine(unsigned int line, const char* newLine)
 {
 	if (line >= 32)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	std::strncpy(computerLines[line], newLine, 63);
 }
 
 void Item::computerSetColor(unsigned int line, unsigned int column, unsigned char color)
 {
 	if (line >= 32 || column >= 64)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 	computerLineColors[line][column] = color;
 }
 
@@ -1581,7 +1632,7 @@ StreetIntersection* Street::getIntersectionB() const
 StreetLane* Street::getLane(unsigned int idx)
 {
 	if (idx >= numLanes)
-		throw std::runtime_error("Index out of range");
+		throw std::invalid_argument(ERR_OUT_OF_RANGE);
 
 	return &lanes[idx];
 }
