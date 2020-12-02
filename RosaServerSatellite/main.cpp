@@ -4,6 +4,8 @@
 #include <thread>
 #include <unistd.h>
 
+#define ERR_WRITING_MESSAGE "Couldn't write full message to pipe"
+
 static int fdFromParent;
 static int fdToParent;
 
@@ -61,7 +63,7 @@ static void l_sendMessage(std::string message)
 	}
 	else if (bytesWritten != sizeof(length))
 	{
-		throw std::runtime_error("Couldn't write full message to pipe");
+		throw std::runtime_error(ERR_WRITING_MESSAGE);
 	}
 	else
 	{
@@ -72,7 +74,7 @@ static void l_sendMessage(std::string message)
 		}
 		else if (bytesWritten != length)
 		{
-			throw std::runtime_error("Couldn't write full message to pipe");
+			throw std::runtime_error(ERR_WRITING_MESSAGE);
 		}
 	}
 }
