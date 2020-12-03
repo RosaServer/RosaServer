@@ -31,18 +31,18 @@ For complete reference on using the Lua API, go to the [wiki](https://github.com
 
 # Building
 
-Make sure all submodules are cloned, and run `./build`
+Make sure all submodules are cloned, and run `./build.sh`
 
 ## Required Packages
 - `build-essential` on Debian/Ubuntu
 - `cmake`
 - `libssl-dev`
 
-Here's a basic script I use to copy the required files after they're compiled. For example, `./build && ./postbuild`
+Here's a basic script I use to copy the required files after they're compiled. For example, `./build.sh && ./postbuild.sh`
 ```bash
 #!/bin/bash
 
-DEST=~/testing/
+DEST=../RosaServerCore/
 
 cp ./moonjit/src/libluajit.so "$DEST"
 cp ./release/RosaServer/librosaserver.so "$DEST"
