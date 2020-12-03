@@ -3,4 +3,5 @@
 /out
 /release
 /debug
-/postbuild
+/*.sh
+!/build.sh
