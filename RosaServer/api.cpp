@@ -1203,6 +1203,14 @@ Player* Human::getPlayer() const
 	return &players[playerID];
 }
 
+void Human::setPlayer(Player* player)
+{
+	if (player == nullptr)
+		playerID = -1;
+	else
+		playerID = player->getIndex();
+}
+
 Vehicle* Human::getVehicle() const
 {
 	if (vehicleID == -1)

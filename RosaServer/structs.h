@@ -526,6 +526,7 @@ struct Human
 		isAppearanceDirty = b;
 	}
 	Player* getPlayer() const;
+	void setPlayer(Player* player);
 	Vehicle* getVehicle() const;
 	void setVehicle(Vehicle* vcl);
 	Bone* getBone(unsigned int idx);

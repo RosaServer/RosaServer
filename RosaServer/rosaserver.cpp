@@ -501,7 +501,7 @@ void luaInit(bool redo)
 		meta["isOnGround"] = sol::property(&Human::getIsOnGround);
 		meta["isStanding"] = sol::property(&Human::getIsStanding);
 		meta["isBleeding"] = sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
-		meta["player"] = sol::property(&Human::getPlayer);
+		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
 		meta["rightHandItem"] = sol::property(&Human::getRightHandItem);
 		meta["leftHandItem"] = sol::property(&Human::getLeftHandItem);
