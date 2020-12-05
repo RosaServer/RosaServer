@@ -320,6 +320,7 @@ struct Player
 		isBot = b;
 	}
 	Human* getHuman();
+	void setHuman(Human* human);
 	Connection* getConnection();
 	Account* getAccount();
 	void setAccount(Account* account);

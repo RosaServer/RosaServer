@@ -443,7 +443,7 @@ void luaInit(bool redo)
 		meta["isAdmin"] = sol::property(&Player::getIsAdmin, &Player::setIsAdmin);
 		meta["isReady"] = sol::property(&Player::getIsReady, &Player::setIsReady);
 		meta["isBot"] = sol::property(&Player::getIsBot, &Player::setIsBot);
-		meta["human"] = sol::property(&Player::getHuman);
+		meta["human"] = sol::property(&Player::getHuman, &Player::setHuman);
 		meta["connection"] = sol::property(&Player::getConnection);
 		meta["account"] = sol::property(&Player::getAccount, &Player::setAccount);
 		meta["botDestination"] = sol::property(&Player::getBotDestination, &Player::setBotDestination);

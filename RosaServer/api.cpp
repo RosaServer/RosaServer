@@ -1091,6 +1091,14 @@ Human* Player::getHuman()
 	return &humans[humanID];
 }
 
+void Player::setHuman(Human* human)
+{
+	if (human == nullptr)
+		humanID = -1;
+	else
+		humanID = human->getIndex();
+}
+
 Connection* Player::getConnection()
 {
 	int id = getIndex();
