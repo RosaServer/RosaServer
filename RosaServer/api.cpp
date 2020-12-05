@@ -1091,6 +1091,14 @@ Human* Player::getHuman()
 	return &humans[humanID];
 }
 
+void Player::setHuman(Human* human)
+{
+	if (human == nullptr)
+		humanID = -1;
+	else
+		humanID = human->getIndex();
+}
+
 Connection* Player::getConnection()
 {
 	int id = getIndex();
@@ -1193,6 +1201,14 @@ Player* Human::getPlayer() const
 	if (playerID == -1)
 		return nullptr;
 	return &players[playerID];
+}
+
+void Human::setPlayer(Player* player)
+{
+	if (player == nullptr)
+		playerID = -1;
+	else
+		playerID = player->getIndex();
 }
 
 Vehicle* Human::getVehicle() const
