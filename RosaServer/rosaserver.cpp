@@ -3,8 +3,7 @@
 #include <cerrno>
 
 #define handle_error(msg)               \
-	do                                    \
-	{                                     \
+	do {                                  \
 		std::cout << __LINE__ << std::endl; \
 		perror(msg);                        \
 		exit(EXIT_FAILURE);                 \
@@ -24,15 +23,13 @@ static int* isLevelLoaded;
 static float* gravity;
 static float originalGravity;
 
-static void pryMemory(void* address, size_t numPages)
-{
+static void pryMemory(void* address, size_t numPages) {
 	size_t pageSize = sysconf(_SC_PAGE_SIZE);
 
 	uintptr_t page = (uintptr_t)address;
 	page -= (page % pageSize);
 
-	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0)
-	{
+	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0) {
 		std::ostringstream stream;
 
 		stream << RS_PREFIX "Successfully pried open page at ";
@@ -41,9 +38,7 @@ static void pryMemory(void* address, size_t numPages)
 		stream << "\n";
 
 		Console::log(stream.str());
-	}
-	else
-	{
+	} else {
 		handle_error("mprotect");
 	}
 }
@@ -52,151 +47,67 @@ static void pryMemory(void* address, size_t numPages)
 typedef int(*_test_func)(int, Vector*, RotMatrix*, Vector*, Vector*, float);
 static _test_func _test;
 
-int h__test(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, float mass) {
-	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil)
-	{
-		auto res = func("Test", type, pos, rot, vel, scale, mass);
-		noLuaCallError(&res);
-	}
+int h__test(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale,
+float mass) { sol::protected_function func = (*lua)["hook"]["run"]; if (func !=
+sol::nil)
+  {
+    auto res = func("Test", type, pos, rot, vel, scale, mass);
+    noLuaCallError(&res);
+  }
 
-	subhook::ScopedHookRemove remove(&_test_hook);
-	return _test(type, pos, rot, vel, scale, mass);
+  subhook::ScopedHookRemove remove(&_test_hook);
+  return _test(type, pos, rot, vel, scale, mass);
 }*/
 
-struct Server
-{
+struct Server {
 	const int TPS = 60;
 
-	const char* getClass() const
-	{
-		return "Server";
-	}
-	int getPort() const
-	{
-		return *serverPort;
-	}
-	char* getName() const
-	{
-		return serverName;
-	}
-	void setName(const char* newName) const
-	{
-		strncpy(serverName, newName, 31);
-	}
-	char* getPassword() const
-	{
-		return password;
-	}
-	void setPassword(const char* newPassword) const
-	{
+	const char* getClass() const { return "Server"; }
+	int getPort() const { return *serverPort; }
+	char* getName() const { return serverName; }
+	void setName(const char* newName) const { strncpy(serverName, newName, 31); }
+	char* getPassword() const { return password; }
+	void setPassword(const char* newPassword) const {
 		strncpy(password, newPassword, 31);
 		*isPassworded = newPassword[0] != 0;
 	}
-	int getMaxPlayers() const
-	{
-		return *maxPlayers;
-	}
-	void setMaxPlayers(int max) const
-	{
-		*maxPlayers = max;
-	}
-	int getType() const
-	{
-		return *gameType;
-	}
-	void setType(int type) const
-	{
-		*gameType = type;
-	}
-	char* getLevelName() const
-	{
-		return mapName;
-	}
-	void setLevelName(const char* newName) const
-	{
+	int getMaxPlayers() const { return *maxPlayers; }
+	void setMaxPlayers(int max) const { *maxPlayers = max; }
+	int getType() const { return *gameType; }
+	void setType(int type) const { *gameType = type; }
+	char* getLevelName() const { return mapName; }
+	void setLevelName(const char* newName) const {
 		strncpy(mapName, newName, 31);
 	}
-	char* getLoadedLevelName() const
-	{
-		return loadedMapName;
-	}
-	bool getIsLevelLoaded() const
-	{
-		return *isLevelLoaded;
-	}
-	void setIsLevelLoaded(bool b) const
-	{
-		*isLevelLoaded = b;
-	}
-	float getGravity() const
-	{
-		return *gravity;
-	}
-	void setGravity(float g) const
-	{
-		*gravity = g;
-	}
-	float getDefaultGravity() const
-	{
-		return originalGravity;
-	}
-	int getState() const
-	{
-		return *gameState;
-	}
-	void setState(int state) const
-	{
-		*gameState = state;
-	}
-	int getTime() const
-	{
-		return *gameTimer;
-	}
-	void setTime(int time) const
-	{
-		*gameTimer = time;
-	}
-	int getSunTime() const
-	{
-		return *sunTime;
-	}
-	void setSunTime(int time) const
-	{
-		*sunTime = time % 5184000;
-	}
-	std::string getVersion() const
-	{
+	char* getLoadedLevelName() const { return loadedMapName; }
+	bool getIsLevelLoaded() const { return *isLevelLoaded; }
+	void setIsLevelLoaded(bool b) const { *isLevelLoaded = b; }
+	float getGravity() const { return *gravity; }
+	void setGravity(float g) const { *gravity = g; }
+	float getDefaultGravity() const { return originalGravity; }
+	int getState() const { return *gameState; }
+	void setState(int state) const { *gameState = state; }
+	int getTime() const { return *gameTimer; }
+	void setTime(int time) const { *gameTimer = time; }
+	int getSunTime() const { return *sunTime; }
+	void setSunTime(int time) const { *sunTime = time % 5184000; }
+	std::string getVersion() const {
 		std::ostringstream stream;
 		stream << *version << (char)(*subVersion + 97);
 		return stream.str();
 	}
-	unsigned int getVersionMajor() const
-	{
-		return *version;
-	}
-	unsigned int getVersionMinor() const
-	{
-		return *subVersion;
-	}
-	unsigned int getNumEvents() const
-	{
-		return *numEvents;
-	}
+	unsigned int getVersionMajor() const { return *version; }
+	unsigned int getVersionMinor() const { return *subVersion; }
+	unsigned int getNumEvents() const { return *numEvents; }
 
-	void setConsoleTitle(const char* title) const
-	{
+	void setConsoleTitle(const char* title) const {
 		printf("\033]0;%s\007", title);
 	}
-	void reset() const
-	{
-		hookAndReset(RESET_REASON_LUACALL);
-	}
+	void reset() const { hookAndReset(RESET_REASON_LUACALL); }
 };
 static Server* server;
 
-void defineThreadSafeAPIs(sol::state* state)
-{
+void defineThreadSafeAPIs(sol::state* state) {
 	state->open_libraries(sol::lib::base);
 	state->open_libraries(sol::lib::package);
 	state->open_libraries(sol::lib::coroutine);
@@ -282,66 +193,52 @@ void defineThreadSafeAPIs(sol::state* state)
 	}
 }
 
-void luaInit(bool redo)
-{
+void luaInit(bool redo) {
 	std::lock_guard<std::mutex> guard(stateResetMutex);
 	requestQueue = std::queue<LuaHTTPRequest>();
 	responseQueue = std::queue<LuaHTTPResponse>();
 
-	if (redo)
-	{
+	if (redo) {
 		Console::log(LUA_PREFIX "Resetting state...\n");
 		delete server;
 
-		for (int i = 0; i < MAXNUMOFPLAYERS; i++)
-		{
-			if (playerDataTables[i])
-			{
+		for (int i = 0; i < MAXNUMOFPLAYERS; i++) {
+			if (playerDataTables[i]) {
 				delete playerDataTables[i];
 				playerDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFHUMANS; i++)
-		{
-			if (humanDataTables[i])
-			{
+		for (int i = 0; i < MAXNUMOFHUMANS; i++) {
+			if (humanDataTables[i]) {
 				delete humanDataTables[i];
 				humanDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFITEMS; i++)
-		{
-			if (itemDataTables[i])
-			{
+		for (int i = 0; i < MAXNUMOFITEMS; i++) {
+			if (itemDataTables[i]) {
 				delete itemDataTables[i];
 				itemDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFVEHICLES; i++)
-		{
-			if (vehicleDataTables[i])
-			{
+		for (int i = 0; i < MAXNUMOFVEHICLES; i++) {
+			if (vehicleDataTables[i]) {
 				delete vehicleDataTables[i];
 				vehicleDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFRIGIDBODIES; i++)
-		{
-			if (bodyDataTables[i])
-			{
+		for (int i = 0; i < MAXNUMOFRIGIDBODIES; i++) {
+			if (bodyDataTables[i]) {
 				delete bodyDataTables[i];
 				bodyDataTables[i] = nullptr;
 			}
 		}
 
 		delete lua;
-	}
-	else
-	{
+	} else {
 		Console::log(LUA_PREFIX "Initializing state...\n");
 	}
 
@@ -357,12 +254,16 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&Server::getClass);
 		meta["port"] = sol::property(&Server::getPort);
 		meta["name"] = sol::property(&Server::getName, &Server::setName);
-		meta["password"] = sol::property(&Server::getPassword, &Server::setPassword);
-		meta["maxPlayers"] = sol::property(&Server::getMaxPlayers, &Server::setMaxPlayers);
+		meta["password"] =
+		    sol::property(&Server::getPassword, &Server::setPassword);
+		meta["maxPlayers"] =
+		    sol::property(&Server::getMaxPlayers, &Server::setMaxPlayers);
 		meta["type"] = sol::property(&Server::getType, &Server::setType);
-		meta["levelToLoad"] = sol::property(&Server::getLevelName, &Server::setLevelName);
+		meta["levelToLoad"] =
+		    sol::property(&Server::getLevelName, &Server::setLevelName);
 		meta["loadedLevel"] = sol::property(&Server::getLoadedLevelName);
-		meta["isLevelLoaded"] = sol::property(&Server::getIsLevelLoaded, &Server::setIsLevelLoaded);
+		meta["isLevelLoaded"] =
+		    sol::property(&Server::getIsLevelLoaded, &Server::setIsLevelLoaded);
 		meta["gravity"] = sol::property(&Server::getGravity, &Server::setGravity);
 		meta["defaultGravity"] = sol::property(&Server::getDefaultGravity);
 		meta["state"] = sol::property(&Server::getState, &Server::setState);
@@ -387,7 +288,8 @@ void luaInit(bool redo)
 
 		meta["class"] = sol::property(&Connection::getClass);
 		meta["address"] = sol::property(&Connection::getAddress);
-		meta["adminVisible"] = sol::property(&Connection::getAdminVisible, &Connection::setAdminVisible);
+		meta["adminVisible"] = sol::property(&Connection::getAdminVisible,
+		                                     &Connection::setAdminVisible);
 	}
 
 	{
@@ -437,7 +339,8 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&Player::getClass);
 		meta["__tostring"] = &Player::__tostring;
 		meta["index"] = sol::property(&Player::getIndex);
-		meta["isActive"] = sol::property(&Player::getIsActive, &Player::setIsActive);
+		meta["isActive"] =
+		    sol::property(&Player::getIsActive, &Player::setIsActive);
 		meta["data"] = sol::property(&Player::getDataTable);
 		meta["name"] = sol::property(&Player::getName, &Player::setName);
 		meta["isAdmin"] = sol::property(&Player::getIsAdmin, &Player::setIsAdmin);
@@ -446,7 +349,8 @@ void luaInit(bool redo)
 		meta["human"] = sol::property(&Player::getHuman, &Player::setHuman);
 		meta["connection"] = sol::property(&Player::getConnection);
 		meta["account"] = sol::property(&Player::getAccount, &Player::setAccount);
-		meta["botDestination"] = sol::property(&Player::getBotDestination, &Player::setBotDestination);
+		meta["botDestination"] =
+		    sol::property(&Player::getBotDestination, &Player::setBotDestination);
 
 		meta["getAction"] = &Player::getAction;
 		meta["getMenuButton"] = &Player::getMenuButton;
@@ -497,17 +401,22 @@ void luaInit(bool redo)
 		meta["isActive"] = sol::property(&Human::getIsActive, &Human::setIsActive);
 		meta["data"] = sol::property(&Human::getDataTable);
 		meta["isAlive"] = sol::property(&Human::getIsAlive, &Human::setIsAlive);
-		meta["isImmortal"] = sol::property(&Human::getIsImmortal, &Human::setIsImmortal);
+		meta["isImmortal"] =
+		    sol::property(&Human::getIsImmortal, &Human::setIsImmortal);
 		meta["isOnGround"] = sol::property(&Human::getIsOnGround);
 		meta["isStanding"] = sol::property(&Human::getIsStanding);
-		meta["isBleeding"] = sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
+		meta["isBleeding"] =
+		    sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
 		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
 		meta["rightHandItem"] = sol::property(&Human::getRightHandItem);
 		meta["leftHandItem"] = sol::property(&Human::getLeftHandItem);
-		meta["rightHandGrab"] = sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
-		meta["leftHandGrab"] = sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
-		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty, &Human::setIsAppearanceDirty);
+		meta["rightHandGrab"] =
+		    sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
+		meta["leftHandGrab"] =
+		    sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
+		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty,
+		                                          &Human::setIsAppearanceDirty);
 
 		meta["remove"] = &Human::remove;
 		meta["teleport"] = &Human::teleport;
@@ -560,11 +469,14 @@ void luaInit(bool redo)
 		meta["index"] = sol::property(&Item::getIndex);
 		meta["isActive"] = sol::property(&Item::getIsActive, &Item::setIsActive);
 		meta["data"] = sol::property(&Item::getDataTable);
-		meta["hasPhysics"] = sol::property(&Item::getHasPhysics, &Item::setHasPhysics);
-		meta["physicsSettled"] = sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
+		meta["hasPhysics"] =
+		    sol::property(&Item::getHasPhysics, &Item::setHasPhysics);
+		meta["physicsSettled"] =
+		    sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
 		meta["isStatic"] = sol::property(&Item::getIsStatic, &Item::setIsStatic);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
-		meta["grenadePrimer"] = sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
+		meta["grenadePrimer"] =
+		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
 		meta["parentHuman"] = sol::property(&Item::getParentHuman);
 		meta["parentItem"] = sol::property(&Item::getParentItem);
 
@@ -608,7 +520,8 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&Vehicle::getClass);
 		meta["__tostring"] = &Vehicle::__tostring;
 		meta["index"] = sol::property(&Vehicle::getIndex);
-		meta["isActive"] = sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
+		meta["isActive"] =
+		    sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
 		meta["data"] = sol::property(&Vehicle::getDataTable);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
 		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);
@@ -651,9 +564,11 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&RigidBody::getClass);
 		meta["__tostring"] = &RigidBody::__tostring;
 		meta["index"] = sol::property(&RigidBody::getIndex);
-		meta["isActive"] = sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
+		meta["isActive"] =
+		    sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
 		meta["data"] = sol::property(&RigidBody::getDataTable);
-		meta["isSettled"] = sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
+		meta["isSettled"] =
+		    sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
 
 		meta["bondTo"] = &RigidBody::bondTo;
 		meta["bondRotTo"] = &RigidBody::bondRotTo;
@@ -697,14 +612,16 @@ void luaInit(bool redo)
 	}
 
 	{
-		auto meta = lua->new_usertype<Worker>("Worker", sol::constructors<ChildProcess(std::string)>());
+		auto meta = lua->new_usertype<Worker>(
+		    "Worker", sol::constructors<ChildProcess(std::string)>());
 		meta["stop"] = &Worker::stop;
 		meta["sendMessage"] = &Worker::sendMessage;
 		meta["receiveMessage"] = &Worker::receiveMessage;
 	}
 
 	{
-		auto meta = lua->new_usertype<ChildProcess>("ChildProcess", sol::constructors<ChildProcess(std::string)>());
+		auto meta = lua->new_usertype<ChildProcess>(
+		    "ChildProcess", sol::constructors<ChildProcess(std::string)>());
 		meta["isRunning"] = &ChildProcess::isRunning;
 		meta["terminate"] = &ChildProcess::terminate;
 		meta["getExitCode"] = &ChildProcess::getExitCode;
@@ -744,7 +661,8 @@ void luaInit(bool redo)
 	}
 
 	{
-		auto meta = lua->new_usertype<StreetIntersection>("new", sol::no_constructor);
+		auto meta =
+		    lua->new_usertype<StreetIntersection>("new", sol::no_constructor);
 		meta["pos"] = &StreetIntersection::pos;
 		meta["lightsState"] = &StreetIntersection::lightsState;
 		meta["lightsTimer"] = &StreetIntersection::lightsTimer;
@@ -870,8 +788,9 @@ void luaInit(bool redo)
 		(*lua)["vehicles"] = vehiclesTable;
 		vehiclesTable["getCount"] = l_vehicles_getCount;
 		vehiclesTable["getAll"] = l_vehicles_getAll;
-		vehiclesTable["create"] = sol::overload(l_vehicles_create, l_vehicles_createVel);
-		
+		vehiclesTable["create"] =
+		    sol::overload(l_vehicles_create, l_vehicles_createVel);
+
 		sol::table _meta = lua->create_table();
 		vehiclesTable[sol::metatable_key] = _meta;
 		_meta["__len"] = l_vehicles_getCount;
@@ -890,7 +809,7 @@ void luaInit(bool redo)
 		(*lua)["rigidBodies"] = rigidBodiesTable;
 		rigidBodiesTable["getCount"] = l_rigidBodies_getCount;
 		rigidBodiesTable["getAll"] = l_rigidBodies_getAll;
-		
+
 		sol::table _meta = lua->create_table();
 		rigidBodiesTable[sol::metatable_key] = _meta;
 		_meta["__len"] = l_rigidBodies_getCount;
@@ -953,18 +872,15 @@ void luaInit(bool redo)
 	Console::log(LUA_PREFIX "Running " LUA_ENTRY_FILE "...\n");
 
 	sol::load_result load = lua->load_file(LUA_ENTRY_FILE);
-	if (noLuaCallError(&load))
-	{
+	if (noLuaCallError(&load)) {
 		sol::protected_function_result res = load();
-		if (noLuaCallError(&res))
-		{
+		if (noLuaCallError(&res)) {
 			Console::log(LUA_PREFIX "No problems!\n");
 		}
 	}
 }
 
-static inline unsigned long getBaseAddress()
-{
+static inline unsigned long getBaseAddress() {
 	std::ifstream file("/proc/self/maps");
 	std::string line;
 	// First line
@@ -975,8 +891,7 @@ static inline unsigned long getBaseAddress()
 	return std::stoul(truncated, nullptr, 16);
 }
 
-static inline void printBaseAddress(unsigned long base)
-{
+static inline void printBaseAddress(unsigned long base) {
 	std::ostringstream stream;
 
 	stream << RS_PREFIX "Base address is ";
@@ -987,8 +902,7 @@ static inline void printBaseAddress(unsigned long base)
 	Console::log(stream.str());
 }
 
-static inline void locateMemory(unsigned long base)
-{
+static inline void locateMemory(unsigned long base) {
 	version = (unsigned int*)(base + 0x2D5F08);
 	subVersion = (unsigned int*)(base + 0x2D5F04);
 	serverName = (char*)(base + 0x24EE4234);
@@ -1030,7 +944,7 @@ static inline void locateMemory(unsigned long base)
 	numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);
 
 	//_test = (_test_func)(base + 0x4cc90);
-	//pryMemory(&_test, 2);
+	// pryMemory(&_test, 2);
 
 	subrosa_puts = (subrosa_puts_func)(base + 0x1CF0);
 	subrosa___printf_chk = (subrosa___printf_chk_func)(base + 0x1FE0);
@@ -1071,11 +985,16 @@ static inline void locateMemory(unsigned long base)
 	server_playermessage = (server_playermessage_func)(base + 0xA7B80);
 	playerai = (void_index_func)(base + 0x96F80);
 	playerdeathtax = (void_index_func)(base + 0x2D70);
-	createbond_rigidbody_rigidbody = (createbond_rigidbody_rigidbody_func)(base + 0x12CC0);
-	createbond_rigidbody_rot_rigidbody = (createbond_rigidbody_rot_rigidbody_func)(base + 0x12f70);
-	createbond_rigidbody_level = (createbond_rigidbody_level_func)(base + 0x12B80);
-	addcollision_rigidbody_rigidbody = (addcollision_rigidbody_rigidbody_func)(base + 0x13070);
-	addcollision_rigidbody_level = (addcollision_rigidbody_level_func)(base + 0x13220);
+	createbond_rigidbody_rigidbody =
+	    (createbond_rigidbody_rigidbody_func)(base + 0x12CC0);
+	createbond_rigidbody_rot_rigidbody =
+	    (createbond_rigidbody_rot_rigidbody_func)(base + 0x12f70);
+	createbond_rigidbody_level =
+	    (createbond_rigidbody_level_func)(base + 0x12B80);
+	addcollision_rigidbody_rigidbody =
+	    (addcollision_rigidbody_rigidbody_func)(base + 0x13070);
+	addcollision_rigidbody_level =
+	    (addcollision_rigidbody_level_func)(base + 0x13220);
 
 	createplayer = (createplayer_func)(base + 0x40EE0);
 	deleteplayer = (void_index_func)(base + 0x411D0);
@@ -1104,13 +1023,9 @@ static inline void locateMemory(unsigned long base)
 }
 
 static inline void installHook(
-	const char* name, subhook::Hook& hook,
-	void* source, void* destination,
-	subhook::HookFlags flags = subhook::HookFlags::HookFlag64BitOffset
-	)
-{
-	if (!hook.Install(source, destination, flags))
-	{
+    const char* name, subhook::Hook& hook, void* source, void* destination,
+    subhook::HookFlags flags = subhook::HookFlags::HookFlag64BitOffset) {
+	if (!hook.Install(source, destination, flags)) {
 		std::ostringstream stream;
 		stream << RS_PREFIX "Hook " << name << " failed to install";
 
@@ -1118,78 +1033,128 @@ static inline void installHook(
 	}
 }
 
-static inline void installHooks()
-{
+static inline void installHooks() {
 	//_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
-	installHook("subrosa_puts_hook", subrosa_puts_hook, (void*)subrosa_puts, (void*)h_subrosa_puts);
-	installHook("subrosa___printf_chk_hook", subrosa___printf_chk_hook, (void*)subrosa___printf_chk, (void*)h_subrosa___printf_chk);
+	installHook("subrosa_puts_hook", subrosa_puts_hook, (void*)subrosa_puts,
+	            (void*)h_subrosa_puts);
+	installHook("subrosa___printf_chk_hook", subrosa___printf_chk_hook,
+	            (void*)subrosa___printf_chk, (void*)h_subrosa___printf_chk);
 
-	installHook("resetgame_hook", resetgame_hook, (void*)resetgame, (void*)h_resetgame);
+	installHook("resetgame_hook", resetgame_hook, (void*)resetgame,
+	            (void*)h_resetgame);
 
-	installHook("logicsimulation_hook", logicsimulation_hook, (void*)logicsimulation, (void*)h_logicsimulation);
-	installHook("logicsimulation_race_hook", logicsimulation_race_hook, (void*)logicsimulation_race, (void*)h_logicsimulation_race);
-	installHook("logicsimulation_round_hook", logicsimulation_round_hook, (void*)logicsimulation_round, (void*)h_logicsimulation_round);
-	installHook("logicsimulation_world_hook", logicsimulation_world_hook, (void*)logicsimulation_world, (void*)h_logicsimulation_world);
-	installHook("logicsimulation_terminator_hook", logicsimulation_terminator_hook, (void*)logicsimulation_terminator, (void*)h_logicsimulation_terminator);
-	installHook("logicsimulation_coop_hook", logicsimulation_coop_hook, (void*)logicsimulation_coop, (void*)h_logicsimulation_coop);
-	installHook("logicsimulation_versus_hook", logicsimulation_versus_hook, (void*)logicsimulation_versus, (void*)h_logicsimulation_versus);
-	installHook("logic_playeractions_hook", logic_playeractions_hook, (void*)logic_playeractions, (void*)h_logic_playeractions);
+	installHook("logicsimulation_hook", logicsimulation_hook,
+	            (void*)logicsimulation, (void*)h_logicsimulation);
+	installHook("logicsimulation_race_hook", logicsimulation_race_hook,
+	            (void*)logicsimulation_race, (void*)h_logicsimulation_race);
+	installHook("logicsimulation_round_hook", logicsimulation_round_hook,
+	            (void*)logicsimulation_round, (void*)h_logicsimulation_round);
+	installHook("logicsimulation_world_hook", logicsimulation_world_hook,
+	            (void*)logicsimulation_world, (void*)h_logicsimulation_world);
+	installHook(
+	    "logicsimulation_terminator_hook", logicsimulation_terminator_hook,
+	    (void*)logicsimulation_terminator, (void*)h_logicsimulation_terminator);
+	installHook("logicsimulation_coop_hook", logicsimulation_coop_hook,
+	            (void*)logicsimulation_coop, (void*)h_logicsimulation_coop);
+	installHook("logicsimulation_versus_hook", logicsimulation_versus_hook,
+	            (void*)logicsimulation_versus, (void*)h_logicsimulation_versus);
+	installHook("logic_playeractions_hook", logic_playeractions_hook,
+	            (void*)logic_playeractions, (void*)h_logic_playeractions);
 
-	installHook("physicssimulation_hook", physicssimulation_hook, (void*)physicssimulation, (void*)h_physicssimulation);
-	installHook("serverrecv_hook", serverrecv_hook, (void*)serverrecv, (void*)h_serverrecv);
-	installHook("serversend_hook", serversend_hook, (void*)serversend, (void*)h_serversend);
-	installHook("bulletsimulation_hook", bulletsimulation_hook, (void*)bulletsimulation, (void*)h_bulletsimulation);
+	installHook("physicssimulation_hook", physicssimulation_hook,
+	            (void*)physicssimulation, (void*)h_physicssimulation);
+	installHook("serverrecv_hook", serverrecv_hook, (void*)serverrecv,
+	            (void*)h_serverrecv);
+	installHook("serversend_hook", serversend_hook, (void*)serversend,
+	            (void*)h_serversend);
+	installHook("bulletsimulation_hook", bulletsimulation_hook,
+	            (void*)bulletsimulation, (void*)h_bulletsimulation);
 
-	installHook("saveaccountsserver_hook", saveaccountsserver_hook, (void*)saveaccountsserver, (void*)h_saveaccountsserver);
+	installHook("saveaccountsserver_hook", saveaccountsserver_hook,
+	            (void*)saveaccountsserver, (void*)h_saveaccountsserver);
 
-	installHook("createaccount_jointicket_hook", createaccount_jointicket_hook, (void*)createaccount_jointicket, (void*)h_createaccount_jointicket);
-	installHook("server_sendconnectreponse_hook", server_sendconnectreponse_hook, (void*)server_sendconnectreponse, (void*)h_server_sendconnectreponse);
+	installHook("createaccount_jointicket_hook", createaccount_jointicket_hook,
+	            (void*)createaccount_jointicket,
+	            (void*)h_createaccount_jointicket);
+	installHook("server_sendconnectreponse_hook", server_sendconnectreponse_hook,
+	            (void*)server_sendconnectreponse,
+	            (void*)h_server_sendconnectreponse);
 
-	installHook("linkitem_hook", linkitem_hook, (void*)linkitem, (void*)h_linkitem);
-	installHook("item_computerinput_hook", item_computerinput_hook, (void*)item_computerinput, (void*)h_item_computerinput);
-	installHook("human_applydamage_hook", human_applydamage_hook, (void*)human_applydamage, (void*)h_human_applydamage);
-	installHook("human_collisionvehicle_hook", human_collisionvehicle_hook, (void*)human_collisionvehicle, (void*)h_human_collisionvehicle);
-	installHook("human_grabbing_hook", human_grabbing_hook, (void*)human_grabbing, (void*)h_human_grabbing);
-	installHook("grenadeexplosion_hook", grenadeexplosion_hook, (void*)grenadeexplosion, (void*)h_grenadeexplosion);
-	installHook("server_playermessage_hook", server_playermessage_hook, (void*)server_playermessage, (void*)h_server_playermessage);
-	installHook("playerai_hook", playerai_hook, (void*)playerai, (void*)h_playerai);
-	installHook("playerdeathtax_hook", playerdeathtax_hook, (void*)playerdeathtax, (void*)h_playerdeathtax);
-	installHook("addcollision_rigidbody_rigidbody_hook", addcollision_rigidbody_rigidbody_hook, (void*)addcollision_rigidbody_rigidbody, (void*)h_addcollision_rigidbody_rigidbody);
+	installHook("linkitem_hook", linkitem_hook, (void*)linkitem,
+	            (void*)h_linkitem);
+	installHook("item_computerinput_hook", item_computerinput_hook,
+	            (void*)item_computerinput, (void*)h_item_computerinput);
+	installHook("human_applydamage_hook", human_applydamage_hook,
+	            (void*)human_applydamage, (void*)h_human_applydamage);
+	installHook("human_collisionvehicle_hook", human_collisionvehicle_hook,
+	            (void*)human_collisionvehicle, (void*)h_human_collisionvehicle);
+	installHook("human_grabbing_hook", human_grabbing_hook, (void*)human_grabbing,
+	            (void*)h_human_grabbing);
+	installHook("grenadeexplosion_hook", grenadeexplosion_hook,
+	            (void*)grenadeexplosion, (void*)h_grenadeexplosion);
+	installHook("server_playermessage_hook", server_playermessage_hook,
+	            (void*)server_playermessage, (void*)h_server_playermessage);
+	installHook("playerai_hook", playerai_hook, (void*)playerai,
+	            (void*)h_playerai);
+	installHook("playerdeathtax_hook", playerdeathtax_hook, (void*)playerdeathtax,
+	            (void*)h_playerdeathtax);
+	installHook("addcollision_rigidbody_rigidbody_hook",
+	            addcollision_rigidbody_rigidbody_hook,
+	            (void*)addcollision_rigidbody_rigidbody,
+	            (void*)h_addcollision_rigidbody_rigidbody);
 
-	installHook("createplayer_hook", createplayer_hook, (void*)createplayer, (void*)h_createplayer);
-	installHook("deleteplayer_hook", deleteplayer_hook, (void*)deleteplayer, (void*)h_deleteplayer);
-	installHook("createhuman_hook", createhuman_hook, (void*)createhuman, (void*)h_createhuman);
-	installHook("deletehuman_hook", deletehuman_hook, (void*)deletehuman, (void*)h_deletehuman);
-	installHook("createitem_hook", createitem_hook, (void*)createitem, (void*)h_createitem);
-	installHook("deleteitem_hook", deleteitem_hook, (void*)deleteitem, (void*)h_deleteitem);
-	installHook("createobject_hook", createobject_hook, (void*)createobject, (void*)h_createobject);
-	installHook("deleteobject_hook", deleteobject_hook, (void*)deleteobject, (void*)h_deleteobject);
-	installHook("createrigidbody_hook", createrigidbody_hook, (void*)createrigidbody, (void*)h_createrigidbody);
+	installHook("createplayer_hook", createplayer_hook, (void*)createplayer,
+	            (void*)h_createplayer);
+	installHook("deleteplayer_hook", deleteplayer_hook, (void*)deleteplayer,
+	            (void*)h_deleteplayer);
+	installHook("createhuman_hook", createhuman_hook, (void*)createhuman,
+	            (void*)h_createhuman);
+	installHook("deletehuman_hook", deletehuman_hook, (void*)deletehuman,
+	            (void*)h_deletehuman);
+	installHook("createitem_hook", createitem_hook, (void*)createitem,
+	            (void*)h_createitem);
+	installHook("deleteitem_hook", deleteitem_hook, (void*)deleteitem,
+	            (void*)h_deleteitem);
+	installHook("createobject_hook", createobject_hook, (void*)createobject,
+	            (void*)h_createobject);
+	installHook("deleteobject_hook", deleteobject_hook, (void*)deleteobject,
+	            (void*)h_deleteobject);
+	installHook("createrigidbody_hook", createrigidbody_hook,
+	            (void*)createrigidbody, (void*)h_createrigidbody);
 
-	installHook("createevent_message_hook", createevent_message_hook, (void*)createevent_message, (void*)h_createevent_message);
-	installHook("createevent_updateplayer_hook", createevent_updateplayer_hook, (void*)createevent_updateplayer, (void*)h_createevent_updateplayer);
-	//installHook("createevent_updateplayer_finance_hook", createevent_updateplayer_finance_hook, (void*)createevent_updateplayer_finance, (void*)h_createevent_updateplayer_finance);
-	//createevent_updateitem_hook.Install((void*)createevent_updateitem, (void*)h_createevent_updateitem, HOOK_FLAGS);
-	installHook("createevent_updateobject_hook", createevent_updateobject_hook, (void*)createevent_updateobject, (void*)h_createevent_updateobject);
-	//createevent_sound_hook.Install((void*)createevent_sound, (void*)h_createevent_sound, HOOK_FLAGS);
-	installHook("createevent_bullethit_hook", createevent_bullethit_hook, (void*)createevent_bullethit, (void*)h_createevent_bullethit);
+	installHook("createevent_message_hook", createevent_message_hook,
+	            (void*)createevent_message, (void*)h_createevent_message);
+	installHook("createevent_updateplayer_hook", createevent_updateplayer_hook,
+	            (void*)createevent_updateplayer,
+	            (void*)h_createevent_updateplayer);
+	// installHook("createevent_updateplayer_finance_hook",
+	// createevent_updateplayer_finance_hook,
+	// (void*)createevent_updateplayer_finance,
+	// (void*)h_createevent_updateplayer_finance);
+	// createevent_updateitem_hook.Install((void*)createevent_updateitem,
+	// (void*)h_createevent_updateitem, HOOK_FLAGS);
+	installHook("createevent_updateobject_hook", createevent_updateobject_hook,
+	            (void*)createevent_updateobject,
+	            (void*)h_createevent_updateobject);
+	// createevent_sound_hook.Install((void*)createevent_sound,
+	// (void*)h_createevent_sound, HOOK_FLAGS);
+	installHook("createevent_bullethit_hook", createevent_bullethit_hook,
+	            (void*)createevent_bullethit, (void*)h_createevent_bullethit);
 
-	installHook("lineintersecthuman_hook", lineintersecthuman_hook, (void*)lineintersecthuman, (void*)h_lineintersecthuman);
+	installHook("lineintersecthuman_hook", lineintersecthuman_hook,
+	            (void*)lineintersecthuman, (void*)h_lineintersecthuman);
 }
 
-static inline void attachSignalHandler()
-{
+static inline void attachSignalHandler() {
 	struct sigaction action;
 	action.sa_handler = Console::handleInterruptSignal;
 
-	if (sigaction(SIGINT, &action, nullptr) == -1)
-	{
+	if (sigaction(SIGINT, &action, nullptr) == -1) {
 		throw std::runtime_error(strerror(errno));
 	}
 }
 
-static void attach()
-{
+static void attach() {
 	// Don't load self into future child processes
 	unsetenv("LD_PRELOAD");
 
@@ -1208,17 +1173,14 @@ static void attach()
 	Console::log(RS_PREFIX "Waiting for engine init...\n");
 }
 
-int __attribute__((constructor)) Entry()
-{
+int __attribute__((constructor)) Entry() {
 	std::thread mainThread(attach);
 	mainThread.detach();
 	return 0;
 }
 
-int __attribute__((destructor)) Destroy()
-{
-	if (lua != nullptr)
-	{
+int __attribute__((destructor)) Destroy() {
+	if (lua != nullptr) {
 		delete lua;
 		lua = nullptr;
 	}

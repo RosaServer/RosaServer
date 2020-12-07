@@ -42,7 +42,8 @@ void h_saveaccountsserver();
 extern subhook::Hook createaccount_jointicket_hook;
 int h_createaccount_jointicket(int identifier, unsigned int ticket);
 extern subhook::Hook server_sendconnectreponse_hook;
-void h_server_sendconnectreponse(unsigned int address, unsigned int port, const char* message);
+void h_server_sendconnectreponse(unsigned int address, unsigned int port,
+                                 const char* message);
 
 extern subhook::Hook createplayer_hook;
 int h_createplayer();
@@ -57,11 +58,13 @@ int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot);
 extern subhook::Hook deleteitem_hook;
 void h_deleteitem(int itemID);
 extern subhook::Hook createobject_hook;
-int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
+int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot,
+                   int color);
 extern subhook::Hook deleteobject_hook;
 void h_deleteobject(int vehicleID);
 extern subhook::Hook createrigidbody_hook;
-int h_createrigidbody(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, float mass);
+int h_createrigidbody(int type, Vector* pos, RotMatrix* rot, Vector* vel,
+                      Vector* scale, float mass);
 
 extern subhook::Hook linkitem_hook;
 int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot);
@@ -83,18 +86,24 @@ extern subhook::Hook playerdeathtax_hook;
 void h_playerdeathtax(int playerID);
 
 extern subhook::Hook addcollision_rigidbody_rigidbody_hook;
-void h_addcollision_rigidbody_rigidbody(int aBodyID, int bBodyID, Vector* aLocalPos, Vector* bLocalPos, Vector* normal, float, float, float, float);
+void h_addcollision_rigidbody_rigidbody(int aBodyID, int bBodyID,
+                                        Vector* aLocalPos, Vector* bLocalPos,
+                                        Vector* normal, float, float, float,
+                                        float);
 
 extern subhook::Hook createevent_message_hook;
-void h_createevent_message(int speakerType, char* message, int speakerID, int distance);
+void h_createevent_message(int speakerType, char* message, int speakerID,
+                           int distance);
 extern subhook::Hook createevent_updateplayer_hook;
 void h_createevent_updateplayer(int id);
 extern subhook::Hook createevent_updateplayer_finance_hook;
 void h_createevent_updateplayer_finance(int id);
 extern subhook::Hook createevent_updateobject_hook;
-void h_createevent_updateobject(int vehicleID, int updateType, int partID, Vector* pos, Vector* normal);
-//extern subhook::Hook createevent_sound_hook;
-//void h_createevent_sound(int soundType, Vector* pos, float volume, float pitch);
+void h_createevent_updateobject(int vehicleID, int updateType, int partID,
+                                Vector* pos, Vector* normal);
+// extern subhook::Hook createevent_sound_hook;
+// void h_createevent_sound(int soundType, Vector* pos, float volume, float
+// pitch);
 extern subhook::Hook createevent_bullethit_hook;
 void h_createevent_bullethit(int unk, int hitType, Vector* pos, Vector* normal);
 

@@ -3,10 +3,10 @@
 #include "hooks.h"
 #include "sol/sol.hpp"
 
+#include <memory>
+#include <mutex>
 #include <queue>
 #include <thread>
-#include <mutex>
-#include <memory>
 
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "../cpp-httplib/httplib.h"
@@ -33,14 +33,9 @@ extern sol::table* itemDataTables[MAXNUMOFITEMS];
 extern sol::table* vehicleDataTables[MAXNUMOFVEHICLES];
 extern sol::table* bodyDataTables[MAXNUMOFRIGIDBODIES];
 
-enum LuaRequestType
-{
-	get,
-	post
-};
+enum LuaRequestType { get, post };
 
-struct LuaHTTPRequest
-{
+struct LuaHTTPRequest {
 	LuaRequestType type;
 	std::string scheme;
 	std::string path;
@@ -50,8 +45,7 @@ struct LuaHTTPRequest
 	httplib::Headers headers;
 };
 
-struct LuaHTTPResponse
-{
+struct LuaHTTPResponse {
 	std::shared_ptr<sol::protected_function> callback;
 	bool responded;
 	int status;
@@ -80,13 +74,20 @@ void l_flagStateForReset(const char* mode);
 
 Vector l_Vector();
 Vector l_Vector_3f(float x, float y, float z);
-RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
+RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2,
+                      float z2, float x3, float y3, float z3);
 
-void l_http_get(const char* scheme, const char* path, sol::table headers, sol::protected_function callback);
-void l_http_post(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::protected_function callback);
+void l_http_get(const char* scheme, const char* path, sol::table headers,
+                sol::protected_function callback);
+void l_http_post(const char* scheme, const char* path, sol::table headers,
+                 std::string body, const char* contentType,
+                 sol::protected_function callback);
 
-sol::object l_http_getSync(const char* scheme, const char* path, sol::table headers, sol::this_state s);
-sol::object l_http_postSync(const char* scheme, const char* path, sol::table headers, std::string body, const char* contentType, sol::this_state s);
+sol::object l_http_getSync(const char* scheme, const char* path,
+                           sol::table headers, sol::this_state s);
+sol::object l_http_postSync(const char* scheme, const char* path,
+                            sol::table headers, std::string body,
+                            const char* contentType, sol::this_state s);
 
 void l_event_sound(int soundType, Vector* pos, float volume, float pitch);
 void l_event_soundSimple(int soundType, Vector* pos);
@@ -95,8 +96,12 @@ void l_event_bulletHit(int hitType, Vector* pos, Vector* normal);
 
 sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB);
 sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA, Vector* posB);
-sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB);
-sol::object l_physics_lineIntersectTriangle(Vector* outPos, Vector* normal, Vector* posA, Vector* posB, Vector* triA, Vector* triB, Vector* triC, sol::this_state s);
+sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA,
+                                          Vector* posB);
+sol::object l_physics_lineIntersectTriangle(Vector* outPos, Vector* normal,
+                                            Vector* posA, Vector* posB,
+                                            Vector* triA, Vector* triB,
+                                            Vector* triC, sol::this_state s);
 void l_physics_garbageCollectBullets();
 
 int l_itemTypes_getCount();
@@ -114,8 +119,9 @@ int l_vehicles_getCount();
 sol::table l_vehicles_getAll();
 Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx);
 Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color);
-Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
-//void l_vehicles_createTraffic(int density);
+Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel,
+                              RotMatrix* rot, int color);
+// void l_vehicles_createTraffic(int density);
 
 void l_chat_announce(const char* message);
 void l_chat_tellAdmins(const char* message);
@@ -156,7 +162,8 @@ Street* l_streets_getByIndex(sol::table self, unsigned int idx);
 
 int l_intersections_getCount();
 sol::table l_intersections_getAll();
-StreetIntersection* l_intersections_getByIndex(sol::table self, unsigned int idx);
+StreetIntersection* l_intersections_getByIndex(sol::table self,
+                                               unsigned int idx);
 
 sol::table l_os_listDirectory(const char* path, sol::this_state s);
 bool l_os_createDirectory(const char* path);

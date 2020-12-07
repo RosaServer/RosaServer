@@ -4,22 +4,19 @@
 #include <iostream>
 #include <thread>
 
-Worker::Worker(std::string fileName)
-{
+Worker::Worker(std::string fileName) {
 	stopped = new std::atomic_bool(false);
 
 	std::thread thread(&Worker::runThread, this, fileName);
 	thread.detach();
 }
 
-Worker::~Worker()
-{
+Worker::~Worker() {
 	std::lock_guard<std::mutex> guard(destructionMutex);
 	stop();
 }
 
-void Worker::runThread(std::string fileName)
-{
+void Worker::runThread(std::string fileName) {
 	std::atomic_bool* _stopped = stopped;
 
 	sol::state lua;
@@ -48,41 +45,34 @@ void Worker::runThread(std::string fileName)
 
 	{
 		sol::load_result load = lua.load_file(fileName);
-		if (noLuaCallError(&load))
-		{
+		if (noLuaCallError(&load)) {
 			sol::protected_function_result res = load();
 			noLuaCallError(&res);
 		}
 	}
 
-	if (!*_stopped)
-	{
+	if (!*_stopped) {
 		destructionMutex.unlock();
 	}
 
-	while (!*_stopped)
-	{
+	while (!*_stopped) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 
 	delete _stopped;
 }
 
-void Worker::l_sendMessage(std::string message)
-{
+void Worker::l_sendMessage(std::string message) {
 	std::lock_guard<std::mutex> guard(receiveMessageQueueMutex);
 	receiveMessageQueue.push(message);
-	if (receiveMessageQueue.size() > 2047)
-		receiveMessageQueue.pop();
+	if (receiveMessageQueue.size() > 2047) receiveMessageQueue.pop();
 }
 
-sol::object Worker::l_receiveMessage(sol::this_state s)
-{
+sol::object Worker::l_receiveMessage(sol::this_state s) {
 	sol::state_view lua(s);
 
 	sendMessageQueueMutex.lock();
-	if (sendMessageQueue.empty())
-	{
+	if (sendMessageQueue.empty()) {
 		sendMessageQueueMutex.unlock();
 		return sol::make_object(lua, sol::lua_nil);
 	}
@@ -93,31 +83,25 @@ sol::object Worker::l_receiveMessage(sol::this_state s)
 	return sol::make_object(lua, message);
 }
 
-void Worker::stop()
-{
-	if (stopped && !*stopped)
-	{
+void Worker::stop() {
+	if (stopped && !*stopped) {
 		*stopped = true;
 	}
 }
 
-void Worker::sendMessage(std::string message)
-{
+void Worker::sendMessage(std::string message) {
 	if (stopped && *stopped) return;
 
 	std::lock_guard<std::mutex> guard(sendMessageQueueMutex);
 	sendMessageQueue.push(message);
-	if (sendMessageQueue.size() > 2047)
-		sendMessageQueue.pop();
+	if (sendMessageQueue.size() > 2047) sendMessageQueue.pop();
 }
 
-sol::object Worker::receiveMessage(sol::this_state s)
-{
+sol::object Worker::receiveMessage(sol::this_state s) {
 	sol::state_view lua(s);
 
 	receiveMessageQueueMutex.lock();
-	if (receiveMessageQueue.empty())
-	{
+	if (receiveMessageQueue.empty()) {
 		receiveMessageQueueMutex.unlock();
 		return sol::make_object(lua, sol::lua_nil);
 	}

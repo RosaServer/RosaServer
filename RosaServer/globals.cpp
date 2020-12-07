@@ -149,7 +149,7 @@ void_index_func createevent_updateplayer_finance;
 void_index_func createevent_createobject;
 subhook::Hook createevent_updateobject_hook;
 createevent_updateobject_func createevent_updateobject;
-//subhook::Hook createevent_sound_hook;
+// subhook::Hook createevent_sound_hook;
 createevent_sound_func createevent_sound;
 createevent_explosion_func createevent_explosion;
 subhook::Hook createevent_bullethit_hook;

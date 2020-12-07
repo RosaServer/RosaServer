@@ -29,7 +29,7 @@ extern unsigned int* numStreets;
 extern unsigned int* numStreetIntersections;
 
 /*
-	Misc
+  Misc
 */
 
 typedef int (*subrosa_puts_func)(const char* str);
@@ -60,15 +60,19 @@ extern void_func bullettimetolive;
 
 extern void_func saveaccountsserver;
 
-typedef int (*createaccount_jointicket_func)(int identifier, unsigned int ticket);
+typedef int (*createaccount_jointicket_func)(int identifier,
+                                             unsigned int ticket);
 extern createaccount_jointicket_func createaccount_jointicket;
-typedef void (*server_sendconnectreponse_func)(unsigned int address, unsigned int port, const char* message);
+typedef void (*server_sendconnectreponse_func)(unsigned int address,
+                                               unsigned int port,
+                                               const char* message);
 extern server_sendconnectreponse_func server_sendconnectreponse;
 
 typedef void (*scenario_armhuman_func)(int human, int weapon, int magCount);
 extern scenario_armhuman_func scenario_armhuman;
 
-typedef int (*linkitem_func)(int itemID, int childItemID, int parentHumanID, int slot);
+typedef int (*linkitem_func)(int itemID, int childItemID, int parentHumanID,
+                             int slot);
 extern linkitem_func linkitem;
 
 typedef int (*item_setmemo_func)(int itemID, const char* memo);
@@ -79,7 +83,8 @@ extern void_index_func item_computerincrementline;
 typedef int (*item_computerinput_func)(int itemID, unsigned int character);
 extern item_computerinput_func item_computerinput;
 
-typedef void (*human_applydamage_func)(int humanID, int bone, int unk, int damage);
+typedef void (*human_applydamage_func)(int humanID, int bone, int unk,
+                                       int damage);
 extern human_applydamage_func human_applydamage;
 
 typedef void (*human_collisionvehicle_func)(int humanID, int vehicleID);
@@ -94,21 +99,32 @@ extern server_playermessage_func server_playermessage;
 extern void_index_func playerai;
 extern void_index_func playerdeathtax;
 
-typedef int (*createbond_rigidbody_rigidbody_func)(int aBodyID, int bBodyID, Vector* aLocalPos, Vector* bLocalPos);
+typedef int (*createbond_rigidbody_rigidbody_func)(int aBodyID, int bBodyID,
+                                                   Vector* aLocalPos,
+                                                   Vector* bLocalPos);
 extern createbond_rigidbody_rigidbody_func createbond_rigidbody_rigidbody;
-typedef int (*createbond_rigidbody_rot_rigidbody_func)(int aBodyID, int bBodyID);
-extern createbond_rigidbody_rot_rigidbody_func createbond_rigidbody_rot_rigidbody;
-typedef int (*createbond_rigidbody_level_func)(int bodyID, Vector* localPos, Vector* globalPos);
+typedef int (*createbond_rigidbody_rot_rigidbody_func)(int aBodyID,
+                                                       int bBodyID);
+extern createbond_rigidbody_rot_rigidbody_func
+    createbond_rigidbody_rot_rigidbody;
+typedef int (*createbond_rigidbody_level_func)(int bodyID, Vector* localPos,
+                                               Vector* globalPos);
 extern createbond_rigidbody_level_func createbond_rigidbody_level;
 
-typedef void (*addcollision_rigidbody_rigidbody_func)(int aBodyID, int bBodyID, Vector* aLocalPos, Vector* bLocalPos, Vector* normal, float, float, float, float);
+typedef void (*addcollision_rigidbody_rigidbody_func)(int aBodyID, int bBodyID,
+                                                      Vector* aLocalPos,
+                                                      Vector* bLocalPos,
+                                                      Vector* normal, float,
+                                                      float, float, float);
 extern addcollision_rigidbody_rigidbody_func addcollision_rigidbody_rigidbody;
 
-typedef void (*addcollision_rigidbody_level_func)(int bodyID, Vector* localPos, Vector* normal, float, float, float, float);
+typedef void (*addcollision_rigidbody_level_func)(int bodyID, Vector* localPos,
+                                                  Vector* normal, float, float,
+                                                  float, float);
 extern addcollision_rigidbody_level_func addcollision_rigidbody_level;
 
 /*
-	Object Handling
+  Object Handling
 */
 
 typedef int (*createplayer_func)();
@@ -119,27 +135,32 @@ typedef int (*createhuman_func)(Vector* pos, RotMatrix* rot, int playerID);
 extern createhuman_func createhuman;
 extern void_index_func deletehuman;
 
-typedef int (*createitem_func)(int type, Vector* pos, Vector* vel, RotMatrix* rot);
+typedef int (*createitem_func)(int type, Vector* pos, Vector* vel,
+                               RotMatrix* rot);
 extern createitem_func createitem;
 extern void_index_func deleteitem;
 
 typedef int (*createrope_func)(Vector* pos, RotMatrix* rot);
 extern createrope_func createrope;
 
-typedef int (*createobject_func)(int type, Vector* pos, Vector* vel, RotMatrix* rot, int color);
+typedef int (*createobject_func)(int type, Vector* pos, Vector* vel,
+                                 RotMatrix* rot, int color);
 extern createobject_func createobject;
 extern void_index_func deleteobject;
 
-typedef int (*createrigidbody_func)(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, float mass);
+typedef int (*createrigidbody_func)(int type, Vector* pos, RotMatrix* rot,
+                                    Vector* vel, Vector* scale, float mass);
 extern createrigidbody_func createrigidbody;
 
 /*
-	Events
+  Events
 */
 
-typedef void (*createevent_message_func)(int type, char* message, int speakerID, int distance);
+typedef void (*createevent_message_func)(int type, char* message, int speakerID,
+                                         int distance);
 extern createevent_message_func createevent_message;
-// Sends team, active, isBot, humanID, skinColor, hair, gender, head, necklace, eyeColor, tieColor, suitColor, shirtColor, hairColor, name
+// Sends team, active, isBot, humanID, skinColor, hair, gender, head, necklace,
+// eyeColor, tieColor, suitColor, shirtColor, hairColor, name
 extern void_index_func createevent_updateplayer;
 // Sends money, stocks, phoneNumber
 extern void_index_func createevent_updateplayer_finance;
@@ -153,9 +174,12 @@ updateType:
 1 = tire
 2 = body
 */
-typedef void (*createevent_updateobject_func)(int vehicleID, int updateType, int partID, Vector* pos, Vector* normal);
+typedef void (*createevent_updateobject_func)(int vehicleID, int updateType,
+                                              int partID, Vector* pos,
+                                              Vector* normal);
 extern createevent_updateobject_func createevent_updateobject;
-typedef void (*createevent_sound_func)(int soundType, Vector* pos, float volume, float pitch);
+typedef void (*createevent_sound_func)(int soundType, Vector* pos, float volume,
+                                       float pitch);
 extern createevent_sound_func createevent_sound;
 typedef void (*createevent_explosion_func)(int type, Vector* pos);
 extern createevent_explosion_func createevent_explosion;
@@ -166,11 +190,12 @@ hitType:
 2 = hit car
 3 = blood drip
 */
-typedef void (*createevent_bullethit_func)(int unk, int hitType, Vector* pos, Vector* normal);
+typedef void (*createevent_bullethit_func)(int unk, int hitType, Vector* pos,
+                                           Vector* normal);
 extern createevent_bullethit_func createevent_bullethit;
 
 /*
-	Math
+  Math
 */
 
 typedef int (*lineintersectlevel_func)(Vector* posA, Vector* posB);
@@ -179,8 +204,12 @@ extern lineintersectlevel_func lineintersectlevel;
 typedef int (*lineintersecthuman_func)(int humanID, Vector* posA, Vector* posB);
 extern lineintersecthuman_func lineintersecthuman;
 
-typedef int (*lineintersectobject_func)(int vehicleID, Vector* posA, Vector* posB);
+typedef int (*lineintersectobject_func)(int vehicleID, Vector* posA,
+                                        Vector* posB);
 extern lineintersectobject_func lineintersectobject;
 
-typedef int (*lineintersecttriangle_func)(Vector* outPos, Vector* normal, float* outFraction, Vector* posA, Vector* posB, Vector* triA, Vector* triB, Vector* triC);
+typedef int (*lineintersecttriangle_func)(Vector* outPos, Vector* normal,
+                                          float* outFraction, Vector* posA,
+                                          Vector* posB, Vector* triA,
+                                          Vector* triB, Vector* triC);
 extern lineintersecttriangle_func lineintersecttriangle;
