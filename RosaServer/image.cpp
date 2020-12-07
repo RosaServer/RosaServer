@@ -9,11 +9,11 @@
 #include <cstdlib>
 #include <stdexcept>
 
-#define ERR_COULD_NOT_LOAD "Could not load image"
-#define ERR_COULD_NOT_SAVE "Could not save image"
-#define ERR_NO_DATA_LOADED "No image data loaded"
-#define ERR_OUT_OF_RANGE "Coordinates out of range"
-#define ERR_CHANNELS "Too few channels"
+static constexpr const char* errorCouldNotLoad = "Could not load image";
+static constexpr const char* errorCouldNotSave = "Could not save image";
+static constexpr const char* errorNoDataLoaded = "No image data loaded";
+static constexpr const char* errorOutOfRange = "Coordinates out of range";
+static constexpr const char* errorChannels = "Too few channels";
 
 Image::Image() {}
 
@@ -38,7 +38,7 @@ void Image::loadFromFile(const char* fileName) {
 		width = 0;
 		height = 0;
 		numChannels = 0;
-		throw std::runtime_error(ERR_COULD_NOT_LOAD);
+		throw std::runtime_error(errorCouldNotLoad);
 	}
 }
 
@@ -63,7 +63,7 @@ void Image::loadBlank(unsigned int _width, unsigned int _height,
 		width = 0;
 		height = 0;
 		numChannels = 0;
-		throw std::runtime_error(ERR_COULD_NOT_LOAD);
+		throw std::runtime_error(errorCouldNotLoad);
 	}
 
 	width = _width;
@@ -73,11 +73,11 @@ void Image::loadBlank(unsigned int _width, unsigned int _height,
 
 std::tuple<int, int, int> Image::getRGB(unsigned int x, unsigned int y) {
 	if (!data) {
-		throw std::runtime_error(ERR_NO_DATA_LOADED);
+		throw std::runtime_error(errorNoDataLoaded);
 	}
 
 	if (x >= width || y >= height) {
-		throw std::invalid_argument(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(errorOutOfRange);
 	}
 
 	size_t index = ((y * width) + x) * numChannels;
@@ -87,11 +87,11 @@ std::tuple<int, int, int> Image::getRGB(unsigned int x, unsigned int y) {
 
 std::tuple<int, int, int, int> Image::getRGBA(unsigned int x, unsigned int y) {
 	if (!data) {
-		throw std::runtime_error(ERR_NO_DATA_LOADED);
+		throw std::runtime_error(errorNoDataLoaded);
 	}
 
 	if (x >= width || y >= height) {
-		throw std::invalid_argument(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(errorOutOfRange);
 	}
 
 	size_t index = ((y * width) + x) * numChannels;
@@ -103,15 +103,15 @@ std::tuple<int, int, int, int> Image::getRGBA(unsigned int x, unsigned int y) {
 void Image::setRGB(unsigned int x, unsigned int y, unsigned char r,
                    unsigned char g, unsigned char b) {
 	if (!data) {
-		throw std::runtime_error(ERR_NO_DATA_LOADED);
+		throw std::runtime_error(errorNoDataLoaded);
 	}
 
 	if (x >= width || y >= height) {
-		throw std::invalid_argument(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(errorOutOfRange);
 	}
 
 	if (numChannels < 3) {
-		throw std::invalid_argument(ERR_CHANNELS);
+		throw std::invalid_argument(errorChannels);
 	}
 
 	size_t index = ((y * width) + x) * numChannels;
@@ -126,15 +126,15 @@ void Image::setRGB(unsigned int x, unsigned int y, unsigned char r,
 void Image::setRGBA(unsigned int x, unsigned int y, unsigned char r,
                     unsigned char g, unsigned char b, unsigned char a) {
 	if (!data) {
-		throw std::runtime_error(ERR_NO_DATA_LOADED);
+		throw std::runtime_error(errorNoDataLoaded);
 	}
 
 	if (x >= width || y >= height) {
-		throw std::invalid_argument(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(errorOutOfRange);
 	}
 
 	if (numChannels < 4) {
-		throw std::invalid_argument(ERR_CHANNELS);
+		throw std::invalid_argument(errorChannels);
 	}
 
 	size_t index = ((y * width) + x) * numChannels;
@@ -146,7 +146,7 @@ void Image::setRGBA(unsigned int x, unsigned int y, unsigned char r,
 
 std::string Image::getPNG() {
 	if (!data) {
-		throw std::runtime_error(ERR_NO_DATA_LOADED);
+		throw std::runtime_error(errorNoDataLoaded);
 	}
 
 	int length;
@@ -154,7 +154,7 @@ std::string Image::getPNG() {
 	    reinterpret_cast<const unsigned char*>(data), width * numChannels, width,
 	    height, numChannels, &length);
 	if (!pngBuffer) {
-		throw std::runtime_error(ERR_COULD_NOT_SAVE);
+		throw std::runtime_error(errorCouldNotSave);
 	}
 
 	std::string pngString(reinterpret_cast<char*>(pngBuffer), length);

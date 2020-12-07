@@ -202,35 +202,35 @@ void luaInit(bool redo) {
 		Console::log(LUA_PREFIX "Resetting state...\n");
 		delete server;
 
-		for (int i = 0; i < MAXNUMOFPLAYERS; i++) {
+		for (int i = 0; i < maxNumberOfPlayers; i++) {
 			if (playerDataTables[i]) {
 				delete playerDataTables[i];
 				playerDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFHUMANS; i++) {
+		for (int i = 0; i < maxNumberOfHumans; i++) {
 			if (humanDataTables[i]) {
 				delete humanDataTables[i];
 				humanDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFITEMS; i++) {
+		for (int i = 0; i < maxNumberOfItems; i++) {
 			if (itemDataTables[i]) {
 				delete itemDataTables[i];
 				itemDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFVEHICLES; i++) {
+		for (int i = 0; i < maxNumberOfVehicles; i++) {
 			if (vehicleDataTables[i]) {
 				delete vehicleDataTables[i];
 				vehicleDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFRIGIDBODIES; i++) {
+		for (int i = 0; i < maxNumberOfRigidBodies; i++) {
 			if (bodyDataTables[i]) {
 				delete bodyDataTables[i];
 				bodyDataTables[i] = nullptr;

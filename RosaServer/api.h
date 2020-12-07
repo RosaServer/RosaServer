@@ -27,11 +27,11 @@ extern bool shouldReset;
 extern sol::state* lua;
 extern std::string hookMode;
 
-extern sol::table* playerDataTables[MAXNUMOFPLAYERS];
-extern sol::table* humanDataTables[MAXNUMOFHUMANS];
-extern sol::table* itemDataTables[MAXNUMOFITEMS];
-extern sol::table* vehicleDataTables[MAXNUMOFVEHICLES];
-extern sol::table* bodyDataTables[MAXNUMOFRIGIDBODIES];
+extern sol::table* playerDataTables[maxNumberOfPlayers];
+extern sol::table* humanDataTables[maxNumberOfHumans];
+extern sol::table* itemDataTables[maxNumberOfItems];
+extern sol::table* vehicleDataTables[maxNumberOfVehicles];
+extern sol::table* bodyDataTables[maxNumberOfRigidBodies];
 
 enum LuaRequestType { get, post };
 

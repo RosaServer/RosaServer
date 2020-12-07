@@ -4,14 +4,14 @@
 #include <string>
 #include "sol/sol.hpp"
 
-#define MAXNUMOFACCOUNTS 32768
-#define MAXNUMOFPLAYERS 256
-#define MAXNUMOFHUMANS 256
-#define MAXNUMOFITEMTYPES 45
-#define MAXNUMOFITEMS 1024
-#define MAXNUMOFVEHICLES 512
-#define MAXNUMOFRIGIDBODIES 8192
-#define MAXNUMOFBONDS 16384
+static constexpr int maxNumberOfAccounts = 32768;
+static constexpr int maxNumberOfPlayers = 256;
+static constexpr int maxNumberOfHumans = 256;
+static constexpr int maxNumberOfItemTypes = 45;
+static constexpr int maxNumberOfItems = 1024;
+static constexpr int maxNumberOfVehicles = 512;
+static constexpr int maxNumberOfRigidBodies = 8192;
+static constexpr int maxNumberOfBonds = 16384;
 
 /*
   Event types:

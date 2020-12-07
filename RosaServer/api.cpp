@@ -3,7 +3,7 @@
 #include <filesystem>
 #include "console.h"
 
-#define ERR_OUT_OF_RANGE "Index out of range"
+static constexpr const char* errorOutOfRange = "Index out of range";
 
 void printLuaError(sol::error* err) {
 	std::ostringstream stream;
@@ -306,24 +306,24 @@ sol::object l_physics_lineIntersectTriangle(Vector* outPos, Vector* normal,
 
 void l_physics_garbageCollectBullets() { bullettimetolive(); }
 
-int l_itemTypes_getCount() { return MAXNUMOFITEMTYPES; }
+int l_itemTypes_getCount() { return maxNumberOfItemTypes; }
 
 sol::table l_itemTypes_getAll() {
 	auto arr = lua->create_table();
-	for (int i = 0; i < MAXNUMOFITEMTYPES; i++) {
+	for (int i = 0; i < maxNumberOfItemTypes; i++) {
 		arr.add(&itemTypes[i]);
 	}
 	return arr;
 }
 
 ItemType* l_itemTypes_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= MAXNUMOFITEMTYPES) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= maxNumberOfItemTypes) throw std::invalid_argument(errorOutOfRange);
 	return &itemTypes[idx];
 }
 
 int l_items_getCount() {
 	int count = 0;
-	for (int i = 0; i < MAXNUMOFITEMS; i++) {
+	for (int i = 0; i < maxNumberOfItems; i++) {
 		if ((&items[i])->active) count++;
 	}
 	return count;
@@ -331,7 +331,7 @@ int l_items_getCount() {
 
 sol::table l_items_getAll() {
 	auto arr = lua->create_table();
-	for (int i = 0; i < MAXNUMOFITEMS; i++) {
+	for (int i = 0; i < maxNumberOfItems; i++) {
 		auto item = &items[i];
 		if (!item->active) continue;
 		arr.add(item);
@@ -340,7 +340,7 @@ sol::table l_items_getAll() {
 }
 
 Item* l_items_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= MAXNUMOFITEMS) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= maxNumberOfItems) throw std::invalid_argument(errorOutOfRange);
 	return &items[idx];
 }
 
@@ -376,7 +376,7 @@ Item* l_items_createRope(Vector* pos, RotMatrix* rot) {
 
 int l_vehicles_getCount() {
 	int count = 0;
-	for (int i = 0; i < MAXNUMOFVEHICLES; i++) {
+	for (int i = 0; i < maxNumberOfVehicles; i++) {
 		if ((&vehicles[i])->active) count++;
 	}
 	return count;
@@ -384,7 +384,7 @@ int l_vehicles_getCount() {
 
 sol::table l_vehicles_getAll() {
 	auto arr = lua->create_table();
-	for (int i = 0; i < MAXNUMOFVEHICLES; i++) {
+	for (int i = 0; i < maxNumberOfVehicles; i++) {
 		auto vcl = &vehicles[i];
 		if (!vcl->active) continue;
 		arr.add(vcl);
@@ -393,7 +393,7 @@ sol::table l_vehicles_getAll() {
 }
 
 Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= MAXNUMOFVEHICLES) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= maxNumberOfVehicles) throw std::invalid_argument(errorOutOfRange);
 	return &vehicles[idx];
 }
 
@@ -476,13 +476,13 @@ Account* l_accounts_getByPhone(int phone) {
 }
 
 Account* l_accounts_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= MAXNUMOFACCOUNTS) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= maxNumberOfAccounts) throw std::invalid_argument(errorOutOfRange);
 	return &accounts[idx];
 }
 
 int l_players_getCount() {
 	int count = 0;
-	for (int i = 0; i < MAXNUMOFPLAYERS; i++) {
+	for (int i = 0; i < maxNumberOfPlayers; i++) {
 		if ((&players[i])->active) count++;
 	}
 	return count;
@@ -490,7 +490,7 @@ int l_players_getCount() {
 
 sol::table l_players_getAll() {
 	auto arr = lua->create_table();
-	for (int i = 0; i < MAXNUMOFPLAYERS; i++) {
+	for (int i = 0; i < maxNumberOfPlayers; i++) {
 		auto ply = &players[i];
 		if (!ply->active) continue;
 		arr.add(ply);
@@ -499,7 +499,7 @@ sol::table l_players_getAll() {
 }
 
 Player* l_players_getByPhone(int phone) {
-	for (int i = 0; i < MAXNUMOFPLAYERS; i++) {
+	for (int i = 0; i < maxNumberOfPlayers; i++) {
 		auto ply = &players[i];
 		if (!ply->active) continue;
 		if (ply->phoneNumber == phone) return ply;
@@ -509,7 +509,7 @@ Player* l_players_getByPhone(int phone) {
 
 sol::table l_players_getNonBots() {
 	auto arr = lua->create_table();
-	for (int i = 0; i < MAXNUMOFPLAYERS; i++) {
+	for (int i = 0; i < maxNumberOfPlayers; i++) {
 		auto ply = &players[i];
 		if (!ply->active || !ply->subRosaID || ply->isBot) continue;
 		arr.add(ply);
@@ -518,7 +518,7 @@ sol::table l_players_getNonBots() {
 }
 
 Player* l_players_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= MAXNUMOFPLAYERS) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= maxNumberOfPlayers) throw std::invalid_argument(errorOutOfRange);
 	return &players[idx];
 }
 
@@ -542,7 +542,7 @@ Player* l_players_createBot() {
 
 int l_humans_getCount() {
 	int count = 0;
-	for (int i = 0; i < MAXNUMOFHUMANS; i++) {
+	for (int i = 0; i < maxNumberOfHumans; i++) {
 		if ((&humans[i])->active) count++;
 	}
 	return count;
@@ -550,7 +550,7 @@ int l_humans_getCount() {
 
 sol::table l_humans_getAll() {
 	auto arr = lua->create_table();
-	for (int i = 0; i < MAXNUMOFHUMANS; i++) {
+	for (int i = 0; i < maxNumberOfHumans; i++) {
 		auto man = &humans[i];
 		if (!man->active) continue;
 		arr.add(man);
@@ -559,7 +559,7 @@ sol::table l_humans_getAll() {
 }
 
 Human* l_humans_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= MAXNUMOFHUMANS) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= maxNumberOfHumans) throw std::invalid_argument(errorOutOfRange);
 	return &humans[idx];
 }
 
@@ -600,7 +600,7 @@ sol::table l_bullets_getAll() {
 
 int l_rigidBodies_getCount() {
 	int count = 0;
-	for (int i = 0; i < MAXNUMOFRIGIDBODIES; i++) {
+	for (int i = 0; i < maxNumberOfRigidBodies; i++) {
 		if ((&bodies[i])->active) count++;
 	}
 	return count;
@@ -608,7 +608,7 @@ int l_rigidBodies_getCount() {
 
 sol::table l_rigidBodies_getAll() {
 	auto arr = lua->create_table();
-	for (int i = 0; i < MAXNUMOFRIGIDBODIES; i++) {
+	for (int i = 0; i < maxNumberOfRigidBodies; i++) {
 		auto body = &bodies[i];
 		if (!body->active) continue;
 		arr.add(body);
@@ -617,13 +617,14 @@ sol::table l_rigidBodies_getAll() {
 }
 
 RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= MAXNUMOFRIGIDBODIES) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= maxNumberOfRigidBodies)
+		throw std::invalid_argument(errorOutOfRange);
 	return &bodies[idx];
 }
 
 int l_bonds_getCount() {
 	int count = 0;
-	for (int i = 0; i < MAXNUMOFBONDS; i++) {
+	for (int i = 0; i < maxNumberOfBonds; i++) {
 		if ((&bonds[i])->active) count++;
 	}
 	return count;
@@ -631,7 +632,7 @@ int l_bonds_getCount() {
 
 sol::table l_bonds_getAll() {
 	auto arr = lua->create_table();
-	for (int i = 0; i < MAXNUMOFBONDS; i++) {
+	for (int i = 0; i < maxNumberOfBonds; i++) {
 		auto bond = &bonds[i];
 		if (!bond->active) continue;
 		arr.add(bond);
@@ -640,7 +641,7 @@ sol::table l_bonds_getAll() {
 }
 
 Bond* l_bonds_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= MAXNUMOFBONDS) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= maxNumberOfBonds) throw std::invalid_argument(errorOutOfRange);
 	return &bonds[idx];
 }
 
@@ -655,7 +656,7 @@ sol::table l_streets_getAll() {
 }
 
 Street* l_streets_getByIndex(sol::table self, unsigned int idx) {
-	if (idx >= *numStreets) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= *numStreets) throw std::invalid_argument(errorOutOfRange);
 	return &streets[idx];
 }
 
@@ -672,7 +673,7 @@ sol::table l_intersections_getAll() {
 StreetIntersection* l_intersections_getByIndex(sol::table self,
                                                unsigned int idx) {
 	if (idx >= *numStreetIntersections)
-		throw std::invalid_argument(ERR_OUT_OF_RANGE);
+		throw std::invalid_argument(errorOutOfRange);
 	return &streetIntersections[idx];
 }
 
@@ -921,13 +922,13 @@ void Player::setBotDestination(Vector* vec) {
 }
 
 Action* Player::getAction(unsigned int idx) {
-	if (idx > 63) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx > 63) throw std::invalid_argument(errorOutOfRange);
 
 	return &actions[idx];
 }
 
 MenuButton* Player::getMenuButton(unsigned int idx) {
-	if (idx > 31) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx > 31) throw std::invalid_argument(errorOutOfRange);
 
 	return &menuButtons[idx];
 }
@@ -1021,13 +1022,13 @@ void Human::arm(int weapon, int magCount) const {
 }
 
 Bone* Human::getBone(unsigned int idx) {
-	if (idx > 15) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx > 15) throw std::invalid_argument(errorOutOfRange);
 
 	return &bones[idx];
 }
 
 RigidBody* Human::getRigidBody(unsigned int idx) const {
-	if (idx > 15) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx > 15) throw std::invalid_argument(errorOutOfRange);
 
 	return &bodies[bones[idx].bodyID];
 }
@@ -1187,13 +1188,13 @@ void Item::computerIncrementLine() const {
 }
 
 void Item::computerSetLine(unsigned int line, const char* newLine) {
-	if (line >= 32) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (line >= 32) throw std::invalid_argument(errorOutOfRange);
 	std::strncpy(computerLines[line], newLine, 63);
 }
 
 void Item::computerSetColor(unsigned int line, unsigned int column,
                             unsigned char color) {
-	if (line >= 32 || column >= 64) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (line >= 32 || column >= 64) throw std::invalid_argument(errorOutOfRange);
 	computerLineColors[line][column] = color;
 }
 
@@ -1322,7 +1323,7 @@ StreetIntersection* Street::getIntersectionB() const {
 }
 
 StreetLane* Street::getLane(unsigned int idx) {
-	if (idx >= numLanes) throw std::invalid_argument(ERR_OUT_OF_RANGE);
+	if (idx >= numLanes) throw std::invalid_argument(errorOutOfRange);
 
 	return &lanes[idx];
 }
