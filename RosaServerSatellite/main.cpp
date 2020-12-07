@@ -4,7 +4,12 @@
 #include <chrono>
 #include <thread>
 
-#define ERR_WRITING_MESSAGE "Couldn't write full message to pipe"
+static constexpr int CODE_INVALID_USAGE = 1;
+static constexpr int CODE_FILE_INVALID = 2;
+static constexpr int CODE_FILE_RUNTIME_ERROR = 3;
+
+static constexpr const char* ERR_WRITING_MESSAGE =
+    "Couldn't write full message to pipe";
 
 static int fdFromParent;
 static int fdToParent;
@@ -61,7 +66,7 @@ static void l_sendMessage(std::string message) {
 }
 
 int main(int argc, const char* argv[]) {
-	if (argc < 4) return 1;
+	if (argc < 4) return CODE_INVALID_USAGE;
 
 	fdFromParent = atoi(argv[1]);
 	fdToParent = atoi(argv[2]);
@@ -94,10 +99,10 @@ int main(int argc, const char* argv[]) {
 	if (load.valid()) {
 		sol::protected_function_result res = load();
 		if (!res.valid()) {
-			return 3;
+			return CODE_FILE_RUNTIME_ERROR;
 		}
 	} else {
-		return 2;
+		return CODE_FILE_INVALID;
 	}
 
 	return 0;
