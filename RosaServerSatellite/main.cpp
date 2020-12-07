@@ -83,9 +83,8 @@ int main(int argc, const char* argv[]) {
 
 	lua["os"]["realClock"] = l_os_realClock;
 
-	lua["receiveMessage"] = [](sol::this_state s) { return l_receiveMessage(s); };
-
-	lua["sendMessage"] = [](std::string message) { l_sendMessage(message); };
+	lua["receiveMessage"] = l_receiveMessage;
+	lua["sendMessage"] = l_sendMessage;
 
 	lua["sleep"] = [](unsigned int ms) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
