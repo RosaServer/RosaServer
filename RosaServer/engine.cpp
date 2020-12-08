@@ -1,24 +1,4 @@
-#include "api.h"
 #include "engine.h"
-#include "hooks.h"
-
-bool initialized = false;
-bool shouldReset = false;
-
-sol::state* lua;
-std::string hookMode;
-
-sol::table* playerDataTables[maxNumberOfPlayers];
-sol::table* humanDataTables[maxNumberOfHumans];
-sol::table* itemDataTables[maxNumberOfItems];
-sol::table* vehicleDataTables[maxNumberOfVehicles];
-sol::table* bodyDataTables[maxNumberOfRigidBodies];
-
-std::mutex stateResetMutex;
-std::queue<LuaHTTPRequest> requestQueue;
-std::mutex requestQueueMutex;
-std::queue<LuaHTTPResponse> responseQueue;
-std::mutex responseQueueMutex;
 
 namespace Engine {
 int* gameType;
