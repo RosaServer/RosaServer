@@ -16,6 +16,7 @@ std::string getAutoCompleteInput();
 void respondToAutoComplete(std::string newBuffer);
 void threadMain();
 void init();
+void cleanup();
 void log(std::string line);
 void handleInterruptSignal(int signal);
 }  // namespace Console

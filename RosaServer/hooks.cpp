@@ -118,7 +118,7 @@ void logicSimulation() {
 			auto res = hookFunc("InterruptSignal");
 			noLuaCallError(&res);
 		}
-		exit(EXIT_SUCCESS);
+		Lua::os::exit();
 		return;
 	}
 

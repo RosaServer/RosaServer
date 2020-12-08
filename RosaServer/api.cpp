@@ -715,6 +715,13 @@ double os::realClock() {
 	auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
 	return value.count() / 1000.;
 }
+
+void os::exit() { exitCode(EXIT_SUCCESS); }
+
+void os::exitCode(int code) {
+	Console::cleanup();
+	::exit(code);
+}
 };  // namespace Lua
 
 std::string addressFromInteger(unsigned int address) {

@@ -18,16 +18,16 @@ std::sig_atomic_t shouldExit = false;
 
 // Allows getting characters before newline and disables echo
 static int _getch() {
-	struct termios oldt, newt;
+	struct termios oldMode, newMode;
 
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+	tcgetattr(STDIN_FILENO, &oldMode);
+	newMode = oldMode;
+	newMode.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newMode);
 
 	int code = getchar();
 
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldMode);
 
 	return code;
 }
@@ -376,6 +376,14 @@ void init() {
 
 	std::thread thread(threadMain);
 	thread.detach();
+}
+
+void cleanup() {
+	struct termios mode;
+
+	tcgetattr(STDIN_FILENO, &mode);
+	mode.c_lflag |= (ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &mode);
 }
 
 void log(std::string line) {
