@@ -269,7 +269,7 @@ void logicSimulationTerminator() {
 	}
 }
 
-void logicSimulationHoop() {
+void logicSimulationCoop() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
