@@ -66,137 +66,6 @@ void hookAndReset(int reason) {
 	}
 }
 
-void l_print(sol::variadic_args args, sol::this_state s) {
-	sol::state_view lua(s);
-
-	sol::protected_function toString = lua["tostring"];
-	if (toString == sol::nil) {
-		return;
-	}
-
-	std::ostringstream stream;
-
-	bool doneFirst = false;
-	for (auto arg : args) {
-		if (doneFirst)
-			stream << '\t';
-		else
-			doneFirst = true;
-
-		auto stringified = toString(arg);
-
-		if (!noLuaCallError(&stringified)) {
-			return;
-		}
-
-		std::string str = stringified;
-		stream << str;
-	}
-
-	stream << '\n';
-
-	Console::log(stream.str());
-}
-
-void l_flagStateForReset(const char* mode) {
-	hookMode = mode;
-	shouldReset = true;
-}
-
-Vector l_Vector() { return Vector{0.f, 0.f, 0.f}; }
-
-Vector l_Vector_3f(float x, float y, float z) { return Vector{x, y, z}; }
-
-RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2,
-                      float z2, float x3, float y3, float z3) {
-	return RotMatrix{x1, y1, z1, x2, y2, z2, x3, y3, z3};
-}
-
-void l_http_get(const char* scheme, const char* path, sol::table headers,
-                sol::protected_function callback) {
-	LuaHTTPRequest request{LuaRequestType::get, scheme, path,
-	                       std::make_shared<sol::protected_function>(callback)};
-
-	for (const auto& pair : headers)
-		request.headers.emplace(pair.first.as<std::string>(),
-		                        pair.second.as<std::string>());
-
-	std::lock_guard<std::mutex> guard(requestQueueMutex);
-	requestQueue.push(request);
-}
-
-void l_http_post(const char* scheme, const char* path, sol::table headers,
-                 std::string body, const char* contentType,
-                 sol::protected_function callback) {
-	LuaHTTPRequest request{LuaRequestType::post,
-	                       scheme,
-	                       path,
-	                       std::make_shared<sol::protected_function>(callback),
-	                       contentType,
-	                       body};
-
-	for (const auto& pair : headers)
-		request.headers.emplace(pair.first.as<std::string>(),
-		                        pair.second.as<std::string>());
-
-	std::lock_guard<std::mutex> guard(requestQueueMutex);
-	requestQueue.push(request);
-}
-
-static sol::object handleSyncHTTPResponse(httplib::Result& res,
-                                          sol::this_state s) {
-	sol::state_view lua(s);
-
-	if (res) {
-		sol::table table = lua.create_table();
-		table["status"] = res->status;
-		table["body"] = res->body;
-
-		sol::table headers = lua.create_table();
-		for (const auto& h : res->headers) headers[h.first] = h.second;
-		table["headers"] = headers;
-
-		return sol::make_object(lua, table);
-	}
-
-	return sol::make_object(lua, sol::lua_nil);
-}
-
-sol::object l_http_getSync(const char* scheme, const char* path,
-                           sol::table headers, sol::this_state s) {
-	httplib::Client client(scheme);
-	client.set_connection_timeout(6);
-	client.set_keep_alive(false);
-
-	httplib::Headers httpHeaders;
-	for (const auto& pair : headers)
-		httpHeaders.emplace(pair.first.as<std::string>(),
-		                    pair.second.as<std::string>());
-
-	httpHeaders.emplace("Connection", "close");
-
-	auto res = client.Get(path, httpHeaders);
-	return handleSyncHTTPResponse(res, s);
-}
-
-sol::object l_http_postSync(const char* scheme, const char* path,
-                            sol::table headers, std::string body,
-                            const char* contentType, sol::this_state s) {
-	httplib::Client client(scheme);
-	client.set_connection_timeout(6);
-	client.set_keep_alive(false);
-
-	httplib::Headers httpHeaders;
-	for (const auto& pair : headers)
-		httpHeaders.emplace(pair.first.as<std::string>(),
-		                    pair.second.as<std::string>());
-
-	httpHeaders.emplace("Connection", "close");
-
-	auto res = client.Post(path, httpHeaders, body, contentType);
-	return handleSyncHTTPResponse(res, s);
-}
-
 static void handleHTTPResponse(LuaHTTPRequest& req, httplib::Result& res) {
 	if (res) {
 		LuaHTTPResponse response{req.callback, true, res->status, res->body,
@@ -246,22 +115,154 @@ void HTTPThread() {
 	}
 }
 
-void l_event_sound(int soundType, Vector* pos, float volume, float pitch) {
+namespace Lua {
+void print(sol::variadic_args args, sol::this_state s) {
+	sol::state_view lua(s);
+
+	sol::protected_function toString = lua["tostring"];
+	if (toString == sol::nil) {
+		return;
+	}
+
+	std::ostringstream stream;
+
+	bool doneFirst = false;
+	for (auto arg : args) {
+		if (doneFirst)
+			stream << '\t';
+		else
+			doneFirst = true;
+
+		auto stringified = toString(arg);
+
+		if (!noLuaCallError(&stringified)) {
+			return;
+		}
+
+		std::string str = stringified;
+		stream << str;
+	}
+
+	stream << '\n';
+
+	Console::log(stream.str());
+}
+
+void flagStateForReset(const char* mode) {
+	hookMode = mode;
+	shouldReset = true;
+}
+
+Vector Vector_() { return Vector{0.f, 0.f, 0.f}; }
+
+Vector Vector_3f(float x, float y, float z) { return Vector{x, y, z}; }
+
+RotMatrix RotMatrix_(float x1, float y1, float z1, float x2, float y2, float z2,
+                     float x3, float y3, float z3) {
+	return RotMatrix{x1, y1, z1, x2, y2, z2, x3, y3, z3};
+}
+
+void http::get(const char* scheme, const char* path, sol::table headers,
+               sol::protected_function callback) {
+	LuaHTTPRequest request{LuaRequestType::get, scheme, path,
+	                       std::make_shared<sol::protected_function>(callback)};
+
+	for (const auto& pair : headers)
+		request.headers.emplace(pair.first.as<std::string>(),
+		                        pair.second.as<std::string>());
+
+	std::lock_guard<std::mutex> guard(requestQueueMutex);
+	requestQueue.push(request);
+}
+
+void http::post(const char* scheme, const char* path, sol::table headers,
+                std::string body, const char* contentType,
+                sol::protected_function callback) {
+	LuaHTTPRequest request{LuaRequestType::post,
+	                       scheme,
+	                       path,
+	                       std::make_shared<sol::protected_function>(callback),
+	                       contentType,
+	                       body};
+
+	for (const auto& pair : headers)
+		request.headers.emplace(pair.first.as<std::string>(),
+		                        pair.second.as<std::string>());
+
+	std::lock_guard<std::mutex> guard(requestQueueMutex);
+	requestQueue.push(request);
+}
+
+static sol::object handleSyncHTTPResponse(httplib::Result& res,
+                                          sol::this_state s) {
+	sol::state_view lua(s);
+
+	if (res) {
+		sol::table table = lua.create_table();
+		table["status"] = res->status;
+		table["body"] = res->body;
+
+		sol::table headers = lua.create_table();
+		for (const auto& h : res->headers) headers[h.first] = h.second;
+		table["headers"] = headers;
+
+		return sol::make_object(lua, table);
+	}
+
+	return sol::make_object(lua, sol::lua_nil);
+}
+
+sol::object http::getSync(const char* scheme, const char* path,
+                          sol::table headers, sol::this_state s) {
+	httplib::Client client(scheme);
+	client.set_connection_timeout(6);
+	client.set_keep_alive(false);
+
+	httplib::Headers httpHeaders;
+	for (const auto& pair : headers)
+		httpHeaders.emplace(pair.first.as<std::string>(),
+		                    pair.second.as<std::string>());
+
+	httpHeaders.emplace("Connection", "close");
+
+	auto res = client.Get(path, httpHeaders);
+	return handleSyncHTTPResponse(res, s);
+}
+
+sol::object http::postSync(const char* scheme, const char* path,
+                           sol::table headers, std::string body,
+                           const char* contentType, sol::this_state s) {
+	httplib::Client client(scheme);
+	client.set_connection_timeout(6);
+	client.set_keep_alive(false);
+
+	httplib::Headers httpHeaders;
+	for (const auto& pair : headers)
+		httpHeaders.emplace(pair.first.as<std::string>(),
+		                    pair.second.as<std::string>());
+
+	httpHeaders.emplace("Connection", "close");
+
+	auto res = client.Post(path, httpHeaders, body, contentType);
+	return handleSyncHTTPResponse(res, s);
+}
+
+void event::sound(int soundType, Vector* pos, float volume, float pitch) {
 	Engine::createEventSound(soundType, pos, volume, pitch);
 }
 
-void l_event_soundSimple(int soundType, Vector* pos) {
+void event::soundSimple(int soundType, Vector* pos) {
 	Engine::createEventSound(soundType, pos, 1.0f, 1.0f);
 }
 
-void l_event_explosion(Vector* pos) { Engine::createEventExplosion(0, pos); }
+void event::explosion(Vector* pos) { Engine::createEventExplosion(0, pos); }
 
-void l_event_bulletHit(int hitType, Vector* pos, Vector* normal) {
+void event::bulletHit(int hitType, Vector* pos, Vector* normal) {
 	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
 	Engine::createEventBulletHit(0, hitType, pos, normal);
 }
 
-sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB) {
+sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
 	int res = Engine::lineIntersectLevel(posA, posB);
 	if (res) {
@@ -273,8 +274,7 @@ sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB) {
 	return table;
 }
 
-sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA,
-                                        Vector* posB) {
+sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
 	subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
 	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB);
@@ -288,8 +288,8 @@ sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA,
 	return table;
 }
 
-sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA,
-                                          Vector* posB) {
+sol::table physics::lineIntersectVehicle(Vehicle* vcl, Vector* posA,
+                                         Vector* posB) {
 	sol::table table = lua->create_table();
 	int res = Engine::lineIntersectVehicle(vcl->getIndex(), posA, posB);
 	if (res) {
@@ -306,10 +306,10 @@ sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA,
 	return table;
 }
 
-sol::object l_physics_lineIntersectTriangle(Vector* outPos, Vector* normal,
-                                            Vector* posA, Vector* posB,
-                                            Vector* triA, Vector* triB,
-                                            Vector* triC, sol::this_state s) {
+sol::object physics::lineIntersectTriangle(Vector* outPos, Vector* normal,
+                                           Vector* posA, Vector* posB,
+                                           Vector* triA, Vector* triB,
+                                           Vector* triC, sol::this_state s) {
 	sol::state_view lua(s);
 
 	float outFraction;
@@ -320,11 +320,11 @@ sol::object l_physics_lineIntersectTriangle(Vector* outPos, Vector* normal,
 	return sol::make_object(lua, sol::lua_nil);
 }
 
-void l_physics_garbageCollectBullets() { Engine::bulletTimeToLive(); }
+void physics::garbageCollectBullets() { Engine::bulletTimeToLive(); }
 
-int l_itemTypes_getCount() { return maxNumberOfItemTypes; }
+int itemTypes::getCount() { return maxNumberOfItemTypes; }
 
-sol::table l_itemTypes_getAll() {
+sol::table itemTypes::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < maxNumberOfItemTypes; i++) {
 		arr.add(&Engine::itemTypes[i]);
@@ -332,12 +332,12 @@ sol::table l_itemTypes_getAll() {
 	return arr;
 }
 
-ItemType* l_itemTypes_getByIndex(sol::table self, unsigned int idx) {
+ItemType* itemTypes::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfItemTypes) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::itemTypes[idx];
 }
 
-int l_items_getCount() {
+int items::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfItems; i++) {
 		if ((&Engine::items[i])->active) count++;
@@ -345,7 +345,7 @@ int l_items_getCount() {
 	return count;
 }
 
-sol::table l_items_getAll() {
+sol::table items::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < maxNumberOfItems; i++) {
 		auto item = &Engine::items[i];
@@ -355,12 +355,12 @@ sol::table l_items_getAll() {
 	return arr;
 }
 
-Item* l_items_getByIndex(sol::table self, unsigned int idx) {
+Item* items::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfItems) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::items[idx];
 }
 
-Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot) {
+Item* items::create(int itemType, Vector* pos, RotMatrix* rot) {
 	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
 	int id = Engine::createItem(itemType, pos, nullptr, rot);
 
@@ -372,8 +372,7 @@ Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot) {
 	return id == -1 ? nullptr : &Engine::items[id];
 }
 
-Item* l_items_createVel(int itemType, Vector* pos, Vector* vel,
-                        RotMatrix* rot) {
+Item* items::createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot) {
 	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
 	int id = Engine::createItem(itemType, pos, vel, rot);
 
@@ -385,12 +384,12 @@ Item* l_items_createVel(int itemType, Vector* pos, Vector* vel,
 	return id == -1 ? nullptr : &Engine::items[id];
 }
 
-Item* l_items_createRope(Vector* pos, RotMatrix* rot) {
+Item* items::createRope(Vector* pos, RotMatrix* rot) {
 	int id = Engine::createRope(pos, rot);
 	return id == -1 ? nullptr : &Engine::items[id];
 }
 
-int l_vehicles_getCount() {
+int vehicles::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfVehicles; i++) {
 		if ((&Engine::vehicles[i])->active) count++;
@@ -398,7 +397,7 @@ int l_vehicles_getCount() {
 	return count;
 }
 
-sol::table l_vehicles_getAll() {
+sol::table vehicles::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < maxNumberOfVehicles; i++) {
 		auto vcl = &Engine::vehicles[i];
@@ -408,12 +407,12 @@ sol::table l_vehicles_getAll() {
 	return arr;
 }
 
-Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx) {
+Vehicle* vehicles::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfVehicles) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::vehicles[idx];
 }
 
-Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color) {
+Vehicle* vehicles::create(int type, Vector* pos, RotMatrix* rot, int color) {
 	subhook::ScopedHookRemove remove(&Hooks::createVehicleHook);
 	int id = Engine::createVehicle(type, pos, nullptr, rot, color);
 
@@ -425,8 +424,8 @@ Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color) {
 	return id == -1 ? nullptr : &Engine::vehicles[id];
 }
 
-Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel,
-                              RotMatrix* rot, int color) {
+Vehicle* vehicles::createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot,
+                             int color) {
 	subhook::ScopedHookRemove remove(&Hooks::createVehicleHook);
 	int id = Engine::createVehicle(type, pos, vel, rot, color);
 
@@ -438,27 +437,27 @@ Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel,
 	return id == -1 ? nullptr : &Engine::vehicles[id];
 }
 
-void l_chat_announce(const char* message) {
+void chat::announce(const char* message) {
 	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(0, (char*)message, -1, 0);
 }
 
-void l_chat_tellAdmins(const char* message) {
+void chat::tellAdmins(const char* message) {
 	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(4, (char*)message, -1, 0);
 }
 
-void l_chat_addRaw(int type, const char* message, int speakerID, int distance) {
+void chat::addRaw(int type, const char* message, int speakerID, int distance) {
 	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(type, (char*)message, speakerID, distance);
 }
 
-void l_accounts_save() {
+void accounts::save() {
 	subhook::ScopedHookRemove remove(&Hooks::saveAccountsServerHook);
 	Engine::saveAccountsServer();
 }
 
-int l_accounts_getCount() {
+int accounts::getCount() {
 	int count = 0;
 	while (true) {
 		Account* acc = &Engine::accounts[count];
@@ -468,7 +467,7 @@ int l_accounts_getCount() {
 	return count;
 }
 
-sol::table l_accounts_getAll() {
+sol::table accounts::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0;; i++) {
 		Account* acc = &Engine::accounts[i];
@@ -478,7 +477,7 @@ sol::table l_accounts_getAll() {
 	return arr;
 }
 
-Account* l_accounts_getByPhone(int phone) {
+Account* accounts::getByPhone(int phone) {
 	for (int i = 0;; i++) {
 		Account* acc = &Engine::accounts[i];
 		if (!acc->subRosaID) break;
@@ -487,12 +486,12 @@ Account* l_accounts_getByPhone(int phone) {
 	return nullptr;
 }
 
-Account* l_accounts_getByIndex(sol::table self, unsigned int idx) {
+Account* accounts::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfAccounts) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::accounts[idx];
 }
 
-int l_players_getCount() {
+int players::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfPlayers; i++) {
 		if ((&Engine::players[i])->active) count++;
@@ -500,7 +499,7 @@ int l_players_getCount() {
 	return count;
 }
 
-sol::table l_players_getAll() {
+sol::table players::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < maxNumberOfPlayers; i++) {
 		auto ply = &Engine::players[i];
@@ -510,7 +509,7 @@ sol::table l_players_getAll() {
 	return arr;
 }
 
-Player* l_players_getByPhone(int phone) {
+Player* players::getByPhone(int phone) {
 	for (int i = 0; i < maxNumberOfPlayers; i++) {
 		auto ply = &Engine::players[i];
 		if (!ply->active) continue;
@@ -519,7 +518,7 @@ Player* l_players_getByPhone(int phone) {
 	return nullptr;
 }
 
-sol::table l_players_getNonBots() {
+sol::table players::getNonBots() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < maxNumberOfPlayers; i++) {
 		auto ply = &Engine::players[i];
@@ -529,12 +528,12 @@ sol::table l_players_getNonBots() {
 	return arr;
 }
 
-Player* l_players_getByIndex(sol::table self, unsigned int idx) {
+Player* players::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfPlayers) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::players[idx];
 }
 
-Player* l_players_createBot() {
+Player* players::createBot() {
 	subhook::ScopedHookRemove remove(&Hooks::createPlayerHook);
 	int playerID = Engine::createPlayer();
 	if (playerID == -1) return nullptr;
@@ -552,7 +551,7 @@ Player* l_players_createBot() {
 	return ply;
 }
 
-int l_humans_getCount() {
+int humans::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfHumans; i++) {
 		if ((&Engine::humans[i])->active) count++;
@@ -560,7 +559,7 @@ int l_humans_getCount() {
 	return count;
 }
 
-sol::table l_humans_getAll() {
+sol::table humans::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < maxNumberOfHumans; i++) {
 		auto man = &Engine::humans[i];
@@ -570,12 +569,12 @@ sol::table l_humans_getAll() {
 	return arr;
 }
 
-Human* l_humans_getByIndex(sol::table self, unsigned int idx) {
+Human* humans::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfHumans) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::humans[idx];
 }
 
-Human* l_humans_create(Vector* pos, RotMatrix* rot, Player* ply) {
+Human* humans::create(Vector* pos, RotMatrix* rot, Player* ply) {
 	int playerID = ply->getIndex();
 	if (ply->humanID != -1) {
 		subhook::ScopedHookRemove remove(&Hooks::deleteHumanHook);
@@ -599,9 +598,9 @@ Human* l_humans_create(Vector* pos, RotMatrix* rot, Player* ply) {
 	return man;
 }
 
-unsigned int l_bullets_getCount() { return *Engine::numBullets; }
+unsigned int bullets::getCount() { return *Engine::numBullets; }
 
-sol::table l_bullets_getAll() {
+sol::table bullets::getAll() {
 	auto arr = lua->create_table();
 	for (unsigned int i = 0; i < *Engine::numBullets; i++) {
 		Bullet* bul = &Engine::bullets[i];
@@ -610,7 +609,7 @@ sol::table l_bullets_getAll() {
 	return arr;
 }
 
-int l_rigidBodies_getCount() {
+int rigidBodies::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfRigidBodies; i++) {
 		if ((&Engine::bodies[i])->active) count++;
@@ -618,7 +617,7 @@ int l_rigidBodies_getCount() {
 	return count;
 }
 
-sol::table l_rigidBodies_getAll() {
+sol::table rigidBodies::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < maxNumberOfRigidBodies; i++) {
 		auto body = &Engine::bodies[i];
@@ -628,13 +627,13 @@ sol::table l_rigidBodies_getAll() {
 	return arr;
 }
 
-RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx) {
+RigidBody* rigidBodies::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfRigidBodies)
 		throw std::invalid_argument(errorOutOfRange);
 	return &Engine::bodies[idx];
 }
 
-int l_bonds_getCount() {
+int bonds::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfBonds; i++) {
 		if ((&Engine::bonds[i])->active) count++;
@@ -642,7 +641,7 @@ int l_bonds_getCount() {
 	return count;
 }
 
-sol::table l_bonds_getAll() {
+sol::table bonds::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < maxNumberOfBonds; i++) {
 		auto bond = &Engine::bonds[i];
@@ -652,14 +651,14 @@ sol::table l_bonds_getAll() {
 	return arr;
 }
 
-Bond* l_bonds_getByIndex(sol::table self, unsigned int idx) {
+Bond* bonds::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfBonds) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::bonds[idx];
 }
 
-int l_streets_getCount() { return *Engine::numStreets; }
+int streets::getCount() { return *Engine::numStreets; }
 
-sol::table l_streets_getAll() {
+sol::table streets::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < *Engine::numStreets; i++) {
 		arr.add(&Engine::streets[i]);
@@ -667,14 +666,14 @@ sol::table l_streets_getAll() {
 	return arr;
 }
 
-Street* l_streets_getByIndex(sol::table self, unsigned int idx) {
+Street* streets::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= *Engine::numStreets) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::streets[idx];
 }
 
-int l_intersections_getCount() { return *Engine::numStreetIntersections; }
+int intersections::getCount() { return *Engine::numStreetIntersections; }
 
-sol::table l_intersections_getAll() {
+sol::table intersections::getAll() {
 	auto arr = lua->create_table();
 	for (int i = 0; i < *Engine::numStreetIntersections; i++) {
 		arr.add(&Engine::streetIntersections[i]);
@@ -682,14 +681,14 @@ sol::table l_intersections_getAll() {
 	return arr;
 }
 
-StreetIntersection* l_intersections_getByIndex(sol::table self,
-                                               unsigned int idx) {
+StreetIntersection* intersections::getByIndex(sol::table self,
+                                              unsigned int idx) {
 	if (idx >= *Engine::numStreetIntersections)
 		throw std::invalid_argument(errorOutOfRange);
 	return &Engine::streetIntersections[idx];
 }
 
-sol::table l_os_listDirectory(const char* path, sol::this_state s) {
+sol::table os::listDirectory(const char* path, sol::this_state s) {
 	sol::state_view lua(s);
 
 	auto arr = lua.create_table();
@@ -705,17 +704,18 @@ sol::table l_os_listDirectory(const char* path, sol::this_state s) {
 	return arr;
 }
 
-bool l_os_createDirectory(const char* path) {
+bool os::createDirectory(const char* path) {
 	return std::filesystem::create_directories(path);
 }
 
-double l_os_realClock() {
+double os::realClock() {
 	auto now = std::chrono::steady_clock::now();
 	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
 	auto epoch = ms.time_since_epoch();
 	auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
 	return value.count() / 1000.;
 }
+};  // namespace Lua
 
 std::string addressFromInteger(unsigned int address) {
 	unsigned char* bytes = (unsigned char*)(&address);

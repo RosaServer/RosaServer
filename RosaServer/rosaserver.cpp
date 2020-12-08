@@ -159,21 +159,20 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["getPNG"] = &Image::getPNG;
 	}
 
-	(*state)["print"] = l_print;
+	(*state)["print"] = Lua::print;
 
-	(*state)["Vector"] = sol::overload(l_Vector, l_Vector_3f);
-	(*state)["RotMatrix"] = l_RotMatrix;
+	(*state)["Vector"] = sol::overload(Lua::Vector_, Lua::Vector_3f);
+	(*state)["RotMatrix"] = Lua::RotMatrix_;
 
-	(*state)["os"]["listDirectory"] = l_os_listDirectory;
-	(*state)["os"]["createDirectory"] = l_os_createDirectory;
-
-	(*state)["os"]["realClock"] = l_os_realClock;
+	(*state)["os"]["listDirectory"] = Lua::os::listDirectory;
+	(*state)["os"]["createDirectory"] = Lua::os::createDirectory;
+	(*state)["os"]["realClock"] = Lua::os::realClock;
 
 	{
 		auto httpTable = state->create_table();
 		(*state)["http"] = httpTable;
-		httpTable["getSync"] = l_http_getSync;
-		httpTable["postSync"] = l_http_postSync;
+		httpTable["getSync"] = Lua::http::getSync;
+		httpTable["postSync"] = Lua::http::postSync;
 	}
 }
 
@@ -665,175 +664,177 @@ void luaInit(bool redo) {
 		meta["streetNorth"] = sol::property(&StreetIntersection::getStreetNorth);
 	}
 
-	(*lua)["flagStateForReset"] = l_flagStateForReset;
+	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	(*lua)["hook"] = lua->create_table();
 	(*lua)["hook"]["persistentMode"] = hookMode;
 
-	(*lua)["http"]["get"] = l_http_get;
-	(*lua)["http"]["post"] = l_http_post;
+	(*lua)["http"]["get"] = Lua::http::get;
+	(*lua)["http"]["post"] = Lua::http::post;
 
 	{
 		auto eventTable = lua->create_table();
 		(*lua)["event"] = eventTable;
-		eventTable["sound"] = sol::overload(l_event_sound, l_event_soundSimple);
-		eventTable["explosion"] = l_event_explosion;
-		eventTable["bulletHit"] = l_event_bulletHit;
+		eventTable["sound"] =
+		    sol::overload(Lua::event::sound, Lua::event::soundSimple);
+		eventTable["explosion"] = Lua::event::explosion;
+		eventTable["bulletHit"] = Lua::event::bulletHit;
 	}
 
 	{
 		auto physicsTable = lua->create_table();
 		(*lua)["physics"] = physicsTable;
-		physicsTable["lineIntersectLevel"] = l_physics_lineIntersectLevel;
-		physicsTable["lineIntersectHuman"] = l_physics_lineIntersectHuman;
-		physicsTable["lineIntersectVehicle"] = l_physics_lineIntersectVehicle;
-		physicsTable["lineIntersectTriangle"] = l_physics_lineIntersectTriangle;
-		physicsTable["garbageCollectBullets"] = l_physics_garbageCollectBullets;
+		physicsTable["lineIntersectLevel"] = Lua::physics::lineIntersectLevel;
+		physicsTable["lineIntersectHuman"] = Lua::physics::lineIntersectHuman;
+		physicsTable["lineIntersectVehicle"] = Lua::physics::lineIntersectVehicle;
+		physicsTable["lineIntersectTriangle"] = Lua::physics::lineIntersectTriangle;
+		physicsTable["garbageCollectBullets"] = Lua::physics::garbageCollectBullets;
 	}
 
 	{
 		auto chatTable = lua->create_table();
 		(*lua)["chat"] = chatTable;
-		chatTable["announce"] = l_chat_announce;
-		chatTable["tellAdmins"] = l_chat_tellAdmins;
-		chatTable["addRaw"] = l_chat_addRaw;
+		chatTable["announce"] = Lua::chat::announce;
+		chatTable["tellAdmins"] = Lua::chat::tellAdmins;
+		chatTable["addRaw"] = Lua::chat::addRaw;
 	}
 
 	{
 		auto accountsTable = lua->create_table();
 		(*lua)["accounts"] = accountsTable;
-		accountsTable["save"] = l_accounts_save;
-		accountsTable["getCount"] = l_accounts_getCount;
-		accountsTable["getAll"] = l_accounts_getAll;
-		accountsTable["getByPhone"] = l_accounts_getByPhone;
+		accountsTable["save"] = Lua::accounts::save;
+		accountsTable["getCount"] = Lua::accounts::getCount;
+		accountsTable["getAll"] = Lua::accounts::getAll;
+		accountsTable["getByPhone"] = Lua::accounts::getByPhone;
 
 		sol::table _meta = lua->create_table();
 		accountsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_accounts_getCount;
-		_meta["__index"] = l_accounts_getByIndex;
+		_meta["__len"] = Lua::accounts::getCount;
+		_meta["__index"] = Lua::accounts::getByIndex;
 	}
 
 	{
 		auto playersTable = lua->create_table();
 		(*lua)["players"] = playersTable;
-		playersTable["getCount"] = l_players_getCount;
-		playersTable["getAll"] = l_players_getAll;
-		playersTable["getByPhone"] = l_players_getByPhone;
-		playersTable["getNonBots"] = l_players_getNonBots;
-		playersTable["createBot"] = l_players_createBot;
+		playersTable["getCount"] = Lua::players::getCount;
+		playersTable["getAll"] = Lua::players::getAll;
+		playersTable["getByPhone"] = Lua::players::getByPhone;
+		playersTable["getNonBots"] = Lua::players::getNonBots;
+		playersTable["createBot"] = Lua::players::createBot;
 
 		sol::table _meta = lua->create_table();
 		playersTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_players_getCount;
-		_meta["__index"] = l_players_getByIndex;
+		_meta["__len"] = Lua::players::getCount;
+		_meta["__index"] = Lua::players::getByIndex;
 	}
 
 	{
 		auto humansTable = lua->create_table();
 		(*lua)["humans"] = humansTable;
-		humansTable["getCount"] = l_humans_getCount;
-		humansTable["getAll"] = l_humans_getAll;
-		humansTable["create"] = l_humans_create;
+		humansTable["getCount"] = Lua::humans::getCount;
+		humansTable["getAll"] = Lua::humans::getAll;
+		humansTable["create"] = Lua::humans::create;
 
 		sol::table _meta = lua->create_table();
 		humansTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_humans_getCount;
-		_meta["__index"] = l_humans_getByIndex;
+		_meta["__len"] = Lua::humans::getCount;
+		_meta["__index"] = Lua::humans::getByIndex;
 	}
 
 	{
 		auto itemTypesTable = lua->create_table();
 		(*lua)["itemTypes"] = itemTypesTable;
-		itemTypesTable["getCount"] = l_itemTypes_getCount;
-		itemTypesTable["getAll"] = l_itemTypes_getAll;
+		itemTypesTable["getCount"] = Lua::itemTypes::getCount;
+		itemTypesTable["getAll"] = Lua::itemTypes::getAll;
 
 		sol::table _meta = lua->create_table();
 		itemTypesTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_itemTypes_getCount;
-		_meta["__index"] = l_itemTypes_getByIndex;
+		_meta["__len"] = Lua::itemTypes::getCount;
+		_meta["__index"] = Lua::itemTypes::getByIndex;
 	}
 
 	{
 		auto itemsTable = lua->create_table();
 		(*lua)["items"] = itemsTable;
-		itemsTable["getCount"] = l_items_getCount;
-		itemsTable["getAll"] = l_items_getAll;
-		itemsTable["create"] = sol::overload(l_items_create, l_items_createVel);
-		itemsTable["createRope"] = l_items_createRope;
+		itemsTable["getCount"] = Lua::items::getCount;
+		itemsTable["getAll"] = Lua::items::getAll;
+		itemsTable["create"] =
+		    sol::overload(Lua::items::create, Lua::items::createVel);
+		itemsTable["createRope"] = Lua::items::createRope;
 
 		sol::table _meta = lua->create_table();
 		itemsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_items_getCount;
-		_meta["__index"] = l_items_getByIndex;
+		_meta["__len"] = Lua::items::getCount;
+		_meta["__index"] = Lua::items::getByIndex;
 	}
 
 	{
 		auto vehiclesTable = lua->create_table();
 		(*lua)["vehicles"] = vehiclesTable;
-		vehiclesTable["getCount"] = l_vehicles_getCount;
-		vehiclesTable["getAll"] = l_vehicles_getAll;
+		vehiclesTable["getCount"] = Lua::vehicles::getCount;
+		vehiclesTable["getAll"] = Lua::vehicles::getAll;
 		vehiclesTable["create"] =
-		    sol::overload(l_vehicles_create, l_vehicles_createVel);
+		    sol::overload(Lua::vehicles::create, Lua::vehicles::createVel);
 
 		sol::table _meta = lua->create_table();
 		vehiclesTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_vehicles_getCount;
-		_meta["__index"] = l_vehicles_getByIndex;
+		_meta["__len"] = Lua::vehicles::getCount;
+		_meta["__index"] = Lua::vehicles::getByIndex;
 	}
 
 	{
 		auto bulletsTable = lua->create_table();
 		(*lua)["bullets"] = bulletsTable;
-		bulletsTable["getCount"] = l_bullets_getCount;
-		bulletsTable["getAll"] = l_bullets_getAll;
+		bulletsTable["getCount"] = Lua::bullets::getCount;
+		bulletsTable["getAll"] = Lua::bullets::getAll;
 	}
 
 	{
 		auto rigidBodiesTable = lua->create_table();
 		(*lua)["rigidBodies"] = rigidBodiesTable;
-		rigidBodiesTable["getCount"] = l_rigidBodies_getCount;
-		rigidBodiesTable["getAll"] = l_rigidBodies_getAll;
+		rigidBodiesTable["getCount"] = Lua::rigidBodies::getCount;
+		rigidBodiesTable["getAll"] = Lua::rigidBodies::getAll;
 
 		sol::table _meta = lua->create_table();
 		rigidBodiesTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_rigidBodies_getCount;
-		_meta["__index"] = l_rigidBodies_getByIndex;
+		_meta["__len"] = Lua::rigidBodies::getCount;
+		_meta["__index"] = Lua::rigidBodies::getByIndex;
 	}
 
 	{
 		auto bondsTable = lua->create_table();
 		(*lua)["bonds"] = bondsTable;
-		bondsTable["getCount"] = l_bonds_getCount;
-		bondsTable["getAll"] = l_bonds_getAll;
+		bondsTable["getCount"] = Lua::bonds::getCount;
+		bondsTable["getAll"] = Lua::bonds::getAll;
 
 		sol::table _meta = lua->create_table();
 		bondsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_bonds_getCount;
-		_meta["__index"] = l_bonds_getByIndex;
+		_meta["__len"] = Lua::bonds::getCount;
+		_meta["__index"] = Lua::bonds::getByIndex;
 	}
 
 	{
 		auto streetsTable = lua->create_table();
 		(*lua)["streets"] = streetsTable;
-		streetsTable["getCount"] = l_streets_getCount;
-		streetsTable["getAll"] = l_streets_getAll;
+		streetsTable["getCount"] = Lua::streets::getCount;
+		streetsTable["getAll"] = Lua::streets::getAll;
 
 		sol::table _meta = lua->create_table();
 		streetsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_streets_getCount;
-		_meta["__index"] = l_streets_getByIndex;
+		_meta["__len"] = Lua::streets::getCount;
+		_meta["__index"] = Lua::streets::getByIndex;
 	}
 
 	{
 		auto intersectionsTable = lua->create_table();
 		(*lua)["intersections"] = intersectionsTable;
-		intersectionsTable["getCount"] = l_intersections_getCount;
-		intersectionsTable["getAll"] = l_intersections_getAll;
+		intersectionsTable["getCount"] = Lua::intersections::getCount;
+		intersectionsTable["getAll"] = Lua::intersections::getAll;
 
 		sol::table _meta = lua->create_table();
 		intersectionsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_intersections_getCount;
-		_meta["__index"] = l_intersections_getByIndex;
+		_meta["__len"] = Lua::intersections::getCount;
+		_meta["__index"] = Lua::intersections::getByIndex;
 	}
 
 	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;

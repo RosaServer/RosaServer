@@ -69,104 +69,134 @@ void hookAndReset(int reason);
 void defineThreadSafeAPIs(sol::state* state);
 void luaInit(bool redo = false);
 
-void l_print(sol::variadic_args va, sol::this_state s);
-void l_flagStateForReset(const char* mode);
+namespace Lua {
+void print(sol::variadic_args va, sol::this_state s);
+void flagStateForReset(const char* mode);
 
-Vector l_Vector();
-Vector l_Vector_3f(float x, float y, float z);
-RotMatrix l_RotMatrix(float x1, float y1, float z1, float x2, float y2,
-                      float z2, float x3, float y3, float z3);
+Vector Vector_();
+Vector Vector_3f(float x, float y, float z);
+RotMatrix RotMatrix_(float x1, float y1, float z1, float x2, float y2, float z2,
+                     float x3, float y3, float z3);
 
-void l_http_get(const char* scheme, const char* path, sol::table headers,
-                sol::protected_function callback);
-void l_http_post(const char* scheme, const char* path, sol::table headers,
-                 std::string body, const char* contentType,
-                 sol::protected_function callback);
+namespace http {
+void get(const char* scheme, const char* path, sol::table headers,
+         sol::protected_function callback);
+void post(const char* scheme, const char* path, sol::table headers,
+          std::string body, const char* contentType,
+          sol::protected_function callback);
 
-sol::object l_http_getSync(const char* scheme, const char* path,
-                           sol::table headers, sol::this_state s);
-sol::object l_http_postSync(const char* scheme, const char* path,
-                            sol::table headers, std::string body,
-                            const char* contentType, sol::this_state s);
+sol::object getSync(const char* scheme, const char* path, sol::table headers,
+                    sol::this_state s);
+sol::object postSync(const char* scheme, const char* path, sol::table headers,
+                     std::string body, const char* contentType,
+                     sol::this_state s);
+};  // namespace http
 
-void l_event_sound(int soundType, Vector* pos, float volume, float pitch);
-void l_event_soundSimple(int soundType, Vector* pos);
-void l_event_explosion(Vector* pos);
-void l_event_bulletHit(int hitType, Vector* pos, Vector* normal);
+namespace event {
+void sound(int soundType, Vector* pos, float volume, float pitch);
+void soundSimple(int soundType, Vector* pos);
+void explosion(Vector* pos);
+void bulletHit(int hitType, Vector* pos, Vector* normal);
+};  // namespace event
 
-sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB);
-sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA, Vector* posB);
-sol::table l_physics_lineIntersectVehicle(Vehicle* vcl, Vector* posA,
-                                          Vector* posB);
-sol::object l_physics_lineIntersectTriangle(Vector* outPos, Vector* normal,
-                                            Vector* posA, Vector* posB,
-                                            Vector* triA, Vector* triB,
-                                            Vector* triC, sol::this_state s);
-void l_physics_garbageCollectBullets();
+namespace physics {
+sol::table lineIntersectLevel(Vector* posA, Vector* posB);
+sol::table lineIntersectHuman(Human* man, Vector* posA, Vector* posB);
+sol::table lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB);
+sol::object lineIntersectTriangle(Vector* outPos, Vector* normal, Vector* posA,
+                                  Vector* posB, Vector* triA, Vector* triB,
+                                  Vector* triC, sol::this_state s);
+void garbageCollectBullets();
+};  // namespace physics
 
-int l_itemTypes_getCount();
-sol::table l_itemTypes_getAll();
-ItemType* l_itemTypes_getByIndex(sol::table self, unsigned int idx);
+namespace itemTypes {
+int getCount();
+sol::table getAll();
+ItemType* getByIndex(sol::table self, unsigned int idx);
+};  // namespace itemTypes
 
-int l_items_getCount();
-sol::table l_items_getAll();
-Item* l_items_getByIndex(sol::table self, unsigned int idx);
-Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot);
-Item* l_items_createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot);
-Item* l_items_createRope(Vector* pos, RotMatrix* rot);
+namespace items {
+int getCount();
+sol::table getAll();
+Item* getByIndex(sol::table self, unsigned int idx);
+Item* create(int itemType, Vector* pos, RotMatrix* rot);
+Item* createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot);
+Item* createRope(Vector* pos, RotMatrix* rot);
+};  // namespace items
 
-int l_vehicles_getCount();
-sol::table l_vehicles_getAll();
-Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx);
-Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color);
-Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel,
-                              RotMatrix* rot, int color);
-// void l_vehicles_createTraffic(int density);
+namespace vehicles {
+int getCount();
+sol::table getAll();
+Vehicle* getByIndex(sol::table self, unsigned int idx);
+Vehicle* create(int type, Vector* pos, RotMatrix* rot, int color);
+Vehicle* createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot,
+                   int color);
+};  // namespace vehicles
 
-void l_chat_announce(const char* message);
-void l_chat_tellAdmins(const char* message);
-void l_chat_addRaw(int type, const char* message, int speakerID, int distance);
+namespace chat {
+void announce(const char* message);
+void tellAdmins(const char* message);
+void addRaw(int type, const char* message, int speakerID, int distance);
+};  // namespace chat
 
-void l_accounts_save();
-int l_accounts_getCount();
-sol::table l_accounts_getAll();
-Account* l_accounts_getByPhone(int phone);
-Account* l_accounts_getByIndex(sol::table self, unsigned int idx);
+namespace accounts {
+void save();
+int getCount();
+sol::table getAll();
+Account* getByPhone(int phone);
+Account* getByIndex(sol::table self, unsigned int idx);
+};  // namespace accounts
 
-int l_players_getCount();
-sol::table l_players_getAll();
-Player* l_players_getByPhone(int phone);
-sol::table l_players_getNonBots();
-Player* l_players_getByIndex(sol::table self, unsigned int idx);
-Player* l_players_createBot();
+namespace players {
+int getCount();
+sol::table getAll();
+Player* getByPhone(int phone);
+sol::table getNonBots();
+Player* getByIndex(sol::table self, unsigned int idx);
+Player* createBot();
+};  // namespace players
 
-int l_humans_getCount();
-sol::table l_humans_getAll();
-Human* l_humans_getByIndex(sol::table self, unsigned int idx);
-Human* l_humans_create(Vector* pos, RotMatrix* rot, Player* ply);
+namespace humans {
+int getCount();
+sol::table getAll();
+Human* getByIndex(sol::table self, unsigned int idx);
+Human* create(Vector* pos, RotMatrix* rot, Player* ply);
+};  // namespace humans
 
-unsigned int l_bullets_getCount();
-sol::table l_bullets_getAll();
+namespace bullets {
+unsigned int getCount();
+sol::table getAll();
+};  // namespace bullets
 
-int l_rigidBodies_getCount();
-sol::table l_rigidBodies_getAll();
-RigidBody* l_rigidBodies_getByIndex(sol::table self, unsigned int idx);
+namespace rigidBodies {
+int getCount();
+sol::table getAll();
+RigidBody* getByIndex(sol::table self, unsigned int idx);
+};  // namespace rigidBodies
 
-int l_bonds_getCount();
-sol::table l_bonds_getAll();
-Bond* l_bonds_getByIndex(sol::table self, unsigned int idx);
+namespace bonds {
+int getCount();
+sol::table getAll();
+Bond* getByIndex(sol::table self, unsigned int idx);
+};  // namespace bonds
 
-int l_streets_getCount();
-sol::table l_streets_getAll();
-Street* l_streets_getByIndex(sol::table self, unsigned int idx);
+namespace streets {
+int getCount();
+sol::table getAll();
+Street* getByIndex(sol::table self, unsigned int idx);
+};  // namespace streets
 
-int l_intersections_getCount();
-sol::table l_intersections_getAll();
-StreetIntersection* l_intersections_getByIndex(sol::table self,
-                                               unsigned int idx);
+namespace intersections {
+int getCount();
+sol::table getAll();
+StreetIntersection* getByIndex(sol::table self, unsigned int idx);
+};  // namespace intersections
 
-sol::table l_os_listDirectory(const char* path, sol::this_state s);
-bool l_os_createDirectory(const char* path);
-double l_os_realClock();
+namespace os {
+sol::table listDirectory(const char* path, sol::this_state s);
+bool createDirectory(const char* path);
+double realClock();
+};  // namespace os
+};  // namespace Lua
 
 std::string addressFromInteger(unsigned int address);
