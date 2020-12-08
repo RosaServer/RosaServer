@@ -397,4 +397,9 @@ void log(std::string line) {
 }
 
 void handleInterruptSignal(int signal) { shouldExit = true; }
+
+void setTitle(const char* title) {
+	std::lock_guard<std::mutex> guard(outputMutex);
+	std::cout << "\33]0;" << title << '\7';
+}
 }  // namespace Console

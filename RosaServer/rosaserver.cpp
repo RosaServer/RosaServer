@@ -77,9 +77,7 @@ struct Server {
 	unsigned int getVersionMinor() const { return *subVersion; }
 	unsigned int getNumEvents() const { return *numEvents; }
 
-	void setConsoleTitle(const char* title) const {
-		printf("\033]0;%s\007", title);
-	}
+	void setConsoleTitle(const char* title) const { Console::setTitle(title); }
 	void reset() const { hookAndReset(RESET_REASON_LUACALL); }
 };
 static Server* server;

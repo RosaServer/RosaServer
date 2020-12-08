@@ -19,4 +19,5 @@ void init();
 void cleanup();
 void log(std::string line);
 void handleInterruptSignal(int signal);
+void setTitle(const char* title);
 }  // namespace Console
