@@ -38,7 +38,7 @@ void hookAndReset(int reason) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&resetGameHook);
+			subhook::ScopedHookRemove remove(&Hooks::resetGameHook);
 			Engine::resetGame();
 		}
 		if (func != sol::nil) {
@@ -239,7 +239,7 @@ void l_event_soundSimple(int soundType, Vector* pos) {
 void l_event_explosion(Vector* pos) { Engine::createEventExplosion(0, pos); }
 
 void l_event_bulletHit(int hitType, Vector* pos, Vector* normal) {
-	subhook::ScopedHookRemove remove(&createEventBulletHitHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
 	Engine::createEventBulletHit(0, hitType, pos, normal);
 }
 
@@ -258,7 +258,7 @@ sol::table l_physics_lineIntersectLevel(Vector* posA, Vector* posB) {
 sol::table l_physics_lineIntersectHuman(Human* man, Vector* posA,
                                         Vector* posB) {
 	sol::table table = lua->create_table();
-	subhook::ScopedHookRemove remove(&lineIntersectHumanHook);
+	subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
 	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
@@ -343,7 +343,7 @@ Item* l_items_getByIndex(sol::table self, unsigned int idx) {
 }
 
 Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot) {
-	subhook::ScopedHookRemove remove(&createItemHook);
+	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
 	int id = Engine::createItem(itemType, pos, nullptr, rot);
 
 	if (id != -1 && itemDataTables[id]) {
@@ -356,7 +356,7 @@ Item* l_items_create(int itemType, Vector* pos, RotMatrix* rot) {
 
 Item* l_items_createVel(int itemType, Vector* pos, Vector* vel,
                         RotMatrix* rot) {
-	subhook::ScopedHookRemove remove(&createItemHook);
+	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
 	int id = Engine::createItem(itemType, pos, vel, rot);
 
 	if (id != -1 && itemDataTables[id]) {
@@ -396,7 +396,7 @@ Vehicle* l_vehicles_getByIndex(sol::table self, unsigned int idx) {
 }
 
 Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color) {
-	subhook::ScopedHookRemove remove(&createVehicleHook);
+	subhook::ScopedHookRemove remove(&Hooks::createVehicleHook);
 	int id = Engine::createVehicle(type, pos, nullptr, rot, color);
 
 	if (id != -1 && vehicleDataTables[id]) {
@@ -409,7 +409,7 @@ Vehicle* l_vehicles_create(int type, Vector* pos, RotMatrix* rot, int color) {
 
 Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel,
                               RotMatrix* rot, int color) {
-	subhook::ScopedHookRemove remove(&createVehicleHook);
+	subhook::ScopedHookRemove remove(&Hooks::createVehicleHook);
 	int id = Engine::createVehicle(type, pos, vel, rot, color);
 
 	if (id != -1 && vehicleDataTables[id]) {
@@ -421,22 +421,22 @@ Vehicle* l_vehicles_createVel(int type, Vector* pos, Vector* vel,
 }
 
 void l_chat_announce(const char* message) {
-	subhook::ScopedHookRemove remove(&createEventMessageHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(0, (char*)message, -1, 0);
 }
 
 void l_chat_tellAdmins(const char* message) {
-	subhook::ScopedHookRemove remove(&createEventMessageHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(4, (char*)message, -1, 0);
 }
 
 void l_chat_addRaw(int type, const char* message, int speakerID, int distance) {
-	subhook::ScopedHookRemove remove(&createEventMessageHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(type, (char*)message, speakerID, distance);
 }
 
 void l_accounts_save() {
-	subhook::ScopedHookRemove remove(&saveAccountsServerHook);
+	subhook::ScopedHookRemove remove(&Hooks::saveAccountsServerHook);
 	Engine::saveAccountsServer();
 }
 
@@ -517,7 +517,7 @@ Player* l_players_getByIndex(sol::table self, unsigned int idx) {
 }
 
 Player* l_players_createBot() {
-	subhook::ScopedHookRemove remove(&createPlayerHook);
+	subhook::ScopedHookRemove remove(&Hooks::createPlayerHook);
 	int playerID = Engine::createPlayer();
 	if (playerID == -1) return nullptr;
 
@@ -560,12 +560,12 @@ Human* l_humans_getByIndex(sol::table self, unsigned int idx) {
 Human* l_humans_create(Vector* pos, RotMatrix* rot, Player* ply) {
 	int playerID = ply->getIndex();
 	if (ply->humanID != -1) {
-		subhook::ScopedHookRemove remove(&deleteHumanHook);
+		subhook::ScopedHookRemove remove(&Hooks::deleteHumanHook);
 		Engine::deleteHuman(ply->humanID);
 	}
 	int humanID;
 	{
-		subhook::ScopedHookRemove remove(&createHumanHook);
+		subhook::ScopedHookRemove remove(&Hooks::createHumanHook);
 		humanID = Engine::createHuman(pos, rot, playerID);
 	}
 	if (humanID == -1) return nullptr;
@@ -845,19 +845,18 @@ sol::table Player::getDataTable() const {
 }
 
 void Player::update() const {
-	subhook::ScopedHookRemove remove(&createEventUpdatePlayerHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventUpdatePlayerHook);
 	Engine::createEventUpdatePlayer(getIndex());
 }
 
 void Player::updateFinance() const {
-	subhook::ScopedHookRemove remove(&createEventUpdatePlayerFinanceHook);
 	Engine::createEventUpdatePlayerFinance(getIndex());
 }
 
 void Player::remove() const {
 	int index = getIndex();
 
-	subhook::ScopedHookRemove remove(&deletePlayerHook);
+	subhook::ScopedHookRemove remove(&Hooks::deletePlayerHook);
 	Engine::deletePlayer(index);
 
 	if (playerDataTables[index]) {
@@ -867,7 +866,7 @@ void Player::remove() const {
 }
 
 void Player::sendMessage(const char* message) const {
-	subhook::ScopedHookRemove remove(&createEventMessageHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(6, (char*)message, getIndex(), 0);
 }
 
@@ -950,7 +949,7 @@ sol::table Human::getDataTable() const {
 void Human::remove() const {
 	int index = getIndex();
 
-	subhook::ScopedHookRemove remove(&deleteHumanHook);
+	subhook::ScopedHookRemove remove(&Hooks::deleteHumanHook);
 	Engine::deleteHuman(index);
 
 	if (humanDataTables[index]) {
@@ -1007,7 +1006,7 @@ void Human::teleport(Vector* vec) {
 };
 
 void Human::speak(const char* message, int distance) const {
-	subhook::ScopedHookRemove remove(&createEventMessageHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(1, (char*)message, getIndex(), distance);
 }
 
@@ -1082,12 +1081,12 @@ void Human::addVelocity(Vector* vel) const {
 }
 
 bool Human::mountItem(Item* childItem, unsigned int slot) const {
-	subhook::ScopedHookRemove remove(&linkItemHook);
+	subhook::ScopedHookRemove remove(&Hooks::linkItemHook);
 	return Engine::linkItem(childItem->getIndex(), -1, getIndex(), slot);
 }
 
 void Human::applyDamage(int bone, int damage) const {
-	subhook::ScopedHookRemove remove(&humanApplyDamageHook);
+	subhook::ScopedHookRemove remove(&Hooks::humanApplyDamageHook);
 	Engine::humanApplyDamage(getIndex(), bone, 0, damage);
 }
 
@@ -1124,7 +1123,7 @@ sol::table Item::getDataTable() const {
 void Item::remove() const {
 	int index = getIndex();
 
-	subhook::ScopedHookRemove remove(&deleteItemHook);
+	subhook::ScopedHookRemove remove(&Hooks::deleteItemHook);
 	Engine::deleteItem(index);
 
 	if (itemDataTables[index]) {
@@ -1152,22 +1151,22 @@ Item* Item::getParentItem() const {
 RigidBody* Item::getRigidBody() const { return &Engine::bodies[bodyID]; }
 
 bool Item::mountItem(Item* childItem, unsigned int slot) const {
-	subhook::ScopedHookRemove remove(&linkItemHook);
+	subhook::ScopedHookRemove remove(&Hooks::linkItemHook);
 	return Engine::linkItem(getIndex(), childItem->getIndex(), -1, slot);
 }
 
 bool Item::unmount() const {
-	subhook::ScopedHookRemove remove(&linkItemHook);
+	subhook::ScopedHookRemove remove(&Hooks::linkItemHook);
 	return Engine::linkItem(getIndex(), -1, -1, 0);
 }
 
 void Item::speak(const char* message, int distance) const {
-	subhook::ScopedHookRemove remove(&createEventMessageHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(2, (char*)message, getIndex(), distance);
 }
 
 void Item::explode() const {
-	subhook::ScopedHookRemove remove(&grenadeExplosionHook);
+	subhook::ScopedHookRemove remove(&Hooks::grenadeExplosionHook);
 	Engine::grenadeExplosion(getIndex());
 }
 
@@ -1220,7 +1219,7 @@ void Vehicle::updateType() const {
 
 void Vehicle::updateDestruction(int updateType, int partID, Vector* pos,
                                 Vector* normal) const {
-	subhook::ScopedHookRemove remove(&createEventUpdateVehicleHook);
+	subhook::ScopedHookRemove remove(&Hooks::createEventUpdateVehicleHook);
 	Engine::createEventUpdateVehicle(getIndex(), updateType, partID, pos, normal);
 }
 

@@ -2,9 +2,53 @@
 #include "api.h"
 #include "console.h"
 
+namespace Hooks {
+subhook::Hook subRosaPutsHook;
+subhook::Hook subRosa__printf_chkHook;
+subhook::Hook resetGameHook;
+subhook::Hook logicSimulationHook;
+subhook::Hook logicSimulationRaceHook;
+subhook::Hook logicSimulationRoundHook;
+subhook::Hook logicSimulationWorldHook;
+subhook::Hook logicSimulationTerminatorHook;
+subhook::Hook logicSimulationCoopHook;
+subhook::Hook logicSimulationVersusHook;
+subhook::Hook logicPlayerActionsHook;
+subhook::Hook physicsSimulationHook;
+subhook::Hook serverReceiveHook;
+subhook::Hook serverSendHook;
+subhook::Hook bulletSimulationHook;
+subhook::Hook saveAccountsServerHook;
+subhook::Hook createAccountByJoinTicketHook;
+subhook::Hook serverSendConnectResponseHook;
+subhook::Hook linkItemHook;
+subhook::Hook itemComputerInputHook;
+subhook::Hook humanApplyDamageHook;
+subhook::Hook humanCollisionVehicleHook;
+subhook::Hook humanGrabbingHook;
+subhook::Hook grenadeExplosionHook;
+subhook::Hook serverPlayerMessageHook;
+subhook::Hook playerAIHook;
+subhook::Hook playerDeathTaxHook;
+subhook::Hook addCollisionRigidBodyOnRigidBodyHook;
+subhook::Hook createPlayerHook;
+subhook::Hook deletePlayerHook;
+subhook::Hook createHumanHook;
+subhook::Hook deleteHumanHook;
+subhook::Hook createItemHook;
+subhook::Hook deleteItemHook;
+subhook::Hook createVehicleHook;
+subhook::Hook deleteVehicleHook;
+subhook::Hook createRigidBodyHook;
+subhook::Hook createEventMessageHook;
+subhook::Hook createEventUpdatePlayerHook;
+subhook::Hook createEventUpdateVehicleHook;
+subhook::Hook createEventBulletHitHook;
+subhook::Hook lineIntersectHumanHook;
+
 static constexpr int httpThreadCount = 2;
 
-int h_subrosa_puts(const char* str) {
+int subRosaPuts(const char* str) {
 	std::ostringstream stream;
 
 	stream << SUBROSA_PREFIX;
@@ -16,7 +60,7 @@ int h_subrosa_puts(const char* str) {
 	return 1;
 }
 
-int h_subrosa___printf_chk(int flag, const char* format, ...) {
+int subRosa__printf_chk(int flag, const char* format, ...) {
 	va_list arguments;
 	va_start(arguments, format);
 
@@ -34,7 +78,7 @@ int h_subrosa___printf_chk(int flag, const char* format, ...) {
 	return 0;
 }
 
-void h_resetgame() {
+void resetGame() {
 	if (!initialized) {
 		initialized = true;
 
@@ -58,7 +102,7 @@ void h_resetgame() {
 	}
 }
 
-void h_logicsimulation() {
+void logicSimulation() {
 	if (shouldReset) {
 		shouldReset = false;
 		luaInit(true);
@@ -149,7 +193,7 @@ void h_logicsimulation() {
 	}
 }
 
-void h_logicsimulation_race() {
+void logicSimulationRace() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -168,7 +212,7 @@ void h_logicsimulation_race() {
 	}
 }
 
-void h_logicsimulation_round() {
+void logicSimulationRound() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -187,7 +231,7 @@ void h_logicsimulation_round() {
 	}
 }
 
-void h_logicsimulation_world() {
+void logicSimulationWorld() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -206,7 +250,7 @@ void h_logicsimulation_world() {
 	}
 }
 
-void h_logicsimulation_terminator() {
+void logicSimulationTerminator() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -225,7 +269,7 @@ void h_logicsimulation_terminator() {
 	}
 }
 
-void h_logicsimulation_coop() {
+void logicSimulationHoop() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -244,7 +288,7 @@ void h_logicsimulation_coop() {
 	}
 }
 
-void h_logicsimulation_versus() {
+void logicSimulationVersus() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -263,7 +307,7 @@ void h_logicsimulation_versus() {
 	}
 }
 
-void h_logic_playeractions(int playerID) {
+void logicPlayerActions(int playerID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -282,7 +326,7 @@ void h_logic_playeractions(int playerID) {
 	}
 }
 
-void h_physicssimulation() {
+void physicsSimulation() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -301,7 +345,7 @@ void h_physicssimulation() {
 	}
 }
 
-int h_serverrecv() {
+int serverReceive() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -323,7 +367,7 @@ int h_serverrecv() {
 	return -1;
 }
 
-void h_serversend() {
+void serverSend() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -342,7 +386,7 @@ void h_serversend() {
 	}
 }
 
-void h_bulletsimulation() {
+void bulletSimulation() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -361,7 +405,7 @@ void h_bulletsimulation() {
 	}
 }
 
-void h_saveaccountsserver() {
+void saveAccountsServer() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -380,7 +424,7 @@ void h_saveaccountsserver() {
 	}
 }
 
-int h_createaccount_jointicket(int identifier, unsigned int ticket) {
+int createAccountByJoinTicket(int identifier, unsigned int ticket) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -412,8 +456,8 @@ int h_createaccount_jointicket(int identifier, unsigned int ticket) {
 	return -1;
 }
 
-void h_server_sendconnectreponse(unsigned int address, unsigned int port,
-                                 const char* message) {
+void serverSendConnectResponse(unsigned int address, unsigned int port,
+                               const char* message) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 
@@ -443,7 +487,7 @@ void h_server_sendconnectreponse(unsigned int address, unsigned int port,
 	}
 }
 
-int h_createplayer() {
+int createPlayer() {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -470,7 +514,7 @@ int h_createplayer() {
 	return -1;
 }
 
-void h_deleteplayer(int playerID) {
+void deletePlayer(int playerID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -494,7 +538,7 @@ void h_deleteplayer(int playerID) {
 	}
 }
 
-int h_createhuman(Vector* pos, RotMatrix* rot, int playerID) {
+int createHuman(Vector* pos, RotMatrix* rot, int playerID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -521,7 +565,7 @@ int h_createhuman(Vector* pos, RotMatrix* rot, int playerID) {
 	return -1;
 }
 
-void h_deletehuman(int humanID) {
+void deleteHuman(int humanID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -545,7 +589,7 @@ void h_deletehuman(int humanID) {
 	}
 }
 
-int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot) {
+int createItem(int type, Vector* pos, Vector* vel, RotMatrix* rot) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -572,7 +616,7 @@ int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot) {
 	return -1;
 }
 
-void h_deleteitem(int itemID) {
+void deleteItem(int itemID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -596,8 +640,8 @@ void h_deleteitem(int itemID) {
 	}
 }
 
-int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot,
-                   int color) {
+int createVehicle(int type, Vector* pos, Vector* vel, RotMatrix* rot,
+                  int color) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -624,7 +668,7 @@ int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot,
 	return -1;
 }
 
-void h_deleteobject(int vehicleID) {
+void deleteVehicle(int vehicleID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -648,8 +692,8 @@ void h_deleteobject(int vehicleID) {
 	}
 }
 
-int h_createrigidbody(int type, Vector* pos, RotMatrix* rot, Vector* vel,
-                      Vector* scale, float mass) {
+int createRigidBody(int type, Vector* pos, RotMatrix* rot, Vector* vel,
+                    Vector* scale, float mass) {
 	int id;
 	{
 		subhook::ScopedHookRemove remove(&createRigidBodyHook);
@@ -662,7 +706,7 @@ int h_createrigidbody(int type, Vector* pos, RotMatrix* rot, Vector* vel,
 	return id;
 }
 
-int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot) {
+int linkItem(int itemID, int childItemID, int parentHumanID, int slot) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -691,7 +735,7 @@ int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot) {
 	return 0;
 }
 
-void h_item_computerinput(int itemID, unsigned int character) {
+void itemComputerInput(int itemID, unsigned int character) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -711,7 +755,7 @@ void h_item_computerinput(int itemID, unsigned int character) {
 	}
 }
 
-void h_human_applydamage(int humanID, int bone, int unk, int damage) {
+void humanApplyDamage(int humanID, int bone, int unk, int damage) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -731,7 +775,7 @@ void h_human_applydamage(int humanID, int bone, int unk, int damage) {
 	}
 }
 
-void h_human_collisionvehicle(int humanID, int vehicleID) {
+void humanCollisionVehicle(int humanID, int vehicleID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -752,7 +796,7 @@ void h_human_collisionvehicle(int humanID, int vehicleID) {
 	}
 }
 
-void h_human_grabbing(int humanID) {
+void humanGrabbing(int humanID) {
 	Human* human = &Engine::humans[humanID];
 	bool isGrabbingAny = human->isGrabbingLeft || human->isGrabbingRight;
 
@@ -775,7 +819,7 @@ void h_human_grabbing(int humanID) {
 	}
 }
 
-void h_grenadeexplosion(int itemID) {
+void grenadeExplosion(int itemID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -794,7 +838,7 @@ void h_grenadeexplosion(int itemID) {
 	}
 }
 
-int h_server_playermessage(int playerID, char* message) {
+int serverPlayerMessage(int playerID, char* message) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -808,7 +852,7 @@ int h_server_playermessage(int playerID, char* message) {
 	return 1;
 }
 
-void h_playerai(int playerID) {
+void playerAI(int playerID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -827,7 +871,7 @@ void h_playerai(int playerID) {
 	}
 }
 
-void h_playerdeathtax(int playerID) {
+void playerDeathTax(int playerID) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -846,10 +890,10 @@ void h_playerdeathtax(int playerID) {
 	}
 }
 
-void h_addcollision_rigidbody_rigidbody(int aBodyID, int bBodyID,
-                                        Vector* aLocalPos, Vector* bLocalPos,
-                                        Vector* normal, float a, float b,
-                                        float c, float d) {
+void addCollisionRigidBodyOnRigidBody(int aBodyID, int bBodyID,
+                                      Vector* aLocalPos, Vector* bLocalPos,
+                                      Vector* normal, float a, float b, float c,
+                                      float d) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -875,8 +919,8 @@ Type:
 5 = Billboard
 6 = To Player (Crim)
 */
-void h_createevent_message(int speakerType, char* message, int speakerID,
-                           int distance) {
+void createEventMessage(int speakerType, char* message, int speakerID,
+                        int distance) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -896,7 +940,7 @@ void h_createevent_message(int speakerType, char* message, int speakerID,
 	}
 }
 
-void h_createevent_updateplayer(int id) {
+void createEventUpdatePlayer(int id) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -915,27 +959,8 @@ void h_createevent_updateplayer(int id) {
 	}
 }
 
-void h_createevent_updateplayer_finance(int id) {
-	bool noParent = false;
-	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
-		auto res = func("EventUpdatePlayerFinance", &Engine::players[id]);
-		if (noLuaCallError(&res)) noParent = (bool)res;
-	}
-	if (!noParent) {
-		{
-			subhook::ScopedHookRemove remove(&createEventUpdatePlayerFinanceHook);
-			Engine::createEventUpdatePlayerFinance(id);
-		}
-		if (func != sol::nil) {
-			auto res = func("PostEventUpdatePlayerFinance", &Engine::players[id]);
-			noLuaCallError(&res);
-		}
-	}
-}
-
-void h_createevent_updateobject(int vehicleID, int updateType, int partID,
-                                Vector* pos, Vector* normal) {
+void createEventUpdateVehicle(int vehicleID, int updateType, int partID,
+                              Vector* pos, Vector* normal) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -957,8 +982,7 @@ void h_createevent_updateobject(int vehicleID, int updateType, int partID,
 	}
 }
 
-void h_createevent_bullethit(int unk, int hitType, Vector* pos,
-                             Vector* normal) {
+void createEventBulletHit(int unk, int hitType, Vector* pos, Vector* normal) {
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
 	if (func != sol::nil) {
@@ -977,7 +1001,7 @@ void h_createevent_bullethit(int unk, int hitType, Vector* pos,
 	}
 }
 
-int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB) {
+int lineIntersectHuman(int humanID, Vector* posA, Vector* posB) {
 	int didHit;
 	{
 		subhook::ScopedHookRemove remove(&lineIntersectHumanHook);
@@ -997,3 +1021,4 @@ int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB) {
 
 	return !noParent;
 }
+};  // namespace Hooks
