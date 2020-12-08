@@ -73,24 +73,24 @@ struct Server {
 	}
 	int getMaxPlayers() const { return *maxPlayers; }
 	void setMaxPlayers(int max) const { *maxPlayers = max; }
-	int getType() const { return *gameType; }
-	void setType(int type) const { *gameType = type; }
-	char* getLevelName() const { return mapName; }
+	int getType() const { return *Engine::gameType; }
+	void setType(int type) const { *Engine::gameType = type; }
+	char* getLevelName() const { return Engine::mapName; }
 	void setLevelName(const char* newName) const {
-		strncpy(mapName, newName, 31);
+		strncpy(Engine::mapName, newName, 31);
 	}
-	char* getLoadedLevelName() const { return loadedMapName; }
+	char* getLoadedLevelName() const { return Engine::loadedMapName; }
 	bool getIsLevelLoaded() const { return *isLevelLoaded; }
 	void setIsLevelLoaded(bool b) const { *isLevelLoaded = b; }
 	float getGravity() const { return *gravity; }
 	void setGravity(float g) const { *gravity = g; }
 	float getDefaultGravity() const { return originalGravity; }
-	int getState() const { return *gameState; }
-	void setState(int state) const { *gameState = state; }
-	int getTime() const { return *gameTimer; }
-	void setTime(int time) const { *gameTimer = time; }
-	int getSunTime() const { return *sunTime; }
-	void setSunTime(int time) const { *sunTime = time % 5184000; }
+	int getState() const { return *Engine::gameState; }
+	void setState(int state) const { *Engine::gameState = state; }
+	int getTime() const { return *Engine::gameTimer; }
+	void setTime(int time) const { *Engine::gameTimer = time; }
+	int getSunTime() const { return *Engine::sunTime; }
+	void setSunTime(int time) const { *Engine::sunTime = time % 5184000; }
 	std::string getVersion() const {
 		std::ostringstream stream;
 		stream << *version << (char)(*subVersion + 97);
@@ -912,113 +912,126 @@ static inline void locateMemory(unsigned long base) {
 	password = (char*)(base + 0x1CC6D48C);
 	maxPlayers = (int*)(base + 0x24EE4648);
 
-	gameType = (int*)(base + 0x443F3988);
-	mapName = (char*)(base + 0x443F398C);
-	loadedMapName = (char*)(base + 0x3C2EEFE4);
-	gameState = (int*)(base + 0x443F3BA4);
-	gameTimer = (int*)(base + 0x443F3BAC);
-	sunTime = (unsigned int*)(base + 0x9846CC0);
+	Engine::gameType = (int*)(base + 0x443F3988);
+	Engine::mapName = (char*)(base + 0x443F398C);
+	Engine::loadedMapName = (char*)(base + 0x3C2EEFE4);
+	Engine::gameState = (int*)(base + 0x443F3BA4);
+	Engine::gameTimer = (int*)(base + 0x443F3BAC);
+	Engine::sunTime = (unsigned int*)(base + 0x9846CC0);
 	isLevelLoaded = (int*)(base + 0x3C2EEFE0);
 	gravity = (float*)(base + 0xC72AC);
 	pryMemory(gravity, 1);
 	originalGravity = *gravity;
 
-	lineIntersectResult = (RayCastResult*)(base + 0x55E44E00);
+	Engine::lineIntersectResult = (RayCastResult*)(base + 0x55E44E00);
 
-	connections = (Connection*)(base + 0x43ACE0);
-	accounts = (Account*)(base + 0x334F6D0);
-	players = (Player*)(base + 0x19BC9CC0);
-	humans = (Human*)(base + 0x8B1D4A8);
-	vehicles = (Vehicle*)(base + 0x20DEF320);
-	itemTypes = (ItemType*)(base + 0x5A088680);
-	items = (Item*)(base + 0x7FE2160);
-	bullets = (Bullet*)(base + 0x4355E260);
-	bodies = (RigidBody*)(base + 0x2DACC0);
-	bonds = (Bond*)(base + 0x24964220);
-	streets = (Street*)(base + 0x3C311030);
-	streetIntersections = (StreetIntersection*)(base + 0x3C2EF02C);
+	Engine::connections = (Connection*)(base + 0x43ACE0);
+	Engine::accounts = (Account*)(base + 0x334F6D0);
+	Engine::players = (Player*)(base + 0x19BC9CC0);
+	Engine::humans = (Human*)(base + 0x8B1D4A8);
+	Engine::vehicles = (Vehicle*)(base + 0x20DEF320);
+	Engine::itemTypes = (ItemType*)(base + 0x5A088680);
+	Engine::items = (Item*)(base + 0x7FE2160);
+	Engine::bullets = (Bullet*)(base + 0x4355E260);
+	Engine::bodies = (RigidBody*)(base + 0x2DACC0);
+	Engine::bonds = (Bond*)(base + 0x24964220);
+	Engine::streets = (Street*)(base + 0x3C311030);
+	Engine::streetIntersections = (StreetIntersection*)(base + 0x3C2EF02C);
 
-	numConnections = (unsigned int*)(base + 0x4532F468);
-	numBullets = (unsigned int*)(base + 0x4532F240);
-	numStreets = (unsigned int*)(base + 0x3C31102C);
-	numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);
+	Engine::numConnections = (unsigned int*)(base + 0x4532F468);
+	Engine::numBullets = (unsigned int*)(base + 0x4532F240);
+	Engine::numStreets = (unsigned int*)(base + 0x3C31102C);
+	Engine::numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);
 
 	//_test = (_test_func)(base + 0x4cc90);
 	// pryMemory(&_test, 2);
 
-	subRosaPuts = (subRosaPutsFunc)(base + 0x1CF0);
-	subRosa__printf_chk = (subRosa__printf_chkFunc)(base + 0x1FE0);
+	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1CF0);
+	Engine::subRosa__printf_chk =
+	    (Engine::subRosa__printf_chkFunc)(base + 0x1FE0);
 
-	resetGame = (voidFunc)(base + 0xB10B0);
+	Engine::resetGame = (Engine::voidFunc)(base + 0xB10B0);
 
-	logicSimulation = (voidFunc)(base + 0xB7BF0);
-	logicSimulationRace = (voidFunc)(base + 0xB3650);
-	logicSimulationRound = (voidFunc)(base + 0xB3DD0);
-	logicSimulationWorld = (voidFunc)(base + 0xB71A0);
-	logicSimulationTerminator = (voidFunc)(base + 0xB4D50);
-	logicSimulationCoop = (voidFunc)(base + 0xB3410);
-	logicSimulationVersus = (voidFunc)(base + 0xB65F0);
-	logicPlayerActions = (voidIndexFunc)(base + 0xA93A0);
+	Engine::logicSimulation = (Engine::voidFunc)(base + 0xB7BF0);
+	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xB3650);
+	Engine::logicSimulationRound = (Engine::voidFunc)(base + 0xB3DD0);
+	Engine::logicSimulationWorld = (Engine::voidFunc)(base + 0xB71A0);
+	Engine::logicSimulationTerminator = (Engine::voidFunc)(base + 0xB4D50);
+	Engine::logicSimulationCoop = (Engine::voidFunc)(base + 0xB3410);
+	Engine::logicSimulationVersus = (Engine::voidFunc)(base + 0xB65F0);
+	Engine::logicPlayerActions = (Engine::voidIndexFunc)(base + 0xA93A0);
 
-	physicsSimulation = (voidFunc)(base + 0xA6CC0);
-	serverReceive = (serverrecv_func)(base + 0xC0BB0);
-	serverSend = (voidFunc)(base + 0xBDBA0);
-	bulletSimulation = (voidFunc)(base + 0x98960);
-	bulletTimeToLive = (voidFunc)(base + 0x181B0);
+	Engine::physicsSimulation = (Engine::voidFunc)(base + 0xA6CC0);
+	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xC0BB0);
+	Engine::serverSend = (Engine::voidFunc)(base + 0xBDBA0);
+	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x98960);
+	Engine::bulletTimeToLive = (Engine::voidFunc)(base + 0x181B0);
 
-	saveAccountsServer = (voidFunc)(base + 0x6CC0);
+	Engine::saveAccountsServer = (Engine::voidFunc)(base + 0x6CC0);
 
-	createAccountByJoinTicket = (createAccountByJoinTicketFunc)(base + 0x65D0);
-	serverSendConnectResponse = (serverSendConnectResponseFunc)(base + 0xB8FD0);
+	Engine::createAccountByJoinTicket =
+	    (Engine::createAccountByJoinTicketFunc)(base + 0x65D0);
+	Engine::serverSendConnectResponse =
+	    (Engine::serverSendConnectResponseFunc)(base + 0xB8FD0);
 
-	scenarioArmHuman = (scenarioArmHumanFunc)(base + 0x4FDD0);
-	linkItem = (linkItemFunc)(base + 0x2B060);
-	itemSetMemo = (itemSetMemoFunc)(base + 0x25F80);
-	itemComputerTransmitLine = (itemComputerTransmitLineFunc)(base + 0x26100);
-	itemComputerIncrementLine = (voidIndexFunc)(base + 0x263a0);
-	itemComputerInput = (itemComputerInputFunc)(base + 0x4e620);
+	Engine::scenarioArmHuman = (Engine::scenarioArmHumanFunc)(base + 0x4FDD0);
+	Engine::linkItem = (Engine::linkItemFunc)(base + 0x2B060);
+	Engine::itemSetMemo = (Engine::itemSetMemoFunc)(base + 0x25F80);
+	Engine::itemComputerTransmitLine =
+	    (Engine::itemComputerTransmitLineFunc)(base + 0x26100);
+	Engine::itemComputerIncrementLine = (Engine::voidIndexFunc)(base + 0x263a0);
+	Engine::itemComputerInput = (Engine::itemComputerInputFunc)(base + 0x4e620);
 
-	humanApplyDamage = (humanApplyDamageFunc)(base + 0x1E1D0);
-	humanCollisionVehicle = (humanCollisionVehicleFunc)(base + 0x7AF50);
-	humanGrabbing = (voidIndexFunc)(base + 0xA16D0);
-	grenadeExplosion = (voidIndexFunc)(base + 0x2A990);
-	serverPlayerMessage = (server_playermessage_func)(base + 0xA7B80);
-	playerAI = (voidIndexFunc)(base + 0x96F80);
-	playerDeathTax = (voidIndexFunc)(base + 0x2D70);
-	createBondRigidBodyToRigidBody =
-	    (createBondRigidBodyToRigidBodyFunc)(base + 0x12CC0);
-	createBondRigidBodyRotRigidBody =
-	    (createBondRigidBodyRotRigidBodyFunc)(base + 0x12f70);
-	createBondRigidBodyToLevel = (createBondRigidBodyToLevelFunc)(base + 0x12B80);
-	addCollisionRigidBodyOnRigidBody =
-	    (addCollisionRigidBodyOnRigidBodyFunc)(base + 0x13070);
-	addCollisionRigidBodyOnLevel =
-	    (addCollisionRigidBodyOnLevelFunc)(base + 0x13220);
+	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x1E1D0);
+	Engine::humanCollisionVehicle =
+	    (Engine::humanCollisionVehicleFunc)(base + 0x7AF50);
+	Engine::humanGrabbing = (Engine::voidIndexFunc)(base + 0xA16D0);
+	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x2A990);
+	Engine::serverPlayerMessage =
+	    (Engine::serverPlayerMessageFunc)(base + 0xA7B80);
+	Engine::playerAI = (Engine::voidIndexFunc)(base + 0x96F80);
+	Engine::playerDeathTax = (Engine::voidIndexFunc)(base + 0x2D70);
+	Engine::createBondRigidBodyToRigidBody =
+	    (Engine::createBondRigidBodyToRigidBodyFunc)(base + 0x12CC0);
+	Engine::createBondRigidBodyRotRigidBody =
+	    (Engine::createBondRigidBodyRotRigidBodyFunc)(base + 0x12f70);
+	Engine::createBondRigidBodyToLevel =
+	    (Engine::createBondRigidBodyToLevelFunc)(base + 0x12B80);
+	Engine::addCollisionRigidBodyOnRigidBody =
+	    (Engine::addCollisionRigidBodyOnRigidBodyFunc)(base + 0x13070);
+	Engine::addCollisionRigidBodyOnLevel =
+	    (Engine::addCollisionRigidBodyOnLevelFunc)(base + 0x13220);
 
-	createPlayer = (createPlayerFunc)(base + 0x40EE0);
-	deletePlayer = (voidIndexFunc)(base + 0x411D0);
-	createHuman = (createHumanFunc)(base + 0x66D10);
-	deleteHuman = (voidIndexFunc)(base + 0x3EB0);
-	createItem = (createItemFunc)(base + 0x4DDE0);
-	deleteItem = (voidIndexFunc)(base + 0x2C180);
-	createRope = (createRopeFunc)(base + 0x4F150);
-	createVehicle = (createVehicleFunc)(base + 0x4CEA0);
-	deleteVehicle = (voidIndexFunc)(base + 0x42A0);
-	createRigidBody = (createRigidBodyFunc)(base + 0x4cc90);
+	Engine::createPlayer = (Engine::createPlayerFunc)(base + 0x40EE0);
+	Engine::deletePlayer = (Engine::voidIndexFunc)(base + 0x411D0);
+	Engine::createHuman = (Engine::createHumanFunc)(base + 0x66D10);
+	Engine::deleteHuman = (Engine::voidIndexFunc)(base + 0x3EB0);
+	Engine::createItem = (Engine::createItemFunc)(base + 0x4DDE0);
+	Engine::deleteItem = (Engine::voidIndexFunc)(base + 0x2C180);
+	Engine::createRope = (Engine::createRopeFunc)(base + 0x4F150);
+	Engine::createVehicle = (Engine::createVehicleFunc)(base + 0x4CEA0);
+	Engine::deleteVehicle = (Engine::voidIndexFunc)(base + 0x42A0);
+	Engine::createRigidBody = (Engine::createRigidBodyFunc)(base + 0x4cc90);
 
-	createEventMessage = (createEventMessageFunc)(base + 0x29C0);
-	createEventUpdatePlayer = (voidIndexFunc)(base + 0x2BE0);
-	createEventUpdatePlayerFinance = (voidIndexFunc)(base + 0x2D00);
-	createEventCreateVehicle = (voidIndexFunc)(base + 0x2AE0);
-	createEventUpdateVehicle = (createEventUpdateVehicleFunc)(base + 0x41C0);
-	createEventSound = (createEventSoundFunc)(base + 0x3CC0);
-	createEventExplosion = (createEventExplosionFunc)(base + 0x45A0);
-	createEventBulletHit = (createEventBulletHitFunc)(base + 0x4110);
+	Engine::createEventMessage = (Engine::createEventMessageFunc)(base + 0x29C0);
+	Engine::createEventUpdatePlayer = (Engine::voidIndexFunc)(base + 0x2BE0);
+	Engine::createEventUpdatePlayerFinance =
+	    (Engine::voidIndexFunc)(base + 0x2D00);
+	Engine::createEventCreateVehicle = (Engine::voidIndexFunc)(base + 0x2AE0);
+	Engine::createEventUpdateVehicle =
+	    (Engine::createEventUpdateVehicleFunc)(base + 0x41C0);
+	Engine::createEventSound = (Engine::createEventSoundFunc)(base + 0x3CC0);
+	Engine::createEventExplosion =
+	    (Engine::createEventExplosionFunc)(base + 0x45A0);
+	Engine::createEventBulletHit =
+	    (Engine::createEventBulletHitFunc)(base + 0x4110);
 
-	lineIntersectHuman = (lineIntersectHumanFunc)(base + 0x23AB0);
-	lineIntersectLevel = (lineIntersectLevelFunc)(base + 0x7C470);
-	lineIntersectVehicle = (lineIntersectVehicleFunc)(base + 0x95590);
-	lineIntersectTriangle = (lineIntersectTriangleFunc)(base + 0x6aa70);
+	Engine::lineIntersectHuman = (Engine::lineIntersectHumanFunc)(base + 0x23AB0);
+	Engine::lineIntersectLevel = (Engine::lineIntersectLevelFunc)(base + 0x7C470);
+	Engine::lineIntersectVehicle =
+	    (Engine::lineIntersectVehicleFunc)(base + 0x95590);
+	Engine::lineIntersectTriangle =
+	    (Engine::lineIntersectTriangleFunc)(base + 0x6aa70);
 }
 
 static inline void installHook(
@@ -1034,95 +1047,105 @@ static inline void installHook(
 
 static inline void installHooks() {
 	//_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
-	installHook("subRosaPutsHook", subRosaPutsHook, (void*)subRosaPuts,
+	installHook("subRosaPutsHook", subRosaPutsHook, (void*)Engine::subRosaPuts,
 	            (void*)h_subrosa_puts);
 	installHook("subRosa__printf_chkHook", subRosa__printf_chkHook,
-	            (void*)subRosa__printf_chk, (void*)h_subrosa___printf_chk);
+	            (void*)Engine::subRosa__printf_chk,
+	            (void*)h_subrosa___printf_chk);
 
-	installHook("resetGameHook", resetGameHook, (void*)resetGame,
+	installHook("resetGameHook", resetGameHook, (void*)Engine::resetGame,
 	            (void*)h_resetgame);
 
 	installHook("logicSimulationHook", logicSimulationHook,
-	            (void*)logicSimulation, (void*)h_logicsimulation);
+	            (void*)Engine::logicSimulation, (void*)h_logicsimulation);
 	installHook("logicSimulationRaceHook", logicSimulationRaceHook,
-	            (void*)logicSimulationRace, (void*)h_logicsimulation_race);
+	            (void*)Engine::logicSimulationRace,
+	            (void*)h_logicsimulation_race);
 	installHook("logicSimulationRoundHook", logicSimulationRoundHook,
-	            (void*)logicSimulationRound, (void*)h_logicsimulation_round);
+	            (void*)Engine::logicSimulationRound,
+	            (void*)h_logicsimulation_round);
 	installHook("logicSimulationWorldHook", logicSimulationWorldHook,
-	            (void*)logicSimulationWorld, (void*)h_logicsimulation_world);
+	            (void*)Engine::logicSimulationWorld,
+	            (void*)h_logicsimulation_world);
 	installHook("logicSimulationTerminatorHook", logicSimulationTerminatorHook,
-	            (void*)logicSimulationTerminator,
+	            (void*)Engine::logicSimulationTerminator,
 	            (void*)h_logicsimulation_terminator);
 	installHook("logicSimulationCoopHook", logicSimulationCoopHook,
-	            (void*)logicSimulationCoop, (void*)h_logicsimulation_coop);
+	            (void*)Engine::logicSimulationCoop,
+	            (void*)h_logicsimulation_coop);
 	installHook("logicSimulationVersusHook", logicSimulationVersusHook,
-	            (void*)logicSimulationVersus, (void*)h_logicsimulation_versus);
+	            (void*)Engine::logicSimulationVersus,
+	            (void*)h_logicsimulation_versus);
 	installHook("logicPlayerActionsHook", logicPlayerActionsHook,
-	            (void*)logicPlayerActions, (void*)h_logic_playeractions);
+	            (void*)Engine::logicPlayerActions, (void*)h_logic_playeractions);
 
 	installHook("physicsSimulationHook", physicsSimulationHook,
-	            (void*)physicsSimulation, (void*)h_physicssimulation);
-	installHook("serverReceiveHook", serverReceiveHook, (void*)serverReceive,
-	            (void*)h_serverrecv);
-	installHook("serverSendHook", serverSendHook, (void*)serverSend,
+	            (void*)Engine::physicsSimulation, (void*)h_physicssimulation);
+	installHook("serverReceiveHook", serverReceiveHook,
+	            (void*)Engine::serverReceive, (void*)h_serverrecv);
+	installHook("serverSendHook", serverSendHook, (void*)Engine::serverSend,
 	            (void*)h_serversend);
 	installHook("bulletSimulationHook", bulletSimulationHook,
-	            (void*)bulletSimulation, (void*)h_bulletsimulation);
+	            (void*)Engine::bulletSimulation, (void*)h_bulletsimulation);
 
 	installHook("saveAccountsServerHook", saveAccountsServerHook,
-	            (void*)saveAccountsServer, (void*)h_saveaccountsserver);
+	            (void*)Engine::saveAccountsServer, (void*)h_saveaccountsserver);
 
 	installHook("createAccountByJoinTicketHook", createAccountByJoinTicketHook,
-	            (void*)createAccountByJoinTicket,
+	            (void*)Engine::createAccountByJoinTicket,
 	            (void*)h_createaccount_jointicket);
 	installHook("serverSendConnectResponseHook", serverSendConnectResponseHook,
-	            (void*)serverSendConnectResponse,
+	            (void*)Engine::serverSendConnectResponse,
 	            (void*)h_server_sendconnectreponse);
 
-	installHook("linkItemHook", linkItemHook, (void*)linkItem, (void*)h_linkitem);
+	installHook("linkItemHook", linkItemHook, (void*)Engine::linkItem,
+	            (void*)h_linkitem);
 	installHook("itemComputerInputHook", itemComputerInputHook,
-	            (void*)itemComputerInput, (void*)h_item_computerinput);
+	            (void*)Engine::itemComputerInput, (void*)h_item_computerinput);
 	installHook("humanApplyDamageHook", humanApplyDamageHook,
-	            (void*)humanApplyDamage, (void*)h_human_applydamage);
+	            (void*)Engine::humanApplyDamage, (void*)h_human_applydamage);
 	installHook("humanCollisionVehicleHook", humanCollisionVehicleHook,
-	            (void*)humanCollisionVehicle, (void*)h_human_collisionvehicle);
-	installHook("humanGrabbingHook", humanGrabbingHook, (void*)humanGrabbing,
-	            (void*)h_human_grabbing);
+	            (void*)Engine::humanCollisionVehicle,
+	            (void*)h_human_collisionvehicle);
+	installHook("humanGrabbingHook", humanGrabbingHook,
+	            (void*)Engine::humanGrabbing, (void*)h_human_grabbing);
 	installHook("grenadeExplosionHook", grenadeExplosionHook,
-	            (void*)grenadeExplosion, (void*)h_grenadeexplosion);
+	            (void*)Engine::grenadeExplosion, (void*)h_grenadeexplosion);
 	installHook("serverPlayerMessageHook", serverPlayerMessageHook,
-	            (void*)serverPlayerMessage, (void*)h_server_playermessage);
-	installHook("playerAIHook", playerAIHook, (void*)playerAI, (void*)h_playerai);
-	installHook("playerDeathTaxHook", playerDeathTaxHook, (void*)playerDeathTax,
-	            (void*)h_playerdeathtax);
+	            (void*)Engine::serverPlayerMessage,
+	            (void*)h_server_playermessage);
+	installHook("playerAIHook", playerAIHook, (void*)Engine::playerAI,
+	            (void*)h_playerai);
+	installHook("playerDeathTaxHook", playerDeathTaxHook,
+	            (void*)Engine::playerDeathTax, (void*)h_playerdeathtax);
 	installHook("addCollisionRigidBodyOnRigidBodyHook",
 	            addCollisionRigidBodyOnRigidBodyHook,
-	            (void*)addCollisionRigidBodyOnRigidBody,
+	            (void*)Engine::addCollisionRigidBodyOnRigidBody,
 	            (void*)h_addcollision_rigidbody_rigidbody);
 
-	installHook("createPlayerHook", createPlayerHook, (void*)createPlayer,
+	installHook("createPlayerHook", createPlayerHook, (void*)Engine::createPlayer,
 	            (void*)h_createplayer);
-	installHook("deletePlayerHook", deletePlayerHook, (void*)deletePlayer,
+	installHook("deletePlayerHook", deletePlayerHook, (void*)Engine::deletePlayer,
 	            (void*)h_deleteplayer);
-	installHook("createHumanHook", createHumanHook, (void*)createHuman,
+	installHook("createHumanHook", createHumanHook, (void*)Engine::createHuman,
 	            (void*)h_createhuman);
-	installHook("deleteHumanHook", deleteHumanHook, (void*)deleteHuman,
+	installHook("deleteHumanHook", deleteHumanHook, (void*)Engine::deleteHuman,
 	            (void*)h_deletehuman);
-	installHook("createItemHook", createItemHook, (void*)createItem,
+	installHook("createItemHook", createItemHook, (void*)Engine::createItem,
 	            (void*)h_createitem);
-	installHook("deleteItemHook", deleteItemHook, (void*)deleteItem,
+	installHook("deleteItemHook", deleteItemHook, (void*)Engine::deleteItem,
 	            (void*)h_deleteitem);
-	installHook("createVehicleHook", createVehicleHook, (void*)createVehicle,
-	            (void*)h_createobject);
-	installHook("deleteVehicleHook", deleteVehicleHook, (void*)deleteVehicle,
-	            (void*)h_deleteobject);
+	installHook("createVehicleHook", createVehicleHook,
+	            (void*)Engine::createVehicle, (void*)h_createobject);
+	installHook("deleteVehicleHook", deleteVehicleHook,
+	            (void*)Engine::deleteVehicle, (void*)h_deleteobject);
 	installHook("createRigidBodyHook", createRigidBodyHook,
-	            (void*)createRigidBody, (void*)h_createrigidbody);
+	            (void*)Engine::createRigidBody, (void*)h_createrigidbody);
 
 	installHook("createEventMessageHook", createEventMessageHook,
-	            (void*)createEventMessage, (void*)h_createevent_message);
+	            (void*)Engine::createEventMessage, (void*)h_createevent_message);
 	installHook("createEventUpdatePlayerHook", createEventUpdatePlayerHook,
-	            (void*)createEventUpdatePlayer,
+	            (void*)Engine::createEventUpdatePlayer,
 	            (void*)h_createevent_updateplayer);
 	// installHook("createEventUpdatePlayerFinanceHook",
 	// createEventUpdatePlayerFinanceHook,
@@ -1131,15 +1154,16 @@ static inline void installHooks() {
 	// createevent_updateitem_hook.Install((void*)createevent_updateitem,
 	// (void*)h_createevent_updateitem, HOOK_FLAGS);
 	installHook("createEventUpdateVehicleHook", createEventUpdateVehicleHook,
-	            (void*)createEventUpdateVehicle,
+	            (void*)Engine::createEventUpdateVehicle,
 	            (void*)h_createevent_updateobject);
 	// createevent_sound_hook.Install((void*)createEventSound,
 	// (void*)h_createevent_sound, HOOK_FLAGS);
 	installHook("createEventBulletHitHook", createEventBulletHitHook,
-	            (void*)createEventBulletHit, (void*)h_createevent_bullethit);
+	            (void*)Engine::createEventBulletHit,
+	            (void*)h_createevent_bullethit);
 
 	installHook("lineIntersectHumanHook", lineIntersectHumanHook,
-	            (void*)lineIntersectHuman, (void*)h_lineintersecthuman);
+	            (void*)Engine::lineIntersectHuman, (void*)h_lineintersecthuman);
 }
 
 static inline void attachSignalHandler() {

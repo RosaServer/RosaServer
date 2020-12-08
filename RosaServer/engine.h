@@ -1,6 +1,7 @@
 #pragma once
 #include "structs.h"
 
+namespace Engine {
 extern int* gameType;
 extern char* mapName;
 extern char* loadedMapName;
@@ -52,8 +53,8 @@ extern voidFunc logicSimulationVersus;
 extern voidIndexFunc logicPlayerActions;
 
 extern voidFunc physicsSimulation;
-typedef int (*serverrecv_func)();
-extern serverrecv_func serverReceive;
+typedef int (*serverReceiveFunc)();
+extern serverReceiveFunc serverReceive;
 extern voidFunc serverSend;
 extern voidFunc bulletSimulation;
 extern voidFunc bulletTimeToLive;
@@ -94,8 +95,8 @@ extern voidIndexFunc humanGrabbing;
 
 extern voidIndexFunc grenadeExplosion;
 
-typedef int (*server_playermessage_func)(int playerID, char* message);
-extern server_playermessage_func serverPlayerMessage;
+typedef int (*serverPlayerMessageFunc)(int playerID, char* message);
+extern serverPlayerMessageFunc serverPlayerMessage;
 extern voidIndexFunc playerAI;
 extern voidIndexFunc playerDeathTax;
 
@@ -211,3 +212,4 @@ typedef int (*lineIntersectTriangleFunc)(Vector* outPos, Vector* normal,
                                          Vector* posB, Vector* triA,
                                          Vector* triB, Vector* triC);
 extern lineIntersectTriangleFunc lineIntersectTriangle;
+};  // namespace Engine
