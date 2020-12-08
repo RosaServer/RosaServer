@@ -1,13 +1,12 @@
 #pragma once
 #include "sol/sol.hpp"
 
-#include <queue>
 #include <atomic>
 #include <mutex>
+#include <queue>
 #include <string>
 
-class Worker
-{
+class Worker {
 	std::atomic_bool* stopped = nullptr;
 	std::mutex destructionMutex;
 
@@ -20,7 +19,8 @@ class Worker
 	void runThread(std::string fileName);
 	void l_sendMessage(std::string message);
 	sol::object l_receiveMessage(sol::this_state s);
-public:
+
+ public:
 	Worker(std::string fileName);
 	~Worker();
 	void stop();

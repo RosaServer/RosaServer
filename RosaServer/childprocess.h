@@ -1,11 +1,10 @@
 #pragma once
 #include "sol/sol.hpp"
 
-#include <string>
 #include <sys/resource.h>
+#include <string>
 
-class ChildProcess
-{
+class ChildProcess {
 	int fdParentToChild[2];
 	int fdChildToParent[2];
 	int pid;
@@ -14,7 +13,8 @@ class ChildProcess
 	int exitCode;
 
 	void setLimit(__rlimit_resource resource, rlim_t softLimit, rlim_t hardLimit);
-public:
+
+ public:
 	ChildProcess(std::string fileName);
 	~ChildProcess();
 	bool isRunning();

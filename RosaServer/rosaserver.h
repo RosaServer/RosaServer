@@ -8,9 +8,9 @@
 #include "subhook.h"
 
 #include "api.h"
-#include "engine.h"
-#include "hooks.h"
-#include "worker.h"
 #include "childprocess.h"
 #include "console.h"
+#include "engine.h"
+#include "hooks.h"
 #include "image.h"
+#include "worker.h"

@@ -3,8 +3,7 @@
 #include <cerrno>
 
 #define handle_error(msg)               \
-	do                                    \
-	{                                     \
+	do {                                  \
 		std::cout << __LINE__ << std::endl; \
 		perror(msg);                        \
 		exit(EXIT_FAILURE);                 \
@@ -24,15 +23,13 @@ static int* isLevelLoaded;
 static float* gravity;
 static float originalGravity;
 
-static void pryMemory(void* address, size_t numPages)
-{
+static void pryMemory(void* address, size_t numPages) {
 	size_t pageSize = sysconf(_SC_PAGE_SIZE);
 
 	uintptr_t page = (uintptr_t)address;
 	page -= (page % pageSize);
 
-	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0)
-	{
+	if (mprotect((void*)page, pageSize * numPages, PROT_WRITE | PROT_READ) == 0) {
 		std::ostringstream stream;
 
 		stream << RS_PREFIX "Successfully pried open page at ";
@@ -41,162 +38,60 @@ static void pryMemory(void* address, size_t numPages)
 		stream << "\n";
 
 		Console::log(stream.str());
-	}
-	else
-	{
+	} else {
 		handle_error("mprotect");
 	}
 }
 
-/*static subhook::Hook _test_hook;
-typedef int(*_test_func)(int, Vector*, RotMatrix*, Vector*, Vector*, float);
-static _test_func _test;
-
-int h__test(int type, Vector* pos, RotMatrix* rot, Vector* vel, Vector* scale, float mass) {
-	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil)
-	{
-		auto res = func("Test", type, pos, rot, vel, scale, mass);
-		noLuaCallError(&res);
-	}
-
-	subhook::ScopedHookRemove remove(&_test_hook);
-	return _test(type, pos, rot, vel, scale, mass);
-}*/
-
-struct Server
-{
+struct Server {
 	const int TPS = 60;
 
-	const char* getClass() const
-	{
-		return "Server";
-	}
-	int getPort() const
-	{
-		return *serverPort;
-	}
-	char* getName() const
-	{
-		return serverName;
-	}
-	void setName(const char* newName) const
-	{
-		strncpy(serverName, newName, 31);
-	}
-	char* getPassword() const
-	{
-		return password;
-	}
-	void setPassword(const char* newPassword) const
-	{
+	const char* getClass() const { return "Server"; }
+	int getPort() const { return *serverPort; }
+	char* getName() const { return serverName; }
+	void setName(const char* newName) const { strncpy(serverName, newName, 31); }
+	char* getPassword() const { return password; }
+	void setPassword(const char* newPassword) const {
 		strncpy(password, newPassword, 31);
 		*isPassworded = newPassword[0] != 0;
 	}
-	int getMaxPlayers() const
-	{
-		return *maxPlayers;
+	int getMaxPlayers() const { return *maxPlayers; }
+	void setMaxPlayers(int max) const { *maxPlayers = max; }
+	int getType() const { return *Engine::gameType; }
+	void setType(int type) const { *Engine::gameType = type; }
+	char* getLevelName() const { return Engine::mapName; }
+	void setLevelName(const char* newName) const {
+		strncpy(Engine::mapName, newName, 31);
 	}
-	void setMaxPlayers(int max) const
-	{
-		*maxPlayers = max;
-	}
-	int getType() const
-	{
-		return *gameType;
-	}
-	void setType(int type) const
-	{
-		*gameType = type;
-	}
-	char* getLevelName() const
-	{
-		return mapName;
-	}
-	void setLevelName(const char* newName) const
-	{
-		strncpy(mapName, newName, 31);
-	}
-	char* getLoadedLevelName() const
-	{
-		return loadedMapName;
-	}
-	bool getIsLevelLoaded() const
-	{
-		return *isLevelLoaded;
-	}
-	void setIsLevelLoaded(bool b) const
-	{
-		*isLevelLoaded = b;
-	}
-	float getGravity() const
-	{
-		return *gravity;
-	}
-	void setGravity(float g) const
-	{
-		*gravity = g;
-	}
-	float getDefaultGravity() const
-	{
-		return originalGravity;
-	}
-	int getState() const
-	{
-		return *gameState;
-	}
-	void setState(int state) const
-	{
-		*gameState = state;
-	}
-	int getTime() const
-	{
-		return *gameTimer;
-	}
-	void setTime(int time) const
-	{
-		*gameTimer = time;
-	}
-	int getSunTime() const
-	{
-		return *sunTime;
-	}
-	void setSunTime(int time) const
-	{
-		*sunTime = time % 5184000;
-	}
-	std::string getVersion() const
-	{
+	char* getLoadedLevelName() const { return Engine::loadedMapName; }
+	bool getIsLevelLoaded() const { return *isLevelLoaded; }
+	void setIsLevelLoaded(bool b) const { *isLevelLoaded = b; }
+	float getGravity() const { return *gravity; }
+	void setGravity(float g) const { *gravity = g; }
+	float getDefaultGravity() const { return originalGravity; }
+	int getState() const { return *Engine::gameState; }
+	void setState(int state) const { *Engine::gameState = state; }
+	int getTime() const { return *Engine::gameTimer; }
+	void setTime(int time) const { *Engine::gameTimer = time; }
+	int getSunTime() const { return *Engine::sunTime; }
+	void setSunTime(int time) const { *Engine::sunTime = time % 5184000; }
+	std::string getVersion() const {
 		std::ostringstream stream;
 		stream << *version << (char)(*subVersion + 97);
 		return stream.str();
 	}
-	unsigned int getVersionMajor() const
-	{
-		return *version;
-	}
-	unsigned int getVersionMinor() const
-	{
-		return *subVersion;
-	}
-	unsigned int getNumEvents() const
-	{
-		return *numEvents;
-	}
+	unsigned int getVersionMajor() const { return *version; }
+	unsigned int getVersionMinor() const { return *subVersion; }
+	unsigned int getNumEvents() const { return *numEvents; }
 
-	void setConsoleTitle(const char* title) const
-	{
+	void setConsoleTitle(const char* title) const {
 		printf("\033]0;%s\007", title);
 	}
-	void reset() const
-	{
-		hookAndReset(RESET_REASON_LUACALL);
-	}
+	void reset() const { hookAndReset(RESET_REASON_LUACALL); }
 };
 static Server* server;
 
-void defineThreadSafeAPIs(sol::state* state)
-{
+void defineThreadSafeAPIs(sol::state* state) {
 	state->open_libraries(sol::lib::base);
 	state->open_libraries(sol::lib::package);
 	state->open_libraries(sol::lib::coroutine);
@@ -264,84 +159,69 @@ void defineThreadSafeAPIs(sol::state* state)
 		meta["getPNG"] = &Image::getPNG;
 	}
 
-	(*state)["print"] = l_print;
+	(*state)["print"] = Lua::print;
 
-	(*state)["Vector"] = sol::overload(l_Vector, l_Vector_3f);
-	(*state)["RotMatrix"] = l_RotMatrix;
+	(*state)["Vector"] = sol::overload(Lua::Vector_, Lua::Vector_3f);
+	(*state)["RotMatrix"] = Lua::RotMatrix_;
 
-	(*state)["os"]["listDirectory"] = l_os_listDirectory;
-	(*state)["os"]["createDirectory"] = l_os_createDirectory;
-
-	(*state)["os"]["realClock"] = l_os_realClock;
+	(*state)["os"]["listDirectory"] = Lua::os::listDirectory;
+	(*state)["os"]["createDirectory"] = Lua::os::createDirectory;
+	(*state)["os"]["realClock"] = Lua::os::realClock;
 
 	{
 		auto httpTable = state->create_table();
 		(*state)["http"] = httpTable;
-		httpTable["getSync"] = l_http_getSync;
-		httpTable["postSync"] = l_http_postSync;
+		httpTable["getSync"] = Lua::http::getSync;
+		httpTable["postSync"] = Lua::http::postSync;
 	}
 }
 
-void luaInit(bool redo)
-{
+void luaInit(bool redo) {
 	std::lock_guard<std::mutex> guard(stateResetMutex);
 	requestQueue = std::queue<LuaHTTPRequest>();
 	responseQueue = std::queue<LuaHTTPResponse>();
 
-	if (redo)
-	{
+	if (redo) {
 		Console::log(LUA_PREFIX "Resetting state...\n");
 		delete server;
 
-		for (int i = 0; i < MAXNUMOFPLAYERS; i++)
-		{
-			if (playerDataTables[i])
-			{
+		for (int i = 0; i < maxNumberOfPlayers; i++) {
+			if (playerDataTables[i]) {
 				delete playerDataTables[i];
 				playerDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFHUMANS; i++)
-		{
-			if (humanDataTables[i])
-			{
+		for (int i = 0; i < maxNumberOfHumans; i++) {
+			if (humanDataTables[i]) {
 				delete humanDataTables[i];
 				humanDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFITEMS; i++)
-		{
-			if (itemDataTables[i])
-			{
+		for (int i = 0; i < maxNumberOfItems; i++) {
+			if (itemDataTables[i]) {
 				delete itemDataTables[i];
 				itemDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFVEHICLES; i++)
-		{
-			if (vehicleDataTables[i])
-			{
+		for (int i = 0; i < maxNumberOfVehicles; i++) {
+			if (vehicleDataTables[i]) {
 				delete vehicleDataTables[i];
 				vehicleDataTables[i] = nullptr;
 			}
 		}
 
-		for (int i = 0; i < MAXNUMOFRIGIDBODIES; i++)
-		{
-			if (bodyDataTables[i])
-			{
+		for (int i = 0; i < maxNumberOfRigidBodies; i++) {
+			if (bodyDataTables[i]) {
 				delete bodyDataTables[i];
 				bodyDataTables[i] = nullptr;
 			}
 		}
 
 		delete lua;
-	}
-	else
-	{
+	} else {
 		Console::log(LUA_PREFIX "Initializing state...\n");
 	}
 
@@ -357,12 +237,16 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&Server::getClass);
 		meta["port"] = sol::property(&Server::getPort);
 		meta["name"] = sol::property(&Server::getName, &Server::setName);
-		meta["password"] = sol::property(&Server::getPassword, &Server::setPassword);
-		meta["maxPlayers"] = sol::property(&Server::getMaxPlayers, &Server::setMaxPlayers);
+		meta["password"] =
+		    sol::property(&Server::getPassword, &Server::setPassword);
+		meta["maxPlayers"] =
+		    sol::property(&Server::getMaxPlayers, &Server::setMaxPlayers);
 		meta["type"] = sol::property(&Server::getType, &Server::setType);
-		meta["levelToLoad"] = sol::property(&Server::getLevelName, &Server::setLevelName);
+		meta["levelToLoad"] =
+		    sol::property(&Server::getLevelName, &Server::setLevelName);
 		meta["loadedLevel"] = sol::property(&Server::getLoadedLevelName);
-		meta["isLevelLoaded"] = sol::property(&Server::getIsLevelLoaded, &Server::setIsLevelLoaded);
+		meta["isLevelLoaded"] =
+		    sol::property(&Server::getIsLevelLoaded, &Server::setIsLevelLoaded);
 		meta["gravity"] = sol::property(&Server::getGravity, &Server::setGravity);
 		meta["defaultGravity"] = sol::property(&Server::getDefaultGravity);
 		meta["state"] = sol::property(&Server::getState, &Server::setState);
@@ -387,7 +271,8 @@ void luaInit(bool redo)
 
 		meta["class"] = sol::property(&Connection::getClass);
 		meta["address"] = sol::property(&Connection::getAddress);
-		meta["adminVisible"] = sol::property(&Connection::getAdminVisible, &Connection::setAdminVisible);
+		meta["adminVisible"] = sol::property(&Connection::getAdminVisible,
+		                                     &Connection::setAdminVisible);
 	}
 
 	{
@@ -437,7 +322,8 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&Player::getClass);
 		meta["__tostring"] = &Player::__tostring;
 		meta["index"] = sol::property(&Player::getIndex);
-		meta["isActive"] = sol::property(&Player::getIsActive, &Player::setIsActive);
+		meta["isActive"] =
+		    sol::property(&Player::getIsActive, &Player::setIsActive);
 		meta["data"] = sol::property(&Player::getDataTable);
 		meta["name"] = sol::property(&Player::getName, &Player::setName);
 		meta["isAdmin"] = sol::property(&Player::getIsAdmin, &Player::setIsAdmin);
@@ -446,7 +332,8 @@ void luaInit(bool redo)
 		meta["human"] = sol::property(&Player::getHuman, &Player::setHuman);
 		meta["connection"] = sol::property(&Player::getConnection);
 		meta["account"] = sol::property(&Player::getAccount, &Player::setAccount);
-		meta["botDestination"] = sol::property(&Player::getBotDestination, &Player::setBotDestination);
+		meta["botDestination"] =
+		    sol::property(&Player::getBotDestination, &Player::setBotDestination);
 
 		meta["getAction"] = &Player::getAction;
 		meta["getMenuButton"] = &Player::getMenuButton;
@@ -497,17 +384,22 @@ void luaInit(bool redo)
 		meta["isActive"] = sol::property(&Human::getIsActive, &Human::setIsActive);
 		meta["data"] = sol::property(&Human::getDataTable);
 		meta["isAlive"] = sol::property(&Human::getIsAlive, &Human::setIsAlive);
-		meta["isImmortal"] = sol::property(&Human::getIsImmortal, &Human::setIsImmortal);
+		meta["isImmortal"] =
+		    sol::property(&Human::getIsImmortal, &Human::setIsImmortal);
 		meta["isOnGround"] = sol::property(&Human::getIsOnGround);
 		meta["isStanding"] = sol::property(&Human::getIsStanding);
-		meta["isBleeding"] = sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
+		meta["isBleeding"] =
+		    sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
 		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
 		meta["rightHandItem"] = sol::property(&Human::getRightHandItem);
 		meta["leftHandItem"] = sol::property(&Human::getLeftHandItem);
-		meta["rightHandGrab"] = sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
-		meta["leftHandGrab"] = sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
-		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty, &Human::setIsAppearanceDirty);
+		meta["rightHandGrab"] =
+		    sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
+		meta["leftHandGrab"] =
+		    sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
+		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty,
+		                                          &Human::setIsAppearanceDirty);
 
 		meta["remove"] = &Human::remove;
 		meta["teleport"] = &Human::teleport;
@@ -560,11 +452,14 @@ void luaInit(bool redo)
 		meta["index"] = sol::property(&Item::getIndex);
 		meta["isActive"] = sol::property(&Item::getIsActive, &Item::setIsActive);
 		meta["data"] = sol::property(&Item::getDataTable);
-		meta["hasPhysics"] = sol::property(&Item::getHasPhysics, &Item::setHasPhysics);
-		meta["physicsSettled"] = sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
+		meta["hasPhysics"] =
+		    sol::property(&Item::getHasPhysics, &Item::setHasPhysics);
+		meta["physicsSettled"] =
+		    sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
 		meta["isStatic"] = sol::property(&Item::getIsStatic, &Item::setIsStatic);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
-		meta["grenadePrimer"] = sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
+		meta["grenadePrimer"] =
+		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
 		meta["parentHuman"] = sol::property(&Item::getParentHuman);
 		meta["parentItem"] = sol::property(&Item::getParentItem);
 
@@ -608,7 +503,8 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&Vehicle::getClass);
 		meta["__tostring"] = &Vehicle::__tostring;
 		meta["index"] = sol::property(&Vehicle::getIndex);
-		meta["isActive"] = sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
+		meta["isActive"] =
+		    sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
 		meta["data"] = sol::property(&Vehicle::getDataTable);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
 		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);
@@ -651,9 +547,11 @@ void luaInit(bool redo)
 		meta["class"] = sol::property(&RigidBody::getClass);
 		meta["__tostring"] = &RigidBody::__tostring;
 		meta["index"] = sol::property(&RigidBody::getIndex);
-		meta["isActive"] = sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
+		meta["isActive"] =
+		    sol::property(&RigidBody::getIsActive, &RigidBody::setIsActive);
 		meta["data"] = sol::property(&RigidBody::getDataTable);
-		meta["isSettled"] = sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
+		meta["isSettled"] =
+		    sol::property(&RigidBody::getIsSettled, &RigidBody::setIsSettled);
 
 		meta["bondTo"] = &RigidBody::bondTo;
 		meta["bondRotTo"] = &RigidBody::bondRotTo;
@@ -697,14 +595,16 @@ void luaInit(bool redo)
 	}
 
 	{
-		auto meta = lua->new_usertype<Worker>("Worker", sol::constructors<ChildProcess(std::string)>());
+		auto meta = lua->new_usertype<Worker>(
+		    "Worker", sol::constructors<ChildProcess(std::string)>());
 		meta["stop"] = &Worker::stop;
 		meta["sendMessage"] = &Worker::sendMessage;
 		meta["receiveMessage"] = &Worker::receiveMessage;
 	}
 
 	{
-		auto meta = lua->new_usertype<ChildProcess>("ChildProcess", sol::constructors<ChildProcess(std::string)>());
+		auto meta = lua->new_usertype<ChildProcess>(
+		    "ChildProcess", sol::constructors<ChildProcess(std::string)>());
 		meta["isRunning"] = &ChildProcess::isRunning;
 		meta["terminate"] = &ChildProcess::terminate;
 		meta["getExitCode"] = &ChildProcess::getExitCode;
@@ -744,7 +644,8 @@ void luaInit(bool redo)
 	}
 
 	{
-		auto meta = lua->new_usertype<StreetIntersection>("new", sol::no_constructor);
+		auto meta =
+		    lua->new_usertype<StreetIntersection>("new", sol::no_constructor);
 		meta["pos"] = &StreetIntersection::pos;
 		meta["lightsState"] = &StreetIntersection::lightsState;
 		meta["lightsTimer"] = &StreetIntersection::lightsTimer;
@@ -763,174 +664,177 @@ void luaInit(bool redo)
 		meta["streetNorth"] = sol::property(&StreetIntersection::getStreetNorth);
 	}
 
-	(*lua)["flagStateForReset"] = l_flagStateForReset;
+	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	(*lua)["hook"] = lua->create_table();
 	(*lua)["hook"]["persistentMode"] = hookMode;
 
-	(*lua)["http"]["get"] = l_http_get;
-	(*lua)["http"]["post"] = l_http_post;
+	(*lua)["http"]["get"] = Lua::http::get;
+	(*lua)["http"]["post"] = Lua::http::post;
 
 	{
 		auto eventTable = lua->create_table();
 		(*lua)["event"] = eventTable;
-		eventTable["sound"] = sol::overload(l_event_sound, l_event_soundSimple);
-		eventTable["explosion"] = l_event_explosion;
-		eventTable["bulletHit"] = l_event_bulletHit;
+		eventTable["sound"] =
+		    sol::overload(Lua::event::sound, Lua::event::soundSimple);
+		eventTable["explosion"] = Lua::event::explosion;
+		eventTable["bulletHit"] = Lua::event::bulletHit;
 	}
 
 	{
 		auto physicsTable = lua->create_table();
 		(*lua)["physics"] = physicsTable;
-		physicsTable["lineIntersectLevel"] = l_physics_lineIntersectLevel;
-		physicsTable["lineIntersectHuman"] = l_physics_lineIntersectHuman;
-		physicsTable["lineIntersectVehicle"] = l_physics_lineIntersectVehicle;
-		physicsTable["lineIntersectTriangle"] = l_physics_lineIntersectTriangle;
-		physicsTable["garbageCollectBullets"] = l_physics_garbageCollectBullets;
+		physicsTable["lineIntersectLevel"] = Lua::physics::lineIntersectLevel;
+		physicsTable["lineIntersectHuman"] = Lua::physics::lineIntersectHuman;
+		physicsTable["lineIntersectVehicle"] = Lua::physics::lineIntersectVehicle;
+		physicsTable["lineIntersectTriangle"] = Lua::physics::lineIntersectTriangle;
+		physicsTable["garbageCollectBullets"] = Lua::physics::garbageCollectBullets;
 	}
 
 	{
 		auto chatTable = lua->create_table();
 		(*lua)["chat"] = chatTable;
-		chatTable["announce"] = l_chat_announce;
-		chatTable["tellAdmins"] = l_chat_tellAdmins;
-		chatTable["addRaw"] = l_chat_addRaw;
+		chatTable["announce"] = Lua::chat::announce;
+		chatTable["tellAdmins"] = Lua::chat::tellAdmins;
+		chatTable["addRaw"] = Lua::chat::addRaw;
 	}
 
 	{
 		auto accountsTable = lua->create_table();
 		(*lua)["accounts"] = accountsTable;
-		accountsTable["save"] = l_accounts_save;
-		accountsTable["getCount"] = l_accounts_getCount;
-		accountsTable["getAll"] = l_accounts_getAll;
-		accountsTable["getByPhone"] = l_accounts_getByPhone;
+		accountsTable["save"] = Lua::accounts::save;
+		accountsTable["getCount"] = Lua::accounts::getCount;
+		accountsTable["getAll"] = Lua::accounts::getAll;
+		accountsTable["getByPhone"] = Lua::accounts::getByPhone;
 
 		sol::table _meta = lua->create_table();
 		accountsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_accounts_getCount;
-		_meta["__index"] = l_accounts_getByIndex;
+		_meta["__len"] = Lua::accounts::getCount;
+		_meta["__index"] = Lua::accounts::getByIndex;
 	}
 
 	{
 		auto playersTable = lua->create_table();
 		(*lua)["players"] = playersTable;
-		playersTable["getCount"] = l_players_getCount;
-		playersTable["getAll"] = l_players_getAll;
-		playersTable["getByPhone"] = l_players_getByPhone;
-		playersTable["getNonBots"] = l_players_getNonBots;
-		playersTable["createBot"] = l_players_createBot;
+		playersTable["getCount"] = Lua::players::getCount;
+		playersTable["getAll"] = Lua::players::getAll;
+		playersTable["getByPhone"] = Lua::players::getByPhone;
+		playersTable["getNonBots"] = Lua::players::getNonBots;
+		playersTable["createBot"] = Lua::players::createBot;
 
 		sol::table _meta = lua->create_table();
 		playersTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_players_getCount;
-		_meta["__index"] = l_players_getByIndex;
+		_meta["__len"] = Lua::players::getCount;
+		_meta["__index"] = Lua::players::getByIndex;
 	}
 
 	{
 		auto humansTable = lua->create_table();
 		(*lua)["humans"] = humansTable;
-		humansTable["getCount"] = l_humans_getCount;
-		humansTable["getAll"] = l_humans_getAll;
-		humansTable["create"] = l_humans_create;
+		humansTable["getCount"] = Lua::humans::getCount;
+		humansTable["getAll"] = Lua::humans::getAll;
+		humansTable["create"] = Lua::humans::create;
 
 		sol::table _meta = lua->create_table();
 		humansTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_humans_getCount;
-		_meta["__index"] = l_humans_getByIndex;
+		_meta["__len"] = Lua::humans::getCount;
+		_meta["__index"] = Lua::humans::getByIndex;
 	}
 
 	{
 		auto itemTypesTable = lua->create_table();
 		(*lua)["itemTypes"] = itemTypesTable;
-		itemTypesTable["getCount"] = l_itemTypes_getCount;
-		itemTypesTable["getAll"] = l_itemTypes_getAll;
+		itemTypesTable["getCount"] = Lua::itemTypes::getCount;
+		itemTypesTable["getAll"] = Lua::itemTypes::getAll;
 
 		sol::table _meta = lua->create_table();
 		itemTypesTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_itemTypes_getCount;
-		_meta["__index"] = l_itemTypes_getByIndex;
+		_meta["__len"] = Lua::itemTypes::getCount;
+		_meta["__index"] = Lua::itemTypes::getByIndex;
 	}
 
 	{
 		auto itemsTable = lua->create_table();
 		(*lua)["items"] = itemsTable;
-		itemsTable["getCount"] = l_items_getCount;
-		itemsTable["getAll"] = l_items_getAll;
-		itemsTable["create"] = sol::overload(l_items_create, l_items_createVel);
-		itemsTable["createRope"] = l_items_createRope;
+		itemsTable["getCount"] = Lua::items::getCount;
+		itemsTable["getAll"] = Lua::items::getAll;
+		itemsTable["create"] =
+		    sol::overload(Lua::items::create, Lua::items::createVel);
+		itemsTable["createRope"] = Lua::items::createRope;
 
 		sol::table _meta = lua->create_table();
 		itemsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_items_getCount;
-		_meta["__index"] = l_items_getByIndex;
+		_meta["__len"] = Lua::items::getCount;
+		_meta["__index"] = Lua::items::getByIndex;
 	}
 
 	{
 		auto vehiclesTable = lua->create_table();
 		(*lua)["vehicles"] = vehiclesTable;
-		vehiclesTable["getCount"] = l_vehicles_getCount;
-		vehiclesTable["getAll"] = l_vehicles_getAll;
-		vehiclesTable["create"] = sol::overload(l_vehicles_create, l_vehicles_createVel);
-		
+		vehiclesTable["getCount"] = Lua::vehicles::getCount;
+		vehiclesTable["getAll"] = Lua::vehicles::getAll;
+		vehiclesTable["create"] =
+		    sol::overload(Lua::vehicles::create, Lua::vehicles::createVel);
+
 		sol::table _meta = lua->create_table();
 		vehiclesTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_vehicles_getCount;
-		_meta["__index"] = l_vehicles_getByIndex;
+		_meta["__len"] = Lua::vehicles::getCount;
+		_meta["__index"] = Lua::vehicles::getByIndex;
 	}
 
 	{
 		auto bulletsTable = lua->create_table();
 		(*lua)["bullets"] = bulletsTable;
-		bulletsTable["getCount"] = l_bullets_getCount;
-		bulletsTable["getAll"] = l_bullets_getAll;
+		bulletsTable["getCount"] = Lua::bullets::getCount;
+		bulletsTable["getAll"] = Lua::bullets::getAll;
 	}
 
 	{
 		auto rigidBodiesTable = lua->create_table();
 		(*lua)["rigidBodies"] = rigidBodiesTable;
-		rigidBodiesTable["getCount"] = l_rigidBodies_getCount;
-		rigidBodiesTable["getAll"] = l_rigidBodies_getAll;
-		
+		rigidBodiesTable["getCount"] = Lua::rigidBodies::getCount;
+		rigidBodiesTable["getAll"] = Lua::rigidBodies::getAll;
+
 		sol::table _meta = lua->create_table();
 		rigidBodiesTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_rigidBodies_getCount;
-		_meta["__index"] = l_rigidBodies_getByIndex;
+		_meta["__len"] = Lua::rigidBodies::getCount;
+		_meta["__index"] = Lua::rigidBodies::getByIndex;
 	}
 
 	{
 		auto bondsTable = lua->create_table();
 		(*lua)["bonds"] = bondsTable;
-		bondsTable["getCount"] = l_bonds_getCount;
-		bondsTable["getAll"] = l_bonds_getAll;
+		bondsTable["getCount"] = Lua::bonds::getCount;
+		bondsTable["getAll"] = Lua::bonds::getAll;
 
 		sol::table _meta = lua->create_table();
 		bondsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_bonds_getCount;
-		_meta["__index"] = l_bonds_getByIndex;
+		_meta["__len"] = Lua::bonds::getCount;
+		_meta["__index"] = Lua::bonds::getByIndex;
 	}
 
 	{
 		auto streetsTable = lua->create_table();
 		(*lua)["streets"] = streetsTable;
-		streetsTable["getCount"] = l_streets_getCount;
-		streetsTable["getAll"] = l_streets_getAll;
+		streetsTable["getCount"] = Lua::streets::getCount;
+		streetsTable["getAll"] = Lua::streets::getAll;
 
 		sol::table _meta = lua->create_table();
 		streetsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_streets_getCount;
-		_meta["__index"] = l_streets_getByIndex;
+		_meta["__len"] = Lua::streets::getCount;
+		_meta["__index"] = Lua::streets::getByIndex;
 	}
 
 	{
 		auto intersectionsTable = lua->create_table();
 		(*lua)["intersections"] = intersectionsTable;
-		intersectionsTable["getCount"] = l_intersections_getCount;
-		intersectionsTable["getAll"] = l_intersections_getAll;
+		intersectionsTable["getCount"] = Lua::intersections::getCount;
+		intersectionsTable["getAll"] = Lua::intersections::getAll;
 
 		sol::table _meta = lua->create_table();
 		intersectionsTable[sol::metatable_key] = _meta;
-		_meta["__len"] = l_intersections_getCount;
-		_meta["__index"] = l_intersections_getByIndex;
+		_meta["__len"] = Lua::intersections::getCount;
+		_meta["__index"] = Lua::intersections::getByIndex;
 	}
 
 	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;
@@ -953,18 +857,15 @@ void luaInit(bool redo)
 	Console::log(LUA_PREFIX "Running " LUA_ENTRY_FILE "...\n");
 
 	sol::load_result load = lua->load_file(LUA_ENTRY_FILE);
-	if (noLuaCallError(&load))
-	{
+	if (noLuaCallError(&load)) {
 		sol::protected_function_result res = load();
-		if (noLuaCallError(&res))
-		{
+		if (noLuaCallError(&res)) {
 			Console::log(LUA_PREFIX "No problems!\n");
 		}
 	}
 }
 
-static inline unsigned long getBaseAddress()
-{
+static inline unsigned long getBaseAddress() {
 	std::ifstream file("/proc/self/maps");
 	std::string line;
 	// First line
@@ -975,8 +876,7 @@ static inline unsigned long getBaseAddress()
 	return std::stoul(truncated, nullptr, 16);
 }
 
-static inline void printBaseAddress(unsigned long base)
-{
+static inline void printBaseAddress(unsigned long base) {
 	std::ostringstream stream;
 
 	stream << RS_PREFIX "Base address is ";
@@ -987,8 +887,7 @@ static inline void printBaseAddress(unsigned long base)
 	Console::log(stream.str());
 }
 
-static inline void locateMemory(unsigned long base)
-{
+static inline void locateMemory(unsigned long base) {
 	version = (unsigned int*)(base + 0x2D5F08);
 	subVersion = (unsigned int*)(base + 0x2D5F04);
 	serverName = (char*)(base + 0x24EE4234);
@@ -998,119 +897,129 @@ static inline void locateMemory(unsigned long base)
 	password = (char*)(base + 0x1CC6D48C);
 	maxPlayers = (int*)(base + 0x24EE4648);
 
-	gameType = (int*)(base + 0x443F3988);
-	mapName = (char*)(base + 0x443F398C);
-	loadedMapName = (char*)(base + 0x3C2EEFE4);
-	gameState = (int*)(base + 0x443F3BA4);
-	gameTimer = (int*)(base + 0x443F3BAC);
-	sunTime = (unsigned int*)(base + 0x9846CC0);
+	Engine::gameType = (int*)(base + 0x443F3988);
+	Engine::mapName = (char*)(base + 0x443F398C);
+	Engine::loadedMapName = (char*)(base + 0x3C2EEFE4);
+	Engine::gameState = (int*)(base + 0x443F3BA4);
+	Engine::gameTimer = (int*)(base + 0x443F3BAC);
+	Engine::sunTime = (unsigned int*)(base + 0x9846CC0);
 	isLevelLoaded = (int*)(base + 0x3C2EEFE0);
 	gravity = (float*)(base + 0xC72AC);
 	pryMemory(gravity, 1);
 	originalGravity = *gravity;
 
-	lineIntersectResult = (RayCastResult*)(base + 0x55E44E00);
+	Engine::lineIntersectResult = (RayCastResult*)(base + 0x55E44E00);
 
-	connections = (Connection*)(base + 0x43ACE0);
-	accounts = (Account*)(base + 0x334F6D0);
-	players = (Player*)(base + 0x19BC9CC0);
-	humans = (Human*)(base + 0x8B1D4A8);
-	vehicles = (Vehicle*)(base + 0x20DEF320);
-	itemTypes = (ItemType*)(base + 0x5A088680);
-	items = (Item*)(base + 0x7FE2160);
-	bullets = (Bullet*)(base + 0x4355E260);
-	bodies = (RigidBody*)(base + 0x2DACC0);
-	bonds = (Bond*)(base + 0x24964220);
-	streets = (Street*)(base + 0x3C311030);
-	streetIntersections = (StreetIntersection*)(base + 0x3C2EF02C);
+	Engine::connections = (Connection*)(base + 0x43ACE0);
+	Engine::accounts = (Account*)(base + 0x334F6D0);
+	Engine::players = (Player*)(base + 0x19BC9CC0);
+	Engine::humans = (Human*)(base + 0x8B1D4A8);
+	Engine::vehicles = (Vehicle*)(base + 0x20DEF320);
+	Engine::itemTypes = (ItemType*)(base + 0x5A088680);
+	Engine::items = (Item*)(base + 0x7FE2160);
+	Engine::bullets = (Bullet*)(base + 0x4355E260);
+	Engine::bodies = (RigidBody*)(base + 0x2DACC0);
+	Engine::bonds = (Bond*)(base + 0x24964220);
+	Engine::streets = (Street*)(base + 0x3C311030);
+	Engine::streetIntersections = (StreetIntersection*)(base + 0x3C2EF02C);
 
-	numConnections = (unsigned int*)(base + 0x4532F468);
-	numBullets = (unsigned int*)(base + 0x4532F240);
-	numStreets = (unsigned int*)(base + 0x3C31102C);
-	numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);
+	Engine::numConnections = (unsigned int*)(base + 0x4532F468);
+	Engine::numBullets = (unsigned int*)(base + 0x4532F240);
+	Engine::numStreets = (unsigned int*)(base + 0x3C31102C);
+	Engine::numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);
 
-	//_test = (_test_func)(base + 0x4cc90);
-	//pryMemory(&_test, 2);
+	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1CF0);
+	Engine::subRosa__printf_chk =
+	    (Engine::subRosa__printf_chkFunc)(base + 0x1FE0);
 
-	subrosa_puts = (subrosa_puts_func)(base + 0x1CF0);
-	subrosa___printf_chk = (subrosa___printf_chk_func)(base + 0x1FE0);
+	Engine::resetGame = (Engine::voidFunc)(base + 0xB10B0);
 
-	resetgame = (void_func)(base + 0xB10B0);
+	Engine::logicSimulation = (Engine::voidFunc)(base + 0xB7BF0);
+	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xB3650);
+	Engine::logicSimulationRound = (Engine::voidFunc)(base + 0xB3DD0);
+	Engine::logicSimulationWorld = (Engine::voidFunc)(base + 0xB71A0);
+	Engine::logicSimulationTerminator = (Engine::voidFunc)(base + 0xB4D50);
+	Engine::logicSimulationCoop = (Engine::voidFunc)(base + 0xB3410);
+	Engine::logicSimulationVersus = (Engine::voidFunc)(base + 0xB65F0);
+	Engine::logicPlayerActions = (Engine::voidIndexFunc)(base + 0xA93A0);
 
-	logicsimulation = (void_func)(base + 0xB7BF0);
-	logicsimulation_race = (void_func)(base + 0xB3650);
-	logicsimulation_round = (void_func)(base + 0xB3DD0);
-	logicsimulation_world = (void_func)(base + 0xB71A0);
-	logicsimulation_terminator = (void_func)(base + 0xB4D50);
-	logicsimulation_coop = (void_func)(base + 0xB3410);
-	logicsimulation_versus = (void_func)(base + 0xB65F0);
-	logic_playeractions = (void_index_func)(base + 0xA93A0);
+	Engine::physicsSimulation = (Engine::voidFunc)(base + 0xA6CC0);
+	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xC0BB0);
+	Engine::serverSend = (Engine::voidFunc)(base + 0xBDBA0);
+	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x98960);
+	Engine::bulletTimeToLive = (Engine::voidFunc)(base + 0x181B0);
 
-	physicssimulation = (void_func)(base + 0xA6CC0);
-	serverrecv = (serverrecv_func)(base + 0xC0BB0);
-	serversend = (void_func)(base + 0xBDBA0);
-	bulletsimulation = (void_func)(base + 0x98960);
-	bullettimetolive = (void_func)(base + 0x181B0);
+	Engine::saveAccountsServer = (Engine::voidFunc)(base + 0x6CC0);
 
-	saveaccountsserver = (void_func)(base + 0x6CC0);
+	Engine::createAccountByJoinTicket =
+	    (Engine::createAccountByJoinTicketFunc)(base + 0x65D0);
+	Engine::serverSendConnectResponse =
+	    (Engine::serverSendConnectResponseFunc)(base + 0xB8FD0);
 
-	createaccount_jointicket = (createaccount_jointicket_func)(base + 0x65D0);
-	server_sendconnectreponse = (server_sendconnectreponse_func)(base + 0xB8FD0);
+	Engine::scenarioArmHuman = (Engine::scenarioArmHumanFunc)(base + 0x4FDD0);
+	Engine::linkItem = (Engine::linkItemFunc)(base + 0x2B060);
+	Engine::itemSetMemo = (Engine::itemSetMemoFunc)(base + 0x25F80);
+	Engine::itemComputerTransmitLine =
+	    (Engine::itemComputerTransmitLineFunc)(base + 0x26100);
+	Engine::itemComputerIncrementLine = (Engine::voidIndexFunc)(base + 0x263a0);
+	Engine::itemComputerInput = (Engine::itemComputerInputFunc)(base + 0x4e620);
 
-	scenario_armhuman = (scenario_armhuman_func)(base + 0x4FDD0);
-	linkitem = (linkitem_func)(base + 0x2B060);
-	item_setmemo = (item_setmemo_func)(base + 0x25F80);
-	item_computertransmitline = (item_computertransmitline_func)(base + 0x26100);
-	item_computerincrementline = (void_index_func)(base + 0x263a0);
-	item_computerinput = (item_computerinput_func)(base + 0x4e620);
+	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x1E1D0);
+	Engine::humanCollisionVehicle =
+	    (Engine::humanCollisionVehicleFunc)(base + 0x7AF50);
+	Engine::humanGrabbing = (Engine::voidIndexFunc)(base + 0xA16D0);
+	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x2A990);
+	Engine::serverPlayerMessage =
+	    (Engine::serverPlayerMessageFunc)(base + 0xA7B80);
+	Engine::playerAI = (Engine::voidIndexFunc)(base + 0x96F80);
+	Engine::playerDeathTax = (Engine::voidIndexFunc)(base + 0x2D70);
+	Engine::createBondRigidBodyToRigidBody =
+	    (Engine::createBondRigidBodyToRigidBodyFunc)(base + 0x12CC0);
+	Engine::createBondRigidBodyRotRigidBody =
+	    (Engine::createBondRigidBodyRotRigidBodyFunc)(base + 0x12f70);
+	Engine::createBondRigidBodyToLevel =
+	    (Engine::createBondRigidBodyToLevelFunc)(base + 0x12B80);
+	Engine::addCollisionRigidBodyOnRigidBody =
+	    (Engine::addCollisionRigidBodyOnRigidBodyFunc)(base + 0x13070);
+	Engine::addCollisionRigidBodyOnLevel =
+	    (Engine::addCollisionRigidBodyOnLevelFunc)(base + 0x13220);
 
-	human_applydamage = (human_applydamage_func)(base + 0x1E1D0);
-	human_collisionvehicle = (human_collisionvehicle_func)(base + 0x7AF50);
-	human_grabbing = (void_index_func)(base + 0xA16D0);
-	grenadeexplosion = (void_index_func)(base + 0x2A990);
-	server_playermessage = (server_playermessage_func)(base + 0xA7B80);
-	playerai = (void_index_func)(base + 0x96F80);
-	playerdeathtax = (void_index_func)(base + 0x2D70);
-	createbond_rigidbody_rigidbody = (createbond_rigidbody_rigidbody_func)(base + 0x12CC0);
-	createbond_rigidbody_rot_rigidbody = (createbond_rigidbody_rot_rigidbody_func)(base + 0x12f70);
-	createbond_rigidbody_level = (createbond_rigidbody_level_func)(base + 0x12B80);
-	addcollision_rigidbody_rigidbody = (addcollision_rigidbody_rigidbody_func)(base + 0x13070);
-	addcollision_rigidbody_level = (addcollision_rigidbody_level_func)(base + 0x13220);
+	Engine::createPlayer = (Engine::createPlayerFunc)(base + 0x40EE0);
+	Engine::deletePlayer = (Engine::voidIndexFunc)(base + 0x411D0);
+	Engine::createHuman = (Engine::createHumanFunc)(base + 0x66D10);
+	Engine::deleteHuman = (Engine::voidIndexFunc)(base + 0x3EB0);
+	Engine::createItem = (Engine::createItemFunc)(base + 0x4DDE0);
+	Engine::deleteItem = (Engine::voidIndexFunc)(base + 0x2C180);
+	Engine::createRope = (Engine::createRopeFunc)(base + 0x4F150);
+	Engine::createVehicle = (Engine::createVehicleFunc)(base + 0x4CEA0);
+	Engine::deleteVehicle = (Engine::voidIndexFunc)(base + 0x42A0);
+	Engine::createRigidBody = (Engine::createRigidBodyFunc)(base + 0x4cc90);
 
-	createplayer = (createplayer_func)(base + 0x40EE0);
-	deleteplayer = (void_index_func)(base + 0x411D0);
-	createhuman = (createhuman_func)(base + 0x66D10);
-	deletehuman = (void_index_func)(base + 0x3EB0);
-	createitem = (createitem_func)(base + 0x4DDE0);
-	deleteitem = (void_index_func)(base + 0x2C180);
-	createrope = (createrope_func)(base + 0x4F150);
-	createobject = (createobject_func)(base + 0x4CEA0);
-	deleteobject = (void_index_func)(base + 0x42A0);
-	createrigidbody = (createrigidbody_func)(base + 0x4cc90);
+	Engine::createEventMessage = (Engine::createEventMessageFunc)(base + 0x29C0);
+	Engine::createEventUpdatePlayer = (Engine::voidIndexFunc)(base + 0x2BE0);
+	Engine::createEventUpdatePlayerFinance =
+	    (Engine::voidIndexFunc)(base + 0x2D00);
+	Engine::createEventCreateVehicle = (Engine::voidIndexFunc)(base + 0x2AE0);
+	Engine::createEventUpdateVehicle =
+	    (Engine::createEventUpdateVehicleFunc)(base + 0x41C0);
+	Engine::createEventSound = (Engine::createEventSoundFunc)(base + 0x3CC0);
+	Engine::createEventExplosion =
+	    (Engine::createEventExplosionFunc)(base + 0x45A0);
+	Engine::createEventBulletHit =
+	    (Engine::createEventBulletHitFunc)(base + 0x4110);
 
-	createevent_message = (createevent_message_func)(base + 0x29C0);
-	createevent_updateplayer = (void_index_func)(base + 0x2BE0);
-	createevent_updateplayer_finance = (void_index_func)(base + 0x2D00);
-	createevent_createobject = (void_index_func)(base + 0x2AE0);
-	createevent_updateobject = (createevent_updateobject_func)(base + 0x41C0);
-	createevent_sound = (createevent_sound_func)(base + 0x3CC0);
-	createevent_explosion = (createevent_explosion_func)(base + 0x45A0);
-	createevent_bullethit = (createevent_bullethit_func)(base + 0x4110);
-
-	lineintersecthuman = (lineintersecthuman_func)(base + 0x23AB0);
-	lineintersectlevel = (lineintersectlevel_func)(base + 0x7C470);
-	lineintersectobject = (lineintersectobject_func)(base + 0x95590);
-	lineintersecttriangle = (lineintersecttriangle_func)(base + 0x6aa70);
+	Engine::lineIntersectHuman = (Engine::lineIntersectHumanFunc)(base + 0x23AB0);
+	Engine::lineIntersectLevel = (Engine::lineIntersectLevelFunc)(base + 0x7C470);
+	Engine::lineIntersectVehicle =
+	    (Engine::lineIntersectVehicleFunc)(base + 0x95590);
+	Engine::lineIntersectTriangle =
+	    (Engine::lineIntersectTriangleFunc)(base + 0x6aa70);
 }
 
 static inline void installHook(
-	const char* name, subhook::Hook& hook,
-	void* source, void* destination,
-	subhook::HookFlags flags = subhook::HookFlags::HookFlag64BitOffset
-	)
-{
-	if (!hook.Install(source, destination, flags))
-	{
+    const char* name, subhook::Hook& hook, void* source, void* destination,
+    subhook::HookFlags flags = subhook::HookFlags::HookFlag64BitOffset) {
+	if (!hook.Install(source, destination, flags)) {
 		std::ostringstream stream;
 		stream << RS_PREFIX "Hook " << name << " failed to install";
 
@@ -1118,78 +1027,138 @@ static inline void installHook(
 	}
 }
 
-static inline void installHooks()
-{
-	//_test_hook.Install((void*)_test, (void*)h__test, HOOK_FLAGS);
-	installHook("subrosa_puts_hook", subrosa_puts_hook, (void*)subrosa_puts, (void*)h_subrosa_puts);
-	installHook("subrosa___printf_chk_hook", subrosa___printf_chk_hook, (void*)subrosa___printf_chk, (void*)h_subrosa___printf_chk);
+static inline void installHooks() {
+	installHook("subRosaPutsHook", Hooks::subRosaPutsHook,
+	            (void*)Engine::subRosaPuts, (void*)Hooks::subRosaPuts);
+	installHook("subRosa__printf_chkHook", Hooks::subRosa__printf_chkHook,
+	            (void*)Engine::subRosa__printf_chk,
+	            (void*)Hooks::subRosa__printf_chk);
 
-	installHook("resetgame_hook", resetgame_hook, (void*)resetgame, (void*)h_resetgame);
+	installHook("resetGameHook", Hooks::resetGameHook, (void*)Engine::resetGame,
+	            (void*)Hooks::resetGame);
 
-	installHook("logicsimulation_hook", logicsimulation_hook, (void*)logicsimulation, (void*)h_logicsimulation);
-	installHook("logicsimulation_race_hook", logicsimulation_race_hook, (void*)logicsimulation_race, (void*)h_logicsimulation_race);
-	installHook("logicsimulation_round_hook", logicsimulation_round_hook, (void*)logicsimulation_round, (void*)h_logicsimulation_round);
-	installHook("logicsimulation_world_hook", logicsimulation_world_hook, (void*)logicsimulation_world, (void*)h_logicsimulation_world);
-	installHook("logicsimulation_terminator_hook", logicsimulation_terminator_hook, (void*)logicsimulation_terminator, (void*)h_logicsimulation_terminator);
-	installHook("logicsimulation_coop_hook", logicsimulation_coop_hook, (void*)logicsimulation_coop, (void*)h_logicsimulation_coop);
-	installHook("logicsimulation_versus_hook", logicsimulation_versus_hook, (void*)logicsimulation_versus, (void*)h_logicsimulation_versus);
-	installHook("logic_playeractions_hook", logic_playeractions_hook, (void*)logic_playeractions, (void*)h_logic_playeractions);
+	installHook("logicSimulationHook", Hooks::logicSimulationHook,
+	            (void*)Engine::logicSimulation, (void*)Hooks::logicSimulation);
+	installHook("logicSimulationRaceHook", Hooks::logicSimulationRaceHook,
+	            (void*)Engine::logicSimulationRace,
+	            (void*)Hooks::logicSimulationRace);
+	installHook("logicSimulationRoundHook", Hooks::logicSimulationRoundHook,
+	            (void*)Engine::logicSimulationRound,
+	            (void*)Hooks::logicSimulationRound);
+	installHook("logicSimulationWorldHook", Hooks::logicSimulationWorldHook,
+	            (void*)Engine::logicSimulationWorld,
+	            (void*)Hooks::logicSimulationWorld);
+	installHook("logicSimulationTerminatorHook",
+	            Hooks::logicSimulationTerminatorHook,
+	            (void*)Engine::logicSimulationTerminator,
+	            (void*)Hooks::logicSimulationTerminator);
+	installHook("logicSimulationCoopHook", Hooks::logicSimulationCoopHook,
+	            (void*)Engine::logicSimulationCoop,
+	            (void*)Hooks::logicSimulationHoop);
+	installHook("logicSimulationVersusHook", Hooks::logicSimulationVersusHook,
+	            (void*)Engine::logicSimulationVersus,
+	            (void*)Hooks::logicSimulationVersus);
+	installHook("logicPlayerActionsHook", Hooks::logicPlayerActionsHook,
+	            (void*)Engine::logicPlayerActions,
+	            (void*)Hooks::logicPlayerActions);
 
-	installHook("physicssimulation_hook", physicssimulation_hook, (void*)physicssimulation, (void*)h_physicssimulation);
-	installHook("serverrecv_hook", serverrecv_hook, (void*)serverrecv, (void*)h_serverrecv);
-	installHook("serversend_hook", serversend_hook, (void*)serversend, (void*)h_serversend);
-	installHook("bulletsimulation_hook", bulletsimulation_hook, (void*)bulletsimulation, (void*)h_bulletsimulation);
+	installHook("physicsSimulationHook", Hooks::physicsSimulationHook,
+	            (void*)Engine::physicsSimulation,
+	            (void*)Hooks::physicsSimulation);
+	installHook("serverReceiveHook", Hooks::serverReceiveHook,
+	            (void*)Engine::serverReceive, (void*)Hooks::serverReceive);
+	installHook("serverSendHook", Hooks::serverSendHook,
+	            (void*)Engine::serverSend, (void*)Hooks::serverSend);
+	installHook("bulletSimulationHook", Hooks::bulletSimulationHook,
+	            (void*)Engine::bulletSimulation, (void*)Hooks::bulletSimulation);
 
-	installHook("saveaccountsserver_hook", saveaccountsserver_hook, (void*)saveaccountsserver, (void*)h_saveaccountsserver);
+	installHook("saveAccountsServerHook", Hooks::saveAccountsServerHook,
+	            (void*)Engine::saveAccountsServer,
+	            (void*)Hooks::saveAccountsServer);
 
-	installHook("createaccount_jointicket_hook", createaccount_jointicket_hook, (void*)createaccount_jointicket, (void*)h_createaccount_jointicket);
-	installHook("server_sendconnectreponse_hook", server_sendconnectreponse_hook, (void*)server_sendconnectreponse, (void*)h_server_sendconnectreponse);
+	installHook("createAccountByJoinTicketHook",
+	            Hooks::createAccountByJoinTicketHook,
+	            (void*)Engine::createAccountByJoinTicket,
+	            (void*)Hooks::createAccountByJoinTicket);
+	installHook("serverSendConnectResponseHook",
+	            Hooks::serverSendConnectResponseHook,
+	            (void*)Engine::serverSendConnectResponse,
+	            (void*)Hooks::serverSendConnectResponse);
 
-	installHook("linkitem_hook", linkitem_hook, (void*)linkitem, (void*)h_linkitem);
-	installHook("item_computerinput_hook", item_computerinput_hook, (void*)item_computerinput, (void*)h_item_computerinput);
-	installHook("human_applydamage_hook", human_applydamage_hook, (void*)human_applydamage, (void*)h_human_applydamage);
-	installHook("human_collisionvehicle_hook", human_collisionvehicle_hook, (void*)human_collisionvehicle, (void*)h_human_collisionvehicle);
-	installHook("human_grabbing_hook", human_grabbing_hook, (void*)human_grabbing, (void*)h_human_grabbing);
-	installHook("grenadeexplosion_hook", grenadeexplosion_hook, (void*)grenadeexplosion, (void*)h_grenadeexplosion);
-	installHook("server_playermessage_hook", server_playermessage_hook, (void*)server_playermessage, (void*)h_server_playermessage);
-	installHook("playerai_hook", playerai_hook, (void*)playerai, (void*)h_playerai);
-	installHook("playerdeathtax_hook", playerdeathtax_hook, (void*)playerdeathtax, (void*)h_playerdeathtax);
-	installHook("addcollision_rigidbody_rigidbody_hook", addcollision_rigidbody_rigidbody_hook, (void*)addcollision_rigidbody_rigidbody, (void*)h_addcollision_rigidbody_rigidbody);
+	installHook("linkItemHook", Hooks::linkItemHook, (void*)Engine::linkItem,
+	            (void*)Hooks::linkItem);
+	installHook("itemComputerInputHook", Hooks::itemComputerInputHook,
+	            (void*)Engine::itemComputerInput,
+	            (void*)Hooks::itemComputerInput);
+	installHook("humanApplyDamageHook", Hooks::humanApplyDamageHook,
+	            (void*)Engine::humanApplyDamage, (void*)Hooks::humanApplyDamage);
+	installHook("humanCollisionVehicleHook", Hooks::humanCollisionVehicleHook,
+	            (void*)Engine::humanCollisionVehicle,
+	            (void*)Hooks::humanCollisionVehicle);
+	installHook("humanGrabbingHook", Hooks::humanGrabbingHook,
+	            (void*)Engine::humanGrabbing, (void*)Hooks::humanGrabbing);
+	installHook("grenadeExplosionHook", Hooks::grenadeExplosionHook,
+	            (void*)Engine::grenadeExplosion, (void*)Hooks::grenadeExplosion);
+	installHook("serverPlayerMessageHook", Hooks::serverPlayerMessageHook,
+	            (void*)Engine::serverPlayerMessage,
+	            (void*)Hooks::serverPlayerMessage);
+	installHook("playerAIHook", Hooks::playerAIHook, (void*)Engine::playerAI,
+	            (void*)Hooks::playerAI);
+	installHook("playerDeathTaxHook", Hooks::playerDeathTaxHook,
+	            (void*)Engine::playerDeathTax, (void*)Hooks::playerDeathTax);
+	installHook("addCollisionRigidBodyOnRigidBodyHook",
+	            Hooks::addCollisionRigidBodyOnRigidBodyHook,
+	            (void*)Engine::addCollisionRigidBodyOnRigidBody,
+	            (void*)Hooks::addCollisionRigidBodyOnRigidBody);
 
-	installHook("createplayer_hook", createplayer_hook, (void*)createplayer, (void*)h_createplayer);
-	installHook("deleteplayer_hook", deleteplayer_hook, (void*)deleteplayer, (void*)h_deleteplayer);
-	installHook("createhuman_hook", createhuman_hook, (void*)createhuman, (void*)h_createhuman);
-	installHook("deletehuman_hook", deletehuman_hook, (void*)deletehuman, (void*)h_deletehuman);
-	installHook("createitem_hook", createitem_hook, (void*)createitem, (void*)h_createitem);
-	installHook("deleteitem_hook", deleteitem_hook, (void*)deleteitem, (void*)h_deleteitem);
-	installHook("createobject_hook", createobject_hook, (void*)createobject, (void*)h_createobject);
-	installHook("deleteobject_hook", deleteobject_hook, (void*)deleteobject, (void*)h_deleteobject);
-	installHook("createrigidbody_hook", createrigidbody_hook, (void*)createrigidbody, (void*)h_createrigidbody);
+	installHook("createPlayerHook", Hooks::createPlayerHook,
+	            (void*)Engine::createPlayer, (void*)Hooks::createPlayer);
+	installHook("deletePlayerHook", Hooks::deletePlayerHook,
+	            (void*)Engine::deletePlayer, (void*)Hooks::deletePlayer);
+	installHook("createHumanHook", Hooks::createHumanHook,
+	            (void*)Engine::createHuman, (void*)Hooks::createHuman);
+	installHook("deleteHumanHook", Hooks::deleteHumanHook,
+	            (void*)Engine::deleteHuman, (void*)Hooks::deleteHuman);
+	installHook("createItemHook", Hooks::createItemHook,
+	            (void*)Engine::createItem, (void*)Hooks::createItem);
+	installHook("deleteItemHook", Hooks::deleteItemHook,
+	            (void*)Engine::deleteItem, (void*)Hooks::deleteItem);
+	installHook("createVehicleHook", Hooks::createVehicleHook,
+	            (void*)Engine::createVehicle, (void*)Hooks::createVehicle);
+	installHook("deleteVehicleHook", Hooks::deleteVehicleHook,
+	            (void*)Engine::deleteVehicle, (void*)Hooks::deleteVehicle);
+	installHook("createRigidBodyHook", Hooks::createRigidBodyHook,
+	            (void*)Engine::createRigidBody, (void*)Hooks::createRigidBody);
 
-	installHook("createevent_message_hook", createevent_message_hook, (void*)createevent_message, (void*)h_createevent_message);
-	installHook("createevent_updateplayer_hook", createevent_updateplayer_hook, (void*)createevent_updateplayer, (void*)h_createevent_updateplayer);
-	//installHook("createevent_updateplayer_finance_hook", createevent_updateplayer_finance_hook, (void*)createevent_updateplayer_finance, (void*)h_createevent_updateplayer_finance);
-	//createevent_updateitem_hook.Install((void*)createevent_updateitem, (void*)h_createevent_updateitem, HOOK_FLAGS);
-	installHook("createevent_updateobject_hook", createevent_updateobject_hook, (void*)createevent_updateobject, (void*)h_createevent_updateobject);
-	//createevent_sound_hook.Install((void*)createevent_sound, (void*)h_createevent_sound, HOOK_FLAGS);
-	installHook("createevent_bullethit_hook", createevent_bullethit_hook, (void*)createevent_bullethit, (void*)h_createevent_bullethit);
+	installHook("createEventMessageHook", Hooks::createEventMessageHook,
+	            (void*)Engine::createEventMessage,
+	            (void*)Hooks::createEventMessage);
+	installHook("createEventUpdatePlayerHook", Hooks::createEventUpdatePlayerHook,
+	            (void*)Engine::createEventUpdatePlayer,
+	            (void*)Hooks::createEventUpdatePlayer);
+	installHook("createEventUpdateVehicleHook",
+	            Hooks::createEventUpdateVehicleHook,
+	            (void*)Engine::createEventUpdateVehicle,
+	            (void*)Hooks::createEventUpdateVehicle);
+	installHook("createEventBulletHitHook", Hooks::createEventBulletHitHook,
+	            (void*)Engine::createEventBulletHit,
+	            (void*)Hooks::createEventBulletHit);
 
-	installHook("lineintersecthuman_hook", lineintersecthuman_hook, (void*)lineintersecthuman, (void*)h_lineintersecthuman);
+	installHook("lineIntersectHumanHook", Hooks::lineIntersectHumanHook,
+	            (void*)Engine::lineIntersectHuman,
+	            (void*)Hooks::lineIntersectHuman);
 }
 
-static inline void attachSignalHandler()
-{
+static inline void attachSignalHandler() {
 	struct sigaction action;
 	action.sa_handler = Console::handleInterruptSignal;
 
-	if (sigaction(SIGINT, &action, nullptr) == -1)
-	{
+	if (sigaction(SIGINT, &action, nullptr) == -1) {
 		throw std::runtime_error(strerror(errno));
 	}
 }
 
-static void attach()
-{
+static void attach() {
 	// Don't load self into future child processes
 	unsetenv("LD_PRELOAD");
 
@@ -1208,17 +1177,14 @@ static void attach()
 	Console::log(RS_PREFIX "Waiting for engine init...\n");
 }
 
-int __attribute__((constructor)) Entry()
-{
+int __attribute__((constructor)) Entry() {
 	std::thread mainThread(attach);
 	mainThread.detach();
 	return 0;
 }
 
-int __attribute__((destructor)) Destroy()
-{
-	if (lua != nullptr)
-	{
+int __attribute__((destructor)) Destroy() {
+	if (lua != nullptr) {
 		delete lua;
 		lua = nullptr;
 	}

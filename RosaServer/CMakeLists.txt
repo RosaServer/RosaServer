@@ -20,17 +20,17 @@ set (OPENSSL_USE_STATIC_LIBS TRUE)
 find_package (OpenSSL REQUIRED)
 
 add_library (rosaserver SHARED
-	rosaserver.cpp
 	api.cpp
-	globals.cpp
+	childprocess.cpp
+	console.cpp
+	engine.cpp
 	hooks.cpp
+	image.cpp
+	rosaserver.cpp
 	subhook.c
 	subhook_unix.c
 	subhook_x86.c
 	worker.cpp
-	childprocess.cpp
-	console.cpp
-	image.cpp
 )
 
 set_property (TARGET rosaserver PROPERTY CXX_STANDARD 17)
