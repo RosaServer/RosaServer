@@ -22,7 +22,7 @@ void logicSimulationWorld();
 extern subhook::Hook logicSimulationTerminatorHook;
 void logicSimulationTerminator();
 extern subhook::Hook logicSimulationCoopHook;
-void logicSimulationHoop();
+void logicSimulationCoop();
 extern subhook::Hook logicSimulationVersusHook;
 void logicSimulationVersus();
 extern subhook::Hook logicPlayerActionsHook;

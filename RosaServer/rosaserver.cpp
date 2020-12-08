@@ -1027,126 +1027,54 @@ static inline void installHook(
 	}
 }
 
+#define INSTALL(name)                                               \
+	installHook(#name "Hook", Hooks::name##Hook, (void*)Engine::name, \
+	            (void*)Hooks::name);
+
 static inline void installHooks() {
-	installHook("subRosaPutsHook", Hooks::subRosaPutsHook,
-	            (void*)Engine::subRosaPuts, (void*)Hooks::subRosaPuts);
-	installHook("subRosa__printf_chkHook", Hooks::subRosa__printf_chkHook,
-	            (void*)Engine::subRosa__printf_chk,
-	            (void*)Hooks::subRosa__printf_chk);
-
-	installHook("resetGameHook", Hooks::resetGameHook, (void*)Engine::resetGame,
-	            (void*)Hooks::resetGame);
-
-	installHook("logicSimulationHook", Hooks::logicSimulationHook,
-	            (void*)Engine::logicSimulation, (void*)Hooks::logicSimulation);
-	installHook("logicSimulationRaceHook", Hooks::logicSimulationRaceHook,
-	            (void*)Engine::logicSimulationRace,
-	            (void*)Hooks::logicSimulationRace);
-	installHook("logicSimulationRoundHook", Hooks::logicSimulationRoundHook,
-	            (void*)Engine::logicSimulationRound,
-	            (void*)Hooks::logicSimulationRound);
-	installHook("logicSimulationWorldHook", Hooks::logicSimulationWorldHook,
-	            (void*)Engine::logicSimulationWorld,
-	            (void*)Hooks::logicSimulationWorld);
-	installHook("logicSimulationTerminatorHook",
-	            Hooks::logicSimulationTerminatorHook,
-	            (void*)Engine::logicSimulationTerminator,
-	            (void*)Hooks::logicSimulationTerminator);
-	installHook("logicSimulationCoopHook", Hooks::logicSimulationCoopHook,
-	            (void*)Engine::logicSimulationCoop,
-	            (void*)Hooks::logicSimulationHoop);
-	installHook("logicSimulationVersusHook", Hooks::logicSimulationVersusHook,
-	            (void*)Engine::logicSimulationVersus,
-	            (void*)Hooks::logicSimulationVersus);
-	installHook("logicPlayerActionsHook", Hooks::logicPlayerActionsHook,
-	            (void*)Engine::logicPlayerActions,
-	            (void*)Hooks::logicPlayerActions);
-
-	installHook("physicsSimulationHook", Hooks::physicsSimulationHook,
-	            (void*)Engine::physicsSimulation,
-	            (void*)Hooks::physicsSimulation);
-	installHook("serverReceiveHook", Hooks::serverReceiveHook,
-	            (void*)Engine::serverReceive, (void*)Hooks::serverReceive);
-	installHook("serverSendHook", Hooks::serverSendHook,
-	            (void*)Engine::serverSend, (void*)Hooks::serverSend);
-	installHook("bulletSimulationHook", Hooks::bulletSimulationHook,
-	            (void*)Engine::bulletSimulation, (void*)Hooks::bulletSimulation);
-
-	installHook("saveAccountsServerHook", Hooks::saveAccountsServerHook,
-	            (void*)Engine::saveAccountsServer,
-	            (void*)Hooks::saveAccountsServer);
-
-	installHook("createAccountByJoinTicketHook",
-	            Hooks::createAccountByJoinTicketHook,
-	            (void*)Engine::createAccountByJoinTicket,
-	            (void*)Hooks::createAccountByJoinTicket);
-	installHook("serverSendConnectResponseHook",
-	            Hooks::serverSendConnectResponseHook,
-	            (void*)Engine::serverSendConnectResponse,
-	            (void*)Hooks::serverSendConnectResponse);
-
-	installHook("linkItemHook", Hooks::linkItemHook, (void*)Engine::linkItem,
-	            (void*)Hooks::linkItem);
-	installHook("itemComputerInputHook", Hooks::itemComputerInputHook,
-	            (void*)Engine::itemComputerInput,
-	            (void*)Hooks::itemComputerInput);
-	installHook("humanApplyDamageHook", Hooks::humanApplyDamageHook,
-	            (void*)Engine::humanApplyDamage, (void*)Hooks::humanApplyDamage);
-	installHook("humanCollisionVehicleHook", Hooks::humanCollisionVehicleHook,
-	            (void*)Engine::humanCollisionVehicle,
-	            (void*)Hooks::humanCollisionVehicle);
-	installHook("humanGrabbingHook", Hooks::humanGrabbingHook,
-	            (void*)Engine::humanGrabbing, (void*)Hooks::humanGrabbing);
-	installHook("grenadeExplosionHook", Hooks::grenadeExplosionHook,
-	            (void*)Engine::grenadeExplosion, (void*)Hooks::grenadeExplosion);
-	installHook("serverPlayerMessageHook", Hooks::serverPlayerMessageHook,
-	            (void*)Engine::serverPlayerMessage,
-	            (void*)Hooks::serverPlayerMessage);
-	installHook("playerAIHook", Hooks::playerAIHook, (void*)Engine::playerAI,
-	            (void*)Hooks::playerAI);
-	installHook("playerDeathTaxHook", Hooks::playerDeathTaxHook,
-	            (void*)Engine::playerDeathTax, (void*)Hooks::playerDeathTax);
-	installHook("addCollisionRigidBodyOnRigidBodyHook",
-	            Hooks::addCollisionRigidBodyOnRigidBodyHook,
-	            (void*)Engine::addCollisionRigidBodyOnRigidBody,
-	            (void*)Hooks::addCollisionRigidBodyOnRigidBody);
-
-	installHook("createPlayerHook", Hooks::createPlayerHook,
-	            (void*)Engine::createPlayer, (void*)Hooks::createPlayer);
-	installHook("deletePlayerHook", Hooks::deletePlayerHook,
-	            (void*)Engine::deletePlayer, (void*)Hooks::deletePlayer);
-	installHook("createHumanHook", Hooks::createHumanHook,
-	            (void*)Engine::createHuman, (void*)Hooks::createHuman);
-	installHook("deleteHumanHook", Hooks::deleteHumanHook,
-	            (void*)Engine::deleteHuman, (void*)Hooks::deleteHuman);
-	installHook("createItemHook", Hooks::createItemHook,
-	            (void*)Engine::createItem, (void*)Hooks::createItem);
-	installHook("deleteItemHook", Hooks::deleteItemHook,
-	            (void*)Engine::deleteItem, (void*)Hooks::deleteItem);
-	installHook("createVehicleHook", Hooks::createVehicleHook,
-	            (void*)Engine::createVehicle, (void*)Hooks::createVehicle);
-	installHook("deleteVehicleHook", Hooks::deleteVehicleHook,
-	            (void*)Engine::deleteVehicle, (void*)Hooks::deleteVehicle);
-	installHook("createRigidBodyHook", Hooks::createRigidBodyHook,
-	            (void*)Engine::createRigidBody, (void*)Hooks::createRigidBody);
-
-	installHook("createEventMessageHook", Hooks::createEventMessageHook,
-	            (void*)Engine::createEventMessage,
-	            (void*)Hooks::createEventMessage);
-	installHook("createEventUpdatePlayerHook", Hooks::createEventUpdatePlayerHook,
-	            (void*)Engine::createEventUpdatePlayer,
-	            (void*)Hooks::createEventUpdatePlayer);
-	installHook("createEventUpdateVehicleHook",
-	            Hooks::createEventUpdateVehicleHook,
-	            (void*)Engine::createEventUpdateVehicle,
-	            (void*)Hooks::createEventUpdateVehicle);
-	installHook("createEventBulletHitHook", Hooks::createEventBulletHitHook,
-	            (void*)Engine::createEventBulletHit,
-	            (void*)Hooks::createEventBulletHit);
-
-	installHook("lineIntersectHumanHook", Hooks::lineIntersectHumanHook,
-	            (void*)Engine::lineIntersectHuman,
-	            (void*)Hooks::lineIntersectHuman);
+	INSTALL(subRosaPuts);
+	INSTALL(subRosaPuts);
+	INSTALL(subRosa__printf_chk);
+	INSTALL(resetGame);
+	INSTALL(logicSimulation);
+	INSTALL(logicSimulationRace);
+	INSTALL(logicSimulationRound);
+	INSTALL(logicSimulationWorld);
+	INSTALL(logicSimulationTerminator);
+	INSTALL(logicSimulationCoop);
+	INSTALL(logicSimulationVersus);
+	INSTALL(logicPlayerActions);
+	INSTALL(physicsSimulation);
+	INSTALL(serverReceive);
+	INSTALL(serverSend);
+	INSTALL(bulletSimulation);
+	INSTALL(saveAccountsServer);
+	INSTALL(createAccountByJoinTicket);
+	INSTALL(serverSendConnectResponse);
+	INSTALL(linkItem);
+	INSTALL(itemComputerInput);
+	INSTALL(humanApplyDamage);
+	INSTALL(humanCollisionVehicle);
+	INSTALL(humanGrabbing);
+	INSTALL(grenadeExplosion);
+	INSTALL(serverPlayerMessage);
+	INSTALL(playerAI);
+	INSTALL(playerDeathTax);
+	INSTALL(addCollisionRigidBodyOnRigidBody);
+	INSTALL(createPlayer);
+	INSTALL(deletePlayer);
+	INSTALL(createHuman);
+	INSTALL(deleteHuman);
+	INSTALL(createItem);
+	INSTALL(deleteItem);
+	INSTALL(createVehicle);
+	INSTALL(deleteVehicle);
+	INSTALL(createRigidBody);
+	INSTALL(createEventMessage);
+	INSTALL(createEventUpdatePlayer);
+	INSTALL(createEventUpdateVehicle);
+	INSTALL(createEventBulletHit);
+	INSTALL(lineIntersectHuman);
 }
 
 static inline void attachSignalHandler() {
