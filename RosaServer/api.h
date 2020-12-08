@@ -196,6 +196,8 @@ namespace os {
 sol::table listDirectory(const char* path, sol::this_state s);
 bool createDirectory(const char* path);
 double realClock();
+void exit();
+void exitCode(int code);
 };  // namespace os
 };  // namespace Lua
 

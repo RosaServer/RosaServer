@@ -19,20 +19,20 @@ Worker::~Worker() {
 void Worker::runThread(std::string fileName) {
 	std::atomic_bool* _stopped = stopped;
 
-	sol::state lua;
-	defineThreadSafeAPIs(&lua);
+	sol::state state;
+	defineThreadSafeAPIs(&state);
 
-	lua["sendMessage"] = [this](std::string message) {
+	state["sendMessage"] = [this](std::string message) {
 		this->l_sendMessage(message);
 	};
 
-	lua["receiveMessage"] = [this](sol::this_state s) {
+	state["receiveMessage"] = [this](sol::this_state s) {
 		return this->l_receiveMessage(s);
 	};
 
 	destructionMutex.lock();
 
-	lua["sleep"] = [this, &_stopped](unsigned int ms) -> bool {
+	state["sleep"] = [this, &_stopped](unsigned int ms) -> bool {
 		// Allow this to be deconstructed while sleeping
 		this->destructionMutex.unlock();
 		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
@@ -44,7 +44,7 @@ void Worker::runThread(std::string fileName) {
 	};
 
 	{
-		sol::load_result load = lua.load_file(fileName);
+		sol::load_result load = state.load_file(fileName);
 		if (noLuaCallError(&load)) {
 			sol::protected_function_result res = load();
 			noLuaCallError(&res);
@@ -69,18 +69,18 @@ void Worker::l_sendMessage(std::string message) {
 }
 
 sol::object Worker::l_receiveMessage(sol::this_state s) {
-	sol::state_view lua(s);
+	sol::state_view state(s);
 
 	sendMessageQueueMutex.lock();
 	if (sendMessageQueue.empty()) {
 		sendMessageQueueMutex.unlock();
-		return sol::make_object(lua, sol::lua_nil);
+		return sol::make_object(state, sol::lua_nil);
 	}
 
 	auto message = sendMessageQueue.front();
 	sendMessageQueue.pop();
 	sendMessageQueueMutex.unlock();
-	return sol::make_object(lua, message);
+	return sol::make_object(state, message);
 }
 
 void Worker::stop() {
@@ -98,16 +98,16 @@ void Worker::sendMessage(std::string message) {
 }
 
 sol::object Worker::receiveMessage(sol::this_state s) {
-	sol::state_view lua(s);
+	sol::state_view state(s);
 
 	receiveMessageQueueMutex.lock();
 	if (receiveMessageQueue.empty()) {
 		receiveMessageQueueMutex.unlock();
-		return sol::make_object(lua, sol::lua_nil);
+		return sol::make_object(state, sol::lua_nil);
 	}
 
 	auto message = receiveMessageQueue.front();
 	receiveMessageQueue.pop();
 	receiveMessageQueueMutex.unlock();
-	return sol::make_object(lua, message);
+	return sol::make_object(state, message);
 }
