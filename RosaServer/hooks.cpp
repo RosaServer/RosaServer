@@ -753,10 +753,14 @@ void h_human_collisionvehicle(int humanID, int vehicleID) {
 }
 
 void h_human_grabbing(int humanID) {
+	Human* human = &Engine::humans[humanID];
+	bool isGrabbingAny = human->isGrabbingLeft || human->isGrabbingRight;
+
 	bool noParent = false;
 	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
-		auto res = func("HumanGrabbing", &Engine::humans[humanID]);
+
+	if (isGrabbingAny && func != sol::nil) {
+		auto res = func("HumanGrabbing", human);
 		if (noLuaCallError(&res)) noParent = (bool)res;
 	}
 	if (!noParent) {
@@ -764,8 +768,8 @@ void h_human_grabbing(int humanID) {
 			subhook::ScopedHookRemove remove(&humanGrabbingHook);
 			Engine::humanGrabbing(humanID);
 		}
-		if (func != sol::nil) {
-			auto res = func("PostHumanGrabbing", &Engine::humans[humanID]);
+		if (isGrabbingAny && func != sol::nil) {
+			auto res = func("PostHumanGrabbing", human);
 			noLuaCallError(&res);
 		}
 	}
