@@ -46,8 +46,6 @@ subhook::Hook createEventUpdateVehicleHook;
 subhook::Hook createEventBulletHitHook;
 subhook::Hook lineIntersectHumanHook;
 
-static constexpr int httpThreadCount = 2;
-
 int subRosaPuts(const char* str) {
 	std::ostringstream stream;
 
@@ -88,12 +86,6 @@ void resetGame() {
 
 		Console::log(RS_PREFIX "Initializing input...\n");
 		Console::init();
-
-		Console::log(RS_PREFIX "Starting HTTP threads...\n");
-		for (int i = 0; i < httpThreadCount; i++) {
-			std::thread thread(HTTPThread);
-			thread.detach();
-		}
 
 		Console::log(RS_PREFIX "Ready!\n");
 		hookAndReset(RESET_REASON_BOOT);
@@ -145,35 +137,6 @@ void logicSimulation() {
 				noLuaCallError(&res);
 			}
 			Console::commandQueue.pop();
-		}
-	}
-
-	while (true) {
-		responseQueueMutex.lock();
-		if (responseQueue.empty()) {
-			responseQueueMutex.unlock();
-			break;
-		}
-		auto res = responseQueue.front();
-		responseQueue.pop();
-		responseQueueMutex.unlock();
-
-		if (hookFunc != sol::nil) {
-			if (res.responded) {
-				sol::table table = lua->create_table();
-				table["status"] = res.status;
-				table["body"] = res.body;
-
-				sol::table headers = lua->create_table();
-				for (const auto& h : res.headers) headers[h.first] = h.second;
-				table["headers"] = headers;
-
-				auto resf = res.callback->call(table);
-				noLuaCallError(&resf);
-			} else {
-				auto resf = res.callback->call();
-				noLuaCallError(&resf);
-			}
 		}
 	}
 

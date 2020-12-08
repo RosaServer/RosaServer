@@ -54,12 +54,6 @@ struct LuaHTTPResponse {
 };
 
 extern std::mutex stateResetMutex;
-extern std::queue<LuaHTTPRequest> requestQueue;
-extern std::mutex requestQueueMutex;
-extern std::queue<LuaHTTPResponse> responseQueue;
-extern std::mutex responseQueueMutex;
-
-void HTTPThread();
 
 void printLuaError(sol::error* err);
 bool noLuaCallError(sol::protected_function_result* res);

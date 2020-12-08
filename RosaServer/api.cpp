@@ -16,10 +16,6 @@ sol::table* vehicleDataTables[maxNumberOfVehicles];
 sol::table* bodyDataTables[maxNumberOfRigidBodies];
 
 std::mutex stateResetMutex;
-std::queue<LuaHTTPRequest> requestQueue;
-std::mutex requestQueueMutex;
-std::queue<LuaHTTPResponse> responseQueue;
-std::mutex responseQueueMutex;
 
 static constexpr const char* errorOutOfRange = "Index out of range";
 
@@ -63,55 +59,6 @@ void hookAndReset(int reason) {
 			auto res = func("PostResetGame", reason);
 			noLuaCallError(&res);
 		}
-	}
-}
-
-static void handleHTTPResponse(LuaHTTPRequest& req, httplib::Result& res) {
-	if (res) {
-		LuaHTTPResponse response{req.callback, true, res->status, res->body,
-		                         res->headers};
-		std::lock_guard<std::mutex> guard(responseQueueMutex);
-		responseQueue.push(response);
-	} else {
-		LuaHTTPResponse response{req.callback, false};
-		std::lock_guard<std::mutex> guard(responseQueueMutex);
-		responseQueue.push(response);
-	}
-}
-
-void HTTPThread() {
-	while (true) {
-		while (true) {
-			std::lock_guard<std::mutex> guard(stateResetMutex);
-
-			requestQueueMutex.lock();
-			if (requestQueue.empty()) {
-				requestQueueMutex.unlock();
-				break;
-			}
-			auto req = requestQueue.front();
-			requestQueue.pop();
-			requestQueueMutex.unlock();
-
-			httplib::Client client(req.scheme.c_str());
-			client.set_connection_timeout(6);
-			client.set_keep_alive(false);
-
-			req.headers.emplace("Connection", "close");
-
-			switch (req.type) {
-				case get: {
-					auto res = client.Get(req.path.c_str(), req.headers);
-					handleHTTPResponse(req, res);
-				} break;
-				case post: {
-					auto res = client.Post(req.path.c_str(), req.headers, req.body,
-					                       req.contentType.c_str());
-					handleHTTPResponse(req, res);
-				} break;
-			}
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
 
@@ -160,37 +107,6 @@ Vector Vector_3f(float x, float y, float z) { return Vector{x, y, z}; }
 RotMatrix RotMatrix_(float x1, float y1, float z1, float x2, float y2, float z2,
                      float x3, float y3, float z3) {
 	return RotMatrix{x1, y1, z1, x2, y2, z2, x3, y3, z3};
-}
-
-void http::get(const char* scheme, const char* path, sol::table headers,
-               sol::protected_function callback) {
-	LuaHTTPRequest request{LuaRequestType::get, scheme, path,
-	                       std::make_shared<sol::protected_function>(callback)};
-
-	for (const auto& pair : headers)
-		request.headers.emplace(pair.first.as<std::string>(),
-		                        pair.second.as<std::string>());
-
-	std::lock_guard<std::mutex> guard(requestQueueMutex);
-	requestQueue.push(request);
-}
-
-void http::post(const char* scheme, const char* path, sol::table headers,
-                std::string body, const char* contentType,
-                sol::protected_function callback) {
-	LuaHTTPRequest request{LuaRequestType::post,
-	                       scheme,
-	                       path,
-	                       std::make_shared<sol::protected_function>(callback),
-	                       contentType,
-	                       body};
-
-	for (const auto& pair : headers)
-		request.headers.emplace(pair.first.as<std::string>(),
-		                        pair.second.as<std::string>());
-
-	std::lock_guard<std::mutex> guard(requestQueueMutex);
-	requestQueue.push(request);
 }
 
 static sol::object handleSyncHTTPResponse(httplib::Result& res,
