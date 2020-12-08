@@ -2,13 +2,6 @@
 #include <sys/mman.h>
 #include <cerrno>
 
-#define handle_error(msg)               \
-	do {                                  \
-		std::cout << __LINE__ << std::endl; \
-		perror(msg);                        \
-		exit(EXIT_FAILURE);                 \
-	} while (0)
-
 static unsigned int* version;
 static unsigned int* subVersion;
 static char* serverName;
@@ -39,7 +32,7 @@ static void pryMemory(void* address, size_t numPages) {
 
 		Console::log(stream.str());
 	} else {
-		handle_error("mprotect");
+		throw std::runtime_error(strerror(errno));
 	}
 }
 
