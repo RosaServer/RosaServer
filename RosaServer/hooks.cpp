@@ -84,8 +84,8 @@ void h_logicsimulation() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&logicsimulation_hook);
-			logicsimulation();
+			subhook::ScopedHookRemove remove(&logicSimulationHook);
+			logicSimulation();
 		}
 		if (hookFunc != sol::nil) {
 			auto res = hookFunc("PostLogic");
@@ -158,8 +158,8 @@ void h_logicsimulation_race() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&logicsimulation_race_hook);
-			logicsimulation_race();
+			subhook::ScopedHookRemove remove(&logicSimulationRaceHook);
+			logicSimulationRace();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostLogicRace");
@@ -177,8 +177,8 @@ void h_logicsimulation_round() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&logicsimulation_round_hook);
-			logicsimulation_round();
+			subhook::ScopedHookRemove remove(&logicSimulationRoundHook);
+			logicSimulationRound();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostLogicRound");
@@ -196,8 +196,8 @@ void h_logicsimulation_world() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&logicsimulation_world_hook);
-			logicsimulation_world();
+			subhook::ScopedHookRemove remove(&logicSimulationWorldHook);
+			logicSimulationWorld();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostLogicWorld");
@@ -215,8 +215,8 @@ void h_logicsimulation_terminator() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&logicsimulation_terminator_hook);
-			logicsimulation_terminator();
+			subhook::ScopedHookRemove remove(&logicSimulationTerminatorHook);
+			logicSimulationTerminator();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostLogicTerminator");
@@ -234,8 +234,8 @@ void h_logicsimulation_coop() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&logicsimulation_coop_hook);
-			logicsimulation_coop();
+			subhook::ScopedHookRemove remove(&logicSimulationCoopHook);
+			logicSimulationCoop();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostLogicCoop");
@@ -253,8 +253,8 @@ void h_logicsimulation_versus() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&logicsimulation_versus_hook);
-			logicsimulation_versus();
+			subhook::ScopedHookRemove remove(&logicSimulationVersusHook);
+			logicSimulationVersus();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostLogicVersus");
@@ -272,8 +272,8 @@ void h_logic_playeractions(int playerID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&logic_playeractions_hook);
-			logic_playeractions(playerID);
+			subhook::ScopedHookRemove remove(&logicPlayerActionsHook);
+			logicPlayerActions(playerID);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostPlayerActions", &players[playerID]);
@@ -291,8 +291,8 @@ void h_physicssimulation() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&physicssimulation_hook);
-			physicssimulation();
+			subhook::ScopedHookRemove remove(&physicsSimulationHook);
+			physicsSimulation();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostPhysics");
@@ -311,8 +311,8 @@ int h_serverrecv() {
 	if (!noParent) {
 		int ret;
 		{
-			subhook::ScopedHookRemove remove(&serverrecv_hook);
-			ret = serverrecv();
+			subhook::ScopedHookRemove remove(&serverReceiveHook);
+			ret = serverReceive();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostInPacket");
@@ -332,8 +332,8 @@ void h_serversend() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&serversend_hook);
-			serversend();
+			subhook::ScopedHookRemove remove(&serverSendHook);
+			serverSend();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostSendPacket");
@@ -351,8 +351,8 @@ void h_bulletsimulation() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&bulletsimulation_hook);
-			bulletsimulation();
+			subhook::ScopedHookRemove remove(&bulletSimulationHook);
+			bulletSimulation();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostPhysicsBullets");
@@ -370,8 +370,8 @@ void h_saveaccountsserver() {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&saveaccountsserver_hook);
-			saveaccountsserver();
+			subhook::ScopedHookRemove remove(&saveAccountsServerHook);
+			saveAccountsServer();
 		}
 		if (func != sol::nil) {
 			auto res = func("PostAccountsSave");
@@ -390,8 +390,8 @@ int h_createaccount_jointicket(int identifier, unsigned int ticket) {
 	if (!noParent) {
 		int id;
 		{
-			subhook::ScopedHookRemove remove(&createaccount_jointicket_hook);
-			id = createaccount_jointicket(identifier, ticket);
+			subhook::ScopedHookRemove remove(&createAccountByJoinTicketHook);
+			id = createAccountByJoinTicket(identifier, ticket);
 		}
 		if (func != sol::nil) {
 			auto res = func("AccountTicketFound", id == -1 ? nullptr : &accounts[id]);
@@ -432,8 +432,8 @@ void h_server_sendconnectreponse(unsigned int address, unsigned int port,
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&server_sendconnectreponse_hook);
-			server_sendconnectreponse(address, port, message);
+			subhook::ScopedHookRemove remove(&serverSendConnectResponseHook);
+			serverSendConnectResponse(address, port, message);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostSendConnectResponse", addressString, port, data);
@@ -452,8 +452,8 @@ int h_createplayer() {
 	if (!noParent) {
 		int id;
 		{
-			subhook::ScopedHookRemove remove(&createplayer_hook);
-			id = createplayer();
+			subhook::ScopedHookRemove remove(&createPlayerHook);
+			id = createPlayer();
 
 			if (id != -1 && playerDataTables[id]) {
 				delete playerDataTables[id];
@@ -478,8 +478,8 @@ void h_deleteplayer(int playerID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&deleteplayer_hook);
-			deleteplayer(playerID);
+			subhook::ScopedHookRemove remove(&deletePlayerHook);
+			deletePlayer(playerID);
 
 			if (playerDataTables[playerID]) {
 				delete playerDataTables[playerID];
@@ -503,8 +503,8 @@ int h_createhuman(Vector* pos, RotMatrix* rot, int playerID) {
 	if (!noParent) {
 		int id;
 		{
-			subhook::ScopedHookRemove remove(&createhuman_hook);
-			id = createhuman(pos, rot, playerID);
+			subhook::ScopedHookRemove remove(&createHumanHook);
+			id = createHuman(pos, rot, playerID);
 
 			if (id != -1 && humanDataTables[id]) {
 				delete humanDataTables[id];
@@ -529,8 +529,8 @@ void h_deletehuman(int humanID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&deletehuman_hook);
-			deletehuman(humanID);
+			subhook::ScopedHookRemove remove(&deleteHumanHook);
+			deleteHuman(humanID);
 
 			if (humanDataTables[humanID]) {
 				delete humanDataTables[humanID];
@@ -554,8 +554,8 @@ int h_createitem(int type, Vector* pos, Vector* vel, RotMatrix* rot) {
 	if (!noParent) {
 		int id;
 		{
-			subhook::ScopedHookRemove remove(&createitem_hook);
-			id = createitem(type, pos, vel, rot);
+			subhook::ScopedHookRemove remove(&createItemHook);
+			id = createItem(type, pos, vel, rot);
 
 			if (id != -1 && itemDataTables[id]) {
 				delete itemDataTables[id];
@@ -580,8 +580,8 @@ void h_deleteitem(int itemID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&deleteitem_hook);
-			deleteitem(itemID);
+			subhook::ScopedHookRemove remove(&deleteItemHook);
+			deleteItem(itemID);
 
 			if (itemDataTables[itemID]) {
 				delete itemDataTables[itemID];
@@ -606,8 +606,8 @@ int h_createobject(int type, Vector* pos, Vector* vel, RotMatrix* rot,
 	if (!noParent) {
 		int id;
 		{
-			subhook::ScopedHookRemove remove(&createobject_hook);
-			id = createobject(type, pos, vel, rot, color);
+			subhook::ScopedHookRemove remove(&createVehicleHook);
+			id = createVehicle(type, pos, vel, rot, color);
 
 			if (id != -1 && vehicleDataTables[id]) {
 				delete vehicleDataTables[id];
@@ -632,8 +632,8 @@ void h_deleteobject(int vehicleID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&deleteobject_hook);
-			deleteobject(vehicleID);
+			subhook::ScopedHookRemove remove(&deleteVehicleHook);
+			deleteVehicle(vehicleID);
 
 			if (vehicleDataTables[vehicleID]) {
 				delete vehicleDataTables[vehicleID];
@@ -651,8 +651,8 @@ int h_createrigidbody(int type, Vector* pos, RotMatrix* rot, Vector* vel,
                       Vector* scale, float mass) {
 	int id;
 	{
-		subhook::ScopedHookRemove remove(&createrigidbody_hook);
-		id = createrigidbody(type, pos, rot, vel, scale, mass);
+		subhook::ScopedHookRemove remove(&createRigidBodyHook);
+		id = createRigidBody(type, pos, rot, vel, scale, mass);
 	}
 	if (id != -1 && bodyDataTables[id]) {
 		delete bodyDataTables[id];
@@ -674,8 +674,8 @@ int h_linkitem(int itemID, int childItemID, int parentHumanID, int slot) {
 	if (!noParent) {
 		int worked;
 		{
-			subhook::ScopedHookRemove remove(&linkitem_hook);
-			worked = linkitem(itemID, childItemID, parentHumanID, slot);
+			subhook::ScopedHookRemove remove(&linkItemHook);
+			worked = linkItem(itemID, childItemID, parentHumanID, slot);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostItemLink", &items[itemID],
@@ -698,8 +698,8 @@ void h_item_computerinput(int itemID, unsigned int character) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&item_computerinput_hook);
-			item_computerinput(itemID, character);
+			subhook::ScopedHookRemove remove(&itemComputerInputHook);
+			itemComputerInput(itemID, character);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostItemComputerInput", &items[itemID], character);
@@ -717,8 +717,8 @@ void h_human_applydamage(int humanID, int bone, int unk, int damage) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&human_applydamage_hook);
-			human_applydamage(humanID, bone, unk, damage);
+			subhook::ScopedHookRemove remove(&humanApplyDamageHook);
+			humanApplyDamage(humanID, bone, unk, damage);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostHumanDamage", &humans[humanID], bone, damage);
@@ -737,8 +737,8 @@ void h_human_collisionvehicle(int humanID, int vehicleID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&human_collisionvehicle_hook);
-			human_collisionvehicle(humanID, vehicleID);
+			subhook::ScopedHookRemove remove(&humanCollisionVehicleHook);
+			humanCollisionVehicle(humanID, vehicleID);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostHumanCollisionVehicle", &humans[humanID],
@@ -757,8 +757,8 @@ void h_human_grabbing(int humanID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&human_grabbing_hook);
-			human_grabbing(humanID);
+			subhook::ScopedHookRemove remove(&humanGrabbingHook);
+			humanGrabbing(humanID);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostHumanGrabbing", &humans[humanID]);
@@ -776,8 +776,8 @@ void h_grenadeexplosion(int itemID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&grenadeexplosion_hook);
-			grenadeexplosion(itemID);
+			subhook::ScopedHookRemove remove(&grenadeExplosionHook);
+			grenadeExplosion(itemID);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostGrenadeExplode", &items[itemID]);
@@ -794,8 +794,8 @@ int h_server_playermessage(int playerID, char* message) {
 		if (noLuaCallError(&res)) noParent = (bool)res;
 	}
 	if (!noParent) {
-		subhook::ScopedHookRemove remove(&server_playermessage_hook);
-		return server_playermessage(playerID, message);
+		subhook::ScopedHookRemove remove(&serverPlayerMessageHook);
+		return serverPlayerMessage(playerID, message);
 	}
 	return 1;
 }
@@ -809,8 +809,8 @@ void h_playerai(int playerID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&playerai_hook);
-			playerai(playerID);
+			subhook::ScopedHookRemove remove(&playerAIHook);
+			playerAI(playerID);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostPlayerAI", &players[playerID]);
@@ -828,8 +828,8 @@ void h_playerdeathtax(int playerID) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&playerdeathtax_hook);
-			playerdeathtax(playerID);
+			subhook::ScopedHookRemove remove(&playerDeathTaxHook);
+			playerDeathTax(playerID);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostPlayerDeathTax", &players[playerID]);
@@ -850,8 +850,8 @@ void h_addcollision_rigidbody_rigidbody(int aBodyID, int bBodyID,
 		if (noLuaCallError(&res)) noParent = (bool)res;
 	}
 	if (!noParent) {
-		subhook::ScopedHookRemove remove(&addcollision_rigidbody_rigidbody_hook);
-		addcollision_rigidbody_rigidbody(aBodyID, bBodyID, aLocalPos, bLocalPos,
+		subhook::ScopedHookRemove remove(&addCollisionRigidBodyOnRigidBodyHook);
+		addCollisionRigidBodyOnRigidBody(aBodyID, bBodyID, aLocalPos, bLocalPos,
 		                                 normal, a, b, c, d);
 	}
 }
@@ -876,8 +876,8 @@ void h_createevent_message(int speakerType, char* message, int speakerID,
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&createevent_message_hook);
-			createevent_message(speakerType, message, speakerID, distance);
+			subhook::ScopedHookRemove remove(&createEventMessageHook);
+			createEventMessage(speakerType, message, speakerID, distance);
 		}
 		if (func != sol::nil) {
 			auto res =
@@ -896,8 +896,8 @@ void h_createevent_updateplayer(int id) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&createevent_updateplayer_hook);
-			createevent_updateplayer(id);
+			subhook::ScopedHookRemove remove(&createEventUpdatePlayerHook);
+			createEventUpdatePlayer(id);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostEventUpdatePlayer", &players[id]);
@@ -915,8 +915,8 @@ void h_createevent_updateplayer_finance(int id) {
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&createevent_updateplayer_finance_hook);
-			createevent_updateplayer_finance(id);
+			subhook::ScopedHookRemove remove(&createEventUpdatePlayerFinanceHook);
+			createEventUpdatePlayerFinance(id);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostEventUpdatePlayerFinance", &players[id]);
@@ -936,8 +936,8 @@ void h_createevent_updateobject(int vehicleID, int updateType, int partID,
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&createevent_updateobject_hook);
-			createevent_updateobject(vehicleID, updateType, partID, pos, normal);
+			subhook::ScopedHookRemove remove(&createEventUpdateVehicleHook);
+			createEventUpdateVehicle(vehicleID, updateType, partID, pos, normal);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostEventUpdateVehicle", &vehicles[vehicleID],
@@ -956,7 +956,7 @@ soundType, pos, volume, pitch); if (noLuaCallError(&res)) noParent = (bool)res;
   if (!noParent) {
     {
       subhook::ScopedHookRemove remove(&createevent_sound_hook);
-      createevent_sound(soundType, pos, volume, pitch);
+      createEventSound(soundType, pos, volume, pitch);
     }
     if (func != sol::nil) {
       auto res = func("PostEventSound", soundType, pos, volume, pitch);
@@ -975,8 +975,8 @@ void h_createevent_bullethit(int unk, int hitType, Vector* pos,
 	}
 	if (!noParent) {
 		{
-			subhook::ScopedHookRemove remove(&createevent_bullethit_hook);
-			createevent_bullethit(unk, hitType, pos, normal);
+			subhook::ScopedHookRemove remove(&createEventBulletHitHook);
+			createEventBulletHit(unk, hitType, pos, normal);
 		}
 		if (func != sol::nil) {
 			auto res = func("PostEventBulletHit", hitType, pos, normal);
@@ -988,8 +988,8 @@ void h_createevent_bullethit(int unk, int hitType, Vector* pos,
 int h_lineintersecthuman(int humanID, Vector* posA, Vector* posB) {
 	int didHit;
 	{
-		subhook::ScopedHookRemove remove(&lineintersecthuman_hook);
-		didHit = lineintersecthuman(humanID, posA, posB);
+		subhook::ScopedHookRemove remove(&lineIntersectHumanHook);
+		didHit = lineIntersectHuman(humanID, posA, posB);
 	}
 
 	if (!didHit) {

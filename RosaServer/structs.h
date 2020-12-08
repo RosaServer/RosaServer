@@ -17,7 +17,7 @@ static constexpr int maxNumberOfBonds = 16384;
   Event types:
   0x1		1	bullethit
   0x2		2	message
-  0x3		3	createobject (vehicle)
+  0x3		3	createVehicle (vehicle)
   0x4		4	updateobject
   0x5		5	updateitem
   0x7		7	updateplayer
