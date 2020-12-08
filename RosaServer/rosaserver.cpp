@@ -170,8 +170,6 @@ void defineThreadSafeAPIs(sol::state* state) {
 
 void luaInit(bool redo) {
 	std::lock_guard<std::mutex> guard(stateResetMutex);
-	requestQueue = std::queue<LuaHTTPRequest>();
-	responseQueue = std::queue<LuaHTTPResponse>();
 
 	if (redo) {
 		Console::log(LUA_PREFIX "Resetting state...\n");
@@ -660,9 +658,6 @@ void luaInit(bool redo) {
 
 	(*lua)["hook"] = lua->create_table();
 	(*lua)["hook"]["persistentMode"] = hookMode;
-
-	(*lua)["http"]["get"] = Lua::http::get;
-	(*lua)["http"]["post"] = Lua::http::post;
 
 	{
 		auto eventTable = lua->create_table();
