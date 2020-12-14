@@ -21,3 +21,8 @@ assert(memory.readByte(base + 7) == 0)
 
 assert(memory.readLong(base) == 0x00010102464c457f)
 assert(memory.readULong(base) == 0x00010102464c457f)
+
+assert(memory.getAddress(players[0]) < memory.getAddress(players[1]))
+
+local sizeOfPlayer = memory.getAddress(players[1]) - memory.getAddress(players[0])
+assert(memory.getAddress(players[2]) == memory.getAddress(players[1]) + sizeOfPlayer)
