@@ -824,6 +824,28 @@ void luaInit(bool redo) {
 		_meta["__index"] = Lua::intersections::getByIndex;
 	}
 
+	{
+		auto memoryTable = lua->create_table();
+		(*lua)["memory"] = memoryTable;
+		memoryTable["getBaseAddress"] = Lua::memory::getBaseAddress;
+		memoryTable["getAddress"] = sol::overload(
+		    &Lua::memory::getAddressOfConnection, &Lua::memory::getAddressOfAccount,
+		    &Lua::memory::getAddressOfPlayer, &Lua::memory::getAddressOfHuman,
+		    &Lua::memory::getAddressOfItemType, &Lua::memory::getAddressOfItem,
+		    &Lua::memory::getAddressOfVehicle, &Lua::memory::getAddressOfBullet,
+		    &Lua::memory::getAddressOfBone, &Lua::memory::getAddressOfRigidBody,
+		    &Lua::memory::getAddressOfBond, &Lua::memory::getAddressOfAction,
+		    &Lua::memory::getAddressOfMenuButton,
+		    &Lua::memory::getAddressOfStreetLane, &Lua::memory::getAddressOfStreet,
+		    &Lua::memory::getAddressOfStreetIntersection);
+		memoryTable["readInt"] = Lua::memory::readInt;
+		memoryTable["readUInt"] = Lua::memory::readUInt;
+		memoryTable["readLong"] = Lua::memory::readLong;
+		memoryTable["readULong"] = Lua::memory::readULong;
+		memoryTable["readFloat"] = Lua::memory::readFloat;
+		memoryTable["readDouble"] = Lua::memory::readDouble;
+	}
+
 	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;
 	(*lua)["RESET_REASON_ENGINECALL"] = RESET_REASON_ENGINECALL;
 	(*lua)["RESET_REASON_LUARESET"] = RESET_REASON_LUARESET;
@@ -852,7 +874,7 @@ void luaInit(bool redo) {
 	}
 }
 
-static inline unsigned long getBaseAddress() {
+static inline uintptr_t getBaseAddress() {
 	std::ifstream file("/proc/self/maps");
 	std::string line;
 	// First line
@@ -863,7 +885,7 @@ static inline unsigned long getBaseAddress() {
 	return std::stoul(truncated, nullptr, 16);
 }
 
-static inline void printBaseAddress(unsigned long base) {
+static inline void printBaseAddress(uintptr_t base) {
 	std::ostringstream stream;
 
 	stream << RS_PREFIX "Base address is ";
@@ -874,7 +896,7 @@ static inline void printBaseAddress(unsigned long base) {
 	Console::log(stream.str());
 }
 
-static inline void locateMemory(unsigned long base) {
+static inline void locateMemory(uintptr_t base) {
 	version = (unsigned int*)(base + 0x2D5F08);
 	subVersion = (unsigned int*)(base + 0x2D5F04);
 	serverName = (char*)(base + 0x24EE4234);
@@ -1082,9 +1104,9 @@ static void attach() {
 	Console::log(RS_PREFIX "Assuming 37c\n");
 
 	Console::log(RS_PREFIX "Locating memory...\n");
-	auto base = getBaseAddress();
-	printBaseAddress(base);
-	locateMemory(base);
+	Lua::memory::baseAddress = getBaseAddress();
+	printBaseAddress(Lua::memory::baseAddress);
+	locateMemory(Lua::memory::baseAddress);
 
 	Console::log(RS_PREFIX "Installing hooks...\n");
 	installHooks();
