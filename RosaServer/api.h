@@ -213,12 +213,17 @@ uintptr_t getAddressOfMenuButton(MenuButton* address);
 uintptr_t getAddressOfStreetLane(StreetLane* address);
 uintptr_t getAddressOfStreet(Street* address);
 uintptr_t getAddressOfStreetIntersection(StreetIntersection* address);
+int8_t readByte(uintptr_t address);
+uint8_t readUByte(uintptr_t address);
+int16_t readShort(uintptr_t address);
+uint16_t readUShort(uintptr_t address);
 int32_t readInt(uintptr_t address);
 uint32_t readUInt(uintptr_t address);
 int64_t readLong(uintptr_t address);
 uint64_t readULong(uintptr_t address);
 float readFloat(uintptr_t address);
 double readDouble(uintptr_t address);
+std::string readBytes(uintptr_t address, size_t count);
 }  // namespace memory
 };  // namespace Lua
 

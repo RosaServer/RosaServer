@@ -838,12 +838,17 @@ void luaInit(bool redo) {
 		    &Lua::memory::getAddressOfMenuButton,
 		    &Lua::memory::getAddressOfStreetLane, &Lua::memory::getAddressOfStreet,
 		    &Lua::memory::getAddressOfStreetIntersection);
+		memoryTable["readByte"] = Lua::memory::readByte;
+		memoryTable["readUByte"] = Lua::memory::readUByte;
+		memoryTable["readShort"] = Lua::memory::readShort;
+		memoryTable["readUShort"] = Lua::memory::readUShort;
 		memoryTable["readInt"] = Lua::memory::readInt;
 		memoryTable["readUInt"] = Lua::memory::readUInt;
 		memoryTable["readLong"] = Lua::memory::readLong;
 		memoryTable["readULong"] = Lua::memory::readULong;
 		memoryTable["readFloat"] = Lua::memory::readFloat;
 		memoryTable["readDouble"] = Lua::memory::readDouble;
+		memoryTable["readBytes"] = Lua::memory::readBytes;
 	}
 
 	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;

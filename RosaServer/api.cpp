@@ -701,12 +701,20 @@ uintptr_t memory::getAddressOfStreetIntersection(StreetIntersection* address) {
 	return (uintptr_t)address;
 }
 
+int8_t memory::readByte(uintptr_t address) { return *(int8_t*)address; }
+uint8_t memory::readUByte(uintptr_t address) { return *(uint8_t*)address; }
+int16_t memory::readShort(uintptr_t address) { return *(int16_t*)address; }
+uint16_t memory::readUShort(uintptr_t address) { return *(uint16_t*)address; }
 int32_t memory::readInt(uintptr_t address) { return *(int32_t*)address; }
 uint32_t memory::readUInt(uintptr_t address) { return *(uint32_t*)address; }
 int64_t memory::readLong(uintptr_t address) { return *(int64_t*)address; }
 uint64_t memory::readULong(uintptr_t address) { return *(uint64_t*)address; }
 float memory::readFloat(uintptr_t address) { return *(float*)address; }
 double memory::readDouble(uintptr_t address) { return *(double*)address; }
+
+std::string memory::readBytes(uintptr_t address, size_t count) {
+	return std::string((char*)address, (char*)(address + count));
+}
 
 };  // namespace Lua
 
