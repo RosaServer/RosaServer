@@ -716,6 +716,41 @@ std::string memory::readBytes(uintptr_t address, size_t count) {
 	return std::string((char*)address, (char*)(address + count));
 }
 
+void memory::writeByte(uintptr_t address, int8_t data) {
+	*(int8_t*)address = data;
+}
+void memory::writeUByte(uintptr_t address, uint8_t data) {
+	*(uint8_t*)address = data;
+}
+void memory::writeShort(uintptr_t address, int16_t data) {
+	*(int16_t*)address = data;
+}
+void memory::writeUShort(uintptr_t address, uint16_t data) {
+	*(uint16_t*)address = data;
+}
+void memory::writeInt(uintptr_t address, int32_t data) {
+	*(int32_t*)address = data;
+}
+void memory::writeUInt(uintptr_t address, uint32_t data) {
+	*(uint32_t*)address = data;
+}
+void memory::writeLong(uintptr_t address, int64_t data) {
+	*(int64_t*)address = data;
+}
+void memory::writeULong(uintptr_t address, uint64_t data) {
+	*(uint64_t*)address = data;
+}
+void memory::writeFloat(uintptr_t address, float data) {
+	*(float*)address = data;
+}
+void memory::writeDouble(uintptr_t address, double data) {
+	*(double*)address = data;
+}
+
+void memory::writeBytes(uintptr_t address, std::string bytes) {
+	std::memcpy((void*)address, bytes.data(), bytes.size());
+}
+
 };  // namespace Lua
 
 std::string addressFromInteger(unsigned int address) {

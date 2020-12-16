@@ -26,3 +26,37 @@ assert(memory.getAddress(players[0]) < memory.getAddress(players[1]))
 
 local sizeOfPlayer = memory.getAddress(players[1]) - memory.getAddress(players[0])
 assert(memory.getAddress(players[2]) == memory.getAddress(players[1]) + sizeOfPlayer)
+
+local item = items[0]
+assert(not item.isActive)
+local address = memory.getAddress(items[0])
+
+for _, func in ipairs({
+	'writeByte',
+	'writeUByte',
+	'writeShort',
+	'writeUShort',
+	'writeInt',
+	'writeUInt',
+	'writeLong',
+	'writeULong',
+	'writeFloat',
+}) do
+	memory[func](address, 1)
+	assert(item.isActive)
+	item.isActive = false
+end
+
+assert(not item.hasPhysics)
+memory.writeDouble(address, 1)
+assert(not item.isActive)
+assert(item.hasPhysics)
+
+memory.writeBytes(address, '\1\0\0\0\0\0\0\0')
+assert(item.isActive)
+assert(not item.hasPhysics)
+memory.writeBytes(address, '\1\0\0\0\1\0\0\0')
+assert(item.hasPhysics)
+
+item.isActive = false
+item.hasPhysics = false

@@ -224,6 +224,17 @@ uint64_t readULong(uintptr_t address);
 float readFloat(uintptr_t address);
 double readDouble(uintptr_t address);
 std::string readBytes(uintptr_t address, size_t count);
+void writeByte(uintptr_t address, int8_t data);
+void writeUByte(uintptr_t address, uint8_t data);
+void writeShort(uintptr_t address, int16_t data);
+void writeUShort(uintptr_t address, uint16_t data);
+void writeInt(uintptr_t address, int32_t data);
+void writeUInt(uintptr_t address, uint32_t data);
+void writeLong(uintptr_t address, int64_t data);
+void writeULong(uintptr_t address, uint64_t data);
+void writeFloat(uintptr_t address, float data);
+void writeDouble(uintptr_t address, double data);
+void writeBytes(uintptr_t address, std::string bytes);
 }  // namespace memory
 };  // namespace Lua
 

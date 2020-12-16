@@ -849,6 +849,17 @@ void luaInit(bool redo) {
 		memoryTable["readFloat"] = Lua::memory::readFloat;
 		memoryTable["readDouble"] = Lua::memory::readDouble;
 		memoryTable["readBytes"] = Lua::memory::readBytes;
+		memoryTable["writeByte"] = Lua::memory::writeByte;
+		memoryTable["writeUByte"] = Lua::memory::writeUByte;
+		memoryTable["writeShort"] = Lua::memory::writeShort;
+		memoryTable["writeUShort"] = Lua::memory::writeUShort;
+		memoryTable["writeInt"] = Lua::memory::writeInt;
+		memoryTable["writeUInt"] = Lua::memory::writeUInt;
+		memoryTable["writeLong"] = Lua::memory::writeLong;
+		memoryTable["writeULong"] = Lua::memory::writeULong;
+		memoryTable["writeFloat"] = Lua::memory::writeFloat;
+		memoryTable["writeDouble"] = Lua::memory::writeDouble;
+		memoryTable["writeBytes"] = Lua::memory::writeBytes;
 	}
 
 	(*lua)["RESET_REASON_BOOT"] = RESET_REASON_BOOT;
