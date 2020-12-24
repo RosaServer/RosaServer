@@ -193,6 +193,49 @@ double realClock();
 void exit();
 void exitCode(int code);
 };  // namespace os
+
+namespace memory {
+extern uintptr_t baseAddress;
+uintptr_t getBaseAddress();
+uintptr_t getAddressOfConnection(Connection* address);
+uintptr_t getAddressOfAccount(Account* address);
+uintptr_t getAddressOfPlayer(Player* address);
+uintptr_t getAddressOfHuman(Human* address);
+uintptr_t getAddressOfItemType(ItemType* address);
+uintptr_t getAddressOfItem(Item* address);
+uintptr_t getAddressOfVehicle(Vehicle* address);
+uintptr_t getAddressOfBullet(Bullet* address);
+uintptr_t getAddressOfBone(Bone* address);
+uintptr_t getAddressOfRigidBody(RigidBody* address);
+uintptr_t getAddressOfBond(Bond* address);
+uintptr_t getAddressOfAction(Action* address);
+uintptr_t getAddressOfMenuButton(MenuButton* address);
+uintptr_t getAddressOfStreetLane(StreetLane* address);
+uintptr_t getAddressOfStreet(Street* address);
+uintptr_t getAddressOfStreetIntersection(StreetIntersection* address);
+int8_t readByte(uintptr_t address);
+uint8_t readUByte(uintptr_t address);
+int16_t readShort(uintptr_t address);
+uint16_t readUShort(uintptr_t address);
+int32_t readInt(uintptr_t address);
+uint32_t readUInt(uintptr_t address);
+int64_t readLong(uintptr_t address);
+uint64_t readULong(uintptr_t address);
+float readFloat(uintptr_t address);
+double readDouble(uintptr_t address);
+std::string readBytes(uintptr_t address, size_t count);
+void writeByte(uintptr_t address, int8_t data);
+void writeUByte(uintptr_t address, uint8_t data);
+void writeShort(uintptr_t address, int16_t data);
+void writeUShort(uintptr_t address, uint16_t data);
+void writeInt(uintptr_t address, int32_t data);
+void writeUInt(uintptr_t address, uint32_t data);
+void writeLong(uintptr_t address, int64_t data);
+void writeULong(uintptr_t address, uint64_t data);
+void writeFloat(uintptr_t address, float data);
+void writeDouble(uintptr_t address, double data);
+void writeBytes(uintptr_t address, std::string bytes);
+}  // namespace memory
 };  // namespace Lua
 
 std::string addressFromInteger(unsigned int address);

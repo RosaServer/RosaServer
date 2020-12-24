@@ -638,6 +638,119 @@ void os::exitCode(int code) {
 	Console::cleanup();
 	::exit(code);
 }
+
+uintptr_t memory::baseAddress;
+
+uintptr_t memory::getBaseAddress() { return baseAddress; }
+
+uintptr_t memory::getAddressOfConnection(Connection* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfAccount(Account* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfPlayer(Player* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfHuman(Human* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfItemType(ItemType* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfItem(Item* address) { return (uintptr_t)address; }
+
+uintptr_t memory::getAddressOfVehicle(Vehicle* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfBullet(Bullet* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfBone(Bone* address) { return (uintptr_t)address; }
+
+uintptr_t memory::getAddressOfRigidBody(RigidBody* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfBond(Bond* address) { return (uintptr_t)address; }
+
+uintptr_t memory::getAddressOfAction(Action* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfMenuButton(MenuButton* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfStreetLane(StreetLane* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfStreet(Street* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfStreetIntersection(StreetIntersection* address) {
+	return (uintptr_t)address;
+}
+
+int8_t memory::readByte(uintptr_t address) { return *(int8_t*)address; }
+uint8_t memory::readUByte(uintptr_t address) { return *(uint8_t*)address; }
+int16_t memory::readShort(uintptr_t address) { return *(int16_t*)address; }
+uint16_t memory::readUShort(uintptr_t address) { return *(uint16_t*)address; }
+int32_t memory::readInt(uintptr_t address) { return *(int32_t*)address; }
+uint32_t memory::readUInt(uintptr_t address) { return *(uint32_t*)address; }
+int64_t memory::readLong(uintptr_t address) { return *(int64_t*)address; }
+uint64_t memory::readULong(uintptr_t address) { return *(uint64_t*)address; }
+float memory::readFloat(uintptr_t address) { return *(float*)address; }
+double memory::readDouble(uintptr_t address) { return *(double*)address; }
+
+std::string memory::readBytes(uintptr_t address, size_t count) {
+	return std::string((char*)address, (char*)(address + count));
+}
+
+void memory::writeByte(uintptr_t address, int8_t data) {
+	*(int8_t*)address = data;
+}
+void memory::writeUByte(uintptr_t address, uint8_t data) {
+	*(uint8_t*)address = data;
+}
+void memory::writeShort(uintptr_t address, int16_t data) {
+	*(int16_t*)address = data;
+}
+void memory::writeUShort(uintptr_t address, uint16_t data) {
+	*(uint16_t*)address = data;
+}
+void memory::writeInt(uintptr_t address, int32_t data) {
+	*(int32_t*)address = data;
+}
+void memory::writeUInt(uintptr_t address, uint32_t data) {
+	*(uint32_t*)address = data;
+}
+void memory::writeLong(uintptr_t address, int64_t data) {
+	*(int64_t*)address = data;
+}
+void memory::writeULong(uintptr_t address, uint64_t data) {
+	*(uint64_t*)address = data;
+}
+void memory::writeFloat(uintptr_t address, float data) {
+	*(float*)address = data;
+}
+void memory::writeDouble(uintptr_t address, double data) {
+	*(double*)address = data;
+}
+
+void memory::writeBytes(uintptr_t address, std::string bytes) {
+	std::memcpy((void*)address, bytes.data(), bytes.size());
+}
+
 };  // namespace Lua
 
 std::string addressFromInteger(unsigned int address) {
