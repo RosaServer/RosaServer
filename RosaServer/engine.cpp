@@ -1,6 +1,12 @@
 #include "engine.h"
 
 namespace Engine {
+unsigned int* version;
+unsigned int* subVersion;
+char* serverName;
+unsigned int* serverPort;
+unsigned int* numEvents;
+
 int* gameType;
 char* mapName;
 char* loadedMapName;
@@ -8,7 +14,15 @@ int* gameState;
 int* gameTimer;
 unsigned int* sunTime;
 
-RayCastResult* lineIntersectResult;
+int* isPassworded;
+char* password;
+int* maxPlayers;
+
+int* isLevelLoaded;
+float* gravity;
+float originalGravity;
+
+LineIntersectResult* lineIntersectResult;
 
 Connection* connections;
 Account* accounts;

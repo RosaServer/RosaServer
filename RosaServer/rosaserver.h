@@ -13,4 +13,5 @@
 #include "engine.h"
 #include "hooks.h"
 #include "image.h"
+#include "server.h"
 #include "worker.h"

@@ -2,6 +2,12 @@
 #include "structs.h"
 
 namespace Engine {
+extern unsigned int* version;
+extern unsigned int* subVersion;
+extern char* serverName;
+extern unsigned int* serverPort;
+extern unsigned int* numEvents;
+
 extern int* gameType;
 extern char* mapName;
 extern char* loadedMapName;
@@ -9,7 +15,15 @@ extern int* gameState;
 extern int* gameTimer;
 extern unsigned int* sunTime;
 
-extern RayCastResult* lineIntersectResult;
+extern int* isPassworded;
+extern char* password;
+extern int* maxPlayers;
+
+extern int* isLevelLoaded;
+extern float* gravity;
+extern float originalGravity;
+
+extern LineIntersectResult* lineIntersectResult;
 
 extern Connection* connections;
 extern Account* accounts;

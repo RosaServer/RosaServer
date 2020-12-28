@@ -48,7 +48,7 @@ function hook.run (event, ...)
 	if event == 'Logic' then
 		tick = tick + 1
 
-		log('Tick %i...', tick, maxTicks)
+		log('Tick %i...', tick)
 
 		if tick == 1 then
 			protectedFailCall(runTests)
