@@ -2,20 +2,6 @@
 #include <sys/mman.h>
 #include <cerrno>
 
-static unsigned int* version;
-static unsigned int* subVersion;
-static char* serverName;
-static unsigned int* serverPort;
-static unsigned int* numEvents;
-
-static int* isPassworded;
-static char* password;
-static int* maxPlayers;
-
-static int* isLevelLoaded;
-static float* gravity;
-static float originalGravity;
-
 static void pryMemory(void* address, size_t numPages) {
 	size_t pageSize = sysconf(_SC_PAGE_SIZE);
 
@@ -40,16 +26,18 @@ struct Server {
 	const int TPS = 60;
 
 	const char* getClass() const { return "Server"; }
-	int getPort() const { return *serverPort; }
-	char* getName() const { return serverName; }
-	void setName(const char* newName) const { strncpy(serverName, newName, 31); }
-	char* getPassword() const { return password; }
-	void setPassword(const char* newPassword) const {
-		strncpy(password, newPassword, 31);
-		*isPassworded = newPassword[0] != 0;
+	int getPort() const { return *Engine::serverPort; }
+	char* getName() const { return Engine::serverName; }
+	void setName(const char* newName) const {
+		strncpy(Engine::serverName, newName, 31);
 	}
-	int getMaxPlayers() const { return *maxPlayers; }
-	void setMaxPlayers(int max) const { *maxPlayers = max; }
+	char* getPassword() const { return Engine::password; }
+	void setPassword(const char* newPassword) const {
+		strncpy(Engine::password, newPassword, 31);
+		*Engine::isPassworded = newPassword[0] != 0;
+	}
+	int getMaxPlayers() const { return *Engine::maxPlayers; }
+	void setMaxPlayers(int max) const { *Engine::maxPlayers = max; }
 	int getType() const { return *Engine::gameType; }
 	void setType(int type) const { *Engine::gameType = type; }
 	char* getLevelName() const { return Engine::mapName; }
@@ -57,11 +45,11 @@ struct Server {
 		strncpy(Engine::mapName, newName, 31);
 	}
 	char* getLoadedLevelName() const { return Engine::loadedMapName; }
-	bool getIsLevelLoaded() const { return *isLevelLoaded; }
-	void setIsLevelLoaded(bool b) const { *isLevelLoaded = b; }
-	float getGravity() const { return *gravity; }
-	void setGravity(float g) const { *gravity = g; }
-	float getDefaultGravity() const { return originalGravity; }
+	bool getIsLevelLoaded() const { return *Engine::isLevelLoaded; }
+	void setIsLevelLoaded(bool b) const { *Engine::isLevelLoaded = b; }
+	float getGravity() const { return *Engine::gravity; }
+	void setGravity(float gravity) const { *Engine::gravity = gravity; }
+	float getDefaultGravity() const { return Engine::originalGravity; }
 	int getState() const { return *Engine::gameState; }
 	void setState(int state) const { *Engine::gameState = state; }
 	int getTime() const { return *Engine::gameTimer; }
@@ -70,12 +58,12 @@ struct Server {
 	void setSunTime(int time) const { *Engine::sunTime = time % 5184000; }
 	std::string getVersion() const {
 		std::ostringstream stream;
-		stream << *version << (char)(*subVersion + 97);
+		stream << *Engine::version << (char)(*Engine::subVersion + 'a');
 		return stream.str();
 	}
-	unsigned int getVersionMajor() const { return *version; }
-	unsigned int getVersionMinor() const { return *subVersion; }
-	unsigned int getNumEvents() const { return *numEvents; }
+	unsigned int getVersionMajor() const { return *Engine::version; }
+	unsigned int getVersionMinor() const { return *Engine::subVersion; }
+	unsigned int getNumEvents() const { return *Engine::numEvents; }
 
 	void setConsoleTitle(const char* title) const { Console::setTitle(title); }
 	void reset() const { hookAndReset(RESET_REASON_LUACALL); }
@@ -913,14 +901,14 @@ static inline void printBaseAddress(uintptr_t base) {
 }
 
 static inline void locateMemory(uintptr_t base) {
-	version = (unsigned int*)(base + 0x2D5F08);
-	subVersion = (unsigned int*)(base + 0x2D5F04);
-	serverName = (char*)(base + 0x24EE4234);
-	serverPort = (unsigned int*)(base + 0x1CC6CE80);
-	numEvents = (unsigned int*)(base + 0x4532f244);
-	isPassworded = (int*)(base + 0x24EE4644);
-	password = (char*)(base + 0x1CC6D48C);
-	maxPlayers = (int*)(base + 0x24EE4648);
+	Engine::version = (unsigned int*)(base + 0x2D5F08);
+	Engine::subVersion = (unsigned int*)(base + 0x2D5F04);
+	Engine::serverName = (char*)(base + 0x24EE4234);
+	Engine::serverPort = (unsigned int*)(base + 0x1CC6CE80);
+	Engine::numEvents = (unsigned int*)(base + 0x4532f244);
+	Engine::isPassworded = (int*)(base + 0x24EE4644);
+	Engine::password = (char*)(base + 0x1CC6D48C);
+	Engine::maxPlayers = (int*)(base + 0x24EE4648);
 
 	Engine::gameType = (int*)(base + 0x443F3988);
 	Engine::mapName = (char*)(base + 0x443F398C);
@@ -928,10 +916,10 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::gameState = (int*)(base + 0x443F3BA4);
 	Engine::gameTimer = (int*)(base + 0x443F3BAC);
 	Engine::sunTime = (unsigned int*)(base + 0x9846CC0);
-	isLevelLoaded = (int*)(base + 0x3C2EEFE0);
-	gravity = (float*)(base + 0xC72AC);
-	pryMemory(gravity, 1);
-	originalGravity = *gravity;
+	Engine::isLevelLoaded = (int*)(base + 0x3C2EEFE0);
+	Engine::gravity = (float*)(base + 0xC72AC);
+	pryMemory(Engine::gravity, 1);
+	Engine::originalGravity = *Engine::gravity;
 
 	Engine::lineIntersectResult = (RayCastResult*)(base + 0x55E44E00);
 
