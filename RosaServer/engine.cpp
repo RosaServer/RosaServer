@@ -22,7 +22,7 @@ int* isLevelLoaded;
 float* gravity;
 float originalGravity;
 
-RayCastResult* lineIntersectResult;
+LineIntersectResult* lineIntersectResult;
 
 Connection* connections;
 Account* accounts;

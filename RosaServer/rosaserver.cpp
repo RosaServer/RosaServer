@@ -875,7 +875,7 @@ static inline void locateMemory(uintptr_t base) {
 	pryMemory(Engine::gravity, 1);
 	Engine::originalGravity = *Engine::gravity;
 
-	Engine::lineIntersectResult = (RayCastResult*)(base + 0x55E44E00);
+	Engine::lineIntersectResult = (LineIntersectResult*)(base + 0x55E44E00);
 
 	Engine::connections = (Connection*)(base + 0x43ACE0);
 	Engine::accounts = (Account*)(base + 0x334F6D0);

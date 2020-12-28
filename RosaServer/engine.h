@@ -23,7 +23,7 @@ extern int* isLevelLoaded;
 extern float* gravity;
 extern float originalGravity;
 
-extern RayCastResult* lineIntersectResult;
+extern LineIntersectResult* lineIntersectResult;
 
 extern Connection* connections;
 extern Account* accounts;

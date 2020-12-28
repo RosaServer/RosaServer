@@ -103,7 +103,7 @@ struct RotMatrix {
 	RotMatrix clone() const;
 };
 
-struct RayCastResult {
+struct LineIntersectResult {
 	Vector pos;
 	Vector normal;    // 0c
 	float fraction;   // 18
