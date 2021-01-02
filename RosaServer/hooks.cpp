@@ -43,6 +43,7 @@ subhook::Hook createRigidBodyHook;
 subhook::Hook createEventMessageHook;
 subhook::Hook createEventUpdatePlayerHook;
 subhook::Hook createEventUpdateVehicleHook;
+subhook::Hook createEventBulletHook;
 subhook::Hook createEventBulletHitHook;
 subhook::Hook lineIntersectHumanHook;
 
@@ -940,6 +941,27 @@ void createEventUpdateVehicle(int vehicleID, int updateType, int partID,
 		if (func != sol::nil) {
 			auto res = func("PostEventUpdateVehicle", &Engine::vehicles[vehicleID],
 			                updateType, partID, pos, normal);
+			noLuaCallError(&res);
+		}
+	}
+}
+
+void createEventBullet(int bulletType, Vector* pos, Vector* vel, int itemID) {
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil) {
+		auto res =
+		    func("EventBullet", bulletType, pos, vel, &Engine::items[itemID]);
+		if (noLuaCallError(&res)) noParent = (bool)res;
+	}
+	if (!noParent) {
+		{
+			subhook::ScopedHookRemove remove(&createEventBulletHook);
+			Engine::createEventBullet(bulletType, pos, vel, itemID);
+		}
+		if (func != sol::nil) {
+			auto res =
+			    func("PostEventBullet", bulletType, pos, vel, &Engine::items[itemID]);
 			noLuaCallError(&res);
 		}
 	}

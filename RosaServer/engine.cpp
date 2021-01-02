@@ -104,6 +104,7 @@ voidIndexFunc createEventCreateVehicle;
 createEventUpdateVehicleFunc createEventUpdateVehicle;
 createEventSoundFunc createEventSound;
 createEventExplosionFunc createEventExplosion;
+createEventBulletFunc createEventBullet;
 createEventBulletHitFunc createEventBulletHit;
 
 lineIntersectLevelFunc lineIntersectLevel;

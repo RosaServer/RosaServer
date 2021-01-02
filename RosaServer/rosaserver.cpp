@@ -972,6 +972,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::createEventSound = (Engine::createEventSoundFunc)(base + 0x3CC0);
 	Engine::createEventExplosion =
 	    (Engine::createEventExplosionFunc)(base + 0x45A0);
+	Engine::createEventBullet = (Engine::createEventBulletFunc)(base + 0x3C30);
 	Engine::createEventBulletHit =
 	    (Engine::createEventBulletHitFunc)(base + 0x4110);
 
@@ -1040,6 +1041,7 @@ static inline void installHooks() {
 	INSTALL(createEventMessage);
 	INSTALL(createEventUpdatePlayer);
 	INSTALL(createEventUpdateVehicle);
+	INSTALL(createEventBullet);
 	INSTALL(createEventBulletHit);
 	INSTALL(lineIntersectHuman);
 }

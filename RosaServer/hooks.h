@@ -100,6 +100,8 @@ void createEventUpdatePlayer(int id);
 extern subhook::Hook createEventUpdateVehicleHook;
 void createEventUpdateVehicle(int vehicleID, int updateType, int partID,
                               Vector* pos, Vector* normal);
+extern subhook::Hook createEventBulletHook;
+void createEventBullet(int bulletType, Vector* pos, Vector* vel, int itemID);
 extern subhook::Hook createEventBulletHitHook;
 void createEventBulletHit(int unk, int hitType, Vector* pos, Vector* normal);
 
