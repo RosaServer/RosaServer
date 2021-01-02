@@ -951,6 +951,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::addCollisionRigidBodyOnLevel =
 	    (Engine::addCollisionRigidBodyOnLevelFunc)(base + 0x13220);
 
+	Engine::createBullet = (Engine::createBulletFunc)(base + 0x17CE0);
 	Engine::createPlayer = (Engine::createPlayerFunc)(base + 0x40EE0);
 	Engine::deletePlayer = (Engine::voidIndexFunc)(base + 0x411D0);
 	Engine::createHuman = (Engine::createHumanFunc)(base + 0x66D10);
@@ -1029,6 +1030,7 @@ static inline void installHooks() {
 	INSTALL(playerAI);
 	INSTALL(playerDeathTax);
 	INSTALL(addCollisionRigidBodyOnRigidBody);
+	INSTALL(createBullet);
 	INSTALL(createPlayer);
 	INSTALL(deletePlayer);
 	INSTALL(createHuman);

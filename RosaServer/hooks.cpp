@@ -31,6 +31,7 @@ subhook::Hook serverPlayerMessageHook;
 subhook::Hook playerAIHook;
 subhook::Hook playerDeathTaxHook;
 subhook::Hook addCollisionRigidBodyOnRigidBodyHook;
+subhook::Hook createBulletHook;
 subhook::Hook createPlayerHook;
 subhook::Hook deletePlayerHook;
 subhook::Hook createHumanHook;
@@ -449,6 +450,28 @@ void serverSendConnectResponse(unsigned int address, unsigned int port,
 			noLuaCallError(&res);
 		}
 	}
+}
+
+int createBullet(int type, Vector* pos, Vector* vel, int playerID) {
+	bool noParent = false;
+	sol::protected_function func = (*lua)["hook"]["run"];
+	if (func != sol::nil) {
+		auto res = func("BulletCreate", type, pos, vel, &Engine::players[playerID]);
+		if (noLuaCallError(&res)) noParent = (bool)res;
+	}
+	if (!noParent) {
+		int id;
+		{
+			subhook::ScopedHookRemove remove(&createBulletHook);
+			id = Engine::createBullet(type, pos, vel, playerID);
+		}
+		if (func != sol::nil && id != -1) {
+			auto res = func("PostBulletCreate", &Engine::bullets[id]);
+			noLuaCallError(&res);
+		}
+		return id;
+	}
+	return -1;
 }
 
 int createPlayer() {

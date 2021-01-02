@@ -140,6 +140,10 @@ extern addCollisionRigidBodyOnLevelFunc addCollisionRigidBodyOnLevel;
   Object Handling
 */
 
+typedef int (*createBulletFunc)(int type, Vector* pos, Vector* vel,
+                                int playerID);
+extern createBulletFunc createBullet;
+
 typedef int (*createPlayerFunc)();
 extern createPlayerFunc createPlayer;
 extern voidIndexFunc deletePlayer;

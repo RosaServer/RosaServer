@@ -46,6 +46,8 @@ extern subhook::Hook serverSendConnectResponseHook;
 void serverSendConnectResponse(unsigned int address, unsigned int port,
                                const char* message);
 
+extern subhook::Hook createBulletHook;
+int createBullet(int type, Vector* pos, Vector* vel, int playerID);
 extern subhook::Hook createPlayerHook;
 int createPlayer();
 extern subhook::Hook deletePlayerHook;

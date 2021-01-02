@@ -86,6 +86,7 @@ createBondRigidBodyToLevelFunc createBondRigidBodyToLevel;
 addCollisionRigidBodyOnRigidBodyFunc addCollisionRigidBodyOnRigidBody;
 addCollisionRigidBodyOnLevelFunc addCollisionRigidBodyOnLevel;
 
+createBulletFunc createBullet;
 createPlayerFunc createPlayer;
 voidIndexFunc deletePlayer;
 createHumanFunc createHuman;
