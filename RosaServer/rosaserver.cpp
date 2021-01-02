@@ -951,6 +951,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::addCollisionRigidBodyOnLevel =
 	    (Engine::addCollisionRigidBodyOnLevelFunc)(base + 0x13220);
 
+	Engine::createBullet = (Engine::createBulletFunc)(base + 0x17CE0);
 	Engine::createPlayer = (Engine::createPlayerFunc)(base + 0x40EE0);
 	Engine::deletePlayer = (Engine::voidIndexFunc)(base + 0x411D0);
 	Engine::createHuman = (Engine::createHumanFunc)(base + 0x66D10);
@@ -972,6 +973,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::createEventSound = (Engine::createEventSoundFunc)(base + 0x3CC0);
 	Engine::createEventExplosion =
 	    (Engine::createEventExplosionFunc)(base + 0x45A0);
+	Engine::createEventBullet = (Engine::createEventBulletFunc)(base + 0x3C30);
 	Engine::createEventBulletHit =
 	    (Engine::createEventBulletHitFunc)(base + 0x4110);
 
@@ -1028,6 +1030,7 @@ static inline void installHooks() {
 	INSTALL(playerAI);
 	INSTALL(playerDeathTax);
 	INSTALL(addCollisionRigidBodyOnRigidBody);
+	INSTALL(createBullet);
 	INSTALL(createPlayer);
 	INSTALL(deletePlayer);
 	INSTALL(createHuman);
@@ -1040,6 +1043,7 @@ static inline void installHooks() {
 	INSTALL(createEventMessage);
 	INSTALL(createEventUpdatePlayer);
 	INSTALL(createEventUpdateVehicle);
+	INSTALL(createEventBullet);
 	INSTALL(createEventBulletHit);
 	INSTALL(lineIntersectHuman);
 }

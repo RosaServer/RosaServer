@@ -140,6 +140,10 @@ extern addCollisionRigidBodyOnLevelFunc addCollisionRigidBodyOnLevel;
   Object Handling
 */
 
+typedef int (*createBulletFunc)(int type, Vector* pos, Vector* vel,
+                                int playerID);
+extern createBulletFunc createBullet;
+
 typedef int (*createPlayerFunc)();
 extern createPlayerFunc createPlayer;
 extern voidIndexFunc deletePlayer;
@@ -196,6 +200,9 @@ typedef void (*createEventSoundFunc)(int soundType, Vector* pos, float volume,
 extern createEventSoundFunc createEventSound;
 typedef void (*createEventExplosionFunc)(int type, Vector* pos);
 extern createEventExplosionFunc createEventExplosion;
+typedef void (*createEventBulletFunc)(int bulletType, Vector* pos, Vector* vel,
+                                      int itemID);
+extern createEventBulletFunc createEventBullet;
 /*
 hitType:
 0 = bullet hole

@@ -46,6 +46,8 @@ extern subhook::Hook serverSendConnectResponseHook;
 void serverSendConnectResponse(unsigned int address, unsigned int port,
                                const char* message);
 
+extern subhook::Hook createBulletHook;
+int createBullet(int type, Vector* pos, Vector* vel, int playerID);
 extern subhook::Hook createPlayerHook;
 int createPlayer();
 extern subhook::Hook deletePlayerHook;
@@ -100,6 +102,8 @@ void createEventUpdatePlayer(int id);
 extern subhook::Hook createEventUpdateVehicleHook;
 void createEventUpdateVehicle(int vehicleID, int updateType, int partID,
                               Vector* pos, Vector* normal);
+extern subhook::Hook createEventBulletHook;
+void createEventBullet(int bulletType, Vector* pos, Vector* vel, int itemID);
 extern subhook::Hook createEventBulletHitHook;
 void createEventBulletHit(int unk, int hitType, Vector* pos, Vector* normal);
 

@@ -86,6 +86,7 @@ createBondRigidBodyToLevelFunc createBondRigidBodyToLevel;
 addCollisionRigidBodyOnRigidBodyFunc addCollisionRigidBodyOnRigidBody;
 addCollisionRigidBodyOnLevelFunc addCollisionRigidBodyOnLevel;
 
+createBulletFunc createBullet;
 createPlayerFunc createPlayer;
 voidIndexFunc deletePlayer;
 createHumanFunc createHuman;
@@ -104,6 +105,7 @@ voidIndexFunc createEventCreateVehicle;
 createEventUpdateVehicleFunc createEventUpdateVehicle;
 createEventSoundFunc createEventSound;
 createEventExplosionFunc createEventExplosion;
+createEventBulletFunc createEventBullet;
 createEventBulletHitFunc createEventBulletHit;
 
 lineIntersectLevelFunc lineIntersectLevel;
