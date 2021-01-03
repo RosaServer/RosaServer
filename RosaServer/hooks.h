@@ -8,7 +8,10 @@
 namespace Hooks {
 enum EnableKeys {
 	ResetGame,
+	InterruptSignal,
 	Logic,
+	ConsoleInput,
+	ConsoleAutoComplete,
 	LogicRace,
 	LogicRound,
 	LogicWorld,

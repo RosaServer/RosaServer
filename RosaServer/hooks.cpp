@@ -4,8 +4,11 @@
 
 namespace Hooks {
 const std::unordered_map<std::string, EnableKeys> enableNames(
-    {{"ResetGame", EnableKeys::ResetGame},
+    {{"InterruptSignal", EnableKeys::InterruptSignal},
+     {"ResetGame", EnableKeys::ResetGame},
      {"Logic", EnableKeys::Logic},
+     {"ConsoleInput", EnableKeys::ConsoleInput},
+     {"ConsoleAutoComplete", EnableKeys::ConsoleAutoComplete},
      {"LogicRace", EnableKeys::LogicRace},
      {"LogicRound", EnableKeys::LogicRound},
      {"LogicWorld", EnableKeys::LogicWorld},
@@ -152,7 +155,7 @@ void logicSimulation() {
 	sol::protected_function hookFunc = (*lua)["hook"]["run"];
 
 	if (Console::shouldExit) {
-		if (hookFunc != sol::nil) {
+		if (enabledKeys[EnableKeys::InterruptSignal] && hookFunc != sol::nil) {
 			auto res = hookFunc("InterruptSignal");
 			noLuaCallError(&res);
 		}
@@ -183,7 +186,7 @@ void logicSimulation() {
 	{
 		std::lock_guard<std::mutex> guard(Console::commandQueueMutex);
 		while (!Console::commandQueue.empty()) {
-			if (hookFunc != sol::nil) {
+			if (enabledKeys[EnableKeys::ConsoleInput] && hookFunc != sol::nil) {
 				auto res = hookFunc("ConsoleInput", Console::commandQueue.front());
 				noLuaCallError(&res);
 			}
@@ -192,7 +195,7 @@ void logicSimulation() {
 	}
 
 	if (Console::isAwaitingAutoComplete()) {
-		if (hookFunc != sol::nil) {
+		if (enabledKeys[EnableKeys::ConsoleAutoComplete] && hookFunc != sol::nil) {
 			auto data = lua->create_table();
 			data["response"] = Console::getAutoCompleteInput();
 
