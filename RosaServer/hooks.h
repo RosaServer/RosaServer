@@ -2,7 +2,61 @@
 #include "structs.h"
 #include "subhook.h"
 
+#include <set>
+#include <unordered_map>
+
 namespace Hooks {
+enum EnableKeys {
+	ResetGame,
+	InterruptSignal,
+	Logic,
+	ConsoleInput,
+	ConsoleAutoComplete,
+	LogicRace,
+	LogicRound,
+	LogicWorld,
+	LogicTerminator,
+	LogicCoop,
+	LogicVersus,
+	PlayerActions,
+	Physics,
+	InPacket,
+	SendPacket,
+	PhysicsBullets,
+	AccountsSave,
+	AccountTicketBegin,
+	SendConnectResponse,
+	ItemLink,
+	ItemComputerInput,
+	HumanDamage,
+	HumanCollisionVehicle,
+	HumanGrabbing,
+	GrenadeExplode,
+	PlayerChat,
+	PlayerAI,
+	PlayerDeathTax,
+	CollideBodies,
+	BulletCreate,
+	PlayerCreate,
+	PlayerDelete,
+	HumanCreate,
+	HumanDelete,
+	ItemCreate,
+	ItemDelete,
+	VehicleCreate,
+	VehicleDelete,
+	EventMessage,
+	EventUpdatePlayer,
+	EventUpdateVehicle,
+	EventBullet,
+	EventBulletHit,
+	LineIntersectHuman,
+	SIZE
+};
+
+extern const std::unordered_map<std::string, EnableKeys> enableNames;
+extern bool enabledKeys[EnableKeys::SIZE];
+
 extern subhook::Hook subRosaPutsHook;
 int subRosaPuts(const char* str);
 extern subhook::Hook subRosa__printf_chkHook;

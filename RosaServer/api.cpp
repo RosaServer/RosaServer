@@ -44,21 +44,26 @@ bool noLuaCallError(sol::load_result* res) {
 }
 
 void hookAndReset(int reason) {
-	bool noParent = false;
-	sol::protected_function func = (*lua)["hook"]["run"];
-	if (func != sol::nil) {
-		auto res = func("ResetGame", reason);
-		if (noLuaCallError(&res)) noParent = (bool)res;
-	}
-	if (!noParent) {
-		{
-			subhook::ScopedHookRemove remove(&Hooks::resetGameHook);
-			Engine::resetGame();
-		}
+	if (Hooks::enabledKeys[Hooks::EnableKeys::ResetGame]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
-			auto res = func("PostResetGame", reason);
-			noLuaCallError(&res);
+			auto res = func("ResetGame", reason);
+			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&Hooks::resetGameHook);
+				Engine::resetGame();
+			}
+			if (func != sol::nil) {
+				auto res = func("PostResetGame", reason);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&Hooks::resetGameHook);
+		Engine::resetGame();
 	}
 }
 
@@ -161,6 +166,38 @@ sol::object http::postSync(const char* scheme, const char* path,
 
 	auto res = client.Post(path, httpHeaders, body, contentType);
 	return handleSyncHTTPResponse(res, s);
+}
+
+static inline std::string withoutPostPrefix(std::string name) {
+	if (name.rfind("Post", 0) == 0) {
+		return name.substr(4);
+	}
+
+	return name;
+}
+
+bool hook::enable(std::string name) {
+	auto search = Hooks::enableNames.find(withoutPostPrefix(name));
+	if (search != Hooks::enableNames.end()) {
+		Hooks::enabledKeys[search->second] = true;
+		return true;
+	}
+	return false;
+}
+
+bool hook::disable(std::string name) {
+	auto search = Hooks::enableNames.find(withoutPostPrefix(name));
+	if (search != Hooks::enableNames.end()) {
+		Hooks::enabledKeys[search->second] = false;
+		return true;
+	}
+	return false;
+}
+
+void hook::clear() {
+	for (size_t i = 0; i < Hooks::EnableKeys::SIZE; i++) {
+		Hooks::enabledKeys[i] = false;
+	}
 }
 
 void event::sound(int soundType, Vector* pos, float volume, float pitch) {

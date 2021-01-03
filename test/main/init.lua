@@ -44,6 +44,7 @@ local handlers = {}
 
 local tick = 0
 
+hook.enable('Logic')
 function hook.run (event, ...)
 	if event == 'Logic' then
 		tick = tick + 1
