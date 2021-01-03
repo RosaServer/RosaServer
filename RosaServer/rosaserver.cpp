@@ -605,6 +605,7 @@ void luaInit(bool redo) {
 		hookTable["enable"] = Lua::hook::enable;
 		hookTable["disable"] = Lua::hook::disable;
 		hookTable["clear"] = Lua::hook::clear;
+		Lua::hook::clear();
 	}
 
 	{
