@@ -598,8 +598,14 @@ void luaInit(bool redo) {
 
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
-	(*lua)["hook"] = lua->create_table();
-	(*lua)["hook"]["persistentMode"] = hookMode;
+	{
+		auto hookTable = lua->create_table();
+		(*lua)["hook"] = hookTable;
+		hookTable["persistentMode"] = hookMode;
+		hookTable["enable"] = Lua::hook::enable;
+		hookTable["disable"] = Lua::hook::disable;
+		hookTable["clear"] = Lua::hook::clear;
+	}
 
 	{
 		auto eventTable = lua->create_table();

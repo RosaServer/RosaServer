@@ -86,6 +86,12 @@ sol::object postSync(const char* scheme, const char* path, sol::table headers,
                      sol::this_state s);
 };  // namespace http
 
+namespace hook {
+bool enable(std::string name);
+bool disable(std::string name);
+void clear();
+};  // namespace hook
+
 namespace event {
 void sound(int soundType, Vector* pos, float volume, float pitch);
 void soundSimple(int soundType, Vector* pos);
