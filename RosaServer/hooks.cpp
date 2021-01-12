@@ -22,6 +22,8 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"PhysicsBullets", EnableKeys::PhysicsBullets},
      {"AccountsSave", EnableKeys::AccountsSave},
      {"AccountTicketBegin", EnableKeys::AccountTicketBegin},
+     {"AccountTicketFound", EnableKeys::AccountTicketFound},
+     {"AccountTicket", EnableKeys::AccountTicket},
      {"SendConnectResponse", EnableKeys::SendConnectResponse},
      {"ItemLink", EnableKeys::ItemLink},
      {"ItemComputerInput", EnableKeys::ItemComputerInput},
@@ -502,7 +504,9 @@ void saveAccountsServer() {
 }
 
 int createAccountByJoinTicket(int identifier, unsigned int ticket) {
-	if (enabledKeys[EnableKeys::AccountTicketBegin]) {
+	if (enabledKeys[EnableKeys::AccountTicketBegin] ||
+	    enabledKeys[EnableKeys::AccountTicketFound] ||
+	    enabledKeys[EnableKeys::AccountTicket]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
