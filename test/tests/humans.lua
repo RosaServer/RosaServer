@@ -64,7 +64,7 @@ assert(man:getRigidBody(0).vel:dist(Vector(3, 3, 3)) == 0)
 
 do
 	local item = items.create(
-		0,
+		itemTypes[0],
 		Vector(),
 		RotMatrix(
 			1, 0, 0,

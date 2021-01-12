@@ -313,21 +313,18 @@ Item* items::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::items[idx];
 }
 
-Item* items::create(int itemType, Vector* pos, RotMatrix* rot) {
-	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
-	int id = Engine::createItem(itemType, pos, nullptr, rot);
-
-	if (id != -1 && itemDataTables[id]) {
-		delete itemDataTables[id];
-		itemDataTables[id] = nullptr;
-	}
-
-	return id == -1 ? nullptr : &Engine::items[id];
+Item* items::create(ItemType* type, Vector* pos, RotMatrix* rot) {
+	return createVel(type, pos, nullptr, rot);
 }
 
-Item* items::createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot) {
+Item* items::createVel(ItemType* type, Vector* pos, Vector* vel,
+                       RotMatrix* rot) {
 	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
-	int id = Engine::createItem(itemType, pos, vel, rot);
+	if (type == nullptr) {
+		throw std::invalid_argument("Cannot create item with nil type");
+	}
+
+	int id = Engine::createItem(type->getIndex(), pos, vel, rot);
 
 	if (id != -1 && itemDataTables[id]) {
 		delete itemDataTables[id];

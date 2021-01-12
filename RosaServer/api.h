@@ -119,8 +119,8 @@ namespace items {
 int getCount();
 sol::table getAll();
 Item* getByIndex(sol::table self, unsigned int idx);
-Item* create(int itemType, Vector* pos, RotMatrix* rot);
-Item* createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot);
+Item* create(ItemType* type, Vector* pos, RotMatrix* rot);
+Item* createVel(ItemType* typee, Vector* pos, Vector* vel, RotMatrix* rot);
 Item* createRope(Vector* pos, RotMatrix* rot);
 };  // namespace items
 
