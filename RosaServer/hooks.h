@@ -25,6 +25,8 @@ enum EnableKeys {
 	PhysicsBullets,
 	AccountsSave,
 	AccountTicketBegin,
+	AccountTicketFound,
+	AccountTicket,
 	SendConnectResponse,
 	ItemLink,
 	ItemComputerInput,
