@@ -417,7 +417,7 @@ void luaInit(bool redo) {
 		meta["pos2"] = &Vehicle::pos2;
 		meta["rot"] = &Vehicle::rot;
 		meta["vel"] = &Vehicle::vel;
-		// Messy but faster than using a table or some shit
+		// TODO: something cleaner
 		meta["windowState0"] = &Vehicle::windowState0;
 		meta["windowState1"] = &Vehicle::windowState1;
 		meta["windowState2"] = &Vehicle::windowState2;
