@@ -368,7 +368,6 @@ void luaInit(bool redo) {
 	{
 		auto meta = lua->new_usertype<Item>("new", sol::no_constructor);
 		meta["physicsSettledTimer"] = &Item::physicsSettledTimer;
-		meta["type"] = &Item::type;
 		meta["despawnTime"] = &Item::despawnTime;
 		meta["parentSlot"] = &Item::parentSlot;
 		meta["pos"] = &Item::pos;
@@ -389,6 +388,7 @@ void luaInit(bool redo) {
 		meta["physicsSettled"] =
 		    sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
 		meta["isStatic"] = sol::property(&Item::getIsStatic, &Item::setIsStatic);
+		meta["type"] = sol::property(&Item::getType);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
 		meta["grenadePrimer"] =
 		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);

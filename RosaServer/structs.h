@@ -510,6 +510,7 @@ struct Item {
 	void setPhysicsSettled(bool b) { physicsSettled = b; }
 	bool getIsStatic() const { return isStatic; }
 	void setIsStatic(bool b) { isStatic = b; }
+	ItemType* getType();
 
 	void remove() const;
 	Player* getGrenadePrimer() const;

@@ -1208,6 +1208,8 @@ sol::table Item::getDataTable() const {
 	return *itemDataTables[index];
 }
 
+ItemType* Item::getType() { return &Engine::itemTypes[type]; }
+
 void Item::remove() const {
 	int index = getIndex();
 
