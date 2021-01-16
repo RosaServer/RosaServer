@@ -447,9 +447,16 @@ struct ItemType {
 	int numHands;         // 78
 	Vector rightHandPos;  // 7c
 	Vector leftHandPos;   // 88
-	char unk3[0x100 - 0x88 - 12];
+	char unk3[0xac - 0x88 - 12];
+	float primaryGripStiffness;  // ac
+	char unk4[0xb8 - 0xac - 4];
+	float primaryGripRotation;     // b8
+	float secondaryGripStiffness;  // bc
+	char unk5[0xc8 - 0xbc - 4];
+	float secondaryGripRotation;  // c8
+	char unk6[0x100 - 0xc8 - 4];
 	Vector boundsCenter;  // 100
-	char unk4[4912 - 0x100 - 12];
+	char unk7[4912 - 0x100 - 12];
 
 	const char* getClass() const { return "ItemType"; }
 	std::string __tostring() const;

@@ -356,6 +356,10 @@ void luaInit(bool redo) {
 		meta["numHands"] = &ItemType::numHands;
 		meta["rightHandPos"] = &ItemType::rightHandPos;
 		meta["leftHandPos"] = &ItemType::leftHandPos;
+		meta["primaryGripStiffness"] = &ItemType::primaryGripStiffness;
+		meta["primaryGripRotation"] = &ItemType::primaryGripRotation;
+		meta["secondaryGripStiffness"] = &ItemType::secondaryGripStiffness;
+		meta["secondaryGripRotation"] = &ItemType::secondaryGripRotation;
 		meta["boundsCenter"] = &ItemType::boundsCenter;
 
 		meta["class"] = sol::property(&ItemType::getClass);
