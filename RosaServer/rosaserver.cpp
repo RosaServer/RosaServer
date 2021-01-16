@@ -361,6 +361,7 @@ void luaInit(bool redo) {
 		meta["secondaryGripStiffness"] = &ItemType::secondaryGripStiffness;
 		meta["secondaryGripRotation"] = &ItemType::secondaryGripRotation;
 		meta["boundsCenter"] = &ItemType::boundsCenter;
+		meta["gunHoldingPos"] = &ItemType::gunHoldingPos;
 
 		meta["class"] = sol::property(&ItemType::getClass);
 		meta["__tostring"] = &ItemType::__tostring;

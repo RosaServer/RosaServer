@@ -456,7 +456,9 @@ struct ItemType {
 	float secondaryGripRotation;  // c8
 	char unk6[0x100 - 0xc8 - 4];
 	Vector boundsCenter;  // 100
-	char unk7[4912 - 0x100 - 12];
+	char unk7[0x12f4 - 0x100 - 12];
+	Vector gunHoldingPos;  // 12f4
+	char unk8[4912 - 0x12f4 - 12];
 
 	const char* getClass() const { return "ItemType"; }
 	std::string __tostring() const;
