@@ -1210,6 +1210,14 @@ sol::table Item::getDataTable() const {
 
 ItemType* Item::getType() { return &Engine::itemTypes[type]; }
 
+void Item::setType(ItemType* itemType) {
+	if (itemType == nullptr) {
+		throw std::invalid_argument("Cannot set an item's type to nil");
+	}
+
+	type = itemType->getIndex();
+}
+
 void Item::remove() const {
 	int index = getIndex();
 

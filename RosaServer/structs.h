@@ -518,6 +518,7 @@ struct Item {
 	bool getIsStatic() const { return isStatic; }
 	void setIsStatic(bool b) { isStatic = b; }
 	ItemType* getType();
+	void setType(ItemType* itemType);
 
 	void remove() const;
 	Player* getGrenadePrimer() const;
