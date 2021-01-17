@@ -313,21 +313,18 @@ Item* items::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::items[idx];
 }
 
-Item* items::create(int itemType, Vector* pos, RotMatrix* rot) {
-	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
-	int id = Engine::createItem(itemType, pos, nullptr, rot);
-
-	if (id != -1 && itemDataTables[id]) {
-		delete itemDataTables[id];
-		itemDataTables[id] = nullptr;
-	}
-
-	return id == -1 ? nullptr : &Engine::items[id];
+Item* items::create(ItemType* type, Vector* pos, RotMatrix* rot) {
+	return createVel(type, pos, nullptr, rot);
 }
 
-Item* items::createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot) {
+Item* items::createVel(ItemType* type, Vector* pos, Vector* vel,
+                       RotMatrix* rot) {
+	if (type == nullptr) {
+		throw std::invalid_argument("Cannot create item with nil type");
+	}
+
 	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
-	int id = Engine::createItem(itemType, pos, vel, rot);
+	int id = Engine::createItem(type->getIndex(), pos, vel, rot);
 
 	if (id != -1 && itemDataTables[id]) {
 		delete itemDataTables[id];
@@ -340,6 +337,22 @@ Item* items::createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot) {
 Item* items::createRope(Vector* pos, RotMatrix* rot) {
 	int id = Engine::createRope(pos, rot);
 	return id == -1 ? nullptr : &Engine::items[id];
+}
+
+int vehicleTypes::getCount() { return maxNumberOfVehicleTypes; }
+
+sol::table vehicleTypes::getAll() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < maxNumberOfVehicleTypes; i++) {
+		arr.add(&Engine::vehicleTypes[i]);
+	}
+	return arr;
+}
+
+VehicleType* vehicleTypes::getByIndex(sol::table self, unsigned int idx) {
+	if (idx >= maxNumberOfVehicleTypes)
+		throw std::invalid_argument(errorOutOfRange);
+	return &Engine::vehicleTypes[idx];
 }
 
 int vehicles::getCount() {
@@ -365,22 +378,19 @@ Vehicle* vehicles::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::vehicles[idx];
 }
 
-Vehicle* vehicles::create(int type, Vector* pos, RotMatrix* rot, int color) {
-	subhook::ScopedHookRemove remove(&Hooks::createVehicleHook);
-	int id = Engine::createVehicle(type, pos, nullptr, rot, color);
-
-	if (id != -1 && vehicleDataTables[id]) {
-		delete vehicleDataTables[id];
-		vehicleDataTables[id] = nullptr;
-	}
-
-	return id == -1 ? nullptr : &Engine::vehicles[id];
+Vehicle* vehicles::create(VehicleType* type, Vector* pos, RotMatrix* rot,
+                          int color) {
+	return createVel(type, pos, nullptr, rot, color);
 }
 
-Vehicle* vehicles::createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot,
-                             int color) {
+Vehicle* vehicles::createVel(VehicleType* type, Vector* pos, Vector* vel,
+                             RotMatrix* rot, int color) {
+	if (type == nullptr) {
+		throw std::invalid_argument("Cannot create vehicle with nil type");
+	}
+
 	subhook::ScopedHookRemove remove(&Hooks::createVehicleHook);
-	int id = Engine::createVehicle(type, pos, vel, rot, color);
+	int id = Engine::createVehicle(type->getIndex(), pos, vel, rot, color);
 
 	if (id != -1 && vehicleDataTables[id]) {
 		delete vehicleDataTables[id];
@@ -701,6 +711,10 @@ uintptr_t memory::getAddressOfItemType(ItemType* address) {
 }
 
 uintptr_t memory::getAddressOfItem(Item* address) { return (uintptr_t)address; }
+
+uintptr_t memory::getAddressOfVehicleType(VehicleType* address) {
+	return (uintptr_t)address;
+}
 
 uintptr_t memory::getAddressOfVehicle(Vehicle* address) {
 	return (uintptr_t)address;
@@ -1211,6 +1225,16 @@ sol::table Item::getDataTable() const {
 	return *itemDataTables[index];
 }
 
+ItemType* Item::getType() { return &Engine::itemTypes[type]; }
+
+void Item::setType(ItemType* itemType) {
+	if (itemType == nullptr) {
+		throw std::invalid_argument("Cannot set an item's type to nil");
+	}
+
+	type = itemType->getIndex();
+}
+
 void Item::remove() const {
 	int index = getIndex();
 
@@ -1284,6 +1308,16 @@ void Item::computerSetColor(unsigned int line, unsigned int column,
 	computerLineColors[line][column] = color;
 }
 
+std::string VehicleType::__tostring() const {
+	char buf[16];
+	sprintf(buf, "VehicleType(%i)", getIndex());
+	return buf;
+}
+
+int VehicleType::getIndex() const {
+	return ((uintptr_t)this - (uintptr_t)Engine::vehicleTypes) / sizeof(*this);
+}
+
 std::string Vehicle::__tostring() const {
 	char buf[16];
 	sprintf(buf, "Vehicle(%i)", getIndex());
@@ -1292,6 +1326,16 @@ std::string Vehicle::__tostring() const {
 
 int Vehicle::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)Engine::vehicles) / sizeof(*this);
+}
+
+VehicleType* Vehicle::getType() { return &Engine::vehicleTypes[type]; }
+
+void Vehicle::setType(VehicleType* vehicleType) {
+	if (vehicleType == nullptr) {
+		throw std::invalid_argument("Cannot set a vehicle's type to nil");
+	}
+
+	type = vehicleType->getIndex();
 }
 
 sol::table Vehicle::getDataTable() const {

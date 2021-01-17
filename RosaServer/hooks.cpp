@@ -757,7 +757,7 @@ int createItem(int type, Vector* pos, Vector* vel, RotMatrix* rot) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
-			auto res = func("ItemCreate", type, pos, rot);
+			auto res = func("ItemCreate", &Engine::itemTypes[type], pos, rot);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
@@ -831,7 +831,8 @@ int createVehicle(int type, Vector* pos, Vector* vel, RotMatrix* rot,
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
-			auto res = func("VehicleCreate", type, pos, rot, color);
+			auto res =
+			    func("VehicleCreate", &Engine::vehicleTypes[type], pos, rot, color);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {

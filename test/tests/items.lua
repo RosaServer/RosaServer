@@ -4,7 +4,7 @@ assert(#items == 0)
 assert(items[0])
 
 local item = assert(items.create(
-	1,
+	itemTypes[1],
 	Vector(),
 	RotMatrix(
 		1, 0, 0,
@@ -16,7 +16,7 @@ assert(item.isActive)
 item:remove()
 
 item = assert(items.create(
-	1,
+	itemTypes[1],
 	Vector(),
 	Vector(1, 0, 0),
 	RotMatrix(
@@ -33,7 +33,7 @@ assert(item.despawnTime == 420)
 
 do
 	local magazine = assert(items.create(
-		2,
+		itemTypes[2],
 		Vector(),
 		RotMatrix(
 			1, 0, 0,

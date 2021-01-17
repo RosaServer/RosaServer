@@ -356,7 +356,12 @@ void luaInit(bool redo) {
 		meta["numHands"] = &ItemType::numHands;
 		meta["rightHandPos"] = &ItemType::rightHandPos;
 		meta["leftHandPos"] = &ItemType::leftHandPos;
+		meta["primaryGripStiffness"] = &ItemType::primaryGripStiffness;
+		meta["primaryGripRotation"] = &ItemType::primaryGripRotation;
+		meta["secondaryGripStiffness"] = &ItemType::secondaryGripStiffness;
+		meta["secondaryGripRotation"] = &ItemType::secondaryGripRotation;
 		meta["boundsCenter"] = &ItemType::boundsCenter;
+		meta["gunHoldingPos"] = &ItemType::gunHoldingPos;
 
 		meta["class"] = sol::property(&ItemType::getClass);
 		meta["__tostring"] = &ItemType::__tostring;
@@ -368,7 +373,6 @@ void luaInit(bool redo) {
 	{
 		auto meta = lua->new_usertype<Item>("new", sol::no_constructor);
 		meta["physicsSettledTimer"] = &Item::physicsSettledTimer;
-		meta["type"] = &Item::type;
 		meta["despawnTime"] = &Item::despawnTime;
 		meta["parentSlot"] = &Item::parentSlot;
 		meta["pos"] = &Item::pos;
@@ -389,6 +393,7 @@ void luaInit(bool redo) {
 		meta["physicsSettled"] =
 		    sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
 		meta["isStatic"] = sol::property(&Item::getIsStatic, &Item::setIsStatic);
+		meta["type"] = sol::property(&Item::getType, &Item::setType);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
 		meta["grenadePrimer"] =
 		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
@@ -408,8 +413,21 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto meta = lua->new_usertype<VehicleType>("new", sol::no_constructor);
+		meta["controllableState"] = &VehicleType::controllableState;
+		meta["price"] = &VehicleType::price;
+		meta["mass"] = &VehicleType::mass;
+
+		meta["class"] = sol::property(&VehicleType::getClass);
+		meta["__tostring"] = &VehicleType::__tostring;
+		meta["index"] = sol::property(&VehicleType::getIndex);
+		meta["name"] = sol::property(&VehicleType::getName, &VehicleType::setName);
+		meta["usesExternalModel"] =
+		    sol::property(&VehicleType::getUsesExternalModel);
+	}
+
+	{
 		auto meta = lua->new_usertype<Vehicle>("new", sol::no_constructor);
-		meta["type"] = &Vehicle::type;
 		meta["controllableState"] = &Vehicle::controllableState;
 		meta["health"] = &Vehicle::health;
 		meta["color"] = &Vehicle::color;
@@ -417,7 +435,7 @@ void luaInit(bool redo) {
 		meta["pos2"] = &Vehicle::pos2;
 		meta["rot"] = &Vehicle::rot;
 		meta["vel"] = &Vehicle::vel;
-		// Messy but faster than using a table or some shit
+		// TODO: something cleaner
 		meta["windowState0"] = &Vehicle::windowState0;
 		meta["windowState1"] = &Vehicle::windowState1;
 		meta["windowState2"] = &Vehicle::windowState2;
@@ -437,6 +455,7 @@ void luaInit(bool redo) {
 		meta["index"] = sol::property(&Vehicle::getIndex);
 		meta["isActive"] =
 		    sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
+		meta["type"] = sol::property(&Vehicle::getType, &Vehicle::setType);
 		meta["data"] = sol::property(&Vehicle::getDataTable);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
 		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);
@@ -705,6 +724,18 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto vehicleTypesTable = lua->create_table();
+		(*lua)["vehicleTypes"] = vehicleTypesTable;
+		vehicleTypesTable["getCount"] = Lua::vehicleTypes::getCount;
+		vehicleTypesTable["getAll"] = Lua::vehicleTypes::getAll;
+
+		sol::table _meta = lua->create_table();
+		vehicleTypesTable[sol::metatable_key] = _meta;
+		_meta["__len"] = Lua::vehicleTypes::getCount;
+		_meta["__index"] = Lua::vehicleTypes::getByIndex;
+	}
+
+	{
 		auto vehiclesTable = lua->create_table();
 		(*lua)["vehicles"] = vehiclesTable;
 		vehiclesTable["getCount"] = Lua::vehicles::getCount;
@@ -781,6 +812,7 @@ void luaInit(bool redo) {
 		    &Lua::memory::getAddressOfConnection, &Lua::memory::getAddressOfAccount,
 		    &Lua::memory::getAddressOfPlayer, &Lua::memory::getAddressOfHuman,
 		    &Lua::memory::getAddressOfItemType, &Lua::memory::getAddressOfItem,
+		    &Lua::memory::getAddressOfVehicleType,
 		    &Lua::memory::getAddressOfVehicle, &Lua::memory::getAddressOfBullet,
 		    &Lua::memory::getAddressOfBone, &Lua::memory::getAddressOfRigidBody,
 		    &Lua::memory::getAddressOfBond, &Lua::memory::getAddressOfAction,
@@ -888,9 +920,10 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::accounts = (Account*)(base + 0x334F6D0);
 	Engine::players = (Player*)(base + 0x19BC9CC0);
 	Engine::humans = (Human*)(base + 0x8B1D4A8);
-	Engine::vehicles = (Vehicle*)(base + 0x20DEF320);
 	Engine::itemTypes = (ItemType*)(base + 0x5A088680);
 	Engine::items = (Item*)(base + 0x7FE2160);
+	Engine::vehicleTypes = (VehicleType*)(base + 0x4AD1F20);
+	Engine::vehicles = (Vehicle*)(base + 0x20DEF320);
 	Engine::bullets = (Bullet*)(base + 0x4355E260);
 	Engine::bodies = (RigidBody*)(base + 0x2DACC0);
 	Engine::bonds = (Bond*)(base + 0x24964220);

@@ -9,9 +9,12 @@ static constexpr int maxNumberOfPlayers = 256;
 static constexpr int maxNumberOfHumans = 256;
 static constexpr int maxNumberOfItemTypes = 45;
 static constexpr int maxNumberOfItems = 1024;
+static constexpr int maxNumberOfVehicleTypes = 16;
 static constexpr int maxNumberOfVehicles = 512;
 static constexpr int maxNumberOfRigidBodies = 8192;
 static constexpr int maxNumberOfBonds = 16384;
+
+using padding = uint8_t;
 
 /*
   Event types:
@@ -38,7 +41,7 @@ struct Connection {
 	int unk1;           // 14
 	int bandwidth;      // 18
 	int timeoutTime;    // 1c
-	char unk2[188888 - 32];
+	padding unk2[188888 - 32];
 
 	const char* getClass() const { return "Connection"; }
 	std::string getAddress();
@@ -59,9 +62,9 @@ struct Account {
 	int spawnTimer;       // 40
 	// in-game minutes
 	int playTime;  // 44
-	char unk1[0x60 - 0x44 - 4];
+	padding unk1[0x60 - 0x44 - 4];
 	int banTime;  // 60
-	char unk2[112 - 104];
+	padding unk2[112 - 104];
 
 	const char* getClass() const { return "Account"; }
 	std::string __tostring() const;
@@ -163,7 +166,9 @@ struct MenuButton {
 
 	const char* getClass() const { return "MenuButton"; }
 	char* getText() { return text; }
-	void setText(const char* newText) { std::strncpy(text, newText, 63); }
+	void setText(const char* newText) {
+		std::strncpy(text, newText, sizeof(text) - 1);
+	}
 };
 
 // 14384 bytes (0x3830)
@@ -177,42 +182,40 @@ struct Player {
 	int isAdmin;                 // 34
 	unsigned int adminAttempts;  // 38
 	unsigned int accountID;      // 3C
-	char unk2[0x48 - 0x3C - 4];
+	padding unk2[0x48 - 0x3C - 4];
 	int isReady;          // 48
 	int money;            // 4C
 	int unk2a;            // 50
 	int unk2b;            // 54
 	int corporateRating;  // 58
 	int criminalRating;   // 5c
-	char unk3[0x84 - 0x5c - 4];
+	padding unk3[0x84 - 0x5c - 4];
 	unsigned int team;             // 84
 	unsigned int teamSwitchTimer;  // 88
 	int stocks;                    // 8c
 	int unk4[2];
 	int spawnTimer;  // 98
 	int humanID;     // 9c
-	char unk5[0x164 - 0x9c - 4];
+	padding unk5[0x164 - 0x9c - 4];
 	// 0 = none, 1-19 = shop, 2X = base
 	int menuTab;  // 164
-	char unk5_1[0x1b4 - 0x164 - 4];
+	padding unk5_1[0x1b4 - 0x164 - 4];
 	int numActions;      // 1b4
 	int lastNumActions;  // 1b8
-	char unk5_2[0x1c8 - 0x1b8 - 4];
+	padding unk5_2[0x1c8 - 0x1b8 - 4];
 	Action actions[64];  // 1c8
-	char unk6[0x1b14 - (0x1c8 + (sizeof(Action) * 64))];
+	padding unk6[0x1b14 - (0x1c8 + (sizeof(Action) * 64))];
 	int numMenuButtons;          // 1b14
 	MenuButton menuButtons[32];  // 1b18
-	char unk6_1[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
+	padding unk6_1[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
 	int isBot;  // 2d18
-	char unk7a[0x2d34 - 0x2d18 - 4];
+	padding unk7a[0x2d34 - 0x2d18 - 4];
 	int botHasDestination;  // 2d34
 	Vector botDestination;  // 2d38
-	char unk7[0x37a8 - 0x2d38 - 12];
+	padding unk7[0x37a8 - 0x2d38 - 12];
 	// int botState;	 //354c
 	// int unk8;
 	// int botEnemyID;	 //3554
-	// char unk9[0x379c - 0x3554 - 4];
-	// char unk9[0x37a8 - 0x2d18 - 4];
 	int gender;     // 37a8
 	int skinColor;  // 37ac
 	int hairColor;  // 37b0
@@ -226,7 +229,7 @@ struct Player {
 	int unk10;     // 37c8
 	int head;      // 37cc
 	int necklace;  // 37d0
-	char unk11[14384 - 14292];
+	padding unk11[14384 - 14292];
 
 	const char* getClass() const { return "Player"; }
 	std::string __tostring() const;
@@ -235,7 +238,9 @@ struct Player {
 	void setIsActive(bool b) { active = b; }
 	sol::table getDataTable() const;
 	char* getName() { return name; }
-	void setName(const char* newName) { std::strncpy(name, newName, 31); }
+	void setName(const char* newName) {
+		std::strncpy(name, newName, sizeof(name) - 1);
+	}
 	bool getIsAdmin() const { return isAdmin; }
 	void setIsAdmin(bool b) { isAdmin = b; }
 	bool getIsReady() const { return isReady; }
@@ -266,7 +271,7 @@ struct Bone {
 	Vector vel;
 	Vector vel2;
 	RotMatrix rot;
-	char unk[312 - 88];
+	padding unk[312 - 88];
 
 	const char* getClass() const { return "Bone"; }
 };
@@ -318,11 +323,11 @@ struct Human {
 	Vector pos2;      // 8c
 	float viewYaw;    // 98
 	float viewPitch;  // 9c
-	char unk19[0x12c - 0x9c - 4];
+	padding unk19[0x12c - 0x9c - 4];
 	float strafeInput;  // 12c
 	float unk20;        // 130
 	float walkInput;    // 134
-	char unk21[0x214 - 0x134 - 4];
+	padding unk21[0x214 - 0x134 - 4];
 	/*
 	mouse1 = 1		1 << 0
 	mouse2 = 2		1 << 1
@@ -340,25 +345,25 @@ struct Human {
 	*/
 	unsigned int inputFlags;      // 214
 	unsigned int lastInputFlags;  // 218
-	char unk22[0x220 - 0x218 - 4];
+	padding unk22[0x220 - 0x218 - 4];
 	Bone bones[16];  // 220
-	char unk23[0x32a8 - (0x220 + (sizeof(Bone) * 16))];
+	padding unk23[0x32a8 - (0x220 + (sizeof(Bone) * 16))];
 	int rightHandOccupied;  // 32a8
 	int rightHandItemID;    // 32ac
-	char unk24[0x32d0 - 0x32ac - 4];
+	padding unk24[0x32d0 - 0x32ac - 4];
 	int leftHandOccupied;  // 32d0
 	int leftHandItemID;    // 32d4
-	char unk25[0x33f8 - 0x32d4 - 4];
+	padding unk25[0x33f8 - 0x32d4 - 4];
 	int isGrabbingRight;       // 33f8
 	int grabbingRightHumanID;  // 33fc
 	int unk26_1;               // 3400
 	int grabbingRightBone;     // 3404
-	char unk26_2[0x3430 - 0x3404 - 4];
+	padding unk26_2[0x3430 - 0x3404 - 4];
 	int isGrabbingLeft;       // 3430
 	int grabbingLeftHumanID;  // 3434
 	int unk26_3;              // 3438
 	int grabbingLeftBone;     // 343c
-	char unk26_4[0x3528 - 0x343c - 4];
+	padding unk26_4[0x3528 - 0x343c - 4];
 	int health;      // 3528
 	int bloodLevel;  // 352c
 	int isBleeding;  // 3530
@@ -373,7 +378,7 @@ struct Human {
 	int leftLegHP;   // 3554
 	int unk30;       // 3558
 	int rightLegHP;  // 355c
-	char unk31[0x3758 - 0x355c - 4];
+	padding unk31[0x3758 - 0x355c - 4];
 	int gender;             // 3758
 	int head;               // 375c
 	int skinColor;          // 3760
@@ -386,7 +391,7 @@ struct Human {
 	int unk32;              // 377c
 	int necklace;           // 3780
 	int isAppearanceDirty;  // 3784
-	char unk33[14288 - 0x3784 - 4];
+	padding unk33[14288 - 0x3784 - 4];
 
 	const char* getClass() const { return "Human"; }
 	std::string __tostring() const;
@@ -443,19 +448,30 @@ struct ItemType {
 	float bulletVelocity;  // 24
 	float bulletSpread;    // 28
 	char name[64];         // 2c
-	char unk2[0x78 - 0x2c - 64];
+	padding unk2[0x78 - 0x2c - 64];
 	int numHands;         // 78
 	Vector rightHandPos;  // 7c
 	Vector leftHandPos;   // 88
-	char unk3[0x100 - 0x88 - 12];
+	padding unk3[0xac - 0x88 - 12];
+	float primaryGripStiffness;  // ac
+	padding unk4[0xb8 - 0xac - 4];
+	float primaryGripRotation;     // b8
+	float secondaryGripStiffness;  // bc
+	padding unk5[0xc8 - 0xbc - 4];
+	float secondaryGripRotation;  // c8
+	padding unk6[0x100 - 0xc8 - 4];
 	Vector boundsCenter;  // 100
-	char unk4[4912 - 0x100 - 12];
+	padding unk7[0x12f4 - 0x100 - 12];
+	Vector gunHoldingPos;  // 12f4
+	padding unk8[4912 - 0x12f4 - 12];
 
 	const char* getClass() const { return "ItemType"; }
 	std::string __tostring() const;
 	int getIndex() const;
 	char* getName() { return name; }
-	void setName(const char* newName) { std::strncpy(name, newName, 63); }
+	void setName(const char* newName) {
+		std::strncpy(name, newName, sizeof(name) - 1);
+	}
 	bool getIsGun() const { return isGun; }
 	void setIsGun(bool b) { isGun = b; }
 };
@@ -475,7 +491,7 @@ struct Item {
 	int parentHumanID;        // 24
 	int parentItemID;         // 28
 	int parentSlot;           // 2c
-	char unk5[0x58 - 0x2c - 4];
+	padding unk5[0x58 - 0x2c - 4];
 	int bodyID;     // 58
 	Vector pos;     // 5c
 	Vector pos2;    // 68
@@ -484,19 +500,19 @@ struct Item {
 	Vector vel3;    // 8c
 	Vector vel4;    // 98
 	RotMatrix rot;  // a4
-	char unk6[0x144 - 0xa4 - 36];
+	padding unk6[0x144 - 0xa4 - 36];
 	int bullets;  // 144
-	char unk7[0x368 - 0x144 - 4];
+	padding unk7[0x368 - 0x144 - 4];
 	unsigned int computerCurrentLine;  // 368
 	unsigned int computerTopLine;      // 36c
 	//-1 for no cursor
 	int computerCursor;          // 370
 	char computerLines[32][64];  // 374
-	char unk8[0xb74 - 0x374 - (64 * 32)];
+	padding unk8[0xb74 - 0x374 - (64 * 32)];
 	unsigned char computerLineColors[32][64];  // b74
-	char unk9[0x1658 - 0xb74 - (64 * 32)];
+	padding unk9[0x1658 - 0xb74 - (64 * 32)];
 	int computerTeam;  // 1658
-	char unk10[6784 - 5724];
+	padding unk10[6784 - 5724];
 
 	const char* getClass() const { return "Item"; }
 	std::string __tostring() const;
@@ -510,6 +526,8 @@ struct Item {
 	void setPhysicsSettled(bool b) { physicsSettled = b; }
 	bool getIsStatic() const { return isStatic; }
 	void setIsStatic(bool b) { isStatic = b; }
+	ItemType* getType();
+	void setType(ItemType* itemType);
 
 	void remove() const;
 	Player* getGrenadePrimer() const;
@@ -527,6 +545,26 @@ struct Item {
 	void computerSetLine(unsigned int line, const char* newLine);
 	void computerSetColor(unsigned int line, unsigned int column,
 	                      unsigned char color);
+};
+
+// 99656 bytes (18548)
+struct VehicleType {
+	int usesExternalModel;
+	int controllableState;  // 04
+	padding unk0[0x10 - 0x04 - 4];
+	char name[32];  // 10
+	int price;      // 30
+	float mass;     // 34
+	padding unk1[0x18548 - 0x34 - 4];
+
+	const char* getClass() const { return "VehicleType"; }
+	std::string __tostring() const;
+	int getIndex() const;
+	bool getUsesExternalModel() const { return usesExternalModel; }
+	char* getName() { return name; }
+	void setName(const char* newName) {
+		std::strncpy(name, newName, sizeof(name) - 1);
+	}
 };
 
 // 20572 bytes (505C)
@@ -549,7 +587,7 @@ struct Vehicle {
 	Vector pos2;         // 38
 	RotMatrix rot;       // 44
 	Vector vel;          // 68
-	char unk5[0x27d8 - 0x68 - 12];
+	padding unk5[0x27d8 - 0x68 - 12];
 	int windowState0;  // 27d8
 	int windowState1;  // 27dc
 	int windowState2;  // 27e0
@@ -558,20 +596,22 @@ struct Vehicle {
 	int windowState5;  // 27ec
 	int windowState6;  // 27f0
 	int windowState7;  // 27f4
-	char unk6[0x35dc - 0x27f4 - 4];
+	padding unk6[0x35dc - 0x27f4 - 4];
 	float gearX;         // 35dc
 	float steerControl;  // 35e0
 	float gearY;         // 35e4
 	float gasControl;    // 35e8
-	char unk7[0x4ea0 - 0x35e8 - 4];
+	padding unk7[0x4ea0 - 0x35e8 - 4];
 	int bladeBodyID;  // 4ea0
-	char unk8[20572 - 20132];
+	padding unk8[20572 - 20132];
 
 	const char* getClass() const { return "Vehicle"; }
 	std::string __tostring() const;
 	int getIndex() const;
 	bool getIsActive() const { return active; }
 	void setIsActive(bool b) { active = b; }
+	VehicleType* getType();
+	void setType(VehicleType* vehicleType);
 	sol::table getDataTable() const;
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
@@ -592,7 +632,7 @@ struct Bullet {
 	Vector lastPos;  // 14
 	Vector pos;      // 20
 	Vector vel;      // 2c
-	char unk2[92 - 56];
+	padding unk2[92 - 56];
 
 	const char* getClass() const { return "Bullet"; }
 	Player* getPlayer() const;
@@ -617,7 +657,7 @@ struct RigidBody {
 	Vector startVel;  //? 30
 	RotMatrix rot;    // 3c
 	RotMatrix rot2;   // 60
-	char unk3[176 - 132];
+	padding unk3[176 - 132];
 
 	const char* getClass() const { return "RigidBody"; }
 	std::string __tostring() const;
@@ -646,16 +686,16 @@ struct Bond {
 	int type;         // 04
 	int unk0;         // 08
 	int despawnTime;  // 0c
-	char unk1[0x2c - 0x0c - 4];
+	padding unk1[0x2c - 0x0c - 4];
 	// for level bonds
 	Vector globalPos;  // 2c
 	Vector localPos;   // 38
 	// for non-level bonds
 	Vector otherLocalPos;  // 44
-	char unk2[0x98 - 0x44 - 12];
+	padding unk2[0x98 - 0x44 - 12];
 	int bodyID;       // 98
 	int otherBodyID;  // 9C
-	char unk3[244 - 160];
+	padding unk3[244 - 160];
 
 	const char* getClass() const { return "Bond"; }
 	std::string __tostring() const;
@@ -687,7 +727,7 @@ struct Street {
 	Vector trafficCuboidA;  // 210
 	Vector trafficCuboidB;  // 21c
 	int numTraffic;         // 228
-	char unk2[1580 - 0x228 - 4];
+	padding unk2[1580 - 0x228 - 4];
 
 	const char* getClass() const { return "Street"; }
 	std::string __tostring() const;
@@ -708,7 +748,7 @@ struct StreetIntersection {
 	int streetSouth;  // 2c
 	int streetWest;   // 20
 	int streetNorth;  // 24
-	char unk1[0x44 - 0x24 - 4];
+	padding unk1[0x44 - 0x24 - 4];
 	int lightsState;     // 44
 	int lightsTimer;     // 48
 	int lightsTimerMax;  // 4c
@@ -716,7 +756,7 @@ struct StreetIntersection {
 	int lightSouth;      // 54
 	int lightWest;       // 58
 	int lightNorth;      // 5c
-	char unk2[136 - 0x5c - 4];
+	padding unk2[136 - 0x5c - 4];
 
 	const char* getClass() const { return "StreetIntersection"; }
 	std::string __tostring() const;

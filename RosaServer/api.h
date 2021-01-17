@@ -119,17 +119,23 @@ namespace items {
 int getCount();
 sol::table getAll();
 Item* getByIndex(sol::table self, unsigned int idx);
-Item* create(int itemType, Vector* pos, RotMatrix* rot);
-Item* createVel(int itemType, Vector* pos, Vector* vel, RotMatrix* rot);
+Item* create(ItemType* type, Vector* pos, RotMatrix* rot);
+Item* createVel(ItemType* typee, Vector* pos, Vector* vel, RotMatrix* rot);
 Item* createRope(Vector* pos, RotMatrix* rot);
 };  // namespace items
+
+namespace vehicleTypes {
+int getCount();
+sol::table getAll();
+VehicleType* getByIndex(sol::table self, unsigned int idx);
+};  // namespace vehicleTypes
 
 namespace vehicles {
 int getCount();
 sol::table getAll();
 Vehicle* getByIndex(sol::table self, unsigned int idx);
-Vehicle* create(int type, Vector* pos, RotMatrix* rot, int color);
-Vehicle* createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot,
+Vehicle* create(VehicleType* type, Vector* pos, RotMatrix* rot, int color);
+Vehicle* createVel(VehicleType* type, Vector* pos, Vector* vel, RotMatrix* rot,
                    int color);
 };  // namespace vehicles
 
@@ -209,6 +215,7 @@ uintptr_t getAddressOfPlayer(Player* address);
 uintptr_t getAddressOfHuman(Human* address);
 uintptr_t getAddressOfItemType(ItemType* address);
 uintptr_t getAddressOfItem(Item* address);
+uintptr_t getAddressOfVehicleType(VehicleType* address);
 uintptr_t getAddressOfVehicle(Vehicle* address);
 uintptr_t getAddressOfBullet(Bullet* address);
 uintptr_t getAddressOfBone(Bone* address);

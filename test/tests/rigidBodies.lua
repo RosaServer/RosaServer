@@ -8,7 +8,7 @@ local body = rigidBodies[0]
 assert(not body.isActive)
 
 local vehicle = assert(vehicles.create(
-	0,
+	vehicleTypes[0],
 	Vector(100, 50, 100),
 	RotMatrix(
 		1, 0, 0,
