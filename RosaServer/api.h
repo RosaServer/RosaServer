@@ -124,6 +124,12 @@ Item* createVel(ItemType* typee, Vector* pos, Vector* vel, RotMatrix* rot);
 Item* createRope(Vector* pos, RotMatrix* rot);
 };  // namespace items
 
+namespace vehicleTypes {
+int getCount();
+sol::table getAll();
+VehicleType* getByIndex(sol::table self, unsigned int idx);
+};  // namespace vehicleTypes
+
 namespace vehicles {
 int getCount();
 sol::table getAll();
@@ -209,6 +215,7 @@ uintptr_t getAddressOfPlayer(Player* address);
 uintptr_t getAddressOfHuman(Human* address);
 uintptr_t getAddressOfItemType(ItemType* address);
 uintptr_t getAddressOfItem(Item* address);
+uintptr_t getAddressOfVehicleType(VehicleType* address);
 uintptr_t getAddressOfVehicle(Vehicle* address);
 uintptr_t getAddressOfBullet(Bullet* address);
 uintptr_t getAddressOfBone(Bone* address);

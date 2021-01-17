@@ -413,6 +413,20 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto meta = lua->new_usertype<VehicleType>("new", sol::no_constructor);
+		meta["controllableState"] = &VehicleType::controllableState;
+		meta["price"] = &VehicleType::price;
+		meta["mass"] = &VehicleType::mass;
+
+		meta["class"] = sol::property(&VehicleType::getClass);
+		meta["__tostring"] = &VehicleType::__tostring;
+		meta["index"] = sol::property(&VehicleType::getIndex);
+		meta["name"] = sol::property(&VehicleType::getName, &VehicleType::setName);
+		meta["usesExternalModel"] =
+		    sol::property(&VehicleType::getUsesExternalModel);
+	}
+
+	{
 		auto meta = lua->new_usertype<Vehicle>("new", sol::no_constructor);
 		meta["type"] = &Vehicle::type;
 		meta["controllableState"] = &Vehicle::controllableState;
@@ -710,6 +724,18 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto vehicleTypesTable = lua->create_table();
+		(*lua)["vehicleTypes"] = vehicleTypesTable;
+		vehicleTypesTable["getCount"] = Lua::vehicleTypes::getCount;
+		vehicleTypesTable["getAll"] = Lua::vehicleTypes::getAll;
+
+		sol::table _meta = lua->create_table();
+		vehicleTypesTable[sol::metatable_key] = _meta;
+		_meta["__len"] = Lua::vehicleTypes::getCount;
+		_meta["__index"] = Lua::vehicleTypes::getByIndex;
+	}
+
+	{
 		auto vehiclesTable = lua->create_table();
 		(*lua)["vehicles"] = vehiclesTable;
 		vehiclesTable["getCount"] = Lua::vehicles::getCount;
@@ -786,6 +812,7 @@ void luaInit(bool redo) {
 		    &Lua::memory::getAddressOfConnection, &Lua::memory::getAddressOfAccount,
 		    &Lua::memory::getAddressOfPlayer, &Lua::memory::getAddressOfHuman,
 		    &Lua::memory::getAddressOfItemType, &Lua::memory::getAddressOfItem,
+		    &Lua::memory::getAddressOfVehicleType,
 		    &Lua::memory::getAddressOfVehicle, &Lua::memory::getAddressOfBullet,
 		    &Lua::memory::getAddressOfBone, &Lua::memory::getAddressOfRigidBody,
 		    &Lua::memory::getAddressOfBond, &Lua::memory::getAddressOfAction,
@@ -893,9 +920,10 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::accounts = (Account*)(base + 0x334F6D0);
 	Engine::players = (Player*)(base + 0x19BC9CC0);
 	Engine::humans = (Human*)(base + 0x8B1D4A8);
-	Engine::vehicles = (Vehicle*)(base + 0x20DEF320);
 	Engine::itemTypes = (ItemType*)(base + 0x5A088680);
 	Engine::items = (Item*)(base + 0x7FE2160);
+	Engine::vehicleTypes = (VehicleType*)(base + 0x4AD1F20);
+	Engine::vehicles = (Vehicle*)(base + 0x20DEF320);
 	Engine::bullets = (Bullet*)(base + 0x4355E260);
 	Engine::bodies = (RigidBody*)(base + 0x2DACC0);
 	Engine::bonds = (Bond*)(base + 0x24964220);

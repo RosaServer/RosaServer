@@ -339,6 +339,22 @@ Item* items::createRope(Vector* pos, RotMatrix* rot) {
 	return id == -1 ? nullptr : &Engine::items[id];
 }
 
+int vehicleTypes::getCount() { return maxNumberOfVehicleTypes; }
+
+sol::table vehicleTypes::getAll() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < maxNumberOfVehicleTypes; i++) {
+		arr.add(&Engine::vehicleTypes[i]);
+	}
+	return arr;
+}
+
+VehicleType* vehicleTypes::getByIndex(sol::table self, unsigned int idx) {
+	if (idx >= maxNumberOfVehicleTypes)
+		throw std::invalid_argument(errorOutOfRange);
+	return &Engine::vehicleTypes[idx];
+}
+
 int vehicles::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfVehicles; i++) {
@@ -698,6 +714,10 @@ uintptr_t memory::getAddressOfItemType(ItemType* address) {
 }
 
 uintptr_t memory::getAddressOfItem(Item* address) { return (uintptr_t)address; }
+
+uintptr_t memory::getAddressOfVehicleType(VehicleType* address) {
+	return (uintptr_t)address;
+}
 
 uintptr_t memory::getAddressOfVehicle(Vehicle* address) {
 	return (uintptr_t)address;
@@ -1289,6 +1309,16 @@ void Item::computerSetColor(unsigned int line, unsigned int column,
                             unsigned char color) {
 	if (line >= 32 || column >= 64) throw std::invalid_argument(errorOutOfRange);
 	computerLineColors[line][column] = color;
+}
+
+std::string VehicleType::__tostring() const {
+	char buf[16];
+	sprintf(buf, "VehicleType(%i)", getIndex());
+	return buf;
+}
+
+int VehicleType::getIndex() const {
+	return ((uintptr_t)this - (uintptr_t)Engine::vehicleTypes) / sizeof(*this);
 }
 
 std::string Vehicle::__tostring() const {
