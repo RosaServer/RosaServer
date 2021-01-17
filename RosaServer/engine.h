@@ -21,6 +21,22 @@ extern int* isPassworded;
 extern char* password;
 extern int* maxPlayers;
 
+namespace World {
+extern int* traffic;
+extern int* startCash;
+extern int* minCash;
+extern bool* showJoinExit;
+extern bool* respawnTeam;
+namespace Crime {
+extern int* civCiv;
+extern int* civTeam;
+extern int* teamCiv;
+extern int* teamTeam;
+extern int* teamTeamInBase;
+extern int* noSpawn;
+};  // namespace Crime
+};  // namespace World
+
 extern int* isLevelLoaded;
 extern float* gravity;
 extern float originalGravity;

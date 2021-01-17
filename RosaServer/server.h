@@ -26,6 +26,49 @@ struct Server {
 	}
 	int getMaxPlayers() const { return *Engine::maxPlayers; }
 	void setMaxPlayers(int max) const { *Engine::maxPlayers = max; }
+
+	int getWorldTraffic() const { return *Engine::World::traffic; }
+	void setWorldTraffic(int traffic) const { *Engine::World::traffic = traffic; }
+	int getWorldStartCash() const { return *Engine::World::startCash; }
+	void setWorldStartCash(int cash) const { *Engine::World::startCash = cash; }
+	int getWorldMinCash() const { return *Engine::World::minCash; }
+	void setWorldMinCash(int cash) const { *Engine::World::minCash = cash; }
+	bool getWorldShowJoinExit() const { return *Engine::World::showJoinExit; }
+	void setWorldShowJoinExit(bool showJoinExit) const {
+		*Engine::World::showJoinExit = showJoinExit;
+	}
+	bool getWorldRespawnTeam() const { return *Engine::World::respawnTeam; }
+	void setWorldRespawnTeam(bool respawnTeam) const {
+		*Engine::World::respawnTeam = respawnTeam;
+	}
+
+	int getWorldCrimeCivCiv() const { return *Engine::World::Crime::civCiv; }
+	void setWorldCrimeCivCiv(int crime) const {
+		*Engine::World::Crime::civCiv = crime;
+	}
+	int getWorldCrimeCivTeam() const { return *Engine::World::Crime::civTeam; }
+	void setWorldCrimeCivTeam(int crime) const {
+		*Engine::World::Crime::civTeam = crime;
+	}
+	int getWorldCrimeTeamCiv() const { return *Engine::World::Crime::teamCiv; }
+	void setWorldCrimeTeamCiv(int crime) const {
+		*Engine::World::Crime::teamCiv = crime;
+	}
+	int getWorldCrimeTeamTeam() const { return *Engine::World::Crime::teamTeam; }
+	void setWorldCrimeTeamTeam(int crime) const {
+		*Engine::World::Crime::teamTeam = crime;
+	}
+	int getWorldCrimeTeamTeamInBase() const {
+		return *Engine::World::Crime::teamTeamInBase;
+	}
+	void setWorldCrimeTeamTeamInBase(int crime) const {
+		*Engine::World::Crime::teamTeamInBase = crime;
+	}
+	int getWorldCrimeNoSpawn() const { return *Engine::World::Crime::noSpawn; }
+	void setWorldCrimeNoSpawn(int crime) const {
+		*Engine::World::Crime::noSpawn = crime;
+	}
+
 	int getType() const { return *Engine::gameType; }
 	void setType(int type) const { *Engine::gameType = type; }
 	char* getLevelName() const { return Engine::mapName; }
