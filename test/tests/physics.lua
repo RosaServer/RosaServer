@@ -45,7 +45,7 @@ nextTick(function ()
 
 	do
 		local vehicle = assert(vehicles.create(
-			0,
+			vehicleTypes[0],
 			Vector(0, airLevel, 0),
 			RotMatrix(
 				1, 0, 0,

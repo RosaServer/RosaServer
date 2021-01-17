@@ -4,7 +4,7 @@ assert(#vehicles == 0)
 assert(vehicles[0])
 
 local vehicle = assert(vehicles.create(
-	0,
+	vehicleTypes[0],
 	Vector(100, 50, 100),
 	RotMatrix(
 		1, 0, 0,
