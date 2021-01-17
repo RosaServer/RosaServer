@@ -457,6 +457,8 @@ void luaInit(bool redo) {
 		meta["isActive"] =
 		    sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
 		meta["type"] = sol::property(&Vehicle::getType, &Vehicle::setType);
+		meta["isLocked"] =
+		    sol::property(&Vehicle::getIsLocked, &Vehicle::setIsLocked);
 		meta["data"] = sol::property(&Vehicle::getDataTable);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
 		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);

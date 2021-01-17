@@ -616,6 +616,8 @@ struct Vehicle {
 	void setIsActive(bool b) { active = b; }
 	VehicleType* getType();
 	void setType(VehicleType* vehicleType);
+	bool getIsLocked() const { return isLocked; }
+	void setIsLocked(bool b) { isLocked = b; }
 	sol::table getDataTable() const;
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
