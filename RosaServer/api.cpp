@@ -371,6 +371,16 @@ VehicleType* vehicleTypes::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::vehicleTypes[idx];
 }
 
+VehicleType* vehicleTypes::getByName(const char* name) {
+	for (int i = 0; i < maxNumberOfVehicleTypes; i++) {
+		VehicleType* type = &Engine::vehicleTypes[i];
+		if (!std::strcmp(name, type->name)) {
+			return type;
+		}
+	}
+	return nullptr;
+}
+
 int vehicles::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfVehicles; i++) {

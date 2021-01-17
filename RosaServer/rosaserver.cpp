@@ -733,6 +733,7 @@ void luaInit(bool redo) {
 		(*lua)["vehicleTypes"] = vehicleTypesTable;
 		vehicleTypesTable["getCount"] = Lua::vehicleTypes::getCount;
 		vehicleTypesTable["getAll"] = Lua::vehicleTypes::getAll;
+		vehicleTypesTable["getByName"] = Lua::vehicleTypes::getByName;
 
 		sol::table _meta = lua->create_table();
 		vehicleTypesTable[sol::metatable_key] = _meta;

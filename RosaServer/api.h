@@ -130,6 +130,7 @@ namespace vehicleTypes {
 int getCount();
 sol::table getAll();
 VehicleType* getByIndex(sol::table self, unsigned int idx);
+VehicleType* getByName(const char* name);
 };  // namespace vehicleTypes
 
 namespace vehicles {
