@@ -755,6 +755,7 @@ void luaInit(bool redo) {
 		(*lua)["bullets"] = bulletsTable;
 		bulletsTable["getCount"] = Lua::bullets::getCount;
 		bulletsTable["getAll"] = Lua::bullets::getAll;
+		bulletsTable["create"] = Lua::bullets::create;
 	}
 
 	{

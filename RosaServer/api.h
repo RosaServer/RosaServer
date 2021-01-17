@@ -173,6 +173,7 @@ Human* create(Vector* pos, RotMatrix* rot, Player* ply);
 namespace bullets {
 unsigned int getCount();
 sol::table getAll();
+Bullet* create(int type, Vector* pos, Vector* vel, Player* ply);
 };  // namespace bullets
 
 namespace rigidBodies {

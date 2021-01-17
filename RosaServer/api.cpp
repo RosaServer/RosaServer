@@ -211,6 +211,7 @@ void event::soundSimple(int soundType, Vector* pos) {
 void event::explosion(Vector* pos) { Engine::createEventExplosion(0, pos); }
 
 void event::bullet(int bulletType, Vector* pos, Vector* vel, Item* item) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHook);
 	Engine::createEventBullet(bulletType, pos, vel,
 	                          item == nullptr ? -1 : item->getIndex());
 }
@@ -575,6 +576,13 @@ sol::table bullets::getAll() {
 		arr.add(bul);
 	}
 	return arr;
+}
+
+Bullet* bullets::create(int type, Vector* pos, Vector* vel, Player* ply) {
+	subhook::ScopedHookRemove remove(&Hooks::createBulletHook);
+	int bulletID = Engine::createBullet(type, pos, vel,
+	                                    ply == nullptr ? -1 : ply->getIndex());
+	return bulletID == -1 ? nullptr : &Engine::bullets[bulletID];
 }
 
 int rigidBodies::getCount() {
