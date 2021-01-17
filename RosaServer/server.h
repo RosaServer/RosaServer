@@ -11,6 +11,10 @@ struct Server {
 	void setName(const char* newName) const {
 		strncpy(Engine::serverName, newName, 31);
 	}
+	char* getAdminPassword() const { return Engine::adminPassword; }
+	void setAdminPassword(const char* newPassword) const {
+		strncpy(Engine::adminPassword, newPassword, 31);
+	}
 	char* getPassword() const { return Engine::password; }
 	void setPassword(const char* newPassword) const {
 		strncpy(Engine::password, newPassword, 31);

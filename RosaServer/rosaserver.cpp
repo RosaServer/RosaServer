@@ -169,6 +169,8 @@ void luaInit(bool redo) {
 		meta["class"] = sol::property(&Server::getClass);
 		meta["port"] = sol::property(&Server::getPort);
 		meta["name"] = sol::property(&Server::getName, &Server::setName);
+		meta["adminPassword"] =
+		    sol::property(&Server::getAdminPassword, &Server::setAdminPassword);
 		meta["password"] =
 		    sol::property(&Server::getPassword, &Server::setPassword);
 		meta["maxPlayers"] =
@@ -906,6 +908,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::serverName = (char*)(base + 0x24EE4234);
 	Engine::serverPort = (unsigned int*)(base + 0x1CC6CE80);
 	Engine::numEvents = (unsigned int*)(base + 0x4532f244);
+	Engine::adminPassword = (char*)(base + 0x1CC6D28C);
 	Engine::isPassworded = (int*)(base + 0x24EE4644);
 	Engine::password = (char*)(base + 0x1CC6D48C);
 	Engine::maxPlayers = (int*)(base + 0x24EE4648);
