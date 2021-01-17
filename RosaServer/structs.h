@@ -610,6 +610,8 @@ struct Vehicle {
 	int getIndex() const;
 	bool getIsActive() const { return active; }
 	void setIsActive(bool b) { active = b; }
+	VehicleType* getType();
+	void setType(VehicleType* vehicleType);
 	sol::table getDataTable() const;
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;

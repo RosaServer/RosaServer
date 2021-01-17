@@ -1331,6 +1331,16 @@ int Vehicle::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)Engine::vehicles) / sizeof(*this);
 }
 
+VehicleType* Vehicle::getType() { return &Engine::vehicleTypes[type]; }
+
+void Vehicle::setType(VehicleType* vehicleType) {
+	if (vehicleType == nullptr) {
+		throw std::invalid_argument("Cannot set a vehicle's type to nil");
+	}
+
+	type = vehicleType->getIndex();
+}
+
 sol::table Vehicle::getDataTable() const {
 	int index = getIndex();
 
