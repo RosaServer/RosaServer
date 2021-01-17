@@ -296,6 +296,16 @@ ItemType* itemTypes::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::itemTypes[idx];
 }
 
+ItemType* itemTypes::getByName(const char* name) {
+	for (int i = 0; i < maxNumberOfItemTypes; i++) {
+		ItemType* type = &Engine::itemTypes[i];
+		if (!std::strcmp(name, type->name)) {
+			return type;
+		}
+	}
+	return nullptr;
+}
+
 int items::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfItems; i++) {

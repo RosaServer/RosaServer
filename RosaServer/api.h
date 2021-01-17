@@ -114,6 +114,7 @@ namespace itemTypes {
 int getCount();
 sol::table getAll();
 ItemType* getByIndex(sol::table self, unsigned int idx);
+ItemType* getByName(const char* name);
 };  // namespace itemTypes
 
 namespace items {

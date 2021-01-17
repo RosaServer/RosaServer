@@ -705,6 +705,7 @@ void luaInit(bool redo) {
 		(*lua)["itemTypes"] = itemTypesTable;
 		itemTypesTable["getCount"] = Lua::itemTypes::getCount;
 		itemTypesTable["getAll"] = Lua::itemTypes::getAll;
+		itemTypesTable["getByName"] = Lua::itemTypes::getByName;
 
 		sol::table _meta = lua->create_table();
 		itemTypesTable[sol::metatable_key] = _meta;
