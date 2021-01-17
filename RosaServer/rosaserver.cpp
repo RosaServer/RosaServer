@@ -395,6 +395,7 @@ void luaInit(bool redo) {
 		meta["isStatic"] = sol::property(&Item::getIsStatic, &Item::setIsStatic);
 		meta["type"] = sol::property(&Item::getType, &Item::setType);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
+		meta["vehicle"] = sol::property(&Item::getVehicle, &Item::setVehicle);
 		meta["grenadePrimer"] =
 		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
 		meta["parentHuman"] = sol::property(&Item::getParentHuman);
@@ -456,6 +457,8 @@ void luaInit(bool redo) {
 		meta["isActive"] =
 		    sol::property(&Vehicle::getIsActive, &Vehicle::setIsActive);
 		meta["type"] = sol::property(&Vehicle::getType, &Vehicle::setType);
+		meta["isLocked"] =
+		    sol::property(&Vehicle::getIsLocked, &Vehicle::setIsLocked);
 		meta["data"] = sol::property(&Vehicle::getDataTable);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
 		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);
@@ -633,6 +636,7 @@ void luaInit(bool redo) {
 		eventTable["sound"] =
 		    sol::overload(Lua::event::sound, Lua::event::soundSimple);
 		eventTable["explosion"] = Lua::event::explosion;
+		eventTable["bullet"] = Lua::event::bullet;
 		eventTable["bulletHit"] = Lua::event::bulletHit;
 	}
 
@@ -701,6 +705,7 @@ void luaInit(bool redo) {
 		(*lua)["itemTypes"] = itemTypesTable;
 		itemTypesTable["getCount"] = Lua::itemTypes::getCount;
 		itemTypesTable["getAll"] = Lua::itemTypes::getAll;
+		itemTypesTable["getByName"] = Lua::itemTypes::getByName;
 
 		sol::table _meta = lua->create_table();
 		itemTypesTable[sol::metatable_key] = _meta;
@@ -728,6 +733,7 @@ void luaInit(bool redo) {
 		(*lua)["vehicleTypes"] = vehicleTypesTable;
 		vehicleTypesTable["getCount"] = Lua::vehicleTypes::getCount;
 		vehicleTypesTable["getAll"] = Lua::vehicleTypes::getAll;
+		vehicleTypesTable["getByName"] = Lua::vehicleTypes::getByName;
 
 		sol::table _meta = lua->create_table();
 		vehicleTypesTable[sol::metatable_key] = _meta;
@@ -754,6 +760,7 @@ void luaInit(bool redo) {
 		(*lua)["bullets"] = bulletsTable;
 		bulletsTable["getCount"] = Lua::bullets::getCount;
 		bulletsTable["getAll"] = Lua::bullets::getAll;
+		bulletsTable["create"] = Lua::bullets::create;
 	}
 
 	{

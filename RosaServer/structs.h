@@ -502,17 +502,19 @@ struct Item {
 	RotMatrix rot;  // a4
 	padding unk6[0x144 - 0xa4 - 36];
 	int bullets;  // 144
-	padding unk7[0x368 - 0x144 - 4];
+	padding unk7[0x280 - 0x144 - 4];
+	int vehicleID;  // 280
+	padding unk8[0x368 - 0x280 - 4];
 	unsigned int computerCurrentLine;  // 368
 	unsigned int computerTopLine;      // 36c
 	//-1 for no cursor
 	int computerCursor;          // 370
 	char computerLines[32][64];  // 374
-	padding unk8[0xb74 - 0x374 - (64 * 32)];
+	padding unk9[0xb74 - 0x374 - (64 * 32)];
 	unsigned char computerLineColors[32][64];  // b74
-	padding unk9[0x1658 - 0xb74 - (64 * 32)];
+	padding unk10[0x1658 - 0xb74 - (64 * 32)];
 	int computerTeam;  // 1658
-	padding unk10[6784 - 5724];
+	padding unk11[6784 - 5724];
 
 	const char* getClass() const { return "Item"; }
 	std::string __tostring() const;
@@ -535,6 +537,8 @@ struct Item {
 	Human* getParentHuman() const;
 	Item* getParentItem() const;
 	RigidBody* getRigidBody() const;
+	Vehicle* getVehicle() const;
+	void setVehicle(Vehicle* vcl);
 	bool mountItem(Item* childItem, unsigned int slot) const;
 	bool unmount() const;
 	void speak(const char* message, int distance) const;
@@ -612,6 +616,8 @@ struct Vehicle {
 	void setIsActive(bool b) { active = b; }
 	VehicleType* getType();
 	void setType(VehicleType* vehicleType);
+	bool getIsLocked() const { return isLocked; }
+	void setIsLocked(bool b) { isLocked = b; }
 	sol::table getDataTable() const;
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;

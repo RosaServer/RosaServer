@@ -96,6 +96,7 @@ namespace event {
 void sound(int soundType, Vector* pos, float volume, float pitch);
 void soundSimple(int soundType, Vector* pos);
 void explosion(Vector* pos);
+void bullet(int bulletType, Vector* pos, Vector* vel, Item* item);
 void bulletHit(int hitType, Vector* pos, Vector* normal);
 };  // namespace event
 
@@ -113,6 +114,7 @@ namespace itemTypes {
 int getCount();
 sol::table getAll();
 ItemType* getByIndex(sol::table self, unsigned int idx);
+ItemType* getByName(const char* name);
 };  // namespace itemTypes
 
 namespace items {
@@ -128,6 +130,7 @@ namespace vehicleTypes {
 int getCount();
 sol::table getAll();
 VehicleType* getByIndex(sol::table self, unsigned int idx);
+VehicleType* getByName(const char* name);
 };  // namespace vehicleTypes
 
 namespace vehicles {
@@ -172,6 +175,7 @@ Human* create(Vector* pos, RotMatrix* rot, Player* ply);
 namespace bullets {
 unsigned int getCount();
 sol::table getAll();
+Bullet* create(int type, Vector* pos, Vector* vel, Player* ply);
 };  // namespace bullets
 
 namespace rigidBodies {

@@ -210,6 +210,12 @@ void event::soundSimple(int soundType, Vector* pos) {
 
 void event::explosion(Vector* pos) { Engine::createEventExplosion(0, pos); }
 
+void event::bullet(int bulletType, Vector* pos, Vector* vel, Item* item) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHook);
+	Engine::createEventBullet(bulletType, pos, vel,
+	                          item == nullptr ? -1 : item->getIndex());
+}
+
 void event::bulletHit(int hitType, Vector* pos, Vector* normal) {
 	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
 	Engine::createEventBulletHit(0, hitType, pos, normal);
@@ -290,6 +296,16 @@ ItemType* itemTypes::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::itemTypes[idx];
 }
 
+ItemType* itemTypes::getByName(const char* name) {
+	for (int i = 0; i < maxNumberOfItemTypes; i++) {
+		ItemType* type = &Engine::itemTypes[i];
+		if (!std::strcmp(name, type->name)) {
+			return type;
+		}
+	}
+	return nullptr;
+}
+
 int items::getCount() {
 	int count = 0;
 	for (int i = 0; i < maxNumberOfItems; i++) {
@@ -353,6 +369,16 @@ VehicleType* vehicleTypes::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfVehicleTypes)
 		throw std::invalid_argument(errorOutOfRange);
 	return &Engine::vehicleTypes[idx];
+}
+
+VehicleType* vehicleTypes::getByName(const char* name) {
+	for (int i = 0; i < maxNumberOfVehicleTypes; i++) {
+		VehicleType* type = &Engine::vehicleTypes[i];
+		if (!std::strcmp(name, type->name)) {
+			return type;
+		}
+	}
+	return nullptr;
 }
 
 int vehicles::getCount() {
@@ -570,6 +596,13 @@ sol::table bullets::getAll() {
 		arr.add(bul);
 	}
 	return arr;
+}
+
+Bullet* bullets::create(int type, Vector* pos, Vector* vel, Player* ply) {
+	subhook::ScopedHookRemove remove(&Hooks::createBulletHook);
+	int bulletID = Engine::createBullet(type, pos, vel,
+	                                    ply == nullptr ? -1 : ply->getIndex());
+	return bulletID == -1 ? nullptr : &Engine::bullets[bulletID];
 }
 
 int rigidBodies::getCount() {
@@ -1264,6 +1297,14 @@ Item* Item::getParentItem() const {
 }
 
 RigidBody* Item::getRigidBody() const { return &Engine::bodies[bodyID]; }
+
+Vehicle* Item::getVehicle() const {
+	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
+}
+
+void Item::setVehicle(Vehicle* vcl) {
+	vehicleID = vcl == nullptr ? -1 : vcl->getIndex();
+}
 
 bool Item::mountItem(Item* childItem, unsigned int slot) const {
 	subhook::ScopedHookRemove remove(&Hooks::linkItemHook);
