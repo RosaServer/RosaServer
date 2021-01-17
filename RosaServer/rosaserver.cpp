@@ -202,6 +202,17 @@ void luaInit(bool redo) {
 		meta["worldCrimeNoSpawn"] = sol::property(&Server::getWorldCrimeNoSpawn,
 		                                          &Server::setWorldCrimeNoSpawn);
 
+		meta["roundRoundTime"] =
+		    sol::property(&Server::getRoundRoundTime, &Server::setRoundRoundTime);
+		meta["roundStartCash"] =
+		    sol::property(&Server::getRoundStartCash, &Server::setRoundStartCash);
+		meta["roundIsWeekly"] =
+		    sol::property(&Server::getRoundIsWeekly, &Server::setRoundIsWeekly);
+		meta["roundHasBonusRatio"] = sol::property(&Server::getRoundHasBonusRatio,
+		                                           &Server::setRoundHasBonusRatio);
+		meta["roundTeamDamage"] =
+		    sol::property(&Server::getRoundTeamDamage, &Server::setRoundTeamDamage);
+
 		meta["type"] = sol::property(&Server::getType, &Server::setType);
 		meta["levelToLoad"] =
 		    sol::property(&Server::getLevelName, &Server::setLevelName);
@@ -952,6 +963,12 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::World::Crime::teamTeam = (int*)(base + 0x444AE4A8);
 	Engine::World::Crime::teamTeamInBase = (int*)(base + 0x444AE4AC);
 	Engine::World::Crime::noSpawn = (int*)(base + 0x444AE4B8);
+
+	Engine::Round::roundTime = (int*)(base + 0x444AE484);
+	Engine::Round::startCash = (int*)(base + 0x444AE488);
+	Engine::Round::weekly = (bool*)(base + 0x444AE48C);
+	Engine::Round::bonusRatio = (bool*)(base + 0x444AE490);
+	Engine::Round::teamDamage = (int*)(base + 0x444AE494);
 
 	Engine::gameType = (int*)(base + 0x443F3988);
 	Engine::mapName = (char*)(base + 0x443F398C);

@@ -36,6 +36,14 @@ int* noSpawn;
 };  // namespace Crime
 };  // namespace World
 
+namespace Round {
+int* roundTime;
+int* startCash;
+bool* weekly;
+bool* bonusRatio;
+int* teamDamage;
+};  // namespace Round
+
 int* isLevelLoaded;
 float* gravity;
 float originalGravity;

@@ -69,6 +69,23 @@ struct Server {
 		*Engine::World::Crime::noSpawn = crime;
 	}
 
+	int getRoundRoundTime() const { return *Engine::Round::roundTime; }
+	void setRoundRoundTime(int minutes) const {
+		*Engine::Round::roundTime = minutes;
+	}
+	int getRoundStartCash() const { return *Engine::Round::startCash; }
+	void setRoundStartCash(int cash) const { *Engine::Round::startCash = cash; }
+	bool getRoundIsWeekly() const { return *Engine::Round::weekly; }
+	void setRoundIsWeekly(bool weekly) const { *Engine::Round::weekly = weekly; }
+	bool getRoundHasBonusRatio() const { return *Engine::Round::bonusRatio; }
+	void setRoundHasBonusRatio(bool ratio) const {
+		*Engine::Round::bonusRatio = ratio;
+	}
+	int getRoundTeamDamage() const { return *Engine::Round::teamDamage; }
+	void setRoundTeamDamage(int damage) const {
+		*Engine::Round::teamDamage = damage;
+	}
+
 	int getType() const { return *Engine::gameType; }
 	void setType(int type) const { *Engine::gameType = type; }
 	char* getLevelName() const { return Engine::mapName; }

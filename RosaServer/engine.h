@@ -37,6 +37,14 @@ extern int* noSpawn;
 };  // namespace Crime
 };  // namespace World
 
+namespace Round {
+extern int* roundTime;
+extern int* startCash;
+extern bool* weekly;
+extern bool* bonusRatio;
+extern int* teamDamage;
+};  // namespace Round
+
 extern int* isLevelLoaded;
 extern float* gravity;
 extern float originalGravity;
