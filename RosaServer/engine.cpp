@@ -14,9 +14,35 @@ int* gameState;
 int* gameTimer;
 unsigned int* sunTime;
 
+int* serverMaxBytesPerSecond;
+char* adminPassword;
 int* isPassworded;
 char* password;
 int* maxPlayers;
+
+namespace World {
+int* traffic;
+int* startCash;
+int* minCash;
+bool* showJoinExit;
+bool* respawnTeam;
+namespace Crime {
+int* civCiv;
+int* civTeam;
+int* teamCiv;
+int* teamTeam;
+int* teamTeamInBase;
+int* noSpawn;
+};  // namespace Crime
+};  // namespace World
+
+namespace Round {
+int* roundTime;
+int* startCash;
+bool* weekly;
+bool* bonusRatio;
+int* teamDamage;
+};  // namespace Round
 
 int* isLevelLoaded;
 float* gravity;

@@ -169,10 +169,50 @@ void luaInit(bool redo) {
 		meta["class"] = sol::property(&Server::getClass);
 		meta["port"] = sol::property(&Server::getPort);
 		meta["name"] = sol::property(&Server::getName, &Server::setName);
+		meta["maxBytesPerSecond"] = sol::property(&Server::getMaxBytesPerSecond,
+		                                          &Server::setMaxBytesPerSecond);
+		meta["adminPassword"] =
+		    sol::property(&Server::getAdminPassword, &Server::setAdminPassword);
 		meta["password"] =
 		    sol::property(&Server::getPassword, &Server::setPassword);
 		meta["maxPlayers"] =
 		    sol::property(&Server::getMaxPlayers, &Server::setMaxPlayers);
+
+		meta["worldTraffic"] =
+		    sol::property(&Server::getWorldTraffic, &Server::setWorldTraffic);
+		meta["worldStartCash"] =
+		    sol::property(&Server::getWorldStartCash, &Server::setWorldStartCash);
+		meta["worldMinCash"] =
+		    sol::property(&Server::getWorldMinCash, &Server::setWorldMinCash);
+		meta["worldShowJoinExit"] = sol::property(&Server::getWorldShowJoinExit,
+		                                          &Server::setWorldShowJoinExit);
+		meta["worldRespawnTeam"] = sol::property(&Server::getWorldRespawnTeam,
+		                                         &Server::setWorldRespawnTeam);
+		meta["worldCrimeCivCiv"] = sol::property(&Server::getWorldCrimeCivCiv,
+		                                         &Server::setWorldCrimeCivCiv);
+		meta["worldCrimeCivTeam"] = sol::property(&Server::getWorldCrimeCivTeam,
+		                                          &Server::setWorldCrimeCivTeam);
+		meta["worldCrimeTeamCiv"] = sol::property(&Server::getWorldCrimeTeamCiv,
+		                                          &Server::setWorldCrimeTeamCiv);
+		meta["worldCrimeTeamTeam"] = sol::property(&Server::getWorldCrimeTeamTeam,
+		                                           &Server::setWorldCrimeTeamTeam);
+		meta["worldCrimeTeamTeamInBase"] =
+		    sol::property(&Server::getWorldCrimeTeamTeamInBase,
+		                  &Server::setWorldCrimeTeamTeamInBase);
+		meta["worldCrimeNoSpawn"] = sol::property(&Server::getWorldCrimeNoSpawn,
+		                                          &Server::setWorldCrimeNoSpawn);
+
+		meta["roundRoundTime"] =
+		    sol::property(&Server::getRoundRoundTime, &Server::setRoundRoundTime);
+		meta["roundStartCash"] =
+		    sol::property(&Server::getRoundStartCash, &Server::setRoundStartCash);
+		meta["roundIsWeekly"] =
+		    sol::property(&Server::getRoundIsWeekly, &Server::setRoundIsWeekly);
+		meta["roundHasBonusRatio"] = sol::property(&Server::getRoundHasBonusRatio,
+		                                           &Server::setRoundHasBonusRatio);
+		meta["roundTeamDamage"] =
+		    sol::property(&Server::getRoundTeamDamage, &Server::setRoundTeamDamage);
+
 		meta["type"] = sol::property(&Server::getType, &Server::setType);
 		meta["levelToLoad"] =
 		    sol::property(&Server::getLevelName, &Server::setLevelName);
@@ -906,9 +946,29 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::serverName = (char*)(base + 0x24EE4234);
 	Engine::serverPort = (unsigned int*)(base + 0x1CC6CE80);
 	Engine::numEvents = (unsigned int*)(base + 0x4532f244);
+	Engine::serverMaxBytesPerSecond = (int*)(base + 0x1CC6CE84);
+	Engine::adminPassword = (char*)(base + 0x1CC6D28C);
 	Engine::isPassworded = (int*)(base + 0x24EE4644);
 	Engine::password = (char*)(base + 0x1CC6D48C);
 	Engine::maxPlayers = (int*)(base + 0x24EE4648);
+
+	Engine::World::traffic = (int*)(base + 0x444AE498);
+	Engine::World::startCash = (int*)(base + 0X444AE4C0);
+	Engine::World::minCash = (int*)(base + 0x444AE4C4);
+	Engine::World::showJoinExit = (bool*)(base + 0x444AE4C8);
+	Engine::World::respawnTeam = (bool*)(base + 0x444AE4CC);
+	Engine::World::Crime::civCiv = (int*)(base + 0x444AE49C);
+	Engine::World::Crime::civTeam = (int*)(base + 0x444AE4A0);
+	Engine::World::Crime::teamCiv = (int*)(base + 0x444AE4A4);
+	Engine::World::Crime::teamTeam = (int*)(base + 0x444AE4A8);
+	Engine::World::Crime::teamTeamInBase = (int*)(base + 0x444AE4AC);
+	Engine::World::Crime::noSpawn = (int*)(base + 0x444AE4B8);
+
+	Engine::Round::roundTime = (int*)(base + 0x444AE484);
+	Engine::Round::startCash = (int*)(base + 0x444AE488);
+	Engine::Round::weekly = (bool*)(base + 0x444AE48C);
+	Engine::Round::bonusRatio = (bool*)(base + 0x444AE490);
+	Engine::Round::teamDamage = (int*)(base + 0x444AE494);
 
 	Engine::gameType = (int*)(base + 0x443F3988);
 	Engine::mapName = (char*)(base + 0x443F398C);
