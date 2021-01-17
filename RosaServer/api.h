@@ -96,6 +96,7 @@ namespace event {
 void sound(int soundType, Vector* pos, float volume, float pitch);
 void soundSimple(int soundType, Vector* pos);
 void explosion(Vector* pos);
+void bullet(int bulletType, Vector* pos, Vector* vel, Item* item);
 void bulletHit(int hitType, Vector* pos, Vector* normal);
 };  // namespace event
 

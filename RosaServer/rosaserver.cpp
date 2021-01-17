@@ -633,6 +633,7 @@ void luaInit(bool redo) {
 		eventTable["sound"] =
 		    sol::overload(Lua::event::sound, Lua::event::soundSimple);
 		eventTable["explosion"] = Lua::event::explosion;
+		eventTable["bullet"] = Lua::event::bullet;
 		eventTable["bulletHit"] = Lua::event::bulletHit;
 	}
 

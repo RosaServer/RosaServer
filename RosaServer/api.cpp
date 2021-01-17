@@ -210,6 +210,11 @@ void event::soundSimple(int soundType, Vector* pos) {
 
 void event::explosion(Vector* pos) { Engine::createEventExplosion(0, pos); }
 
+void event::bullet(int bulletType, Vector* pos, Vector* vel, Item* item) {
+	Engine::createEventBullet(bulletType, pos, vel,
+	                          item == nullptr ? -1 : item->getIndex());
+}
+
 void event::bulletHit(int hitType, Vector* pos, Vector* normal) {
 	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
 	Engine::createEventBulletHit(0, hitType, pos, normal);
