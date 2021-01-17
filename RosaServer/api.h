@@ -134,8 +134,8 @@ namespace vehicles {
 int getCount();
 sol::table getAll();
 Vehicle* getByIndex(sol::table self, unsigned int idx);
-Vehicle* create(int type, Vector* pos, RotMatrix* rot, int color);
-Vehicle* createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot,
+Vehicle* create(VehicleType* type, Vector* pos, RotMatrix* rot, int color);
+Vehicle* createVel(VehicleType* type, Vector* pos, Vector* vel, RotMatrix* rot,
                    int color);
 };  // namespace vehicles
 

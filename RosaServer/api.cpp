@@ -319,11 +319,11 @@ Item* items::create(ItemType* type, Vector* pos, RotMatrix* rot) {
 
 Item* items::createVel(ItemType* type, Vector* pos, Vector* vel,
                        RotMatrix* rot) {
-	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
 	if (type == nullptr) {
 		throw std::invalid_argument("Cannot create item with nil type");
 	}
 
+	subhook::ScopedHookRemove remove(&Hooks::createItemHook);
 	int id = Engine::createItem(type->getIndex(), pos, vel, rot);
 
 	if (id != -1 && itemDataTables[id]) {
@@ -378,22 +378,19 @@ Vehicle* vehicles::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::vehicles[idx];
 }
 
-Vehicle* vehicles::create(int type, Vector* pos, RotMatrix* rot, int color) {
-	subhook::ScopedHookRemove remove(&Hooks::createVehicleHook);
-	int id = Engine::createVehicle(type, pos, nullptr, rot, color);
-
-	if (id != -1 && vehicleDataTables[id]) {
-		delete vehicleDataTables[id];
-		vehicleDataTables[id] = nullptr;
-	}
-
-	return id == -1 ? nullptr : &Engine::vehicles[id];
+Vehicle* vehicles::create(VehicleType* type, Vector* pos, RotMatrix* rot,
+                          int color) {
+	return createVel(type, pos, nullptr, rot, color);
 }
 
-Vehicle* vehicles::createVel(int type, Vector* pos, Vector* vel, RotMatrix* rot,
-                             int color) {
+Vehicle* vehicles::createVel(VehicleType* type, Vector* pos, Vector* vel,
+                             RotMatrix* rot, int color) {
+	if (type == nullptr) {
+		throw std::invalid_argument("Cannot create vehicle with nil type");
+	}
+
 	subhook::ScopedHookRemove remove(&Hooks::createVehicleHook);
-	int id = Engine::createVehicle(type, pos, vel, rot, color);
+	int id = Engine::createVehicle(type->getIndex(), pos, vel, rot, color);
 
 	if (id != -1 && vehicleDataTables[id]) {
 		delete vehicleDataTables[id];
