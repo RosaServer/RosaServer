@@ -1278,6 +1278,14 @@ Item* Item::getParentItem() const {
 
 RigidBody* Item::getRigidBody() const { return &Engine::bodies[bodyID]; }
 
+Vehicle* Item::getVehicle() const {
+	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
+}
+
+void Item::setVehicle(Vehicle* vcl) {
+	vehicleID = vcl == nullptr ? -1 : vcl->getIndex();
+}
+
 bool Item::mountItem(Item* childItem, unsigned int slot) const {
 	subhook::ScopedHookRemove remove(&Hooks::linkItemHook);
 	return Engine::linkItem(getIndex(), childItem->getIndex(), -1, slot);
