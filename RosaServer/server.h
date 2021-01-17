@@ -11,6 +11,10 @@ struct Server {
 	void setName(const char* newName) const {
 		strncpy(Engine::serverName, newName, 31);
 	}
+	int getMaxBytesPerSecond() const { return *Engine::serverMaxBytesPerSecond; }
+	void setMaxBytesPerSecond(int max) const {
+		*Engine::serverMaxBytesPerSecond = max;
+	}
 	char* getAdminPassword() const { return Engine::adminPassword; }
 	void setAdminPassword(const char* newPassword) const {
 		strncpy(Engine::adminPassword, newPassword, 31);

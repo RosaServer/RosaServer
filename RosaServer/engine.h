@@ -15,6 +15,7 @@ extern int* gameState;
 extern int* gameTimer;
 extern unsigned int* sunTime;
 
+extern int* serverMaxBytesPerSecond;
 extern char* adminPassword;
 extern int* isPassworded;
 extern char* password;

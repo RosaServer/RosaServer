@@ -14,6 +14,7 @@ int* gameState;
 int* gameTimer;
 unsigned int* sunTime;
 
+int* serverMaxBytesPerSecond;
 char* adminPassword;
 int* isPassworded;
 char* password;
