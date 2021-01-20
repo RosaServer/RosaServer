@@ -378,7 +378,9 @@ struct Human {
 	int leftLegHP;   // 3554
 	int unk30;       // 3558
 	int rightLegHP;  // 355c
-	padding unk31[0x3758 - 0x355c - 4];
+	padding unk30_1[0x35b4 - 0x355c - 4];
+	int bandageTimer;  // 35b4
+	padding unk31[0x3758 - 0x35b4 - 4];
 	int gender;             // 3758
 	int head;               // 375c
 	int skinColor;          // 3760

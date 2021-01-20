@@ -339,6 +339,7 @@ void luaInit(bool redo) {
 		meta["rightArmHP"] = &Human::rightArmHP;
 		meta["leftLegHP"] = &Human::leftLegHP;
 		meta["rightLegHP"] = &Human::rightLegHP;
+		meta["bandageTimer"] = &Human::bandageTimer;
 		meta["gender"] = &Human::gender;
 		meta["head"] = &Human::head;
 		meta["skinColor"] = &Human::skinColor;
