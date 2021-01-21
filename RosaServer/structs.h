@@ -775,6 +775,17 @@ struct StreetIntersection {
 	Street* getStreetNorth() const;
 };
 
+// 12 bytes (C)
+struct ShopCar {
+	int type;
+	int price;
+	int color;
+
+	const char* getClass() const { return "ShopCar"; }
+	VehicleType* getType();
+	void setType(VehicleType* vehicleType);
+};
+
 // 56076 bytes (DB0C)
 struct Building {
 	int type;                // 00
@@ -783,9 +794,14 @@ struct Building {
 	RotMatrix spawnRot;      // 1c
 	Vector interiorCuboidA;  // 40
 	Vector interiorCuboidB;  // 4C
-	padding unk1[0xDB0C - 0x4c - 12];
+	padding unk1[0xC9F4 - 0x4c - 12];
+	int numShopCars;       // C9F4
+	ShopCar shopCars[16];  // C9F8
+	int shopCarSales;      // CAB8
+	padding unk2[0xDB0C - 0xCAB8 - 4];
 
 	const char* getClass() const { return "Building"; }
 	std::string __tostring() const;
 	int getIndex() const;
+	ShopCar* getShopCar(unsigned int idx);
 };

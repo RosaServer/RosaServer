@@ -1546,6 +1546,16 @@ Street* StreetIntersection::getStreetNorth() const {
 	return streetNorth == -1 ? nullptr : &Engine::streets[streetNorth];
 }
 
+VehicleType* ShopCar::getType() { return &Engine::vehicleTypes[type]; }
+
+void ShopCar::setType(VehicleType* vehicleType) {
+	if (vehicleType == nullptr) {
+		throw std::invalid_argument("Cannot set a shop car's type to nil");
+	}
+
+	type = vehicleType->getIndex();
+}
+
 std::string Building::__tostring() const {
 	char buf[24];
 	sprintf(buf, "Building(%i)", getIndex());
@@ -1554,4 +1564,10 @@ std::string Building::__tostring() const {
 
 int Building::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)Engine::buildings) / sizeof(*this);
+}
+
+ShopCar* Building::getShopCar(unsigned int idx) {
+	if (idx > 15) throw std::invalid_argument(errorOutOfRange);
+
+	return &shopCars[idx];
 }

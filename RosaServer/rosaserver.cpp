@@ -660,16 +660,28 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto meta = lua->new_usertype<ShopCar>("new", sol::no_constructor);
+		meta["price"] = &ShopCar::price;
+		meta["color"] = &ShopCar::color;
+
+		meta["class"] = sol::property(&ShopCar::getClass);
+		meta["type"] = sol::property(&ShopCar::getType, &ShopCar::setType);
+	}
+
+	{
 		auto meta = lua->new_usertype<Building>("new", sol::no_constructor);
 		meta["type"] = &Building::type;
 		meta["pos"] = &Building::pos;
 		meta["spawnRot"] = &Building::spawnRot;
 		meta["interiorCuboidA"] = &Building::interiorCuboidA;
 		meta["interiorCuboidB"] = &Building::interiorCuboidB;
+		meta["numShopCars"] = &Building::numShopCars;
 
 		meta["class"] = sol::property(&Building::getClass);
 		meta["__tostring"] = &Building::__tostring;
 		meta["index"] = sol::property(&Building::getIndex);
+
+		meta["getShopCar"] = &Building::getShopCar;
 	}
 
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
