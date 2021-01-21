@@ -202,6 +202,12 @@ sol::table getAll();
 StreetIntersection* getByIndex(sol::table self, unsigned int idx);
 };  // namespace intersections
 
+namespace buildings {
+int getCount();
+sol::table getAll();
+Building* getByIndex(sol::table self, unsigned int idx);
+};  // namespace buildings
+
 namespace os {
 sol::table listDirectory(const char* path, sol::this_state s);
 bool createDirectory(const char* path);

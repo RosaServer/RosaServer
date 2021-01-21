@@ -63,11 +63,13 @@ RigidBody* bodies;
 Bond* bonds;
 Street* streets;
 StreetIntersection* streetIntersections;
+Building* buildings;
 
 unsigned int* numConnections;
 unsigned int* numBullets;
 unsigned int* numStreets;
 unsigned int* numStreetIntersections;
+unsigned int* numBuildings;
 
 subRosaPutsFunc subRosaPuts;
 subRosa__printf_chkFunc subRosa__printf_chk;
@@ -89,6 +91,7 @@ voidFunc serverSend;
 voidFunc bulletSimulation;
 voidFunc bulletTimeToLive;
 
+voidFunc economyCarMarket;
 voidFunc saveAccountsServer;
 
 createAccountByJoinTicketFunc createAccountByJoinTicket;

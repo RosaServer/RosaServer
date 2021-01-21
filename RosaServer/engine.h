@@ -64,11 +64,13 @@ extern RigidBody* bodies;
 extern Bond* bonds;
 extern Street* streets;
 extern StreetIntersection* streetIntersections;
+extern Building* buildings;
 
 extern unsigned int* numConnections;
 extern unsigned int* numBullets;
 extern unsigned int* numStreets;
 extern unsigned int* numStreetIntersections;
+extern unsigned int* numBuildings;
 
 /*
   Misc
@@ -100,6 +102,7 @@ extern voidFunc serverSend;
 extern voidFunc bulletSimulation;
 extern voidFunc bulletTimeToLive;
 
+extern voidFunc economyCarMarket;
 extern voidFunc saveAccountsServer;
 
 typedef int (*createAccountByJoinTicketFunc)(int identifier,

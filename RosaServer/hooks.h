@@ -23,6 +23,7 @@ enum EnableKeys {
 	InPacket,
 	SendPacket,
 	PhysicsBullets,
+	EconomyCarMarket,
 	AccountsSave,
 	AccountTicketBegin,
 	AccountTicketFound,
@@ -93,6 +94,8 @@ void serverSend();
 extern subhook::Hook bulletSimulationHook;
 void bulletSimulation();
 
+extern subhook::Hook economyCarMarketHook;
+void economyCarMarket();
 extern subhook::Hook saveAccountsServerHook;
 void saveAccountsServer();
 

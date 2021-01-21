@@ -684,6 +684,22 @@ StreetIntersection* intersections::getByIndex(sol::table self,
 	return &Engine::streetIntersections[idx];
 }
 
+int buildings::getCount() { return *Engine::numBuildings; }
+
+sol::table buildings::getAll() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < *Engine::numBuildings; i++) {
+		arr.add(&Engine::buildings[i]);
+	}
+	return arr;
+}
+
+Building* buildings::getByIndex(sol::table self, unsigned int idx) {
+	if (idx >= *Engine::numBuildings)
+		throw std::invalid_argument(errorOutOfRange);
+	return &Engine::buildings[idx];
+}
+
 sol::table os::listDirectory(const char* path, sol::this_state s) {
 	sol::state_view lua(s);
 
@@ -1528,4 +1544,30 @@ Street* StreetIntersection::getStreetWest() const {
 
 Street* StreetIntersection::getStreetNorth() const {
 	return streetNorth == -1 ? nullptr : &Engine::streets[streetNorth];
+}
+
+VehicleType* ShopCar::getType() { return &Engine::vehicleTypes[type]; }
+
+void ShopCar::setType(VehicleType* vehicleType) {
+	if (vehicleType == nullptr) {
+		throw std::invalid_argument("Cannot set a shop car's type to nil");
+	}
+
+	type = vehicleType->getIndex();
+}
+
+std::string Building::__tostring() const {
+	char buf[24];
+	sprintf(buf, "Building(%i)", getIndex());
+	return buf;
+}
+
+int Building::getIndex() const {
+	return ((uintptr_t)this - (uintptr_t)Engine::buildings) / sizeof(*this);
+}
+
+ShopCar* Building::getShopCar(unsigned int idx) {
+	if (idx > 15) throw std::invalid_argument(errorOutOfRange);
+
+	return &shopCars[idx];
 }

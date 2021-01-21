@@ -378,7 +378,9 @@ struct Human {
 	int leftLegHP;   // 3554
 	int unk30;       // 3558
 	int rightLegHP;  // 355c
-	padding unk31[0x3758 - 0x355c - 4];
+	padding unk30_1[0x35b4 - 0x355c - 4];
+	int progressBar;  // 35b4
+	padding unk31[0x3758 - 0x35b4 - 4];
 	int gender;             // 3758
 	int head;               // 375c
 	int skinColor;          // 3760
@@ -771,4 +773,35 @@ struct StreetIntersection {
 	Street* getStreetSouth() const;
 	Street* getStreetWest() const;
 	Street* getStreetNorth() const;
+};
+
+// 12 bytes (C)
+struct ShopCar {
+	int type;
+	int price;
+	int color;
+
+	const char* getClass() const { return "ShopCar"; }
+	VehicleType* getType();
+	void setType(VehicleType* vehicleType);
+};
+
+// 56076 bytes (DB0C)
+struct Building {
+	int type;                // 00
+	int unk0[3];             // 04
+	Vector pos;              // 10
+	RotMatrix spawnRot;      // 1c
+	Vector interiorCuboidA;  // 40
+	Vector interiorCuboidB;  // 4C
+	padding unk1[0xC9F4 - 0x4c - 12];
+	int numShopCars;       // C9F4
+	ShopCar shopCars[16];  // C9F8
+	int shopCarSales;      // CAB8
+	padding unk2[0xDB0C - 0xCAB8 - 4];
+
+	const char* getClass() const { return "Building"; }
+	std::string __tostring() const;
+	int getIndex() const;
+	ShopCar* getShopCar(unsigned int idx);
 };
