@@ -676,6 +676,7 @@ void luaInit(bool redo) {
 		meta["interiorCuboidA"] = &Building::interiorCuboidA;
 		meta["interiorCuboidB"] = &Building::interiorCuboidB;
 		meta["numShopCars"] = &Building::numShopCars;
+		meta["shopCarSales"] = &Building::shopCarSales;
 
 		meta["class"] = sol::property(&Building::getClass);
 		meta["__tostring"] = &Building::__tostring;
