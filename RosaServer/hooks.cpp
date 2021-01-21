@@ -20,6 +20,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"InPacket", EnableKeys::InPacket},
      {"SendPacket", EnableKeys::SendPacket},
      {"PhysicsBullets", EnableKeys::PhysicsBullets},
+     {"EconomyCarMarket", EnableKeys::EconomyCarMarket},
      {"AccountsSave", EnableKeys::AccountsSave},
      {"AccountTicketBegin", EnableKeys::AccountTicketBegin},
      {"AccountTicketFound", EnableKeys::AccountTicketFound},
@@ -67,6 +68,7 @@ subhook::Hook physicsSimulationHook;
 subhook::Hook serverReceiveHook;
 subhook::Hook serverSendHook;
 subhook::Hook bulletSimulationHook;
+subhook::Hook economyCarMarketHook;
 subhook::Hook saveAccountsServerHook;
 subhook::Hook createAccountByJoinTicketHook;
 subhook::Hook serverSendConnectResponseHook;
@@ -476,6 +478,30 @@ void bulletSimulation() {
 	} else {
 		subhook::ScopedHookRemove remove(&bulletSimulationHook);
 		Engine::bulletSimulation();
+	}
+}
+
+void economyCarMarket() {
+	if (enabledKeys[EnableKeys::EconomyCarMarket]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			auto res = func("EconomyCarMarket");
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&economyCarMarketHook);
+				Engine::economyCarMarket();
+			}
+			if (func != sol::nil) {
+				auto res = func("PostEconomyCarMarket");
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&economyCarMarketHook);
+		Engine::economyCarMarket();
 	}
 }
 

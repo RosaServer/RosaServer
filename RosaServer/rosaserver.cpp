@@ -1063,6 +1063,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x98960);
 	Engine::bulletTimeToLive = (Engine::voidFunc)(base + 0x181B0);
 
+	Engine::economyCarMarket = (Engine::voidFunc)(base + 0x1AA30);
 	Engine::saveAccountsServer = (Engine::voidFunc)(base + 0x6CC0);
 
 	Engine::createAccountByJoinTicket =
@@ -1164,6 +1165,7 @@ static inline void installHooks() {
 	INSTALL(serverReceive);
 	INSTALL(serverSend);
 	INSTALL(bulletSimulation);
+	INSTALL(economyCarMarket);
 	INSTALL(saveAccountsServer);
 	INSTALL(createAccountByJoinTicket);
 	INSTALL(serverSendConnectResponse);

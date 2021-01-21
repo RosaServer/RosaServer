@@ -102,6 +102,7 @@ extern voidFunc serverSend;
 extern voidFunc bulletSimulation;
 extern voidFunc bulletTimeToLive;
 
+extern voidFunc economyCarMarket;
 extern voidFunc saveAccountsServer;
 
 typedef int (*createAccountByJoinTicketFunc)(int identifier,

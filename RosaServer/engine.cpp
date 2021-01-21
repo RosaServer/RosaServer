@@ -91,6 +91,7 @@ voidFunc serverSend;
 voidFunc bulletSimulation;
 voidFunc bulletTimeToLive;
 
+voidFunc economyCarMarket;
 voidFunc saveAccountsServer;
 
 createAccountByJoinTicketFunc createAccountByJoinTicket;
