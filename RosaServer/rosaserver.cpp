@@ -659,6 +659,19 @@ void luaInit(bool redo) {
 		meta["streetNorth"] = sol::property(&StreetIntersection::getStreetNorth);
 	}
 
+	{
+		auto meta = lua->new_usertype<Building>("new", sol::no_constructor);
+		meta["type"] = &Building::type;
+		meta["pos"] = &Building::pos;
+		meta["spawnRot"] = &Building::spawnRot;
+		meta["interiorCuboidA"] = &Building::interiorCuboidA;
+		meta["interiorCuboidB"] = &Building::interiorCuboidB;
+
+		meta["class"] = sol::property(&Building::getClass);
+		meta["__tostring"] = &Building::__tostring;
+		meta["index"] = sol::property(&Building::getIndex);
+	}
+
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	{
@@ -853,6 +866,18 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto buildingsTable = lua->create_table();
+		(*lua)["buildings"] = buildingsTable;
+		buildingsTable["getCount"] = Lua::buildings::getCount;
+		buildingsTable["getAll"] = Lua::buildings::getAll;
+
+		sol::table _meta = lua->create_table();
+		buildingsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = Lua::buildings::getCount;
+		_meta["__index"] = Lua::buildings::getByIndex;
+	}
+
+	{
 		auto memoryTable = lua->create_table();
 		(*lua)["memory"] = memoryTable;
 		memoryTable["getBaseAddress"] = Lua::memory::getBaseAddress;
@@ -997,11 +1022,13 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::bonds = (Bond*)(base + 0x24964220);
 	Engine::streets = (Street*)(base + 0x3C311030);
 	Engine::streetIntersections = (StreetIntersection*)(base + 0x3C2EF02C);
+	Engine::buildings = (Building*)(base + 0x3C3E2A00);
 
 	Engine::numConnections = (unsigned int*)(base + 0x4532F468);
 	Engine::numBullets = (unsigned int*)(base + 0x4532F240);
 	Engine::numStreets = (unsigned int*)(base + 0x3C31102C);
 	Engine::numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);
+	Engine::numBuildings = (unsigned int*)(base + 0x3C3E29BC);
 
 	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1CF0);
 	Engine::subRosa__printf_chk =

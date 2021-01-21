@@ -774,3 +774,18 @@ struct StreetIntersection {
 	Street* getStreetWest() const;
 	Street* getStreetNorth() const;
 };
+
+// 56076 bytes (DB0C)
+struct Building {
+	int type;                // 00
+	int unk0[3];             // 04
+	Vector pos;              // 10
+	RotMatrix spawnRot;      // 1c
+	Vector interiorCuboidA;  // 40
+	Vector interiorCuboidB;  // 4C
+	padding unk1[0xDB0C - 0x4c - 12];
+
+	const char* getClass() const { return "Building"; }
+	std::string __tostring() const;
+	int getIndex() const;
+};
