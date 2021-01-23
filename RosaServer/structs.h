@@ -31,6 +31,13 @@ using padding = uint8_t;
   0x14	20	explosion
 */
 
+struct Human;
+struct Vehicle;
+struct Item;
+struct RigidBody;
+struct Bond;
+struct StreetIntersection;
+
 // 188888 bytes (2E1D8)
 struct Connection {
 	unsigned int address;
@@ -41,12 +48,15 @@ struct Connection {
 	int unk1;           // 14
 	int bandwidth;      // 18
 	int timeoutTime;    // 1c
-	padding unk2[188888 - 32];
+	padding unk2[0x194 - 0x1c - 4];
+	int spectatingHumanID;  // 194
+	padding unk3[0x2E1D8 - 0x194 - 4];
 
 	const char* getClass() const { return "Connection"; }
 	std::string getAddress();
 	bool getAdminVisible() const { return adminVisible; }
 	void setAdminVisible(bool b) { adminVisible = b; }
+	Human* getSpectatingHuman() const;
 };
 
 // 112 bytes (70)
@@ -137,14 +147,6 @@ struct LineIntersectResult {
 	int unk23;        // 7c
 	int unk24;        // 80
 };
-
-// Forward decl
-struct Human;
-struct Vehicle;
-struct Item;
-struct RigidBody;
-struct Bond;
-struct StreetIntersection;
 
 // 84 bytes (54)
 struct Action {
