@@ -865,6 +865,10 @@ std::string addressFromInteger(unsigned int address) {
 
 std::string Connection::getAddress() { return addressFromInteger(address); }
 
+Human* Connection::getSpectatingHuman() const {
+	return spectatingHumanID == -1 ? nullptr : &Engine::humans[spectatingHumanID];
+}
+
 std::string Account::__tostring() const {
 	char buf[32];
 	sprintf(buf, "Account(%i)", getIndex());
