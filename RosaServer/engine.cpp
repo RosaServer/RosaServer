@@ -106,6 +106,7 @@ itemComputerInputFunc itemComputerInput;
 humanApplyDamageFunc humanApplyDamage;
 humanCollisionVehicleFunc humanCollisionVehicle;
 voidIndexFunc humanGrabbing;
+humanLimbInverseKinematicsFunc humanLimbInverseKinematics;
 voidIndexFunc grenadeExplosion;
 serverPlayerMessageFunc serverPlayerMessage;
 voidIndexFunc playerAI;

@@ -31,6 +31,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"HumanDamage", EnableKeys::HumanDamage},
      {"HumanCollisionVehicle", EnableKeys::HumanCollisionVehicle},
      {"HumanGrabbing", EnableKeys::HumanGrabbing},
+     {"HumanLimbInverseKinematics", EnableKeys::HumanLimbInverseKinematics},
      {"GrenadeExplode", EnableKeys::GrenadeExplode},
      {"PlayerChat", EnableKeys::PlayerChat},
      {"PlayerAI", EnableKeys::PlayerAI},
@@ -77,6 +78,7 @@ subhook::Hook itemComputerInputHook;
 subhook::Hook humanApplyDamageHook;
 subhook::Hook humanCollisionVehicleHook;
 subhook::Hook humanGrabbingHook;
+subhook::Hook humanLimbInverseKinematicsHook;
 subhook::Hook grenadeExplosionHook;
 subhook::Hook serverPlayerMessageHook;
 subhook::Hook playerAIHook;
@@ -1075,6 +1077,35 @@ void humanGrabbing(int humanID) {
 	} else {
 		subhook::ScopedHookRemove remove(&humanGrabbingHook);
 		Engine::humanGrabbing(humanID);
+	}
+}
+
+void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
+                                Vector* destination, RotMatrix* rot,
+                                Vector* vecA, float a, float b, float c,
+                                float* d /* Quaternion? */, Vector* vecB,
+                                Vector* vecC, char flags) {
+	if (enabledKeys[EnableKeys::HumanLimbInverseKinematics]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+
+		if (func != sol::nil) {
+			auto res = func("HumanLimbInverseKinematics", &Engine::humans[humanID],
+			                trunkBoneID, branchBoneID, destination, rot, vecA, a, b,
+			                c, vecB, vecC, static_cast<int>(flags));
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);
+			Engine::humanLimbInverseKinematics(humanID, trunkBoneID, branchBoneID,
+			                                   destination, rot, vecA, a, b, c, d,
+			                                   vecB, vecC, flags);
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);
+		Engine::humanLimbInverseKinematics(humanID, trunkBoneID, branchBoneID,
+		                                   destination, rot, vecA, a, b, c, d, vecB,
+		                                   vecC, flags);
 	}
 }
 
