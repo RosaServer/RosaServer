@@ -1093,16 +1093,18 @@ void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
 			Float wrappedA = {a};
 			Float wrappedRot = {rot};
 			Float wrappedStrength = {strength};
+			Integer wrappedFlags = {+flags};
 
 			auto res = func("HumanLimbInverseKinematics", &Engine::humans[humanID],
 			                trunkBoneID, branchBoneID, destination, destinationAxis,
 			                vecA, &wrappedA, &wrappedRot, &wrappedStrength, vecB,
-			                vecC, static_cast<int>(flags));
+			                vecC, &wrappedFlags);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 
 			a = wrappedA.value;
 			rot = wrappedRot.value;
 			strength = wrappedStrength.value;
+			flags = wrappedFlags.value;
 		}
 		if (!noParent) {
 			subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);

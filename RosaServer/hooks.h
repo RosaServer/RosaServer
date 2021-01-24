@@ -177,4 +177,8 @@ int lineIntersectHuman(int humanID, Vector* posA, Vector* posB);
 struct Float {
 	float value;
 };
+
+struct Integer {
+	int value;
+};
 };  // namespace Hooks

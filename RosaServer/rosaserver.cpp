@@ -691,6 +691,11 @@ void luaInit(bool redo) {
 		meta["value"] = &Hooks::Float::value;
 	}
 
+	{
+		auto meta = lua->new_usertype<Hooks::Integer>("new", sol::no_constructor);
+		meta["value"] = &Hooks::Integer::value;
+	}
+
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	{
