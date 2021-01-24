@@ -686,6 +686,16 @@ void luaInit(bool redo) {
 		meta["getShopCar"] = &Building::getShopCar;
 	}
 
+	{
+		auto meta = lua->new_usertype<Hooks::Float>("new", sol::no_constructor);
+		meta["value"] = &Hooks::Float::value;
+	}
+
+	{
+		auto meta = lua->new_usertype<Hooks::Integer>("new", sol::no_constructor);
+		meta["value"] = &Hooks::Integer::value;
+	}
+
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	{
@@ -1085,6 +1095,8 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::humanCollisionVehicle =
 	    (Engine::humanCollisionVehicleFunc)(base + 0x7AF50);
 	Engine::humanGrabbing = (Engine::voidIndexFunc)(base + 0xA16D0);
+	Engine::humanLimbInverseKinematics =
+	    (Engine::humanLimbInverseKinematicsFunc)(base + 0x46330);
 	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x2A990);
 	Engine::serverPlayerMessage =
 	    (Engine::serverPlayerMessageFunc)(base + 0xA7B80);
@@ -1176,6 +1188,7 @@ static inline void installHooks() {
 	INSTALL(humanApplyDamage);
 	INSTALL(humanCollisionVehicle);
 	INSTALL(humanGrabbing);
+	INSTALL(humanLimbInverseKinematics);
 	INSTALL(grenadeExplosion);
 	INSTALL(serverPlayerMessage);
 	INSTALL(playerAI);

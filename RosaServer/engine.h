@@ -137,6 +137,13 @@ extern humanCollisionVehicleFunc humanCollisionVehicle;
 
 extern voidIndexFunc humanGrabbing;
 
+typedef void (*humanLimbInverseKinematicsFunc)(int, int, int, Vector*,
+                                               RotMatrix*, Vector*, float,
+                                               float, float,
+                                               float* /* Quaternion? */,
+                                               Vector*, Vector*, char);
+extern humanLimbInverseKinematicsFunc humanLimbInverseKinematics;
+
 extern voidIndexFunc grenadeExplosion;
 
 typedef int (*serverPlayerMessageFunc)(int playerID, char* message);

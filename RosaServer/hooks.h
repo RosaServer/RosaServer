@@ -34,6 +34,7 @@ enum EnableKeys {
 	HumanDamage,
 	HumanCollisionVehicle,
 	HumanGrabbing,
+	HumanLimbInverseKinematics,
 	GrenadeExplode,
 	PlayerChat,
 	PlayerAI,
@@ -138,6 +139,10 @@ extern subhook::Hook humanCollisionVehicleHook;
 void humanCollisionVehicle(int humanID, int vehicleID);
 extern subhook::Hook humanGrabbingHook;
 void humanGrabbing(int humanID);
+extern subhook::Hook humanLimbInverseKinematicsHook;
+void humanLimbInverseKinematics(int, int, int, Vector*, RotMatrix*, Vector*,
+                                float, float, float, float* /* Quaternion? */,
+                                Vector*, Vector*, char);
 extern subhook::Hook grenadeExplosionHook;
 void grenadeExplosion(int itemID);
 extern subhook::Hook serverPlayerMessageHook;
@@ -168,4 +173,12 @@ void createEventBulletHit(int unk, int hitType, Vector* pos, Vector* normal);
 
 extern subhook::Hook lineIntersectHumanHook;
 int lineIntersectHuman(int humanID, Vector* posA, Vector* posB);
+
+struct Float {
+	float value;
+};
+
+struct Integer {
+	int value;
+};
 };  // namespace Hooks
