@@ -1081,31 +1081,40 @@ void humanGrabbing(int humanID) {
 }
 
 void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
-                                Vector* destination, RotMatrix* rot,
-                                Vector* vecA, float a, float b, float c,
-                                float* d /* Quaternion? */, Vector* vecB,
-                                Vector* vecC, char flags) {
+                                Vector* destination, RotMatrix* destinationAxis,
+                                Vector* vecA, float a, float rot,
+                                float strength, float* d /* Quaternion? */,
+                                Vector* vecB, Vector* vecC, char flags) {
 	if (enabledKeys[EnableKeys::HumanLimbInverseKinematics]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 
 		if (func != sol::nil) {
+			Float wrappedA = {a};
+			Float wrappedRot = {rot};
+			Float wrappedStrength = {strength};
+
 			auto res = func("HumanLimbInverseKinematics", &Engine::humans[humanID],
-			                trunkBoneID, branchBoneID, destination, rot, vecA, a, b,
-			                c, vecB, vecC, static_cast<int>(flags));
+			                trunkBoneID, branchBoneID, destination, destinationAxis,
+			                vecA, &wrappedA, &wrappedRot, &wrappedStrength, vecB,
+			                vecC, static_cast<int>(flags));
 			if (noLuaCallError(&res)) noParent = (bool)res;
+
+			a = wrappedA.value;
+			rot = wrappedRot.value;
+			strength = wrappedStrength.value;
 		}
 		if (!noParent) {
 			subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);
 			Engine::humanLimbInverseKinematics(humanID, trunkBoneID, branchBoneID,
-			                                   destination, rot, vecA, a, b, c, d,
-			                                   vecB, vecC, flags);
+			                                   destination, destinationAxis, vecA, a,
+			                                   rot, strength, d, vecB, vecC, flags);
 		}
 	} else {
 		subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);
 		Engine::humanLimbInverseKinematics(humanID, trunkBoneID, branchBoneID,
-		                                   destination, rot, vecA, a, b, c, d, vecB,
-		                                   vecC, flags);
+		                                   destination, destinationAxis, vecA, a,
+		                                   rot, strength, d, vecB, vecC, flags);
 	}
 }
 

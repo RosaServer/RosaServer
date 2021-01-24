@@ -686,6 +686,11 @@ void luaInit(bool redo) {
 		meta["getShopCar"] = &Building::getShopCar;
 	}
 
+	{
+		auto meta = lua->new_usertype<Hooks::Float>("new", sol::no_constructor);
+		meta["value"] = &Hooks::Float::value;
+	}
+
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	{
