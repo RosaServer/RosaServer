@@ -609,9 +609,11 @@ struct Vehicle {
 	float steerControl;  // 35e0
 	float gearY;         // 35e4
 	float gasControl;    // 35e8
-	padding unk7[0x4ea0 - 0x35e8 - 4];
+	padding unk7[0x390c - 0x35e8 - 4];
+	int engineRPM;  // 390c
+	padding unk8[0x4ea0 - 0x390c - 4];
 	int bladeBodyID;  // 4ea0
-	padding unk8[20572 - 20132];
+	padding unk9[20572 - 20132];
 
 	const char* getClass() const { return "Vehicle"; }
 	std::string __tostring() const;
