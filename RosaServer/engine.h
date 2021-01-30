@@ -151,6 +151,10 @@ extern serverPlayerMessageFunc serverPlayerMessage;
 extern voidIndexFunc playerAI;
 extern voidIndexFunc playerDeathTax;
 
+typedef void (*playerGiveWantedLevelFunc)(int playerID, int victimPlayerID,
+                                          int basePoints);
+extern playerGiveWantedLevelFunc playerGiveWantedLevel;
+
 typedef int (*createBondRigidBodyToRigidBodyFunc)(int aBodyID, int bBodyID,
                                                   Vector* aLocalPos,
                                                   Vector* bLocalPos);

@@ -39,6 +39,7 @@ enum EnableKeys {
 	PlayerChat,
 	PlayerAI,
 	PlayerDeathTax,
+	PlayerGiveWantedLevel,
 	CollideBodies,
 	BulletCreate,
 	PlayerCreate,
@@ -151,6 +152,8 @@ extern subhook::Hook playerAIHook;
 void playerAI(int playerID);
 extern subhook::Hook playerDeathTaxHook;
 void playerDeathTax(int playerID);
+extern subhook::Hook playerGiveWantedLevelHook;
+void playerGiveWantedLevel(int playerID, int victimPlayerID, int basePoints);
 
 extern subhook::Hook addCollisionRigidBodyOnRigidBodyHook;
 void addCollisionRigidBodyOnRigidBody(int aBodyID, int bBodyID,

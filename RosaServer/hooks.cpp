@@ -36,6 +36,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"PlayerChat", EnableKeys::PlayerChat},
      {"PlayerAI", EnableKeys::PlayerAI},
      {"PlayerDeathTax", EnableKeys::PlayerDeathTax},
+     {"PlayerGiveWantedLevel", EnableKeys::PlayerGiveWantedLevel},
      {"CollideBodies", EnableKeys::CollideBodies},
      {"BulletCreate", EnableKeys::BulletCreate},
      {"PlayerCreate", EnableKeys::PlayerCreate},
@@ -83,6 +84,7 @@ subhook::Hook grenadeExplosionHook;
 subhook::Hook serverPlayerMessageHook;
 subhook::Hook playerAIHook;
 subhook::Hook playerDeathTaxHook;
+subhook::Hook playerGiveWantedLevelHook;
 subhook::Hook addCollisionRigidBodyOnRigidBodyHook;
 subhook::Hook createBulletHook;
 subhook::Hook createPlayerHook;
@@ -1208,6 +1210,36 @@ void playerDeathTax(int playerID) {
 	} else {
 		subhook::ScopedHookRemove remove(&playerDeathTaxHook);
 		Engine::playerDeathTax(playerID);
+	}
+}
+
+void playerGiveWantedLevel(int playerID, int victimPlayerID, int basePoints) {
+	if (enabledKeys[EnableKeys::PlayerGiveWantedLevel]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			Integer wrappedBasePoints = {basePoints};
+
+			auto res = func("PlayerGiveWantedLevel", &Engine::players[playerID],
+			                &Engine::players[victimPlayerID], &wrappedBasePoints);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+
+			basePoints = wrappedBasePoints.value;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&playerGiveWantedLevelHook);
+				Engine::playerGiveWantedLevel(playerID, victimPlayerID, basePoints);
+			}
+			if (func != sol::nil) {
+				auto res = func("PostPlayerGiveWantedLevel", &Engine::players[playerID],
+				                &Engine::players[victimPlayerID], basePoints);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&playerGiveWantedLevelHook);
+		Engine::playerGiveWantedLevel(playerID, victimPlayerID, basePoints);
 	}
 }
 
