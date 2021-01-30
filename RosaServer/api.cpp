@@ -1421,6 +1421,8 @@ void Vehicle::updateDestruction(int updateType, int partID, Vector* pos,
 
 void Vehicle::remove() const {
 	int index = getIndex();
+
+	subhook::ScopedHookRemove remove(&Hooks::deleteVehicleHook);
 	Engine::deleteVehicle(index);
 
 	if (vehicleDataTables[index]) {
