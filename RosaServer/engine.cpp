@@ -111,6 +111,7 @@ voidIndexFunc grenadeExplosion;
 serverPlayerMessageFunc serverPlayerMessage;
 voidIndexFunc playerAI;
 voidIndexFunc playerDeathTax;
+playerGiveWantedLevelFunc playerGiveWantedLevel;
 createBondRigidBodyToRigidBodyFunc createBondRigidBodyToRigidBody;
 createBondRigidBodyRotRigidBodyFunc createBondRigidBodyRotRigidBody;
 createBondRigidBodyToLevelFunc createBondRigidBodyToLevel;
