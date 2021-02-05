@@ -17,5 +17,6 @@ class FileWatcher {
 	FileWatcher();
 	~FileWatcher();
 	void addWatch(const char* path, uint32_t mask);
+	bool removeWatch(const char* path);
 	sol::object receiveEvent(sol::this_state s);
 };

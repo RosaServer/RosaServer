@@ -98,6 +98,7 @@ void defineThreadSafeAPIs(sol::state* state) {
 	{
 		auto meta = lua->new_usertype<FileWatcher>("FileWatcher");
 		meta["addWatch"] = &FileWatcher::addWatch;
+		meta["removeWatch"] = &FileWatcher::removeWatch;
 		meta["receiveEvent"] = &FileWatcher::receiveEvent;
 	}
 
