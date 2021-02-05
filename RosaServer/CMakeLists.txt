@@ -24,6 +24,7 @@ add_library (rosaserver SHARED
 	childprocess.cpp
 	console.cpp
 	engine.cpp
+	filewatcher.cpp
 	hooks.cpp
 	image.cpp
 	rosaserver.cpp

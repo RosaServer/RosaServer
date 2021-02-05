@@ -95,6 +95,12 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["getPNG"] = &Image::getPNG;
 	}
 
+	{
+		auto meta = lua->new_usertype<FileWatcher>("FileWatcher");
+		meta["addWatch"] = &FileWatcher::addWatch;
+		meta["receiveEvent"] = &FileWatcher::receiveEvent;
+	}
+
 	(*state)["print"] = Lua::print;
 
 	(*state)["Vector"] = sol::overload(Lua::Vector_, Lua::Vector_3f);
@@ -960,6 +966,19 @@ void luaInit(bool redo) {
 	(*lua)["TYPE_TERMINATOR"] = 5;
 	(*lua)["TYPE_COOP"] = 6;
 	(*lua)["TYPE_VERSUS"] = 7;
+
+	(*lua)["FILE_WATCH_ACCESS"] = IN_ACCESS;
+	(*lua)["FILE_WATCH_ATTRIB"] = IN_ATTRIB;
+	(*lua)["FILE_WATCH_CLOSE_WRITE"] = IN_CLOSE_WRITE;
+	(*lua)["FILE_WATCH_CLOSE_NOWRITE"] = IN_CLOSE_NOWRITE;
+	(*lua)["FILE_WATCH_CREATE"] = IN_CREATE;
+	(*lua)["FILE_WATCH_DELETE"] = IN_DELETE;
+	(*lua)["FILE_WATCH_DELETE_SELF"] = IN_DELETE_SELF;
+	(*lua)["FILE_WATCH_MODIFY"] = IN_MODIFY;
+	(*lua)["FILE_WATCH_MOVE_SELF"] = IN_MOVE_SELF;
+	(*lua)["FILE_WATCH_MOVED_FROM"] = IN_MOVED_FROM;
+	(*lua)["FILE_WATCH_MOVED_TO"] = IN_MOVED_TO;
+	(*lua)["FILE_WATCH_OPEN"] = IN_OPEN;
 
 	Console::log(LUA_PREFIX "Running " LUA_ENTRY_FILE "...\n");
 
