@@ -11,6 +11,7 @@
 #include "childprocess.h"
 #include "console.h"
 #include "engine.h"
+#include "filewatcher.h"
 #include "hooks.h"
 #include "image.h"
 #include "server.h"
