@@ -41,3 +41,5 @@ do
 	assert(event.name == fileName)
 	assert(event.mask == FILE_WATCH_DELETE)
 end
+
+assert(watcher:removeWatch('.'))
