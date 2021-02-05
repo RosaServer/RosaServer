@@ -982,6 +982,12 @@ RotMatrix RotMatrix::clone() const {
 	return RotMatrix{x1, y1, z1, x2, y2, z2, x3, y3, z3};
 }
 
+Vector RotMatrix::getForward() const { return Vector{x1, y1, z1}; }
+
+Vector RotMatrix::getUp() const { return Vector{x2, y2, z2}; }
+
+Vector RotMatrix::getRight() const { return Vector{x3, y3, z3}; }
+
 std::string Player::__tostring() const {
 	char buf[16];
 	sprintf(buf, "Player(%i)", getIndex());
