@@ -114,6 +114,9 @@ struct RotMatrix {
 	RotMatrix __mul(RotMatrix* other) const;
 	void set(RotMatrix* other);
 	RotMatrix clone() const;
+	Vector getForward() const;
+	Vector getUp() const;
+	Vector getRight() const;
 };
 
 struct LineIntersectResult {

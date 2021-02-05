@@ -76,6 +76,9 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["__mul"] = &RotMatrix::__mul;
 		meta["set"] = &RotMatrix::set;
 		meta["clone"] = &RotMatrix::clone;
+		meta["getForward"] = &RotMatrix::getForward;
+		meta["getUp"] = &RotMatrix::getUp;
+		meta["getRight"] = &RotMatrix::getRight;
 	}
 
 	{
