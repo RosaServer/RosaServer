@@ -20,6 +20,7 @@ enum EnableKeys {
 	LogicVersus,
 	PlayerActions,
 	Physics,
+	PhysicsRigidBodies,
 	InPacket,
 	SendPacket,
 	PhysicsBullets,
@@ -89,6 +90,8 @@ void logicPlayerActions(int playerID);
 
 extern subhook::Hook physicsSimulationHook;
 void physicsSimulation();
+extern subhook::Hook rigidBodySimulationHook;
+void rigidBodySimulation();
 extern subhook::Hook serverReceiveHook;
 int serverReceive();
 extern subhook::Hook serverSendHook;

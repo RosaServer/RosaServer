@@ -1105,6 +1105,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::logicPlayerActions = (Engine::voidIndexFunc)(base + 0xA93A0);
 
 	Engine::physicsSimulation = (Engine::voidFunc)(base + 0xA6CC0);
+	Engine::rigidBodySimulation = (Engine::voidFunc)(base + 0x543A0);
 	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xC0BB0);
 	Engine::serverSend = (Engine::voidFunc)(base + 0xBDBA0);
 	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x98960);
@@ -1213,6 +1214,7 @@ static inline void installHooks() {
 	INSTALL(logicSimulationVersus);
 	INSTALL(logicPlayerActions);
 	INSTALL(physicsSimulation);
+	INSTALL(rigidBodySimulation);
 	INSTALL(serverReceive);
 	INSTALL(serverSend);
 	INSTALL(bulletSimulation);

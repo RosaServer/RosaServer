@@ -86,6 +86,7 @@ voidFunc logicSimulationVersus;
 voidIndexFunc logicPlayerActions;
 
 voidFunc physicsSimulation;
+voidFunc rigidBodySimulation;
 serverReceiveFunc serverReceive;
 voidFunc serverSend;
 voidFunc bulletSimulation;

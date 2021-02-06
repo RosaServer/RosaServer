@@ -17,6 +17,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"LogicVersus", EnableKeys::LogicVersus},
      {"PlayerActions", EnableKeys::PlayerActions},
      {"Physics", EnableKeys::Physics},
+     {"PhysicsRigidBodies", EnableKeys::PhysicsRigidBodies},
      {"InPacket", EnableKeys::InPacket},
      {"SendPacket", EnableKeys::SendPacket},
      {"PhysicsBullets", EnableKeys::PhysicsBullets},
@@ -67,6 +68,7 @@ subhook::Hook logicSimulationCoopHook;
 subhook::Hook logicSimulationVersusHook;
 subhook::Hook logicPlayerActionsHook;
 subhook::Hook physicsSimulationHook;
+subhook::Hook rigidBodySimulationHook;
 subhook::Hook serverReceiveHook;
 subhook::Hook serverSendHook;
 subhook::Hook bulletSimulationHook;
@@ -407,6 +409,30 @@ void physicsSimulation() {
 	} else {
 		subhook::ScopedHookRemove remove(&physicsSimulationHook);
 		Engine::physicsSimulation();
+	}
+}
+
+void rigidBodySimulation() {
+	if (enabledKeys[EnableKeys::PhysicsRigidBodies]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			auto res = func("PhysicsRigidBodies");
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&rigidBodySimulationHook);
+				Engine::rigidBodySimulation();
+			}
+			if (func != sol::nil) {
+				auto res = func("PostPhysicsRigidBodies");
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&rigidBodySimulationHook);
+		Engine::rigidBodySimulation();
 	}
 }
 
