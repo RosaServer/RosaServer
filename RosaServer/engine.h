@@ -96,6 +96,7 @@ extern voidFunc logicSimulationVersus;
 extern voidIndexFunc logicPlayerActions;
 
 extern voidFunc physicsSimulation;
+extern voidFunc rigidBodySimulation;
 typedef int (*serverReceiveFunc)();
 extern serverReceiveFunc serverReceive;
 extern voidFunc serverSend;
