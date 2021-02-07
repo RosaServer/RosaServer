@@ -1373,7 +1373,7 @@ void Item::computerSetLine(unsigned int line, const char* newLine) {
 void Item::computerSetLineColors(unsigned int line, std::string colors) {
 	if (line >= 32) throw std::invalid_argument(errorOutOfRange);
 	std::memcpy(computerLineColors[line], colors.data(),
-	            std::min(std::size_t(64), colors.size()));
+	            std::min(std::size_t(63), colors.size()));
 }
 
 void Item::computerSetColor(unsigned int line, unsigned int column,
