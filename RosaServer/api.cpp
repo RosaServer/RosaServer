@@ -1,4 +1,5 @@
 #include "api.h"
+#include <algorithm>
 #include <chrono>
 #include <filesystem>
 #include "console.h"
@@ -1367,6 +1368,12 @@ void Item::computerIncrementLine() const {
 void Item::computerSetLine(unsigned int line, const char* newLine) {
 	if (line >= 32) throw std::invalid_argument(errorOutOfRange);
 	std::strncpy(computerLines[line], newLine, 63);
+}
+
+void Item::computerSetLineColors(unsigned int line, std::string colors) {
+	if (line >= 32) throw std::invalid_argument(errorOutOfRange);
+	std::memcpy(computerLineColors[line], colors.data(),
+	            std::min(std::size_t(64), colors.size()));
 }
 
 void Item::computerSetColor(unsigned int line, unsigned int column,

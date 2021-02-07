@@ -554,6 +554,7 @@ struct Item {
 	void computerTransmitLine(unsigned int line) const;
 	void computerIncrementLine() const;
 	void computerSetLine(unsigned int line, const char* newLine);
+	void computerSetLineColors(unsigned int line, std::string colors);
 	void computerSetColor(unsigned int line, unsigned int column,
 	                      unsigned char color);
 };

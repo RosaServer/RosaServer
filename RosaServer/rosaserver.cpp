@@ -486,6 +486,7 @@ void luaInit(bool redo) {
 		meta["computerTransmitLine"] = &Item::computerTransmitLine;
 		meta["computerIncrementLine"] = &Item::computerIncrementLine;
 		meta["computerSetLine"] = &Item::computerSetLine;
+		meta["computerSetLineColors"] = &Item::computerSetLineColors;
 		meta["computerSetColor"] = &Item::computerSetColor;
 	}
 
