@@ -1276,16 +1276,27 @@ static inline void attachSignalHandler() {
 	}
 }
 
-static void attach() {
-	// Don't load self into future child processes
-	unsetenv("LD_PRELOAD");
+static subhook::Hook getPathsHook;
+typedef void (*getPathsFunc)();
+static getPathsFunc getPaths;
 
-	attachSignalHandler();
+// 'getpaths' is a tiny function that's called inside of main. It has to be
+// recreated since installing a hook before main can't be reversed for some
+// reason.
+static inline void getPathsNormally() {
+	char* pathA = (char*)(Lua::memory::baseAddress + 0x59DF0300);
+	char* pathB = (char*)(Lua::memory::baseAddress + 0x59DF0500);
+
+	getcwd(pathA, 0x200);
+	getcwd(pathB, 0x200);
+}
+
+static void hookedGetPaths() {
+	getPathsNormally();
 
 	Console::log(RS_PREFIX "Assuming 37c\n");
 
 	Console::log(RS_PREFIX "Locating memory...\n");
-	Lua::memory::baseAddress = getBaseAddress();
 	printBaseAddress(Lua::memory::baseAddress);
 	locateMemory(Lua::memory::baseAddress);
 
@@ -1293,18 +1304,17 @@ static void attach() {
 	installHooks();
 
 	Console::log(RS_PREFIX "Waiting for engine init...\n");
+
+	// Don't load self into future child processes
+	unsetenv("LD_PRELOAD");
+
+	attachSignalHandler();
 }
 
-int __attribute__((constructor)) Entry() {
-	std::thread mainThread(attach);
-	mainThread.detach();
-	return 0;
-}
+void __attribute__((constructor)) entry() {
+	Lua::memory::baseAddress = getBaseAddress();
+	getPaths = (getPathsFunc)(Lua::memory::baseAddress + 0xC5B00);
 
-int __attribute__((destructor)) Destroy() {
-	if (lua != nullptr) {
-		delete lua;
-		lua = nullptr;
-	}
-	return 0;
+	installHook("getPathsHook", getPathsHook, (void*)getPaths,
+	            (void*)hookedGetPaths);
 }
