@@ -768,6 +768,7 @@ void luaInit(bool redo) {
 		physicsTable["lineIntersectVehicle"] = Lua::physics::lineIntersectVehicle;
 		physicsTable["lineIntersectTriangle"] = Lua::physics::lineIntersectTriangle;
 		physicsTable["garbageCollectBullets"] = Lua::physics::garbageCollectBullets;
+		physicsTable["createBlock"] = Lua::physics::createBlock;
 	}
 
 	{

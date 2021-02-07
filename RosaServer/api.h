@@ -108,6 +108,7 @@ sol::object lineIntersectTriangle(Vector* outPos, Vector* normal, Vector* posA,
                                   Vector* posB, Vector* triA, Vector* triB,
                                   Vector* triC, sol::this_state s);
 void garbageCollectBullets();
+void createBlock(int blockX, int blockY, int blockZ, unsigned int flags);
 };  // namespace physics
 
 namespace itemTypes {

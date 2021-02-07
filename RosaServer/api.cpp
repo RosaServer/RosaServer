@@ -282,6 +282,13 @@ sol::object physics::lineIntersectTriangle(Vector* outPos, Vector* normal,
 
 void physics::garbageCollectBullets() { Engine::bulletTimeToLive(); }
 
+void physics::createBlock(int blockX, int blockY, int blockZ,
+                          unsigned int flags) {
+	short unk[8] = {15, 15, 15, 15, 15, 15, 15, 15};
+	subhook::ScopedHookRemove remove(&Hooks::areaCreateBlockHook);
+	Engine::areaCreateBlock(0, blockX, blockY, blockZ, flags, unk);
+}
+
 int itemTypes::getCount() { return maxNumberOfItemTypes; }
 
 sol::table itemTypes::getAll() {
