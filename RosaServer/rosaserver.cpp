@@ -1103,6 +1103,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::resetGame = (Engine::voidFunc)(base + 0xB10B0);
 
 	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x11760);
+	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0xC400);
 
 	Engine::logicSimulation = (Engine::voidFunc)(base + 0xB7BF0);
 	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xB3650);
@@ -1215,6 +1216,7 @@ static inline void installHooks() {
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
 	INSTALL(areaCreateBlock);
+	INSTALL(areaDeleteBlock);
 	INSTALL(logicSimulation);
 	INSTALL(logicSimulationRace);
 	INSTALL(logicSimulationRound);

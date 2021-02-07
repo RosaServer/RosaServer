@@ -88,6 +88,8 @@ extern voidFunc resetGame;
 
 typedef int (*areaCreateBlockFunc)(int, int, int, int, unsigned int, short[8]);
 extern areaCreateBlockFunc areaCreateBlock;
+typedef int (*areaDeleteBlockFunc)(int, int, int, int);
+extern areaDeleteBlockFunc areaDeleteBlock;
 
 extern voidFunc logicSimulation;
 extern voidFunc logicSimulationRace;
