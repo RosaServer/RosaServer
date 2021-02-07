@@ -769,6 +769,7 @@ void luaInit(bool redo) {
 		physicsTable["lineIntersectTriangle"] = Lua::physics::lineIntersectTriangle;
 		physicsTable["garbageCollectBullets"] = Lua::physics::garbageCollectBullets;
 		physicsTable["createBlock"] = Lua::physics::createBlock;
+		physicsTable["deleteBlock"] = Lua::physics::deleteBlock;
 	}
 
 	{

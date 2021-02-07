@@ -289,6 +289,11 @@ void physics::createBlock(int blockX, int blockY, int blockZ,
 	Engine::areaCreateBlock(0, blockX, blockY, blockZ, flags, unk);
 }
 
+void physics::deleteBlock(int blockX, int blockY, int blockZ) {
+	subhook::ScopedHookRemove remove(&Hooks::areaDeleteBlockHook);
+	Engine::areaDeleteBlock(0, blockX, blockY, blockZ);
+}
+
 int itemTypes::getCount() { return maxNumberOfItemTypes; }
 
 sol::table itemTypes::getAll() {
