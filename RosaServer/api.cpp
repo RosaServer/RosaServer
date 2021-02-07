@@ -956,6 +956,13 @@ float Vector::distSquare(Vector* other) const {
 	return dx * dx + dy * dy + dz * dz;
 }
 
+std::tuple<int, int, int> Vector::getBlockPos() const {
+	int blockX = x / 4.f;
+	int blockY = y / 4.f;
+	int blockZ = z / 4.f;
+	return std::make_tuple(blockX, blockY, blockZ);
+}
+
 std::string RotMatrix::__tostring() const {
 	char buf[256];
 	sprintf(buf, "RotMatrix(%f, %f, %f, %f, %f, %f, %f, %f, %f)", x1, y1, z1, x2,

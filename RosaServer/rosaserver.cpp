@@ -57,6 +57,7 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["clone"] = &Vector::clone;
 		meta["dist"] = &Vector::dist;
 		meta["distSquare"] = &Vector::distSquare;
+		meta["getBlockPos"] = &Vector::getBlockPos;
 	}
 
 	{

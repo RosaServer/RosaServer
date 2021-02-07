@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <string>
+#include <tuple>
 #include "sol/sol.hpp"
 
 static constexpr int maxNumberOfAccounts = 32768;
@@ -102,6 +103,7 @@ struct Vector {
 	Vector clone() const;
 	float dist(Vector* other) const;
 	float distSquare(Vector* other) const;
+	std::tuple<int, int, int> getBlockPos() const;
 };
 
 struct RotMatrix {
