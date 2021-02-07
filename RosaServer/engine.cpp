@@ -76,6 +76,9 @@ subRosa__printf_chkFunc subRosa__printf_chk;
 
 voidFunc resetGame;
 
+areaCreateBlockFunc areaCreateBlock;
+areaDeleteBlockFunc areaDeleteBlock;
+
 voidFunc logicSimulation;
 voidFunc logicSimulationRace;
 voidFunc logicSimulationRound;

@@ -57,6 +57,7 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["clone"] = &Vector::clone;
 		meta["dist"] = &Vector::dist;
 		meta["distSquare"] = &Vector::distSquare;
+		meta["getBlockPos"] = &Vector::getBlockPos;
 	}
 
 	{
@@ -486,6 +487,7 @@ void luaInit(bool redo) {
 		meta["computerTransmitLine"] = &Item::computerTransmitLine;
 		meta["computerIncrementLine"] = &Item::computerIncrementLine;
 		meta["computerSetLine"] = &Item::computerSetLine;
+		meta["computerSetLineColors"] = &Item::computerSetLineColors;
 		meta["computerSetColor"] = &Item::computerSetColor;
 	}
 
@@ -731,6 +733,12 @@ void luaInit(bool redo) {
 		meta["value"] = &Hooks::Integer::value;
 	}
 
+	{
+		auto meta =
+		    lua->new_usertype<Hooks::UnsignedInteger>("new", sol::no_constructor);
+		meta["value"] = &Hooks::UnsignedInteger::value;
+	}
+
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	{
@@ -761,6 +769,8 @@ void luaInit(bool redo) {
 		physicsTable["lineIntersectVehicle"] = Lua::physics::lineIntersectVehicle;
 		physicsTable["lineIntersectTriangle"] = Lua::physics::lineIntersectTriangle;
 		physicsTable["garbageCollectBullets"] = Lua::physics::garbageCollectBullets;
+		physicsTable["createBlock"] = Lua::physics::createBlock;
+		physicsTable["deleteBlock"] = Lua::physics::deleteBlock;
 	}
 
 	{
@@ -1095,6 +1105,9 @@ static inline void locateMemory(uintptr_t base) {
 
 	Engine::resetGame = (Engine::voidFunc)(base + 0xB10B0);
 
+	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x11760);
+	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0xC400);
+
 	Engine::logicSimulation = (Engine::voidFunc)(base + 0xB7BF0);
 	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xB3650);
 	Engine::logicSimulationRound = (Engine::voidFunc)(base + 0xB3DD0);
@@ -1205,6 +1218,8 @@ static inline void installHooks() {
 	INSTALL(subRosaPuts);
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
+	INSTALL(areaCreateBlock);
+	INSTALL(areaDeleteBlock);
 	INSTALL(logicSimulation);
 	INSTALL(logicSimulationRace);
 	INSTALL(logicSimulationRound);

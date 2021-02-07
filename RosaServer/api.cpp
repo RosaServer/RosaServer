@@ -1,4 +1,5 @@
 #include "api.h"
+#include <algorithm>
 #include <chrono>
 #include <filesystem>
 #include "console.h"
@@ -280,6 +281,18 @@ sol::object physics::lineIntersectTriangle(Vector* outPos, Vector* normal,
 }
 
 void physics::garbageCollectBullets() { Engine::bulletTimeToLive(); }
+
+void physics::createBlock(int blockX, int blockY, int blockZ,
+                          unsigned int flags) {
+	short unk[8] = {15, 15, 15, 15, 15, 15, 15, 15};
+	subhook::ScopedHookRemove remove(&Hooks::areaCreateBlockHook);
+	Engine::areaCreateBlock(0, blockX, blockY, blockZ, flags, unk);
+}
+
+void physics::deleteBlock(int blockX, int blockY, int blockZ) {
+	subhook::ScopedHookRemove remove(&Hooks::areaDeleteBlockHook);
+	Engine::areaDeleteBlock(0, blockX, blockY, blockZ);
+}
 
 int itemTypes::getCount() { return maxNumberOfItemTypes; }
 
@@ -943,6 +956,13 @@ float Vector::distSquare(Vector* other) const {
 	return dx * dx + dy * dy + dz * dz;
 }
 
+std::tuple<int, int, int> Vector::getBlockPos() const {
+	int blockX = x / 4.f;
+	int blockY = y / 4.f;
+	int blockZ = z / 4.f;
+	return std::make_tuple(blockX, blockY, blockZ);
+}
+
 std::string RotMatrix::__tostring() const {
 	char buf[256];
 	sprintf(buf, "RotMatrix(%f, %f, %f, %f, %f, %f, %f, %f, %f)", x1, y1, z1, x2,
@@ -1367,6 +1387,12 @@ void Item::computerIncrementLine() const {
 void Item::computerSetLine(unsigned int line, const char* newLine) {
 	if (line >= 32) throw std::invalid_argument(errorOutOfRange);
 	std::strncpy(computerLines[line], newLine, 63);
+}
+
+void Item::computerSetLineColors(unsigned int line, std::string colors) {
+	if (line >= 32) throw std::invalid_argument(errorOutOfRange);
+	std::memcpy(computerLineColors[line], colors.data(),
+	            std::min(std::size_t(63), colors.size()));
 }
 
 void Item::computerSetColor(unsigned int line, unsigned int column,

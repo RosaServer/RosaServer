@@ -6,6 +6,8 @@ namespace Hooks {
 const std::unordered_map<std::string, EnableKeys> enableNames(
     {{"InterruptSignal", EnableKeys::InterruptSignal},
      {"ResetGame", EnableKeys::ResetGame},
+     {"AreaCreateBlock", EnableKeys::AreaCreateBlock},
+     {"AreaDeleteBlock", EnableKeys::AreaDeleteBlock},
      {"Logic", EnableKeys::Logic},
      {"ConsoleInput", EnableKeys::ConsoleInput},
      {"ConsoleAutoComplete", EnableKeys::ConsoleAutoComplete},
@@ -59,6 +61,8 @@ bool enabledKeys[EnableKeys::SIZE] = {0};
 subhook::Hook subRosaPutsHook;
 subhook::Hook subRosa__printf_chkHook;
 subhook::Hook resetGameHook;
+subhook::Hook areaCreateBlockHook;
+subhook::Hook areaDeleteBlockHook;
 subhook::Hook logicSimulationHook;
 subhook::Hook logicSimulationRaceHook;
 subhook::Hook logicSimulationRoundHook;
@@ -150,6 +154,59 @@ void resetGame() {
 		hookAndReset(RESET_REASON_BOOT);
 	} else {
 		hookAndReset(RESET_REASON_ENGINECALL);
+	}
+}
+
+void areaCreateBlock(int zero, int blockX, int blockY, int blockZ,
+                     unsigned int flags, short unk[8]) {
+	if (enabledKeys[EnableKeys::AreaCreateBlock]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			UnsignedInteger wrappedFlags = {flags};
+
+			auto res = func("AreaCreateBlock", blockX, blockY, blockZ, &wrappedFlags);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+
+			flags = wrappedFlags.value;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&areaCreateBlockHook);
+				Engine::areaCreateBlock(zero, blockX, blockY, blockZ, flags, unk);
+			}
+			if (func != sol::nil) {
+				auto res = func("PostAreaCreateBlock", blockX, blockY, blockZ, flags);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&areaCreateBlockHook);
+		Engine::areaCreateBlock(zero, blockX, blockY, blockZ, flags, unk);
+	}
+}
+
+void areaDeleteBlock(int zero, int blockX, int blockY, int blockZ) {
+	if (enabledKeys[EnableKeys::AreaDeleteBlock]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			auto res = func("AreaDeleteBlock", blockX, blockY, blockZ);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&areaDeleteBlockHook);
+				Engine::areaDeleteBlock(zero, blockX, blockY, blockZ);
+			}
+			if (func != sol::nil) {
+				auto res = func("PostAreaDeleteBlock", blockX, blockY, blockZ);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&areaDeleteBlockHook);
+		Engine::areaDeleteBlock(zero, blockX, blockY, blockZ);
 	}
 }
 
