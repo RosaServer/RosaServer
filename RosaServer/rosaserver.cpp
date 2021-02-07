@@ -732,6 +732,12 @@ void luaInit(bool redo) {
 		meta["value"] = &Hooks::Integer::value;
 	}
 
+	{
+		auto meta =
+		    lua->new_usertype<Hooks::UnsignedInteger>("new", sol::no_constructor);
+		meta["value"] = &Hooks::UnsignedInteger::value;
+	}
+
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	{
@@ -1096,6 +1102,8 @@ static inline void locateMemory(uintptr_t base) {
 
 	Engine::resetGame = (Engine::voidFunc)(base + 0xB10B0);
 
+	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x11760);
+
 	Engine::logicSimulation = (Engine::voidFunc)(base + 0xB7BF0);
 	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xB3650);
 	Engine::logicSimulationRound = (Engine::voidFunc)(base + 0xB3DD0);
@@ -1206,6 +1214,7 @@ static inline void installHooks() {
 	INSTALL(subRosaPuts);
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
+	INSTALL(areaCreateBlock);
 	INSTALL(logicSimulation);
 	INSTALL(logicSimulationRace);
 	INSTALL(logicSimulationRound);

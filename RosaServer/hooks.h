@@ -8,6 +8,7 @@
 namespace Hooks {
 enum EnableKeys {
 	ResetGame,
+	AreaCreateBlock,
 	InterruptSignal,
 	Logic,
 	ConsoleInput,
@@ -70,6 +71,10 @@ int subRosa__printf_chk(int flag, const char* format, ...);
 
 extern subhook::Hook resetGameHook;
 void resetGame();
+
+extern subhook::Hook areaCreateBlockHook;
+void areaCreateBlock(int zero, int blockX, int blockY, int blockZ,
+                     unsigned int flags, short[8]);
 
 extern subhook::Hook logicSimulationHook;
 void logicSimulation();
@@ -186,5 +191,9 @@ struct Float {
 
 struct Integer {
 	int value;
+};
+
+struct UnsignedInteger {
+	unsigned int value;
 };
 };  // namespace Hooks

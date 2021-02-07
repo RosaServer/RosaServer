@@ -86,6 +86,9 @@ typedef void (*voidIndexFunc)(int id);
 
 extern voidFunc resetGame;
 
+typedef int (*areaCreateBlockFunc)(int, int, int, int, unsigned int, short[8]);
+extern areaCreateBlockFunc areaCreateBlock;
+
 extern voidFunc logicSimulation;
 extern voidFunc logicSimulationRace;
 extern voidFunc logicSimulationRound;
