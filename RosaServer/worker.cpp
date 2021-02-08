@@ -5,7 +5,7 @@
 #include <thread>
 
 Worker::Worker(std::string fileName) {
-	stopped = new bool(false);
+	stopped = new std::atomic_bool(false);
 
 	std::thread thread(&Worker::runThread, this, fileName);
 	thread.detach();
@@ -17,7 +17,7 @@ Worker::~Worker() {
 }
 
 void Worker::runThread(std::string fileName) {
-	bool* _stopped = stopped;
+	std::atomic_bool* _stopped = stopped;
 
 	sol::state state;
 	defineThreadSafeAPIs(&state);
@@ -37,12 +37,7 @@ void Worker::runThread(std::string fileName) {
 		this->destructionMutex.unlock();
 		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
-		{
-			std::lock_guard<std::mutex> guard(stoppedMutex);
-			if (*_stopped) {
-				return true;
-			}
-		}
+		if (*_stopped) return true;
 
 		this->destructionMutex.lock();
 		return false;
@@ -56,20 +51,11 @@ void Worker::runThread(std::string fileName) {
 		}
 	}
 
-	{
-		std::lock_guard<std::mutex> guard(stoppedMutex);
-		if (!*_stopped) {
-			destructionMutex.unlock();
-		}
+	if (!*_stopped) {
+		destructionMutex.unlock();
 	}
 
-	while (true) {
-		{
-			std::lock_guard<std::mutex> guard(stoppedMutex);
-			if (*_stopped) {
-				break;
-			}
-		}
+	while (!*_stopped) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 
@@ -98,17 +84,13 @@ sol::object Worker::l_receiveMessage(sol::this_state s) {
 }
 
 void Worker::stop() {
-	std::lock_guard<std::mutex> guard(stoppedMutex);
 	if (stopped && !*stopped) {
 		*stopped = true;
 	}
 }
 
 void Worker::sendMessage(std::string message) {
-	{
-		std::lock_guard<std::mutex> guard(stoppedMutex);
-		if (stopped && *stopped) return;
-	}
+	if (stopped && *stopped) return;
 
 	std::lock_guard<std::mutex> guard(sendMessageQueueMutex);
 	sendMessageQueue.push(message);
