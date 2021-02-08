@@ -511,7 +511,13 @@ struct Item {
 	RotMatrix rot;  // a4
 	padding unk6[0x144 - 0xa4 - 36];
 	int bullets;  // 144
-	padding unk7[0x280 - 0x144 - 4];
+	padding unk7_1[0x15C - 0x144 - 4];
+	int connectedPhoneID;    // 15C
+	int phoneNumber;         // 160
+	int unk7_2;              // 164
+	int displayPhoneNumber;  // 168
+	int enteredPhoneNumber;  // 16C
+	padding unk7[0x280 - 0x16C - 4];
 	int vehicleID;  // 280
 	padding unk8[0x368 - 0x280 - 4];
 	unsigned int computerCurrentLine;  // 368
@@ -546,6 +552,8 @@ struct Item {
 	Human* getParentHuman() const;
 	Item* getParentItem() const;
 	RigidBody* getRigidBody() const;
+	Item* getConnectedPhone() const;
+	void setConnectedPhone(Item* item);
 	Vehicle* getVehicle() const;
 	void setVehicle(Vehicle* vcl);
 	bool mountItem(Item* childItem, unsigned int slot) const;

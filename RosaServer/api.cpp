@@ -1344,6 +1344,14 @@ Item* Item::getParentItem() const {
 
 RigidBody* Item::getRigidBody() const { return &Engine::bodies[bodyID]; }
 
+Item* Item::getConnectedPhone() const {
+	return connectedPhoneID == -1 ? nullptr : &Engine::items[connectedPhoneID];
+}
+
+void Item::setConnectedPhone(Item* item) {
+	connectedPhoneID = item == nullptr ? -1 : item->getIndex();
+}
+
 Vehicle* Item::getVehicle() const {
 	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
 }

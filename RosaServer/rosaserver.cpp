@@ -456,6 +456,9 @@ void luaInit(bool redo) {
 		meta["vel"] = &Item::vel;
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
+		meta["phoneNumber"] = &Item::phoneNumber;
+		meta["displayPhoneNumber"] = &Item::displayPhoneNumber;
+		meta["enteredPhoneNumber"] = &Item::enteredPhoneNumber;
 		meta["computerCurrentLine"] = &Item::computerCurrentLine;
 		meta["computerTopLine"] = &Item::computerTopLine;
 		meta["computerCursor"] = &Item::computerCursor;
@@ -472,6 +475,8 @@ void luaInit(bool redo) {
 		meta["isStatic"] = sol::property(&Item::getIsStatic, &Item::setIsStatic);
 		meta["type"] = sol::property(&Item::getType, &Item::setType);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
+		meta["connectedPhone"] =
+		    sol::property(&Item::getConnectedPhone, &Item::setConnectedPhone);
 		meta["vehicle"] = sol::property(&Item::getVehicle, &Item::setVehicle);
 		meta["grenadePrimer"] =
 		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
