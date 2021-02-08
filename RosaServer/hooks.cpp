@@ -770,15 +770,14 @@ void deletePlayer(int playerID) {
 			{
 				subhook::ScopedHookRemove remove(&deletePlayerHook);
 				Engine::deletePlayer(playerID);
-
-				if (playerDataTables[playerID]) {
-					delete playerDataTables[playerID];
-					playerDataTables[playerID] = nullptr;
-				}
 			}
 			if (func != sol::nil) {
 				auto res = func("PostPlayerDelete", &Engine::players[playerID]);
 				noLuaCallError(&res);
+			}
+			if (playerDataTables[playerID]) {
+				delete playerDataTables[playerID];
+				playerDataTables[playerID] = nullptr;
 			}
 		}
 	} else {
@@ -843,15 +842,14 @@ void deleteHuman(int humanID) {
 			{
 				subhook::ScopedHookRemove remove(&deleteHumanHook);
 				Engine::deleteHuman(humanID);
-
-				if (humanDataTables[humanID]) {
-					delete humanDataTables[humanID];
-					humanDataTables[humanID] = nullptr;
-				}
 			}
 			if (func != sol::nil) {
 				auto res = func("PostHumanDelete", &Engine::humans[humanID]);
 				noLuaCallError(&res);
+			}
+			if (humanDataTables[humanID]) {
+				delete humanDataTables[humanID];
+				humanDataTables[humanID] = nullptr;
 			}
 		}
 	} else {
@@ -878,15 +876,14 @@ int createItem(int type, Vector* pos, Vector* vel, RotMatrix* rot) {
 			{
 				subhook::ScopedHookRemove remove(&createItemHook);
 				id = Engine::createItem(type, pos, vel, rot);
-
-				if (id != -1 && itemDataTables[id]) {
-					delete itemDataTables[id];
-					itemDataTables[id] = nullptr;
-				}
 			}
 			if (id != -1 && func != sol::nil) {
 				auto res = func("PostItemCreate", &Engine::items[id]);
 				noLuaCallError(&res);
+			}
+			if (id != -1 && itemDataTables[id]) {
+				delete itemDataTables[id];
+				itemDataTables[id] = nullptr;
 			}
 			return id;
 		}
@@ -916,15 +913,14 @@ void deleteItem(int itemID) {
 			{
 				subhook::ScopedHookRemove remove(&deleteItemHook);
 				Engine::deleteItem(itemID);
-
-				if (itemDataTables[itemID]) {
-					delete itemDataTables[itemID];
-					itemDataTables[itemID] = nullptr;
-				}
 			}
 			if (func != sol::nil) {
 				auto res = func("PostItemDelete", &Engine::items[itemID]);
 				noLuaCallError(&res);
+			}
+			if (itemDataTables[itemID]) {
+				delete itemDataTables[itemID];
+				itemDataTables[itemID] = nullptr;
 			}
 		}
 	} else {
@@ -991,15 +987,14 @@ void deleteVehicle(int vehicleID) {
 			{
 				subhook::ScopedHookRemove remove(&deleteVehicleHook);
 				Engine::deleteVehicle(vehicleID);
-
-				if (vehicleDataTables[vehicleID]) {
-					delete vehicleDataTables[vehicleID];
-					vehicleDataTables[vehicleID] = nullptr;
-				}
 			}
 			if (func != sol::nil) {
 				auto res = func("PostVehicleDelete", &Engine::vehicles[vehicleID]);
 				noLuaCallError(&res);
+			}
+			if (vehicleDataTables[vehicleID]) {
+				delete vehicleDataTables[vehicleID];
+				vehicleDataTables[vehicleID] = nullptr;
 			}
 		}
 	} else {
