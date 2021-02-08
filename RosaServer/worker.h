@@ -7,7 +7,8 @@
 #include <string>
 
 class Worker {
-	std::atomic_bool* stopped = nullptr;
+	bool* stopped = nullptr;
+	std::mutex stoppedMutex;
 	std::mutex destructionMutex;
 
 	std::queue<std::string> sendMessageQueue;

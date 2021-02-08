@@ -97,7 +97,7 @@ void defineThreadSafeAPIs(sol::state* state) {
 	}
 
 	{
-		auto meta = lua->new_usertype<FileWatcher>("FileWatcher");
+		auto meta = state->new_usertype<FileWatcher>("FileWatcher");
 		meta["addWatch"] = &FileWatcher::addWatch;
 		meta["removeWatch"] = &FileWatcher::removeWatch;
 		meta["receiveEvent"] = &FileWatcher::receiveEvent;
@@ -120,29 +120,29 @@ void defineThreadSafeAPIs(sol::state* state) {
 		httpTable["postSync"] = Lua::http::postSync;
 	}
 
-	(*lua)["FILE_WATCH_ACCESS"] = IN_ACCESS;
-	(*lua)["FILE_WATCH_ATTRIB"] = IN_ATTRIB;
-	(*lua)["FILE_WATCH_CLOSE_WRITE"] = IN_CLOSE_WRITE;
-	(*lua)["FILE_WATCH_CLOSE_NOWRITE"] = IN_CLOSE_NOWRITE;
-	(*lua)["FILE_WATCH_CREATE"] = IN_CREATE;
-	(*lua)["FILE_WATCH_DELETE"] = IN_DELETE;
-	(*lua)["FILE_WATCH_DELETE_SELF"] = IN_DELETE_SELF;
-	(*lua)["FILE_WATCH_MODIFY"] = IN_MODIFY;
-	(*lua)["FILE_WATCH_MOVE_SELF"] = IN_MOVE_SELF;
-	(*lua)["FILE_WATCH_MOVED_FROM"] = IN_MOVED_FROM;
-	(*lua)["FILE_WATCH_MOVED_TO"] = IN_MOVED_TO;
-	(*lua)["FILE_WATCH_OPEN"] = IN_OPEN;
-	(*lua)["FILE_WATCH_MOVE"] = IN_MOVE;
-	(*lua)["FILE_WATCH_CLOSE"] = IN_CLOSE;
-	(*lua)["FILE_WATCH_DONT_FOLLOW"] = IN_DONT_FOLLOW;
-	(*lua)["FILE_WATCH_EXCL_UNLINK"] = IN_EXCL_UNLINK;
-	(*lua)["FILE_WATCH_MASK_ADD"] = IN_MASK_ADD;
-	(*lua)["FILE_WATCH_ONESHOT"] = IN_ONESHOT;
-	(*lua)["FILE_WATCH_ONLYDIR"] = IN_ONLYDIR;
-	(*lua)["FILE_WATCH_IGNORED"] = IN_IGNORED;
-	(*lua)["FILE_WATCH_ISDIR"] = IN_ISDIR;
-	(*lua)["FILE_WATCH_Q_OVERFLOW"] = IN_Q_OVERFLOW;
-	(*lua)["FILE_WATCH_UNMOUNT"] = IN_UNMOUNT;
+	(*state)["FILE_WATCH_ACCESS"] = IN_ACCESS;
+	(*state)["FILE_WATCH_ATTRIB"] = IN_ATTRIB;
+	(*state)["FILE_WATCH_CLOSE_WRITE"] = IN_CLOSE_WRITE;
+	(*state)["FILE_WATCH_CLOSE_NOWRITE"] = IN_CLOSE_NOWRITE;
+	(*state)["FILE_WATCH_CREATE"] = IN_CREATE;
+	(*state)["FILE_WATCH_DELETE"] = IN_DELETE;
+	(*state)["FILE_WATCH_DELETE_SELF"] = IN_DELETE_SELF;
+	(*state)["FILE_WATCH_MODIFY"] = IN_MODIFY;
+	(*state)["FILE_WATCH_MOVE_SELF"] = IN_MOVE_SELF;
+	(*state)["FILE_WATCH_MOVED_FROM"] = IN_MOVED_FROM;
+	(*state)["FILE_WATCH_MOVED_TO"] = IN_MOVED_TO;
+	(*state)["FILE_WATCH_OPEN"] = IN_OPEN;
+	(*state)["FILE_WATCH_MOVE"] = IN_MOVE;
+	(*state)["FILE_WATCH_CLOSE"] = IN_CLOSE;
+	(*state)["FILE_WATCH_DONT_FOLLOW"] = IN_DONT_FOLLOW;
+	(*state)["FILE_WATCH_EXCL_UNLINK"] = IN_EXCL_UNLINK;
+	(*state)["FILE_WATCH_MASK_ADD"] = IN_MASK_ADD;
+	(*state)["FILE_WATCH_ONESHOT"] = IN_ONESHOT;
+	(*state)["FILE_WATCH_ONLYDIR"] = IN_ONLYDIR;
+	(*state)["FILE_WATCH_IGNORED"] = IN_IGNORED;
+	(*state)["FILE_WATCH_ISDIR"] = IN_ISDIR;
+	(*state)["FILE_WATCH_Q_OVERFLOW"] = IN_Q_OVERFLOW;
+	(*state)["FILE_WATCH_UNMOUNT"] = IN_UNMOUNT;
 }
 
 void luaInit(bool redo) {
@@ -1276,16 +1276,27 @@ static inline void attachSignalHandler() {
 	}
 }
 
-static void attach() {
-	// Don't load self into future child processes
-	unsetenv("LD_PRELOAD");
+static subhook::Hook getPathsHook;
+typedef void (*getPathsFunc)();
+static getPathsFunc getPaths;
 
-	attachSignalHandler();
+// 'getpaths' is a tiny function that's called inside of main. It has to be
+// recreated since installing a hook before main can't be reversed for some
+// reason.
+static inline void getPathsNormally() {
+	char* pathA = (char*)(Lua::memory::baseAddress + 0x59DF0300);
+	char* pathB = (char*)(Lua::memory::baseAddress + 0x59DF0500);
+
+	getcwd(pathA, 0x200);
+	getcwd(pathB, 0x200);
+}
+
+static void hookedGetPaths() {
+	getPathsNormally();
 
 	Console::log(RS_PREFIX "Assuming 37c\n");
 
 	Console::log(RS_PREFIX "Locating memory...\n");
-	Lua::memory::baseAddress = getBaseAddress();
 	printBaseAddress(Lua::memory::baseAddress);
 	locateMemory(Lua::memory::baseAddress);
 
@@ -1293,18 +1304,17 @@ static void attach() {
 	installHooks();
 
 	Console::log(RS_PREFIX "Waiting for engine init...\n");
+
+	// Don't load self into future child processes
+	unsetenv("LD_PRELOAD");
+
+	attachSignalHandler();
 }
 
-int __attribute__((constructor)) Entry() {
-	std::thread mainThread(attach);
-	mainThread.detach();
-	return 0;
-}
+void __attribute__((constructor)) entry() {
+	Lua::memory::baseAddress = getBaseAddress();
+	getPaths = (getPathsFunc)(Lua::memory::baseAddress + 0xC5B00);
 
-int __attribute__((destructor)) Destroy() {
-	if (lua != nullptr) {
-		delete lua;
-		lua = nullptr;
-	}
-	return 0;
+	installHook("getPathsHook", getPathsHook, (void*)getPaths,
+	            (void*)hookedGetPaths);
 }
