@@ -3,10 +3,10 @@
 STYLE="\e[36;1m\e[1m"
 RESET="\e[0m"
 
-TYPE=${TYPE:-Release}
+TYPE=${TYPE:-Debug}
 
-mkdir -p release
-cd release
+mkdir -p debug
+cd debug
 
 echo -e "${STYLE}Compiling moonjit...${RESET}"
 pushd ../moonjit/src
