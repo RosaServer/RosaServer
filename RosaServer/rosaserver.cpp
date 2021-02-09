@@ -459,6 +459,7 @@ void luaInit(bool redo) {
 		meta["phoneNumber"] = &Item::phoneNumber;
 		meta["displayPhoneNumber"] = &Item::displayPhoneNumber;
 		meta["enteredPhoneNumber"] = &Item::enteredPhoneNumber;
+		meta["phoneTexture"] = &Item::phoneTexture;
 		meta["computerCurrentLine"] = &Item::computerCurrentLine;
 		meta["computerTopLine"] = &Item::computerTopLine;
 		meta["computerCursor"] = &Item::computerCursor;
