@@ -10,9 +10,9 @@ cd release
 
 echo -e "${STYLE}Compiling moonjit...${RESET}"
 pushd ../moonjit/src
-	make XCFLAGS+=-DLUAJIT_ENABLE_LUA52COMPAT
+	make XCFLAGS+=-DLUAJIT_ENABLE_LUA52COMPAT -j${nproc}
 popd
 
 echo -e "${STYLE}Compiling RosaServer (${TYPE})...${RESET}"
 cmake -DCMAKE_BUILD_TYPE=${TYPE} ..
-make
+make -j${nproc}
