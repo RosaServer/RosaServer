@@ -517,7 +517,9 @@ struct Item {
 	int unk7_2;              // 164
 	int displayPhoneNumber;  // 168
 	int enteredPhoneNumber;  // 16C
-	padding unk7[0x280 - 0x16C - 4];
+	padding unk7[0x278 - 0x16C - 4];
+	int phoneTexture; // 278
+	int unk0; // 27C
 	int vehicleID;  // 280
 	padding unk8[0x368 - 0x280 - 4];
 	unsigned int computerCurrentLine;  // 368
