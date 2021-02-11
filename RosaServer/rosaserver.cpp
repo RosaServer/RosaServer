@@ -376,6 +376,8 @@ void luaInit(bool redo) {
 		meta["leftLegHP"] = &Human::leftLegHP;
 		meta["rightLegHP"] = &Human::rightLegHP;
 		meta["progressBar"] = &Human::progressBar;
+		meta["inventoryAnimationFlags"] = &Human::inventoryAnimationFlags;
+		meta["inventoryAnimationDuration"] = &Human::inventoryAnimationDuration;
 		meta["gender"] = &Human::gender;
 		meta["head"] = &Human::head;
 		meta["skinColor"] = &Human::skinColor;
