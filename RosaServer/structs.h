@@ -388,8 +388,9 @@ struct Human {
 	padding unk30_1[0x35b4 - 0x355c - 4];
 	int progressBar;  // 35b4
 	int inventoryAnimationFlags; // 35b8
-	float inventoryAnimationDuration; // 35c0
-	padding unk31[0x3758 - 0x35c0];
+	float inventoryAnimationDuration; // 35bc
+	int inventoryAnimationDurationTicks; // 35c0
+	padding unk31[0x3758 - 0x35c0 - 4];
 	int gender;             // 3758
 	int head;               // 375c
 	int skinColor;          // 3760
