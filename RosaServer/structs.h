@@ -393,11 +393,8 @@ struct Human {
 	int inventoryAnimationHand; // 35c4
 	int inventoryAnimationSlot; // 35c8
 	int inventoryAnimationVar1; // 35cc
-	int unk4194; // 35d0
-	int unk6541; // 35d4
-	int unk6271; // 35d8
-	int inventoryAnimationVar2; // 35dc
-	padding unk31[0x3758 - 0x35dc - 4];
+	int inventoryAnimationVar2; // 35d0
+	padding unk31[0x3758 - 0x35d0 - 4];
 	int gender;             // 3758
 	int head;               // 375c
 	int skinColor;          // 3760
