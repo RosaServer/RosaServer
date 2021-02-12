@@ -381,9 +381,8 @@ void luaInit(bool redo) {
 		meta["inventoryAnimationDurationTicks"] = &Human::inventoryAnimationDurationTicks;
 		meta["inventoryAnimationHand"] = &Human::inventoryAnimationHand;
 		meta["inventoryAnimationSlot"] = &Human::inventoryAnimationSlot;
-		meta["inventoryAnimationVar1"] = &Human::inventoryAnimationVar1;
-		meta["inventoryAnimationVar2"] = &Human::inventoryAnimationVar2;
-		std::cout << sizeof(Human) << std::endl;
+		meta["inventoryAnimationCounterFinished"] = &Human::inventoryAnimationCounterFinished;
+		meta["inventoryAnimationCounter"] = &Human::inventoryAnimationCounter;
 		meta["gender"] = &Human::gender;
 		meta["head"] = &Human::head;
 		meta["skinColor"] = &Human::skinColor;
