@@ -377,9 +377,8 @@ void luaInit(bool redo) {
 		meta["rightLegHP"] = &Human::rightLegHP;
 		meta["progressBar"] = &Human::progressBar;
 		meta["inventoryAnimationFlags"] = &Human::inventoryAnimationFlags;
+		meta["inventoryAnimationProgress"] = &Human::inventoryAnimationProgress;
 		meta["inventoryAnimationDuration"] = &Human::inventoryAnimationDuration;
-		meta["inventoryAnimationDurationTicks"] =
-		    &Human::inventoryAnimationDurationTicks;
 		meta["inventoryAnimationHand"] = &Human::inventoryAnimationHand;
 		meta["inventoryAnimationSlot"] = &Human::inventoryAnimationSlot;
 		meta["inventoryAnimationCounterFinished"] =
