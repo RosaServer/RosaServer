@@ -27,6 +27,7 @@ extern bool shouldReset;
 extern sol::state* lua;
 extern std::string hookMode;
 
+extern sol::table* accountDataTables[maxNumberOfAccounts];
 extern sol::table* playerDataTables[maxNumberOfPlayers];
 extern sol::table* humanDataTables[maxNumberOfHumans];
 extern sol::table* itemDataTables[maxNumberOfItems];
