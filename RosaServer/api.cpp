@@ -10,6 +10,7 @@ bool shouldReset = false;
 sol::state* lua;
 std::string hookMode;
 
+sol::table* accountDataTables[maxNumberOfAccounts];
 sol::table* playerDataTables[maxNumberOfPlayers];
 sol::table* humanDataTables[maxNumberOfHumans];
 sol::table* itemDataTables[maxNumberOfItems];
@@ -890,6 +891,16 @@ std::string Account::__tostring() const {
 
 int Account::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)Engine::accounts) / sizeof(*this);
+}
+
+sol::table Account::getDataTable() const {
+	int index = getIndex();
+
+	if (!accountDataTables[index]) {
+		accountDataTables[index] = new sol::table(lua->lua_state(), sol::create);
+	}
+
+	return *accountDataTables[index];
 }
 
 std::string Vector::__tostring() const {

@@ -152,6 +152,13 @@ void luaInit(bool redo) {
 		Console::log(LUA_PREFIX "Resetting state...\n");
 		delete server;
 
+		for (int i = 0; i < maxNumberOfAccounts; i++) {
+			if (accountDataTables[i]) {
+				delete accountDataTables[i];
+				accountDataTables[i] = nullptr;
+			}
+		}
+
 		for (int i = 0; i < maxNumberOfPlayers; i++) {
 			if (playerDataTables[i]) {
 				delete playerDataTables[i];
@@ -297,6 +304,7 @@ void luaInit(bool redo) {
 		meta["class"] = sol::property(&Account::getClass);
 		meta["__tostring"] = &Account::__tostring;
 		meta["index"] = sol::property(&Account::getIndex);
+		meta["data"] = sol::property(&Account::getDataTable);
 		meta["name"] = sol::property(&Account::getName);
 		meta["steamID"] = sol::property(&Account::getSteamID);
 	}

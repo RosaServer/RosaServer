@@ -80,6 +80,7 @@ struct Account {
 	const char* getClass() const { return "Account"; }
 	std::string __tostring() const;
 	int getIndex() const;
+	sol::table getDataTable() const;
 	char* getName() { return name; }
 	std::string getSteamID() { return std::to_string(steamID); }
 };
