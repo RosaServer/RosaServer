@@ -386,14 +386,14 @@ struct Human {
 	int unk30;       // 3558
 	int rightLegHP;  // 355c
 	padding unk30_1[0x35b4 - 0x355c - 4];
-	int progressBar;  // 35b4
-	int inventoryAnimationFlags; // 35b8
-	float inventoryAnimationDuration; // 35bc
-	int inventoryAnimationDurationTicks; // 35c0
-	int inventoryAnimationHand; // 35c4
-	int inventoryAnimationSlot; // 35c8
-	int inventoryAnimationCounterFinished; // 35cc
-	int inventoryAnimationCounter; // 35d0
+	int progressBar;                        // 35b4
+	int inventoryAnimationFlags;            // 35b8
+	float inventoryAnimationDuration;       // 35bc
+	int inventoryAnimationDurationTicks;    // 35c0
+	int inventoryAnimationHand;             // 35c4
+	int inventoryAnimationSlot;             // 35c8
+	int inventoryAnimationCounterFinished;  // 35cc
+	int inventoryAnimationCounter;          // 35d0
 	padding unk31[0x3758 - 0x35d0 - 4];
 	int gender;             // 3758
 	int head;               // 375c
@@ -525,9 +525,9 @@ struct Item {
 	int displayPhoneNumber;  // 168
 	int enteredPhoneNumber;  // 16C
 	padding unk7[0x278 - 0x16C - 4];
-	int phoneTexture; // 278
-	int unk0; // 27C
-	int vehicleID;  // 280
+	int phoneTexture;  // 278
+	int unk0;          // 27C
+	int vehicleID;     // 280
 	padding unk8[0x368 - 0x280 - 4];
 	unsigned int computerCurrentLine;  // 368
 	unsigned int computerTopLine;      // 36c
