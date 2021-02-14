@@ -1231,6 +1231,56 @@ Item* Human::getLeftHandItem() const {
 	return &Engine::items[leftHandItemID];
 }
 
+Item* Human::getSlot2Item1() const {
+	if (slot2ItemCount == 0) return nullptr;
+	return &Engine::items[slot2ItemID1];
+}
+
+Item* Human::getSlot2Item2() const {
+	if (slot2ItemCount != 2) return nullptr;
+	return &Engine::items[slot2ItemID2];
+}
+
+Item* Human::getSlot3Item1() const {
+	if (slot3ItemCount == 0) return nullptr;
+	return &Engine::items[slot3ItemID1];
+}
+
+Item* Human::getSlot3Item2() const {
+	if (slot3ItemCount != 2) return nullptr;
+	return &Engine::items[slot3ItemID2];
+}
+
+Item* Human::getSlot4Item1() const {
+	if (slot4ItemCount == 0) return nullptr;
+	return &Engine::items[slot4ItemID1];
+}
+
+Item* Human::getSlot4Item2() const {
+	if (slot4ItemCount != 2) return nullptr;
+	return &Engine::items[slot4ItemID2];
+}
+
+Item* Human::getSlot5Item1() const {
+	if (slot5ItemCount == 0) return nullptr;
+	return &Engine::items[slot5ItemID1];
+}
+
+Item* Human::getSlot5Item2() const {
+	if (slot5ItemCount != 2) return nullptr;
+	return &Engine::items[slot5ItemID2];
+}
+
+Item* Human::getSlot6Item1() const {
+	if (slot6ItemCount == 0) return nullptr;
+	return &Engine::items[slot6ItemID1];
+}
+
+Item* Human::getSlot6Item2() const {
+	if (slot6ItemCount != 2) return nullptr;
+	return &Engine::items[slot6ItemID2];
+}
+
 Human* Human::getRightHandGrab() const {
 	if (!isGrabbingRight) return nullptr;
 	return &Engine::humans[grabbingRightHumanID];
