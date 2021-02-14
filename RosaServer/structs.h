@@ -360,7 +360,27 @@ struct Human {
 	padding unk24[0x32d0 - 0x32ac - 4];
 	int leftHandOccupied;  // 32d0
 	int leftHandItemID;    // 32d4
-	padding unk25[0x33f8 - 0x32d4 - 4];
+	padding unk61[0x32f8 - 0x32d4 - 4];
+	int slot2ItemCount;		   // 32f8
+	int slot2ItemID1;	   	   // 32fc
+	int slot2ItemID2;	   	   // 3300
+	padding unk61_2[0x3320 - 0x3300 - 4];	
+	int slot3ItemCount;	   	   // 3320
+	int slot3ItemID1;	   	   // 3324
+	int slot3ItemID2;	   	   // 3328
+	padding unk61_3[0x3348 - 0x3328 - 4];	
+	int slot4ItemCount;	   	   // 3348
+	int slot4ItemID1;	   	   // 334c
+	int slot4ItemID2;	   	   // 3350
+	padding unk61_4[0x3370 - 0x3350 - 4];	
+	int slot5ItemCount;	       // 3370
+	int slot5ItemID1;	   	   // 3374
+	int slot5ItemID2;	   	   // 3378
+	padding unk61_9[0x3398 - 0x3378 - 4];
+	int slot6ItemCount;	       // 3398
+	int slot6ItemID1;	   	   // 339c
+	int slot6ItemID2;	   	   // 33a0
+	padding unk25[0x33f8 - 0x33a0 - 4];
 	int isGrabbingRight;       // 33f8
 	int grabbingRightHumanID;  // 33fc
 	int unk26_1;               // 3400
@@ -433,6 +453,16 @@ struct Human {
 	RigidBody* getRigidBody(unsigned int idx) const;
 	Item* getRightHandItem() const;
 	Item* getLeftHandItem() const;
+	Item* getSlot2Item1() const;
+	Item* getSlot2Item2() const;
+	Item* getSlot3Item1() const;
+	Item* getSlot3Item2() const;
+	Item* getSlot4Item1() const;
+	Item* getSlot4Item2() const;
+	Item* getSlot5Item1() const;
+	Item* getSlot5Item2() const;
+	Item* getSlot6Item1() const;
+	Item* getSlot6Item2() const;
 	Human* getRightHandGrab() const;
 	void setRightHandGrab(Human* man);
 	Human* getLeftHandGrab() const;
@@ -460,7 +490,7 @@ struct ItemType {
 	//?
 	int bulletType;        // 18
 	int unk0;              // 1c
-	int unk1;              // 20
+	int magazineAmmo;		// 20
 	float bulletVelocity;  // 24
 	float bulletSpread;    // 28
 	char name[64];         // 2c

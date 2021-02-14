@@ -410,6 +410,21 @@ void luaInit(bool redo) {
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
 		meta["rightHandItem"] = sol::property(&Human::getRightHandItem);
 		meta["leftHandItem"] = sol::property(&Human::getLeftHandItem);
+		meta["slot2ItemCount"] = &Human::slot2ItemCount;
+		meta["slot2Item1"] = sol::property(&Human::getSlot2Item1);
+		meta["slot2Item2"] = sol::property(&Human::getSlot2Item2);
+		meta["slot3ItemCount"] = &Human::slot3ItemCount;
+		meta["slot3Item1"] = sol::property(&Human::getSlot3Item1);
+		meta["slot3Item2"] = sol::property(&Human::getSlot3Item2);
+		meta["slot4ItemCount"] = &Human::slot4ItemCount;
+		meta["slot4Item1"] = sol::property(&Human::getSlot4Item1);
+		meta["slot4Item2"] = sol::property(&Human::getSlot4Item2);
+		meta["slot5ItemCount"] = &Human::slot5ItemCount;
+		meta["slot5Item1"] = sol::property(&Human::getSlot5Item1);
+		meta["slot5Item2"] = sol::property(&Human::getSlot5Item2);
+		meta["slot6ItemCount"] = &Human::slot6ItemCount;
+		meta["slot6Item1"] = sol::property(&Human::getSlot6Item1);
+		meta["slot6Item2"] = sol::property(&Human::getSlot6Item2);
 		meta["rightHandGrab"] =
 		    sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
 		meta["leftHandGrab"] =
