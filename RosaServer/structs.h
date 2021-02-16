@@ -284,6 +284,18 @@ struct Bone {
 	const char* getClass() const { return "Bone"; }
 };
 
+// 44 bytes (2C)
+struct InventorySlot {
+	int count;
+	int primaryItemID;
+	int secondaryItemID;
+	padding unk01[0x1c];
+	
+	const char* getClass() const { return "InventorySlot"; }
+	Item* getPrimaryItem() const;
+	Item* getSecondaryItem() const;
+};
+
 // 14288 bytes (37D0)
 struct Human {
 	int active;
@@ -356,32 +368,8 @@ struct Human {
 	padding unk22[0x220 - 0x218 - 4];
 	Bone bones[16];  // 220
 	padding unk23[0x32a8 - (0x220 + (sizeof(Bone) * 16))];
-	int rightHandOccupied;  // 32a8
-	int rightHandItemID;    // 32ac
-	padding unk24[0x32d0 - 0x32ac - 4];
-	int leftHandOccupied;  // 32d0
-	int leftHandItemID;    // 32d4
-	padding unk61[0x32f8 - 0x32d4 - 4];
-	int slot2ItemCount;		   // 32f8
-	int slot2ItemID1;	   	   // 32fc
-	int slot2ItemID2;	   	   // 3300
-	padding unk61_2[0x3320 - 0x3300 - 4];	
-	int slot3ItemCount;	   	   // 3320
-	int slot3ItemID1;	   	   // 3324
-	int slot3ItemID2;	   	   // 3328
-	padding unk61_3[0x3348 - 0x3328 - 4];	
-	int slot4ItemCount;	   	   // 3348
-	int slot4ItemID1;	   	   // 334c
-	int slot4ItemID2;	   	   // 3350
-	padding unk61_4[0x3370 - 0x3350 - 4];	
-	int slot5ItemCount;	       // 3370
-	int slot5ItemID1;	   	   // 3374
-	int slot5ItemID2;	   	   // 3378
-	padding unk61_9[0x3398 - 0x3378 - 4];
-	int slot6ItemCount;	       // 3398
-	int slot6ItemID1;	   	   // 339c
-	int slot6ItemID2;	   	   // 33a0
-	padding unk25[0x33f8 - 0x33a0 - 4];
+	InventorySlot inventorySlots[6]; // 32a8
+	padding unk25[0x33f8 - (0x32a8 + (sizeof(InventorySlot) * 6))];
 	int isGrabbingRight;       // 33f8
 	int grabbingRightHumanID;  // 33fc
 	int unk26_1;               // 3400
@@ -452,18 +440,7 @@ struct Human {
 	void setVehicle(Vehicle* vcl);
 	Bone* getBone(unsigned int idx);
 	RigidBody* getRigidBody(unsigned int idx) const;
-	Item* getRightHandItem() const;
-	Item* getLeftHandItem() const;
-	Item* getSlot2Item1() const;
-	Item* getSlot2Item2() const;
-	Item* getSlot3Item1() const;
-	Item* getSlot3Item2() const;
-	Item* getSlot4Item1() const;
-	Item* getSlot4Item2() const;
-	Item* getSlot5Item1() const;
-	Item* getSlot5Item2() const;
-	Item* getSlot6Item1() const;
-	Item* getSlot6Item2() const;
+	InventorySlot* getInventorySlot(unsigned int idx);
 	Human* getRightHandGrab() const;
 	void setRightHandGrab(Human* man);
 	Human* getLeftHandGrab() const;

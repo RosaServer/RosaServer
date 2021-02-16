@@ -417,23 +417,6 @@ void luaInit(bool redo) {
 		    sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
 		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
-		meta["rightHandItem"] = sol::property(&Human::getRightHandItem);
-		meta["leftHandItem"] = sol::property(&Human::getLeftHandItem);
-		meta["slot2ItemCount"] = &Human::slot2ItemCount;
-		meta["slot2Item1"] = sol::property(&Human::getSlot2Item1);
-		meta["slot2Item2"] = sol::property(&Human::getSlot2Item2);
-		meta["slot3ItemCount"] = &Human::slot3ItemCount;
-		meta["slot3Item1"] = sol::property(&Human::getSlot3Item1);
-		meta["slot3Item2"] = sol::property(&Human::getSlot3Item2);
-		meta["slot4ItemCount"] = &Human::slot4ItemCount;
-		meta["slot4Item1"] = sol::property(&Human::getSlot4Item1);
-		meta["slot4Item2"] = sol::property(&Human::getSlot4Item2);
-		meta["slot5ItemCount"] = &Human::slot5ItemCount;
-		meta["slot5Item1"] = sol::property(&Human::getSlot5Item1);
-		meta["slot5Item2"] = sol::property(&Human::getSlot5Item2);
-		meta["slot6ItemCount"] = &Human::slot6ItemCount;
-		meta["slot6Item1"] = sol::property(&Human::getSlot6Item1);
-		meta["slot6Item2"] = sol::property(&Human::getSlot6Item2);
 		meta["rightHandGrab"] =
 		    sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
 		meta["leftHandGrab"] =
@@ -447,6 +430,7 @@ void luaInit(bool redo) {
 		meta["arm"] = &Human::arm;
 		meta["getBone"] = &Human::getBone;
 		meta["getRigidBody"] = &Human::getRigidBody;
+		meta["getInventorySlot"] = &Human::getInventorySlot;
 		meta["setVelocity"] = &Human::setVelocity;
 		meta["addVelocity"] = &Human::addVelocity;
 		meta["mountItem"] = &Human::mountItem;
@@ -457,7 +441,9 @@ void luaInit(bool redo) {
 		auto meta = lua->new_usertype<ItemType>("new", sol::no_constructor);
 		meta["price"] = &ItemType::price;
 		meta["mass"] = &ItemType::mass;
+		meta["messedUpAiming"] = &ItemType::messedUpAiming;
 		meta["fireRate"] = &ItemType::fireRate;
+		meta["magazineAmmo"] = &ItemType::magazineAmmo;
 		meta["bulletType"] = &ItemType::bulletType;
 		meta["bulletVelocity"] = &ItemType::bulletVelocity;
 		meta["bulletSpread"] = &ItemType::bulletSpread;
@@ -627,6 +613,16 @@ void luaInit(bool redo) {
 		meta["bondRotTo"] = &RigidBody::bondRotTo;
 		meta["bondToLevel"] = &RigidBody::bondToLevel;
 		meta["collideLevel"] = &RigidBody::collideLevel;
+	}
+
+	{
+		auto meta = lua->new_usertype<InventorySlot>("new", sol::no_constructor);
+		meta["count"] = &InventorySlot::count;
+
+		meta["class"] = sol::property(&InventorySlot::getClass);
+		
+		meta["primaryItem"] = sol::property(&InventorySlot::getPrimaryItem);
+		meta["secondaryItem"] = sol::property(&InventorySlot::getSecondaryItem);
 	}
 
 	{
@@ -997,7 +993,7 @@ void luaInit(bool redo) {
 		    &Lua::memory::getAddressOfBond, &Lua::memory::getAddressOfAction,
 		    &Lua::memory::getAddressOfMenuButton,
 		    &Lua::memory::getAddressOfStreetLane, &Lua::memory::getAddressOfStreet,
-		    &Lua::memory::getAddressOfStreetIntersection);
+		    &Lua::memory::getAddressOfStreetIntersection, &Lua::memory::getAddressOfInventorySlot);
 		memoryTable["readByte"] = Lua::memory::readByte;
 		memoryTable["readUByte"] = Lua::memory::readUByte;
 		memoryTable["readShort"] = Lua::memory::readShort;

@@ -811,6 +811,10 @@ uintptr_t memory::getAddressOfStreet(Street* address) {
 	return (uintptr_t)address;
 }
 
+uintptr_t memory::getAddressOfInventorySlot(InventorySlot* address) {
+	return (uintptr_t)address;
+}
+
 uintptr_t memory::getAddressOfStreetIntersection(StreetIntersection* address) {
 	return (uintptr_t)address;
 }
@@ -1221,64 +1225,10 @@ RigidBody* Human::getRigidBody(unsigned int idx) const {
 	return &Engine::bodies[bones[idx].bodyID];
 }
 
-Item* Human::getRightHandItem() const {
-	if (!rightHandOccupied) return nullptr;
-	return &Engine::items[rightHandItemID];
-}
+InventorySlot* Human::getInventorySlot(unsigned int idx) {
+	if (idx > 6) throw std::invalid_argument(errorOutOfRange);
 
-Item* Human::getLeftHandItem() const {
-	if (!leftHandOccupied) return nullptr;
-	return &Engine::items[leftHandItemID];
-}
-
-Item* Human::getSlot2Item1() const {
-	if (slot2ItemCount == 0) return nullptr;
-	return &Engine::items[slot2ItemID1];
-}
-
-Item* Human::getSlot2Item2() const {
-	if (slot2ItemCount != 2) return nullptr;
-	return &Engine::items[slot2ItemID2];
-}
-
-Item* Human::getSlot3Item1() const {
-	if (slot3ItemCount == 0) return nullptr;
-	return &Engine::items[slot3ItemID1];
-}
-
-Item* Human::getSlot3Item2() const {
-	if (slot3ItemCount != 2) return nullptr;
-	return &Engine::items[slot3ItemID2];
-}
-
-Item* Human::getSlot4Item1() const {
-	if (slot4ItemCount == 0) return nullptr;
-	return &Engine::items[slot4ItemID1];
-}
-
-Item* Human::getSlot4Item2() const {
-	if (slot4ItemCount != 2) return nullptr;
-	return &Engine::items[slot4ItemID2];
-}
-
-Item* Human::getSlot5Item1() const {
-	if (slot5ItemCount == 0) return nullptr;
-	return &Engine::items[slot5ItemID1];
-}
-
-Item* Human::getSlot5Item2() const {
-	if (slot5ItemCount != 2) return nullptr;
-	return &Engine::items[slot5ItemID2];
-}
-
-Item* Human::getSlot6Item1() const {
-	if (slot6ItemCount == 0) return nullptr;
-	return &Engine::items[slot6ItemID1];
-}
-
-Item* Human::getSlot6Item2() const {
-	if (slot6ItemCount != 2) return nullptr;
-	return &Engine::items[slot6ItemID2];
+	return &inventorySlots[idx];
 }
 
 Human* Human::getRightHandGrab() const {
@@ -1586,6 +1536,23 @@ void RigidBody::collideLevel(Vector* localPos, Vector* normal, float a, float b,
                              float c, float d) const {
 	Engine::addCollisionRigidBodyOnLevel(getIndex(), localPos, normal, a, b, c,
 	                                     d);
+}
+
+Item* InventorySlot::getPrimaryItem() const {
+	if (primaryItemID < 0) return nullptr;
+	if (count == 0) return nullptr;
+	return &Engine::items[primaryItemID];
+};
+
+Item* InventorySlot::getSecondaryItem() const {
+	if (primaryItemID < 0) return nullptr;
+	if (count != 2) return nullptr;
+	return &Engine::items[primaryItemID];
+};
+
+bool Human::mountItem(Item* childItem, unsigned int slot) const {
+	subhook::ScopedHookRemove remove(&Hooks::linkItemHook);
+	return Engine::linkItem(childItem->getIndex(), -1, getIndex(), slot);
 }
 
 std::string Bond::__tostring() const {
