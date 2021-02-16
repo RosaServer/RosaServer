@@ -1550,11 +1550,6 @@ Item* InventorySlot::getSecondaryItem() const {
 	return &Engine::items[primaryItemID];
 };
 
-bool Human::mountItem(Item* childItem, unsigned int slot) const {
-	subhook::ScopedHookRemove remove(&Hooks::linkItemHook);
-	return Engine::linkItem(childItem->getIndex(), -1, getIndex(), slot);
-}
-
 std::string Bond::__tostring() const {
 	char buf[16];
 	sprintf(buf, "Bond(%i)", getIndex());
