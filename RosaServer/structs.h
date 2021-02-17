@@ -284,7 +284,7 @@ struct Bone {
 	const char* getClass() const { return "Bone"; }
 };
 
-// 44 bytes (2C)
+// 40 bytes (28)
 struct InventorySlot {
 	int count;
 	int primaryItemID;
