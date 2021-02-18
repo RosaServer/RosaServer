@@ -417,8 +417,6 @@ void luaInit(bool redo) {
 		    sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
 		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
-		meta["rightHandItem"] = sol::property(&Human::getRightHandItem);
-		meta["leftHandItem"] = sol::property(&Human::getLeftHandItem);
 		meta["rightHandGrab"] =
 		    sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
 		meta["leftHandGrab"] =
@@ -432,6 +430,7 @@ void luaInit(bool redo) {
 		meta["arm"] = &Human::arm;
 		meta["getBone"] = &Human::getBone;
 		meta["getRigidBody"] = &Human::getRigidBody;
+		meta["getInventorySlot"] = &Human::getInventorySlot;
 		meta["setVelocity"] = &Human::setVelocity;
 		meta["addVelocity"] = &Human::addVelocity;
 		meta["mountItem"] = &Human::mountItem;
@@ -443,6 +442,7 @@ void luaInit(bool redo) {
 		meta["price"] = &ItemType::price;
 		meta["mass"] = &ItemType::mass;
 		meta["fireRate"] = &ItemType::fireRate;
+		meta["magazineAmmo"] = &ItemType::magazineAmmo;
 		meta["bulletType"] = &ItemType::bulletType;
 		meta["bulletVelocity"] = &ItemType::bulletVelocity;
 		meta["bulletSpread"] = &ItemType::bulletSpread;
@@ -612,6 +612,16 @@ void luaInit(bool redo) {
 		meta["bondRotTo"] = &RigidBody::bondRotTo;
 		meta["bondToLevel"] = &RigidBody::bondToLevel;
 		meta["collideLevel"] = &RigidBody::collideLevel;
+	}
+
+	{
+		auto meta = lua->new_usertype<InventorySlot>("new", sol::no_constructor);
+		meta["count"] = &InventorySlot::count;
+
+		meta["class"] = sol::property(&InventorySlot::getClass);
+
+		meta["primaryItem"] = sol::property(&InventorySlot::getPrimaryItem);
+		meta["secondaryItem"] = sol::property(&InventorySlot::getSecondaryItem);
 	}
 
 	{
@@ -982,7 +992,8 @@ void luaInit(bool redo) {
 		    &Lua::memory::getAddressOfBond, &Lua::memory::getAddressOfAction,
 		    &Lua::memory::getAddressOfMenuButton,
 		    &Lua::memory::getAddressOfStreetLane, &Lua::memory::getAddressOfStreet,
-		    &Lua::memory::getAddressOfStreetIntersection);
+		    &Lua::memory::getAddressOfStreetIntersection,
+		    &Lua::memory::getAddressOfInventorySlot);
 		memoryTable["readByte"] = Lua::memory::readByte;
 		memoryTable["readUByte"] = Lua::memory::readUByte;
 		memoryTable["readShort"] = Lua::memory::readShort;

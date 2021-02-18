@@ -284,6 +284,18 @@ struct Bone {
 	const char* getClass() const { return "Bone"; }
 };
 
+// 40 bytes (28)
+struct InventorySlot {
+	int count;
+	int primaryItemID;
+	int secondaryItemID;
+	padding unk01[0x1c];
+
+	const char* getClass() const { return "InventorySlot"; }
+	Item* getPrimaryItem() const;
+	Item* getSecondaryItem() const;
+};
+
 // 14288 bytes (37D0)
 struct Human {
 	int active;
@@ -356,12 +368,8 @@ struct Human {
 	padding unk22[0x220 - 0x218 - 4];
 	Bone bones[16];  // 220
 	padding unk23[0x32a8 - (0x220 + (sizeof(Bone) * 16))];
-	int rightHandOccupied;  // 32a8
-	int rightHandItemID;    // 32ac
-	padding unk24[0x32d0 - 0x32ac - 4];
-	int leftHandOccupied;  // 32d0
-	int leftHandItemID;    // 32d4
-	padding unk25[0x33f8 - 0x32d4 - 4];
+	InventorySlot inventorySlots[6];  // 32a8
+	padding unk25[0x33f8 - (0x32a8 + (sizeof(InventorySlot) * 6))];
 	int isGrabbingRight;       // 33f8
 	int grabbingRightHumanID;  // 33fc
 	int unk26_1;               // 3400
@@ -432,8 +440,7 @@ struct Human {
 	void setVehicle(Vehicle* vcl);
 	Bone* getBone(unsigned int idx);
 	RigidBody* getRigidBody(unsigned int idx) const;
-	Item* getRightHandItem() const;
-	Item* getLeftHandItem() const;
+	InventorySlot* getInventorySlot(unsigned int idx);
 	Human* getRightHandGrab() const;
 	void setRightHandGrab(Human* man);
 	Human* getLeftHandGrab() const;
@@ -461,7 +468,7 @@ struct ItemType {
 	//?
 	int bulletType;        // 18
 	int unk0;              // 1c
-	int unk1;              // 20
+	int magazineAmmo;      // 20
 	float bulletVelocity;  // 24
 	float bulletSpread;    // 28
 	char name[64];         // 2c
