@@ -1539,15 +1539,19 @@ void RigidBody::collideLevel(Vector* localPos, Vector* normal, float a, float b,
 }
 
 Item* InventorySlot::getPrimaryItem() const {
-	if (primaryItemID < 0) return nullptr;
-	if (count == 0) return nullptr;
-	return &Engine::items[primaryItemID];
+	if (count < 1) {
+		return nullptr;
+	}
+
+	return primaryItemID == -1 ? nullptr : &Engine::items[primaryItemID];
 };
 
 Item* InventorySlot::getSecondaryItem() const {
-	if (primaryItemID < 0) return nullptr;
-	if (count != 2) return nullptr;
-	return &Engine::items[primaryItemID];
+	if (count < 2) {
+		return nullptr;
+	}
+
+	return secondaryItemID == -1 ? nullptr : &Engine::items[secondaryItemID];
 };
 
 std::string Bond::__tostring() const {
