@@ -441,7 +441,6 @@ void luaInit(bool redo) {
 		auto meta = lua->new_usertype<ItemType>("new", sol::no_constructor);
 		meta["price"] = &ItemType::price;
 		meta["mass"] = &ItemType::mass;
-		meta["messedUpAiming"] = &ItemType::messedUpAiming;
 		meta["fireRate"] = &ItemType::fireRate;
 		meta["magazineAmmo"] = &ItemType::magazineAmmo;
 		meta["bulletType"] = &ItemType::bulletType;
