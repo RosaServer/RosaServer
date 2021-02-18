@@ -620,7 +620,7 @@ void luaInit(bool redo) {
 		meta["count"] = &InventorySlot::count;
 
 		meta["class"] = sol::property(&InventorySlot::getClass);
-		
+
 		meta["primaryItem"] = sol::property(&InventorySlot::getPrimaryItem);
 		meta["secondaryItem"] = sol::property(&InventorySlot::getSecondaryItem);
 	}
@@ -993,7 +993,8 @@ void luaInit(bool redo) {
 		    &Lua::memory::getAddressOfBond, &Lua::memory::getAddressOfAction,
 		    &Lua::memory::getAddressOfMenuButton,
 		    &Lua::memory::getAddressOfStreetLane, &Lua::memory::getAddressOfStreet,
-		    &Lua::memory::getAddressOfStreetIntersection, &Lua::memory::getAddressOfInventorySlot);
+		    &Lua::memory::getAddressOfStreetIntersection,
+		    &Lua::memory::getAddressOfInventorySlot);
 		memoryTable["readByte"] = Lua::memory::readByte;
 		memoryTable["readUByte"] = Lua::memory::readUByte;
 		memoryTable["readShort"] = Lua::memory::readShort;

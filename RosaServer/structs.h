@@ -290,7 +290,7 @@ struct InventorySlot {
 	int primaryItemID;
 	int secondaryItemID;
 	padding unk01[0x1c];
-	
+
 	const char* getClass() const { return "InventorySlot"; }
 	Item* getPrimaryItem() const;
 	Item* getSecondaryItem() const;
@@ -368,7 +368,7 @@ struct Human {
 	padding unk22[0x220 - 0x218 - 4];
 	Bone bones[16];  // 220
 	padding unk23[0x32a8 - (0x220 + (sizeof(Bone) * 16))];
-	InventorySlot inventorySlots[6]; // 32a8
+	InventorySlot inventorySlots[6];  // 32a8
 	padding unk25[0x33f8 - (0x32a8 + (sizeof(InventorySlot) * 6))];
 	int isGrabbingRight;       // 33f8
 	int grabbingRightHumanID;  // 33fc
@@ -468,7 +468,7 @@ struct ItemType {
 	//?
 	int bulletType;        // 18
 	int unk0;              // 1c
-	int magazineAmmo;		// 20
+	int magazineAmmo;      // 20
 	float bulletVelocity;  // 24
 	float bulletSpread;    // 28
 	char name[64];         // 2c
