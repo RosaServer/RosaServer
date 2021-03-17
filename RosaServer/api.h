@@ -27,6 +27,7 @@ extern bool shouldReset;
 extern sol::state* lua;
 extern std::string hookMode;
 
+extern sol::table* accountDataTables[maxNumberOfAccounts];
 extern sol::table* playerDataTables[maxNumberOfPlayers];
 extern sol::table* humanDataTables[maxNumberOfHumans];
 extern sol::table* itemDataTables[maxNumberOfItems];
@@ -238,6 +239,7 @@ uintptr_t getAddressOfMenuButton(MenuButton* address);
 uintptr_t getAddressOfStreetLane(StreetLane* address);
 uintptr_t getAddressOfStreet(Street* address);
 uintptr_t getAddressOfStreetIntersection(StreetIntersection* address);
+uintptr_t getAddressOfInventorySlot(InventorySlot* address);
 int8_t readByte(uintptr_t address);
 uint8_t readUByte(uintptr_t address);
 int16_t readShort(uintptr_t address);

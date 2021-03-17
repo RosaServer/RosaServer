@@ -10,6 +10,7 @@ bool shouldReset = false;
 sol::state* lua;
 std::string hookMode;
 
+sol::table* accountDataTables[maxNumberOfAccounts];
 sol::table* playerDataTables[maxNumberOfPlayers];
 sol::table* humanDataTables[maxNumberOfHumans];
 sol::table* itemDataTables[maxNumberOfItems];
@@ -810,6 +811,10 @@ uintptr_t memory::getAddressOfStreet(Street* address) {
 	return (uintptr_t)address;
 }
 
+uintptr_t memory::getAddressOfInventorySlot(InventorySlot* address) {
+	return (uintptr_t)address;
+}
+
 uintptr_t memory::getAddressOfStreetIntersection(StreetIntersection* address) {
 	return (uintptr_t)address;
 }
@@ -890,6 +895,16 @@ std::string Account::__tostring() const {
 
 int Account::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)Engine::accounts) / sizeof(*this);
+}
+
+sol::table Account::getDataTable() const {
+	int index = getIndex();
+
+	if (!accountDataTables[index]) {
+		accountDataTables[index] = new sol::table(lua->lua_state(), sol::create);
+	}
+
+	return *accountDataTables[index];
 }
 
 std::string Vector::__tostring() const {
@@ -1210,14 +1225,10 @@ RigidBody* Human::getRigidBody(unsigned int idx) const {
 	return &Engine::bodies[bones[idx].bodyID];
 }
 
-Item* Human::getRightHandItem() const {
-	if (!rightHandOccupied) return nullptr;
-	return &Engine::items[rightHandItemID];
-}
+InventorySlot* Human::getInventorySlot(unsigned int idx) {
+	if (idx > 6) throw std::invalid_argument(errorOutOfRange);
 
-Item* Human::getLeftHandItem() const {
-	if (!leftHandOccupied) return nullptr;
-	return &Engine::items[leftHandItemID];
+	return &inventorySlots[idx];
 }
 
 Human* Human::getRightHandGrab() const {
@@ -1526,6 +1537,18 @@ void RigidBody::collideLevel(Vector* localPos, Vector* normal, float a, float b,
 	Engine::addCollisionRigidBodyOnLevel(getIndex(), localPos, normal, a, b, c,
 	                                     d);
 }
+
+Item* InventorySlot::getPrimaryItem() const {
+	if (primaryItemID < 0) return nullptr;
+	if (count == 0) return nullptr;
+	return &Engine::items[primaryItemID];
+};
+
+Item* InventorySlot::getSecondaryItem() const {
+	if (primaryItemID < 0) return nullptr;
+	if (count != 2) return nullptr;
+	return &Engine::items[primaryItemID];
+};
 
 std::string Bond::__tostring() const {
 	char buf[16];
