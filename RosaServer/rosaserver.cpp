@@ -461,6 +461,7 @@ void luaInit(bool redo) {
 		meta["index"] = sol::property(&ItemType::getIndex);
 		meta["name"] = sol::property(&ItemType::getName, &ItemType::setName);
 		meta["isGun"] = sol::property(&ItemType::getIsGun, &ItemType::setIsGun);
+		meta["canPutInBriefcase"] = sol::property(&ItemType::getCanPutInBriefcase, &ItemType::setCanPutInBriefcase);
 	}
 
 	{
