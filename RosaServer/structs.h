@@ -80,6 +80,7 @@ struct Account {
 	const char* getClass() const { return "Account"; }
 	std::string __tostring() const;
 	int getIndex() const;
+	sol::table getDataTable() const;
 	char* getName() { return name; }
 	std::string getSteamID() { return std::to_string(steamID); }
 };
@@ -283,6 +284,18 @@ struct Bone {
 	const char* getClass() const { return "Bone"; }
 };
 
+// 40 bytes (28)
+struct InventorySlot {
+	int count;
+	int primaryItemID;
+	int secondaryItemID;
+	padding unk01[0x1c];
+
+	const char* getClass() const { return "InventorySlot"; }
+	Item* getPrimaryItem() const;
+	Item* getSecondaryItem() const;
+};
+
 // 14288 bytes (37D0)
 struct Human {
 	int active;
@@ -355,12 +368,8 @@ struct Human {
 	padding unk22[0x220 - 0x218 - 4];
 	Bone bones[16];  // 220
 	padding unk23[0x32a8 - (0x220 + (sizeof(Bone) * 16))];
-	int rightHandOccupied;  // 32a8
-	int rightHandItemID;    // 32ac
-	padding unk24[0x32d0 - 0x32ac - 4];
-	int leftHandOccupied;  // 32d0
-	int leftHandItemID;    // 32d4
-	padding unk25[0x33f8 - 0x32d4 - 4];
+	InventorySlot inventorySlots[6];  // 32a8
+	padding unk25[0x33f8 - (0x32a8 + (sizeof(InventorySlot) * 6))];
 	int isGrabbingRight;       // 33f8
 	int grabbingRightHumanID;  // 33fc
 	int unk26_1;               // 3400
@@ -386,8 +395,15 @@ struct Human {
 	int unk30;       // 3558
 	int rightLegHP;  // 355c
 	padding unk30_1[0x35b4 - 0x355c - 4];
-	int progressBar;  // 35b4
-	padding unk31[0x3758 - 0x35b4 - 4];
+	int progressBar;                        // 35b4
+	int inventoryAnimationFlags;            // 35b8
+	float inventoryAnimationProgress;       // 35bc
+	int inventoryAnimationDuration;         // 35c0
+	int inventoryAnimationHand;             // 35c4
+	int inventoryAnimationSlot;             // 35c8
+	int inventoryAnimationCounterFinished;  // 35cc
+	int inventoryAnimationCounter;          // 35d0
+	padding unk31[0x3758 - 0x35d0 - 4];
 	int gender;             // 3758
 	int head;               // 375c
 	int skinColor;          // 3760
@@ -424,8 +440,7 @@ struct Human {
 	void setVehicle(Vehicle* vcl);
 	Bone* getBone(unsigned int idx);
 	RigidBody* getRigidBody(unsigned int idx) const;
-	Item* getRightHandItem() const;
-	Item* getLeftHandItem() const;
+	InventorySlot* getInventorySlot(unsigned int idx);
 	Human* getRightHandGrab() const;
 	void setRightHandGrab(Human* man);
 	Human* getLeftHandGrab() const;
@@ -453,7 +468,7 @@ struct ItemType {
 	//?
 	int bulletType;        // 18
 	int unk0;              // 1c
-	int unk1;              // 20
+	int magazineAmmo;      // 20
 	float bulletVelocity;  // 24
 	float bulletSpread;    // 28
 	char name[64];         // 2c
@@ -521,8 +536,10 @@ struct Item {
 	int unk7_2;              // 164
 	int displayPhoneNumber;  // 168
 	int enteredPhoneNumber;  // 16C
-	padding unk7[0x280 - 0x16C - 4];
-	int vehicleID;  // 280
+	padding unk7[0x278 - 0x16C - 4];
+	int phoneTexture;  // 278
+	int unk0;          // 27C
+	int vehicleID;     // 280
 	padding unk8[0x368 - 0x280 - 4];
 	unsigned int computerCurrentLine;  // 368
 	unsigned int computerTopLine;      // 36c
