@@ -485,6 +485,8 @@ struct ItemType {
 	}
 	bool getIsGun() const { return isGun; }
 	void setIsGun(bool b) { isGun = b; }
+	bool getCanPutInBriefcase() const { return canPutInBriefcase; }
+	void setCanPutInBriefcase(bool b) { canPutInBriefcase = b; }
 };
 
 // 6784 bytes (1A80)

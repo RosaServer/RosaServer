@@ -438,7 +438,6 @@ void luaInit(bool redo) {
 		meta["secondaryGripStiffness"] = &ItemType::secondaryGripStiffness;
 		meta["secondaryGripRotation"] = &ItemType::secondaryGripRotation;
 		meta["boundsCenter"] = &ItemType::boundsCenter;
-		meta["canPutInBriefcase"] = &ItemType::canPutInBriefcase;
 		meta["gunHoldingPos"] = &ItemType::gunHoldingPos;
 
 		meta["class"] = sol::property(&ItemType::getClass);
@@ -446,6 +445,7 @@ void luaInit(bool redo) {
 		meta["index"] = sol::property(&ItemType::getIndex);
 		meta["name"] = sol::property(&ItemType::getName, &ItemType::setName);
 		meta["isGun"] = sol::property(&ItemType::getIsGun, &ItemType::setIsGun);
+		meta["canPutInBriefcase"] = sol::property(&ItemType::getCanPutInBriefcase, &ItemType::setCanPutInBriefcase);
 	}
 
 	{
