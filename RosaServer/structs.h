@@ -470,9 +470,11 @@ struct ItemType {
 	float secondaryGripRotation;  // c8
 	padding unk6[0x100 - 0xc8 - 4];
 	Vector boundsCenter;  // 100
-	padding unk7[0x12f4 - 0x100 - 12];
+	padding unk7[0x0158 - 0x100 - 12];
+	int canPutInBriefcase; // 0158
+	padding unk8[0x12f4 - 0x0158 - 4];
 	Vector gunHoldingPos;  // 12f4
-	padding unk8[4912 - 0x12f4 - 12];
+	padding unk9[4912 - 0x12f4 - 12];
 
 	const char* getClass() const { return "ItemType"; }
 	std::string __tostring() const;
