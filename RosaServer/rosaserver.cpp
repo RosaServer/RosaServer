@@ -461,7 +461,8 @@ void luaInit(bool redo) {
 		meta["index"] = sol::property(&ItemType::getIndex);
 		meta["name"] = sol::property(&ItemType::getName, &ItemType::setName);
 		meta["isGun"] = sol::property(&ItemType::getIsGun, &ItemType::setIsGun);
-		meta["canPutInBriefcase"] = sol::property(&ItemType::getCanPutInBriefcase, &ItemType::setCanPutInBriefcase);
+		meta["canPutInBriefcase"] = sol::property(&ItemType::getCanPutInBriefcase,
+		                                          &ItemType::setCanPutInBriefcase);
 	}
 
 	{
@@ -800,6 +801,12 @@ void luaInit(bool redo) {
 		physicsTable["lineIntersectLevel"] = Lua::physics::lineIntersectLevel;
 		physicsTable["lineIntersectHuman"] = Lua::physics::lineIntersectHuman;
 		physicsTable["lineIntersectVehicle"] = Lua::physics::lineIntersectVehicle;
+		physicsTable["lineIntersectLevelQuick"] =
+		    Lua::physics::lineIntersectLevelQuick;
+		physicsTable["lineIntersectHumanQuick"] =
+		    Lua::physics::lineIntersectHumanQuick;
+		physicsTable["lineIntersectVehicleQuick"] =
+		    Lua::physics::lineIntersectVehicleQuick;
 		physicsTable["lineIntersectTriangle"] = Lua::physics::lineIntersectTriangle;
 		physicsTable["garbageCollectBullets"] = Lua::physics::garbageCollectBullets;
 		physicsTable["createBlock"] = Lua::physics::createBlock;

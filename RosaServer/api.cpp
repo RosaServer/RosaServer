@@ -267,6 +267,40 @@ sol::table physics::lineIntersectVehicle(Vehicle* vcl, Vector* posA,
 	return table;
 }
 
+sol::object physics::lineIntersectLevelQuick(Vector* posA, Vector* posB,
+                                             sol::this_state s) {
+	sol::state_view lua(s);
+
+	int res = Engine::lineIntersectLevel(posA, posB);
+	if (res) {
+		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
+	}
+	return sol::make_object(lua, sol::lua_nil);
+}
+
+sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
+                                             Vector* posB, sol::this_state s) {
+	sol::state_view lua(s);
+
+	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB);
+	if (res) {
+		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
+	}
+	return sol::make_object(lua, sol::lua_nil);
+}
+
+sol::object physics::lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA,
+                                               Vector* posB,
+                                               sol::this_state s) {
+	sol::state_view lua(s);
+
+	int res = Engine::lineIntersectVehicle(vcl->getIndex(), posA, posB);
+	if (res) {
+		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
+	}
+	return sol::make_object(lua, sol::lua_nil);
+}
+
 sol::object physics::lineIntersectTriangle(Vector* outPos, Vector* normal,
                                            Vector* posA, Vector* posB,
                                            Vector* triA, Vector* triB,
