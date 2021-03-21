@@ -11,6 +11,13 @@ do
 	assert(ray.pos:dist(Vector(0, groundLevel, 0)) == 0)
 	assert(ray.normal:dist(Vector(0, 1, 0)) == 0)
 	assert(ray.fraction == 0.5)
+
+	local fraction = assert(physics.lineIntersectLevelQuick(
+		Vector(0, airLevel, 0),
+		Vector(0, 0, 0)
+	))
+
+	assert(fraction == 0.5)
 end
 
 nextTick(function ()
@@ -37,6 +44,14 @@ nextTick(function ()
 			assert(ray.pos:dist(Vector(0, airLevel, 0)) < 1)
 			assert(ray.fraction <= 0.5)
 			assert(ray.bone == 5)
+
+			local fraction = assert(physics.lineIntersectHumanQuick(
+				man,
+				Vector(-10, airLevel, 0),
+				Vector(10, airLevel, 0)
+			))
+
+			assert(fraction <= 0.5)
 
 			man:remove()
 			bot:remove()
@@ -66,6 +81,14 @@ nextTick(function ()
 			assert(ray.pos.x == 0)
 			assert(ray.pos.z == 0)
 			assert(ray.normal:dist(Vector(0, 1, 0)) < 0.01)
+
+			local fraction = assert(physics.lineIntersectVehicleQuick(
+				vehicle,
+				Vector(0, airLevel + 10, 0),
+				Vector(0, airLevel - 10, 0)
+			))
+
+			assert(fraction <= 0.5)
 
 			vehicle:remove()
 		end)
