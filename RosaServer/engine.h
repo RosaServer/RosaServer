@@ -270,7 +270,8 @@ extern createEventBulletHitFunc createEventBulletHit;
 typedef int (*lineIntersectLevelFunc)(Vector* posA, Vector* posB);
 extern lineIntersectLevelFunc lineIntersectLevel;
 
-typedef int (*lineIntersectHumanFunc)(int humanID, Vector* posA, Vector* posB);
+typedef int (*lineIntersectHumanFunc)(int humanID, Vector* posA, Vector* posB,
+                                      float padding);
 extern lineIntersectHumanFunc lineIntersectHuman;
 
 typedef int (*lineIntersectVehicleFunc)(int vehicleID, Vector* posA,
