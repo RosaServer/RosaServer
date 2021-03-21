@@ -599,7 +599,7 @@ void luaInit(bool redo) {
 		meta["pos"] = &RigidBody::pos;
 		meta["vel"] = &RigidBody::vel;
 		meta["rot"] = &RigidBody::rot;
-		meta["rot2"] = &RigidBody::rot2;
+		meta["rotVel"] = &RigidBody::rotVel;
 
 		meta["class"] = sol::property(&RigidBody::getClass);
 		meta["__tostring"] = &RigidBody::__tostring;
@@ -807,6 +807,7 @@ void luaInit(bool redo) {
 		    Lua::physics::lineIntersectHumanQuick;
 		physicsTable["lineIntersectVehicleQuick"] =
 		    Lua::physics::lineIntersectVehicleQuick;
+		physicsTable["lineIntersectAnyQuick"] = Lua::physics::lineIntersectAnyQuick;
 		physicsTable["lineIntersectTriangle"] = Lua::physics::lineIntersectTriangle;
 		physicsTable["garbageCollectBullets"] = Lua::physics::garbageCollectBullets;
 		physicsTable["createBlock"] = Lua::physics::createBlock;
