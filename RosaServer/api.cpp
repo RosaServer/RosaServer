@@ -239,7 +239,7 @@ sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
 sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
 	subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
-	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB);
+	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, 0.f);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
@@ -283,7 +283,8 @@ sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
                                              Vector* posB, sol::this_state s) {
 	sol::state_view lua(s);
 
-	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB);
+	subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
+	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, 0.f);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
@@ -316,13 +317,16 @@ sol::object physics::lineIntersectAnyQuick(Vector* posA, Vector* posB,
 		nearestFraction = Engine::lineIntersectResult->fraction;
 	}
 
-	for (int i = 0; i < maxNumberOfHumans; i++) {
-		if (i != ignoreHumanId && Engine::humans[i].active &&
-		    Engine::lineIntersectHuman(i, posA, posB)) {
-			float fraction = Engine::lineIntersectResult->fraction;
-			if (fraction < nearestFraction) {
-				nearestFraction = fraction;
-				nearestObject = i;
+	{
+		subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
+		for (int i = 0; i < maxNumberOfHumans; i++) {
+			if (i != ignoreHumanId && Engine::humans[i].active &&
+			    Engine::lineIntersectHuman(i, posA, posB, 0.f)) {
+				float fraction = Engine::lineIntersectResult->fraction;
+				if (fraction < nearestFraction) {
+					nearestFraction = fraction;
+					nearestObject = i;
+				}
 			}
 		}
 	}

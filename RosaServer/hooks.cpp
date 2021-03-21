@@ -1486,12 +1486,12 @@ void createEventBulletHit(int unk, int hitType, Vector* pos, Vector* normal) {
 	}
 }
 
-int lineIntersectHuman(int humanID, Vector* posA, Vector* posB) {
+int lineIntersectHuman(int humanID, Vector* posA, Vector* posB, float padding) {
 	if (enabledKeys[EnableKeys::LineIntersectHuman]) {
 		int didHit;
 		{
 			subhook::ScopedHookRemove remove(&lineIntersectHumanHook);
-			didHit = Engine::lineIntersectHuman(humanID, posA, posB);
+			didHit = Engine::lineIntersectHuman(humanID, posA, posB, padding);
 		}
 
 		if (!didHit) {
@@ -1509,7 +1509,7 @@ int lineIntersectHuman(int humanID, Vector* posA, Vector* posB) {
 		return !noParent;
 	} else {
 		subhook::ScopedHookRemove remove(&lineIntersectHumanHook);
-		return Engine::lineIntersectHuman(humanID, posA, posB);
+		return Engine::lineIntersectHuman(humanID, posA, posB, padding);
 	}
 }
 };  // namespace Hooks

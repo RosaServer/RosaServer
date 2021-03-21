@@ -186,7 +186,7 @@ extern subhook::Hook createEventBulletHitHook;
 void createEventBulletHit(int unk, int hitType, Vector* pos, Vector* normal);
 
 extern subhook::Hook lineIntersectHumanHook;
-int lineIntersectHuman(int humanID, Vector* posA, Vector* posB);
+int lineIntersectHuman(int humanID, Vector* posA, Vector* posB, float padding);
 
 struct Float {
 	float value;
