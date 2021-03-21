@@ -694,16 +694,16 @@ struct RigidBody {
 	2 = wheel
 	3 = item
 	*/
-	int type;         // 04
-	int settled;      // 08
-	int unk0;         // 0c
-	int unk01;        // 10
-	float mass;       // 14
-	Vector pos;       // 18
-	Vector vel;       // 24
-	Vector startVel;  //? 30
-	RotMatrix rot;    // 3c
-	RotMatrix rot2;   // 60
+	int type;          // 04
+	int settled;       // 08
+	int unk0;          // 0c
+	int unk01;         // 10
+	float mass;        // 14
+	Vector pos;        // 18
+	Vector vel;        // 24
+	Vector startVel;   //? 30
+	RotMatrix rot;     // 3c
+	RotMatrix rotVel;  // 60
 	padding unk3[176 - 132];
 
 	const char* getClass() const { return "RigidBody"; }

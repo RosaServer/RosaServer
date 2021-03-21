@@ -599,7 +599,7 @@ void luaInit(bool redo) {
 		meta["pos"] = &RigidBody::pos;
 		meta["vel"] = &RigidBody::vel;
 		meta["rot"] = &RigidBody::rot;
-		meta["rot2"] = &RigidBody::rot2;
+		meta["rotVel"] = &RigidBody::rotVel;
 
 		meta["class"] = sol::property(&RigidBody::getClass);
 		meta["__tostring"] = &RigidBody::__tostring;
