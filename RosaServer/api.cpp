@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <chrono>
 #include <filesystem>
+#include <limits>
 #include "console.h"
 
 bool initialized = false;
@@ -298,6 +299,53 @@ sol::object physics::lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA,
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
+	return sol::make_object(lua, sol::lua_nil);
+}
+
+sol::object physics::lineIntersectAnyQuick(Vector* posA, Vector* posB,
+                                           Human* ignoreHuman,
+                                           sol::this_state s) {
+	sol::state_view lua(s);
+
+	float nearestFraction = std::numeric_limits<float>::infinity();
+	int nearestObject = -1;
+	bool nearestIsVehicle = false;
+	int ignoreHumanId = ignoreHuman ? ignoreHuman->getIndex() : -1;
+
+	if (Engine::lineIntersectLevel(posA, posB)) {
+		nearestFraction = Engine::lineIntersectResult->fraction;
+	}
+
+	for (int i = 0; i < maxNumberOfHumans; i++) {
+		if (i != ignoreHumanId && Engine::humans[i].active &&
+		    Engine::lineIntersectHuman(i, posA, posB)) {
+			float fraction = Engine::lineIntersectResult->fraction;
+			if (fraction < nearestFraction) {
+				nearestFraction = fraction;
+				nearestObject = i;
+			}
+		}
+	}
+
+	for (int i = 0; i < maxNumberOfVehicles; i++) {
+		if (Engine::vehicles[i].active &&
+		    Engine::lineIntersectVehicle(i, posA, posB)) {
+			float fraction = Engine::lineIntersectResult->fraction;
+			if (fraction < nearestFraction) {
+				nearestFraction = fraction;
+				nearestObject = i;
+				nearestIsVehicle = true;
+			}
+		}
+	}
+
+	if (nearestObject != -1) {
+		if (nearestIsVehicle) {
+			return sol::make_object(lua, &Engine::vehicles[nearestObject]);
+		}
+		return sol::make_object(lua, &Engine::humans[nearestObject]);
+	}
+
 	return sol::make_object(lua, sol::lua_nil);
 }
 

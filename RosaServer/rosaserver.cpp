@@ -807,6 +807,7 @@ void luaInit(bool redo) {
 		    Lua::physics::lineIntersectHumanQuick;
 		physicsTable["lineIntersectVehicleQuick"] =
 		    Lua::physics::lineIntersectVehicleQuick;
+		physicsTable["lineIntersectAnyQuick"] = Lua::physics::lineIntersectAnyQuick;
 		physicsTable["lineIntersectTriangle"] = Lua::physics::lineIntersectTriangle;
 		physicsTable["garbageCollectBullets"] = Lua::physics::garbageCollectBullets;
 		physicsTable["createBlock"] = Lua::physics::createBlock;
