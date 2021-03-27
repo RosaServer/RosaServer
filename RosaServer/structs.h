@@ -300,7 +300,7 @@ struct InventorySlot {
 	Item* getSecondaryItem() const;
 };
 
-// TODO: Human
+// TODO: Human (6FF8)
 // 14288 bytes (37D0)
 struct Human {
 	int active;
@@ -510,7 +510,7 @@ struct ItemType {
 	void setCanPutInBriefcase(bool b) { canPutInBriefcase = b; }
 };
 
-// TODO: Item
+// TODO: Item (1A80)
 // 6784 bytes (1A80)
 struct Item {
 	int active;
@@ -618,7 +618,7 @@ struct VehicleType {
 	}
 };
 
-// TODO: Vehicle
+// TODO: Vehicle (5168)
 // 20572 bytes (505C)
 struct Vehicle {
 	int active;
@@ -695,7 +695,7 @@ struct Bullet {
 	Player* getPlayer() const;
 };
 
-// TODO: RigidBody
+// TODO: RigidBody (BC)
 // 176 bytes (B0)
 struct RigidBody {
 	int active;
