@@ -1328,9 +1328,8 @@ static getPathsFunc getPaths;
 // recreated since installing a hook before main can't be reversed for some
 // reason.
 static inline void getPathsNormally() {
-	// TODO: Update offsets
-	char* pathA = (char*)(Lua::memory::baseAddress + 0x59DF0300);  //
-	char* pathB = (char*)(Lua::memory::baseAddress + 0x59DF0500);  //
+	char* pathA = (char*)(Lua::memory::baseAddress + 0x58793C40);
+	char* pathB = (char*)(Lua::memory::baseAddress + 0x58793E40);
 
 	getcwd(pathA, 0x200);
 	getcwd(pathB, 0x200);
