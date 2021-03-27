@@ -1078,6 +1078,7 @@ static inline void printBaseAddress(uintptr_t base) {
 }
 
 static inline void locateMemory(uintptr_t base) {
+	// TODO: Update offsets
 	Engine::version = (unsigned int*)(base + 0x2D5F08);           //
 	Engine::subVersion = (unsigned int*)(base + 0x2D5F04);        //
 	Engine::serverName = (char*)(base + 0x24EE4234);              //
@@ -1332,6 +1333,7 @@ static getPathsFunc getPaths;
 // recreated since installing a hook before main can't be reversed for some
 // reason.
 static inline void getPathsNormally() {
+	// TODO: Update offsets
 	char* pathA = (char*)(Lua::memory::baseAddress + 0x59DF0300);  //
 	char* pathB = (char*)(Lua::memory::baseAddress + 0x59DF0500);  //
 
@@ -1342,7 +1344,7 @@ static inline void getPathsNormally() {
 static void hookedGetPaths() {
 	getPathsNormally();
 
-	Console::log(RS_PREFIX "Assuming 38a\n");
+	Console::log(RS_PREFIX "Assuming 38b\n");
 
 	Console::log(RS_PREFIX "Locating memory...\n");
 	printBaseAddress(Lua::memory::baseAddress);

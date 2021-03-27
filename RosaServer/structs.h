@@ -39,6 +39,7 @@ struct RigidBody;
 struct Bond;
 struct StreetIntersection;
 
+// TODO: Connection
 // 188888 bytes (2E1D8)
 struct Connection {
 	unsigned int address;
@@ -60,6 +61,7 @@ struct Connection {
 	Human* getSpectatingHuman() const;
 };
 
+// TODO: Account
 // 112 bytes (70)
 struct Account {
 	int subRosaID;
@@ -122,6 +124,7 @@ struct RotMatrix {
 	Vector getRight() const;
 };
 
+// TODO: LineIntersectResult
 struct LineIntersectResult {
 	Vector pos;
 	Vector normal;    // 0c
@@ -179,6 +182,7 @@ struct MenuButton {
 	}
 };
 
+// TODO: Player
 // 14384 bytes (0x3830)
 struct Player {
 	int active;
@@ -296,6 +300,7 @@ struct InventorySlot {
 	Item* getSecondaryItem() const;
 };
 
+// TODO: Human
 // 14288 bytes (37D0)
 struct Human {
 	int active;
@@ -456,6 +461,7 @@ struct Human {
 	void applyDamage(int bone, int damage) const;
 };
 
+// TODO: ItemType
 // 4912 bytes (1330)
 struct ItemType {
 	int price;
@@ -504,6 +510,7 @@ struct ItemType {
 	void setCanPutInBriefcase(bool b) { canPutInBriefcase = b; }
 };
 
+// TODO: Item
 // 6784 bytes (1A80)
 struct Item {
 	int active;
@@ -590,6 +597,7 @@ struct Item {
 	                      unsigned char color);
 };
 
+// TODO: VehicleType
 // 99656 bytes (18548)
 struct VehicleType {
 	int usesExternalModel;
@@ -610,6 +618,7 @@ struct VehicleType {
 	}
 };
 
+// TODO: Vehicle
 // 20572 bytes (505C)
 struct Vehicle {
 	int active;
@@ -669,6 +678,7 @@ struct Vehicle {
 	void remove() const;
 };
 
+// TODO: Bullet
 // 92 bytes (5C)
 struct Bullet {
 	unsigned int type;
@@ -685,6 +695,7 @@ struct Bullet {
 	Player* getPlayer() const;
 };
 
+// TODO: RigidBody
 // 176 bytes (B0)
 struct RigidBody {
 	int active;
@@ -722,6 +733,7 @@ struct RigidBody {
 	                  float) const;
 };
 
+// TODO: Bond
 // 244 bytes (F4)
 struct Bond {
 	int active;
@@ -762,6 +774,7 @@ struct StreetLane {
 	const char* getClass() const { return "StreetLane"; }
 };
 
+// TODO: Street
 // 1580 bytes (62C)
 struct Street {
 	char name[32];
@@ -787,6 +800,7 @@ struct Street {
 	StreetLane* getLane(unsigned int idx);
 };
 
+// TODO: StreetIntersection
 // 136 bytes (88)
 struct StreetIntersection {
 	int unk0[3];
@@ -825,6 +839,7 @@ struct ShopCar {
 	void setType(VehicleType* vehicleType);
 };
 
+// TODO: Building
 // 56076 bytes (DB0C)
 struct Building {
 	int type;                // 00
