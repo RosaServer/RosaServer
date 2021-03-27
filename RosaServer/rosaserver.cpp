@@ -1082,31 +1082,31 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::version = (unsigned int*)(base + 0x2E4F08);
 	Engine::subVersion = (unsigned int*)(base + 0x2E4F04);
 	Engine::serverName = (char*)(base + 0x1FE952D4);
-	Engine::serverPort = (unsigned int*)(base + 0x1CC6CE80);  //
+	Engine::serverPort = (unsigned int*)(base + 0x17B5C720);
 	Engine::numEvents = (unsigned int*)(base + 0x443AFC64);
-	Engine::serverMaxBytesPerSecond = (int*)(base + 0x1CC6CE84);  //
-	Engine::adminPassword = (char*)(base + 0x1CC6D28C);           //
+	Engine::serverMaxBytesPerSecond = (int*)(base + 0x17B5C724);
+	Engine::adminPassword = (char*)(base + 0x17B5CB2C);
 	Engine::isPassworded = (int*)(base + 0x1FE956F0);
 	Engine::password = (char*)(base + 0x17B5CD2C);
 	Engine::maxPlayers = (int*)(base + 0x1FE956F4);
 
-	Engine::World::traffic = (int*)(base + 0x444AE498);                //
-	Engine::World::startCash = (int*)(base + 0X444AE4C0);              //
-	Engine::World::minCash = (int*)(base + 0x444AE4C4);                //
-	Engine::World::showJoinExit = (bool*)(base + 0x444AE4C8);          //
-	Engine::World::respawnTeam = (bool*)(base + 0x444AE4CC);           //
-	Engine::World::Crime::civCiv = (int*)(base + 0x444AE49C);          //
-	Engine::World::Crime::civTeam = (int*)(base + 0x444AE4A0);         //
-	Engine::World::Crime::teamCiv = (int*)(base + 0x444AE4A4);         //
-	Engine::World::Crime::teamTeam = (int*)(base + 0x444AE4A8);        //
-	Engine::World::Crime::teamTeamInBase = (int*)(base + 0x444AE4AC);  //
-	Engine::World::Crime::noSpawn = (int*)(base + 0x444AE4B8);         //
+	Engine::World::traffic = (int*)(base + 0x4352EEC0);
+	Engine::World::startCash = (int*)(base + 0x4352EEE8);
+	Engine::World::minCash = (int*)(base + 0x4352EEEC);
+	Engine::World::showJoinExit = (bool*)(base + 0x4352EEF0);
+	Engine::World::respawnTeam = (bool*)(base + 0x4352EEF4);
+	Engine::World::Crime::civCiv = (int*)(base + 0x4352EEC4);
+	Engine::World::Crime::civTeam = (int*)(base + 0x4352EEC8);
+	Engine::World::Crime::teamCiv = (int*)(base + 0x4352EECC);
+	Engine::World::Crime::teamTeam = (int*)(base + 0x4352EED0);
+	Engine::World::Crime::teamTeamInBase = (int*)(base + 0x4352EED4);
+	Engine::World::Crime::noSpawn = (int*)(base + 0x4352EEE0);
 
-	Engine::Round::roundTime = (int*)(base + 0x444AE484);    //
-	Engine::Round::startCash = (int*)(base + 0x444AE488);    //
-	Engine::Round::weekly = (bool*)(base + 0x444AE48C);      //
-	Engine::Round::bonusRatio = (bool*)(base + 0x444AE490);  //
-	Engine::Round::teamDamage = (int*)(base + 0x444AE494);   //
+	Engine::Round::roundTime = (int*)(base + 0x4352EEAC);
+	Engine::Round::startCash = (int*)(base + 0x4352EEB0);
+	Engine::Round::weekly = (bool*)(base + 0x4352EEB4);
+	Engine::Round::bonusRatio = (bool*)(base + 0x4352EEB8);
+	Engine::Round::teamDamage = (int*)(base + 0x4352EEBC);
 
 	Engine::gameType = (int*)(base + 0x434743AC);
 	Engine::mapName = (char*)(base + 0x434743B0);
@@ -1114,8 +1114,8 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::gameState = (int*)(base + 0x434745CC);
 	Engine::gameTimer = (int*)(base + 0x434745D4);
 	Engine::sunTime = (unsigned int*)(base + 0x0CD5E6E0);
-	Engine::isLevelLoaded = (int*)(base + 0x3C2EEFE0);  //
-	Engine::gravity = (float*)(base + 0xC72AC);         //
+	Engine::isLevelLoaded = (int*)(base + 0x3723F200);
+	Engine::gravity = (float*)(base + 0xD4B10);
 	pryMemory(Engine::gravity, 1);
 	Engine::originalGravity = *Engine::gravity;
 
@@ -1129,7 +1129,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::items = (Item*)(base + 0x80CFC60);
 	Engine::vehicleTypes = (VehicleType*)(base + 0x4AD1F20);  //
 	Engine::vehicles = (Vehicle*)(base + 0x1BCEEBC0);
-	Engine::bullets = (Bullet*)(base + 0x4355E260);  //
+	Engine::bullets = (Bullet*)(base + 0x425DECA0);
 	Engine::bodies = (RigidBody*)(base + 0x4AA1A0);
 	Engine::bonds = (Bond*)(base + 0x1F8852C0);
 	Engine::streets = (Street*)(base + 0x3C311030);  //
@@ -1142,9 +1142,9 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);  //
 	Engine::numBuildings = (unsigned int*)(base + 0x373333F4);
 
-	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1CF0);  //
+	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1FA0);
 	Engine::subRosa__printf_chk =
-	    (Engine::subRosa__printf_chkFunc)(base + 0x1FE0);  //
+	    (Engine::subRosa__printf_chkFunc)(base + 0x22C0);
 
 	Engine::resetGame = (Engine::voidFunc)(base + 0xBBA00);
 
@@ -1185,59 +1185,57 @@ static inline void locateMemory(uintptr_t base) {
 
 	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x28C00);
 	Engine::humanCollisionVehicle =
-	    (Engine::humanCollisionVehicleFunc)(base + 0x7AF50);          //
-	Engine::humanGrabbing = (Engine::voidIndexFunc)(base + 0xA16D0);  //
+	    (Engine::humanCollisionVehicleFunc)(base + 0x64D20);
 	Engine::humanLimbInverseKinematics =
-	    (Engine::humanLimbInverseKinematicsFunc)(base + 0x46330);        //
-	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x2A990);  //
+	    (Engine::humanLimbInverseKinematicsFunc)(base + 0x6E080);
+	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x400F0);
 	Engine::serverPlayerMessage =
-	    (Engine::serverPlayerMessageFunc)(base + 0xA7B80);  //
+	    (Engine::serverPlayerMessageFunc)(base + 0xB56E0);
 	Engine::playerAI = (Engine::voidIndexFunc)(base + 0x866A0);
-	Engine::playerDeathTax = (Engine::voidIndexFunc)(base + 0x2D70);  //
+	Engine::playerDeathTax = (Engine::voidIndexFunc)(base + 0x5960);
 	Engine::playerGiveWantedLevel =
 	    (Engine::playerGiveWantedLevelFunc)(base + 0x67F0);
 	Engine::createBondRigidBodyToRigidBody =
-	    (Engine::createBondRigidBodyToRigidBodyFunc)(base + 0x12CC0);  //
+	    (Engine::createBondRigidBodyToRigidBodyFunc)(base + 0x18930);
 	Engine::createBondRigidBodyRotRigidBody =
-	    (Engine::createBondRigidBodyRotRigidBodyFunc)(base + 0x12f70);  //
+	    (Engine::createBondRigidBodyRotRigidBodyFunc)(base + 0x18BB0);
 	Engine::createBondRigidBodyToLevel =
 	    (Engine::createBondRigidBodyToLevelFunc)(base + 0x18810);
 	Engine::addCollisionRigidBodyOnRigidBody =
-	    (Engine::addCollisionRigidBodyOnRigidBodyFunc)(base + 0x13070);  //
+	    (Engine::addCollisionRigidBodyOnRigidBodyFunc)(base + 0x18C90);
 	Engine::addCollisionRigidBodyOnLevel =
-	    (Engine::addCollisionRigidBodyOnLevelFunc)(base + 0x13220);  //
+	    (Engine::addCollisionRigidBodyOnLevelFunc)(base + 0x18E20);
 
-	Engine::createBullet = (Engine::createBulletFunc)(base + 0x17CE0);  //
-	Engine::createPlayer = (Engine::createPlayerFunc)(base + 0x40EE0);  //
+	Engine::createBullet = (Engine::createBulletFunc)(base + 0x1C350);
+	Engine::createPlayer = (Engine::createPlayerFunc)(base + 0x69910);
 	Engine::deletePlayer = (Engine::voidIndexFunc)(base + 0x69C00);
 	Engine::createHuman = (Engine::createHumanFunc)(base + 0x73330);
-	Engine::deleteHuman = (Engine::voidIndexFunc)(base + 0x3EB0);  //
+	Engine::deleteHuman = (Engine::voidIndexFunc)(base + 0x6B20);
 	Engine::createItem = (Engine::createItemFunc)(base + 0x73F50);
-	Engine::deleteItem = (Engine::voidIndexFunc)(base + 0x2C180);   //
-	Engine::createRope = (Engine::createRopeFunc)(base + 0x4F150);  //
+	Engine::deleteItem = (Engine::voidIndexFunc)(base + 0x459C0);
+	Engine::createRope = (Engine::createRopeFunc)(base + 0x752E0);
 	Engine::createVehicle = (Engine::createVehicleFunc)(base + 0x79B80);
-	Engine::deleteVehicle = (Engine::voidIndexFunc)(base + 0x42A0);  //
+	Engine::deleteVehicle = (Engine::voidIndexFunc)(base + 0x6D80);
 	Engine::createRigidBody = (Engine::createRigidBodyFunc)(base + 0x730F0);
 
 	Engine::createEventMessage = (Engine::createEventMessageFunc)(base + 0x54D0);
 	Engine::createEventUpdatePlayer = (Engine::voidIndexFunc)(base + 0x57D0);
 	Engine::createEventUpdatePlayerFinance =
 	    (Engine::voidIndexFunc)(base + 0x58F0);
-	Engine::createEventCreateVehicle = (Engine::voidIndexFunc)(base + 0x2AE0);  //
+	Engine::createEventCreateVehicle = (Engine::voidIndexFunc)(base + 0x55F0);
 	Engine::createEventUpdateVehicle =
 	    (Engine::createEventUpdateVehicleFunc)(base + 0x5650);
-	Engine::createEventSound = (Engine::createEventSoundFunc)(base + 0x3CC0);  //
+	Engine::createEventSound = (Engine::createEventSoundFunc)(base + 0x5A30);
 	Engine::createEventExplosion =
-	    (Engine::createEventExplosionFunc)(base + 0x45A0);  //
-	Engine::createEventBullet =
-	    (Engine::createEventBulletFunc)(base + 0x3C30);  //
+	    (Engine::createEventExplosionFunc)(base + 0x6100);
+	Engine::createEventBullet = (Engine::createEventBulletFunc)(base + 0x5390);
 	Engine::createEventBulletHit =
 	    (Engine::createEventBulletHitFunc)(base + 0x5420);
 
 	Engine::lineIntersectHuman = (Engine::lineIntersectHumanFunc)(base + 0x37CE0);
 	Engine::lineIntersectLevel = (Engine::lineIntersectLevelFunc)(base + 0x85950);
 	Engine::lineIntersectVehicle =
-	    (Engine::lineIntersectVehicleFunc)(base + 0x95590);  //
+	    (Engine::lineIntersectVehicleFunc)(base + 0x65270);
 	Engine::lineIntersectTriangle =
 	    (Engine::lineIntersectTriangleFunc)(base + 0x8630);
 }
@@ -1285,7 +1283,6 @@ static inline void installHooks() {
 	INSTALL(itemComputerInput);
 	INSTALL(humanApplyDamage);
 	INSTALL(humanCollisionVehicle);
-	INSTALL(humanGrabbing);
 	INSTALL(humanLimbInverseKinematics);
 	INSTALL(grenadeExplosion);
 	INSTALL(serverPlayerMessage);

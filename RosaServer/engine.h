@@ -143,8 +143,6 @@ extern humanApplyDamageFunc humanApplyDamage;
 typedef void (*humanCollisionVehicleFunc)(int humanID, int vehicleID);
 extern humanCollisionVehicleFunc humanCollisionVehicle;
 
-extern voidIndexFunc humanGrabbing;
-
 typedef void (*humanLimbInverseKinematicsFunc)(int, int, int, Vector*,
                                                RotMatrix*, Vector*, float,
                                                float, float,

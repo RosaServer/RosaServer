@@ -36,7 +36,6 @@ enum EnableKeys {
 	ItemComputerInput,
 	HumanDamage,
 	HumanCollisionVehicle,
-	HumanGrabbing,
 	HumanLimbInverseKinematics,
 	GrenadeExplode,
 	PlayerChat,
@@ -149,8 +148,6 @@ extern subhook::Hook humanApplyDamageHook;
 void humanApplyDamage(int humanID, int bone, int unk, int damage);
 extern subhook::Hook humanCollisionVehicleHook;
 void humanCollisionVehicle(int humanID, int vehicleID);
-extern subhook::Hook humanGrabbingHook;
-void humanGrabbing(int humanID);
 extern subhook::Hook humanLimbInverseKinematicsHook;
 void humanLimbInverseKinematics(int, int, int, Vector*, RotMatrix*, Vector*,
                                 float, float, float, float* /* Quaternion? */,

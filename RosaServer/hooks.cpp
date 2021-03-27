@@ -33,7 +33,6 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"ItemComputerInput", EnableKeys::ItemComputerInput},
      {"HumanDamage", EnableKeys::HumanDamage},
      {"HumanCollisionVehicle", EnableKeys::HumanCollisionVehicle},
-     {"HumanGrabbing", EnableKeys::HumanGrabbing},
      {"HumanLimbInverseKinematics", EnableKeys::HumanLimbInverseKinematics},
      {"GrenadeExplode", EnableKeys::GrenadeExplode},
      {"PlayerChat", EnableKeys::PlayerChat},
@@ -84,7 +83,6 @@ subhook::Hook linkItemHook;
 subhook::Hook itemComputerInputHook;
 subhook::Hook humanApplyDamageHook;
 subhook::Hook humanCollisionVehicleHook;
-subhook::Hook humanGrabbingHook;
 subhook::Hook humanLimbInverseKinematicsHook;
 subhook::Hook grenadeExplosionHook;
 subhook::Hook serverPlayerMessageHook;
@@ -1129,34 +1127,6 @@ void humanCollisionVehicle(int humanID, int vehicleID) {
 	} else {
 		subhook::ScopedHookRemove remove(&humanCollisionVehicleHook);
 		Engine::humanCollisionVehicle(humanID, vehicleID);
-	}
-}
-
-void humanGrabbing(int humanID) {
-	if (enabledKeys[EnableKeys::HumanGrabbing]) {
-		Human* human = &Engine::humans[humanID];
-		bool isGrabbingAny = human->isGrabbingLeft || human->isGrabbingRight;
-
-		bool noParent = false;
-		sol::protected_function func = (*lua)["hook"]["run"];
-
-		if (isGrabbingAny && func != sol::nil) {
-			auto res = func("HumanGrabbing", human);
-			if (noLuaCallError(&res)) noParent = (bool)res;
-		}
-		if (!noParent) {
-			{
-				subhook::ScopedHookRemove remove(&humanGrabbingHook);
-				Engine::humanGrabbing(humanID);
-			}
-			if (isGrabbingAny && func != sol::nil) {
-				auto res = func("PostHumanGrabbing", human);
-				noLuaCallError(&res);
-			}
-		}
-	} else {
-		subhook::ScopedHookRemove remove(&humanGrabbingHook);
-		Engine::humanGrabbing(humanID);
 	}
 }
 
