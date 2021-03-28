@@ -391,18 +391,18 @@ struct Human {
 	int inventoryAnimationCounterFinished;  // 6df4
 	int inventoryAnimationCounter;          // 6df8
 	padding unk31[0x6f80 - 0x6df8 - 4];
-	int gender;                // 6f80
-	int head;                  // 6f84
-	int skinColor;             // 6f88
-	int hairColor;             // 6f8c
-	int hair;                  // 6f90
-	int eyeColor;              // 6f94
-	int model;                 // 6f98
-	int suitColor;             // 6f9c
-	int tieColor;              // 6fa0
-	int unk32;                 // 6fa4
-	int necklace;              // 6fa8
-	int isAppearanceNotDirty;  // 6fac
+	int gender;             // 6f80
+	int head;               // 6f84
+	int skinColor;          // 6f88
+	int hairColor;          // 6f8c
+	int hair;               // 6f90
+	int eyeColor;           // 6f94
+	int model;              // 6f98
+	int suitColor;          // 6f9c
+	int tieColor;           // 6fa0
+	int unk32;              // 6fa4
+	int necklace;           // 6fa8
+	int isAppearanceDirty;  // 6fac
 	padding unk33[0x6FF8 - 0x6fac - 4];
 
 	const char* getClass() const { return "Human"; }
@@ -419,8 +419,8 @@ struct Human {
 	bool getIsStanding() const { return isStanding; }
 	bool getIsBleeding() const { return isBleeding; }
 	void setIsBleeding(bool b) { isBleeding = b; }
-	bool getIsAppearanceDirty() const { return !isAppearanceNotDirty; }
-	void setIsAppearanceDirty(bool b) { isAppearanceNotDirty = !b; }
+	bool getIsAppearanceDirty() const { return isAppearanceDirty; }
+	void setIsAppearanceDirty(bool b) { isAppearanceDirty = b; }
 	Player* getPlayer() const;
 	void setPlayer(Player* player);
 	Vehicle* getVehicle() const;
