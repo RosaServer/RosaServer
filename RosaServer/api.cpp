@@ -226,7 +226,7 @@ void event::bulletHit(int hitType, Vector* pos, Vector* normal) {
 
 sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
-	int res = Engine::lineIntersectLevel(posA, posB);
+	int res = Engine::lineIntersectLevel(posA, posB, 1);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
@@ -272,7 +272,7 @@ sol::object physics::lineIntersectLevelQuick(Vector* posA, Vector* posB,
                                              sol::this_state s) {
 	sol::state_view lua(s);
 
-	int res = Engine::lineIntersectLevel(posA, posB);
+	int res = Engine::lineIntersectLevel(posA, posB, 1);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
@@ -313,7 +313,7 @@ sol::object physics::lineIntersectAnyQuick(Vector* posA, Vector* posB,
 	bool nearestIsVehicle = false;
 	int ignoreHumanId = ignoreHuman ? ignoreHuman->getIndex() : -1;
 
-	if (Engine::lineIntersectLevel(posA, posB)) {
+	if (Engine::lineIntersectLevel(posA, posB, 1)) {
 		nearestFraction = Engine::lineIntersectResult->fraction;
 	}
 
@@ -1315,36 +1315,6 @@ InventorySlot* Human::getInventorySlot(unsigned int idx) {
 	if (idx > 6) throw std::invalid_argument(errorOutOfRange);
 
 	return &inventorySlots[idx];
-}
-
-Human* Human::getRightHandGrab() const {
-	if (!isGrabbingRight) return nullptr;
-	return &Engine::humans[grabbingRightHumanID];
-}
-
-void Human::setRightHandGrab(Human* man) {
-	if (man == nullptr)
-		isGrabbingRight = 0;
-	else {
-		isGrabbingRight = 1;
-		grabbingRightHumanID = man->getIndex();
-		grabbingRightBone = 0;
-	}
-}
-
-Human* Human::getLeftHandGrab() const {
-	if (!isGrabbingLeft) return nullptr;
-	return &Engine::humans[grabbingLeftHumanID];
-}
-
-void Human::setLeftHandGrab(Human* man) {
-	if (man == nullptr)
-		isGrabbingLeft = 0;
-	else {
-		isGrabbingLeft = 1;
-		grabbingLeftHumanID = man->getIndex();
-		grabbingLeftBone = 0;
-	}
 }
 
 void Human::setVelocity(Vector* vel) const {

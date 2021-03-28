@@ -653,7 +653,7 @@ int createAccountByJoinTicket(int identifier, unsigned int ticket) {
 	}
 }
 
-void serverSendConnectResponse(unsigned int address, unsigned int port,
+void serverSendConnectResponse(unsigned int address, unsigned int port, int unk,
                                const char* message) {
 	if (enabledKeys[EnableKeys::SendConnectResponse]) {
 		bool noParent = false;
@@ -676,7 +676,7 @@ void serverSendConnectResponse(unsigned int address, unsigned int port,
 		if (!noParent) {
 			{
 				subhook::ScopedHookRemove remove(&serverSendConnectResponseHook);
-				Engine::serverSendConnectResponse(address, port, message);
+				Engine::serverSendConnectResponse(address, port, unk, message);
 			}
 			if (func != sol::nil) {
 				auto res = func("PostSendConnectResponse", addressString, port, data);
@@ -685,7 +685,7 @@ void serverSendConnectResponse(unsigned int address, unsigned int port,
 		}
 	} else {
 		subhook::ScopedHookRemove remove(&serverSendConnectResponseHook);
-		Engine::serverSendConnectResponse(address, port, message);
+		Engine::serverSendConnectResponse(address, port, unk, message);
 	}
 }
 
@@ -1134,7 +1134,8 @@ void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
                                 Vector* destination, RotMatrix* destinationAxis,
                                 Vector* vecA, float a, float rot,
                                 float strength, float* d /* Quaternion? */,
-                                Vector* vecB, Vector* vecC, char flags) {
+                                Vector* vecB, Vector* vecC, Vector* vecD,
+                                char flags) {
 	if (enabledKeys[EnableKeys::HumanLimbInverseKinematics]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
@@ -1148,7 +1149,7 @@ void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
 			auto res = func("HumanLimbInverseKinematics", &Engine::humans[humanID],
 			                trunkBoneID, branchBoneID, destination, destinationAxis,
 			                vecA, &wrappedA, &wrappedRot, &wrappedStrength, vecB,
-			                vecC, &wrappedFlags);
+			                vecC, vecD, &wrappedFlags);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 
 			a = wrappedA.value;
@@ -1158,15 +1159,15 @@ void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
 		}
 		if (!noParent) {
 			subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);
-			Engine::humanLimbInverseKinematics(humanID, trunkBoneID, branchBoneID,
-			                                   destination, destinationAxis, vecA, a,
-			                                   rot, strength, d, vecB, vecC, flags);
+			Engine::humanLimbInverseKinematics(
+			    humanID, trunkBoneID, branchBoneID, destination, destinationAxis,
+			    vecA, a, rot, strength, d, vecB, vecC, vecD, flags);
 		}
 	} else {
 		subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);
-		Engine::humanLimbInverseKinematics(humanID, trunkBoneID, branchBoneID,
-		                                   destination, destinationAxis, vecA, a,
-		                                   rot, strength, d, vecB, vecC, flags);
+		Engine::humanLimbInverseKinematics(
+		    humanID, trunkBoneID, branchBoneID, destination, destinationAxis, vecA,
+		    a, rot, strength, d, vecB, vecC, vecD, flags);
 	}
 }
 

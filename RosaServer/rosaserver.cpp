@@ -417,10 +417,6 @@ void luaInit(bool redo) {
 		    sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
 		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
-		meta["rightHandGrab"] =
-		    sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
-		meta["leftHandGrab"] =
-		    sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
 		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty,
 		                                          &Human::setIsAppearanceDirty);
 
@@ -1078,7 +1074,6 @@ static inline void printBaseAddress(uintptr_t base) {
 }
 
 static inline void locateMemory(uintptr_t base) {
-	// TODO: Update offsets
 	Engine::version = (unsigned int*)(base + 0x2E4F08);
 	Engine::subVersion = (unsigned int*)(base + 0x2E4F04);
 	Engine::serverName = (char*)(base + 0x1FE952D4);
@@ -1121,25 +1116,25 @@ static inline void locateMemory(uintptr_t base) {
 
 	Engine::lineIntersectResult = (LineIntersectResult*)(base + 0x54F98000);
 
-	Engine::connections = (Connection*)(base + 0x43ACE0);  //
-	Engine::accounts = (Account*)(base + 0x334F6D0);       //
+	Engine::connections = (Connection*)(base + 0x6221E0);
+	Engine::accounts = (Account*)(base + 0x35383D0);
 	Engine::players = (Player*)(base + 0x148E18E0);
 	Engine::humans = (Human*)(base + 0xBCAA6C8);
-	Engine::itemTypes = (ItemType*)(base + 0x5A088680);  //
+	Engine::itemTypes = (ItemType*)(base + 0x58A44840);
 	Engine::items = (Item*)(base + 0x80CFC60);
-	Engine::vehicleTypes = (VehicleType*)(base + 0x4AD1F20);  //
+	Engine::vehicleTypes = (VehicleType*)(base + 0x4CBBC20);
 	Engine::vehicles = (Vehicle*)(base + 0x1BCEEBC0);
 	Engine::bullets = (Bullet*)(base + 0x425DECA0);
 	Engine::bodies = (RigidBody*)(base + 0x4AA1A0);
 	Engine::bonds = (Bond*)(base + 0x1F8852C0);
-	Engine::streets = (Street*)(base + 0x3C311030);  //
+	Engine::streets = (Street*)(base + 0x37261268);
 	Engine::streetIntersections = (StreetIntersection*)(base + 0x3723f264);
-	Engine::buildings = (Building*)(base + 0x3C3E2A00);  //
+	Engine::buildings = (Building*)(base + 0x37333438);
 
-	Engine::numConnections = (unsigned int*)(base + 0x4532F468);          //
-	Engine::numBullets = (unsigned int*)(base + 0x4532F240);              //
-	Engine::numStreets = (unsigned int*)(base + 0x3C31102C);              //
-	Engine::numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);  //
+	Engine::numConnections = (unsigned int*)(base + 0x44480688);
+	Engine::numBullets = (unsigned int*)(base + 0x443AFC60);
+	Engine::numStreets = (unsigned int*)(base + 0x37261264);
+	Engine::numStreetIntersections = (unsigned int*)(base + 0x3723F25C);
 	Engine::numBuildings = (unsigned int*)(base + 0x373333F4);
 
 	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1FA0);
@@ -1257,7 +1252,6 @@ static inline void installHook(
 
 static inline void installHooks() {
 	INSTALL(subRosaPuts);
-	INSTALL(subRosaPuts);
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
 	INSTALL(areaCreateBlock);
@@ -1354,7 +1348,7 @@ static void hookedGetPaths() {
 
 void __attribute__((constructor)) entry() {
 	Lua::memory::baseAddress = getBaseAddress();
-	getPaths = (getPathsFunc)(Lua::memory::baseAddress + 0xC5B00);
+	getPaths = (getPathsFunc)(Lua::memory::baseAddress + 0xD1770);
 
 	installHook("getPathsHook", getPathsHook, (void*)getPaths,
 	            (void*)hookedGetPaths);

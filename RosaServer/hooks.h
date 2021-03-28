@@ -114,7 +114,7 @@ void saveAccountsServer();
 extern subhook::Hook createAccountByJoinTicketHook;
 int createAccountByJoinTicket(int identifier, unsigned int ticket);
 extern subhook::Hook serverSendConnectResponseHook;
-void serverSendConnectResponse(unsigned int address, unsigned int port,
+void serverSendConnectResponse(unsigned int address, unsigned int port, int unk,
                                const char* message);
 
 extern subhook::Hook createBulletHook;
@@ -151,7 +151,7 @@ void humanCollisionVehicle(int humanID, int vehicleID);
 extern subhook::Hook humanLimbInverseKinematicsHook;
 void humanLimbInverseKinematics(int, int, int, Vector*, RotMatrix*, Vector*,
                                 float, float, float, float* /* Quaternion? */,
-                                Vector*, Vector*, char);
+                                Vector*, Vector*, Vector*, char);
 extern subhook::Hook grenadeExplosionHook;
 void grenadeExplosion(int itemID);
 extern subhook::Hook serverPlayerMessageHook;
