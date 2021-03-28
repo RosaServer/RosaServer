@@ -217,11 +217,10 @@ struct Player {
 	MenuButton menuButtons[32];  // 1b18
 	padding unk6_1[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
 	int isBot;  // 2d18
-	padding unk7a[0x2d34 - 0x2d18 - 4];
-	// TODO: botHasDestination/botDestination
-	int botHasDestination;  // 2d34
-	Vector botDestination;  // 2d38
-	padding unk7[0x37ac - 0x2d38 - 12];
+	padding unk7a[0x2d38 - 0x2d18 - 4];
+	int botHasDestination;  // 2d38
+	Vector botDestination;  // 2d3c
+	padding unk7[0x37ac - 0x2d3c - 12];
 	int gender;     // 37ac
 	int skinColor;  // 37b0
 	int hairColor;  // 37b4
