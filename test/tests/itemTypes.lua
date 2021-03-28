@@ -1,4 +1,4 @@
-local expectedNum = 45
+local expectedNum = 46
 
 assert(#itemTypes.getAll() == expectedNum)
 assert(itemTypes.getCount() == expectedNum)

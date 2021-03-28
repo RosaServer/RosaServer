@@ -417,10 +417,6 @@ void luaInit(bool redo) {
 		    sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
 		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
-		meta["rightHandGrab"] =
-		    sol::property(&Human::getRightHandGrab, &Human::setRightHandGrab);
-		meta["leftHandGrab"] =
-		    sol::property(&Human::getLeftHandGrab, &Human::setLeftHandGrab);
 		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty,
 		                                          &Human::setIsAppearanceDirty);
 
@@ -1078,166 +1074,165 @@ static inline void printBaseAddress(uintptr_t base) {
 }
 
 static inline void locateMemory(uintptr_t base) {
-	Engine::version = (unsigned int*)(base + 0x2D5F08);
-	Engine::subVersion = (unsigned int*)(base + 0x2D5F04);
-	Engine::serverName = (char*)(base + 0x24EE4234);
-	Engine::serverPort = (unsigned int*)(base + 0x1CC6CE80);
-	Engine::numEvents = (unsigned int*)(base + 0x4532f244);
-	Engine::serverMaxBytesPerSecond = (int*)(base + 0x1CC6CE84);
-	Engine::adminPassword = (char*)(base + 0x1CC6D28C);
-	Engine::isPassworded = (int*)(base + 0x24EE4644);
-	Engine::password = (char*)(base + 0x1CC6D48C);
-	Engine::maxPlayers = (int*)(base + 0x24EE4648);
+	Engine::version = (unsigned int*)(base + 0x2E4F08);
+	Engine::subVersion = (unsigned int*)(base + 0x2E4F04);
+	Engine::serverName = (char*)(base + 0x1FE952D4);
+	Engine::serverPort = (unsigned int*)(base + 0x17B5C720);
+	Engine::numEvents = (unsigned int*)(base + 0x443AFC64);
+	Engine::serverMaxBytesPerSecond = (int*)(base + 0x17B5C724);
+	Engine::adminPassword = (char*)(base + 0x17B5CB2C);
+	Engine::isPassworded = (int*)(base + 0x1FE956F0);
+	Engine::password = (char*)(base + 0x17B5CD2C);
+	Engine::maxPlayers = (int*)(base + 0x1FE956F4);
 
-	Engine::World::traffic = (int*)(base + 0x444AE498);
-	Engine::World::startCash = (int*)(base + 0X444AE4C0);
-	Engine::World::minCash = (int*)(base + 0x444AE4C4);
-	Engine::World::showJoinExit = (bool*)(base + 0x444AE4C8);
-	Engine::World::respawnTeam = (bool*)(base + 0x444AE4CC);
-	Engine::World::Crime::civCiv = (int*)(base + 0x444AE49C);
-	Engine::World::Crime::civTeam = (int*)(base + 0x444AE4A0);
-	Engine::World::Crime::teamCiv = (int*)(base + 0x444AE4A4);
-	Engine::World::Crime::teamTeam = (int*)(base + 0x444AE4A8);
-	Engine::World::Crime::teamTeamInBase = (int*)(base + 0x444AE4AC);
-	Engine::World::Crime::noSpawn = (int*)(base + 0x444AE4B8);
+	Engine::World::traffic = (int*)(base + 0x4352EEC0);
+	Engine::World::startCash = (int*)(base + 0x4352EEE8);
+	Engine::World::minCash = (int*)(base + 0x4352EEEC);
+	Engine::World::showJoinExit = (bool*)(base + 0x4352EEF0);
+	Engine::World::respawnTeam = (bool*)(base + 0x4352EEF4);
+	Engine::World::Crime::civCiv = (int*)(base + 0x4352EEC4);
+	Engine::World::Crime::civTeam = (int*)(base + 0x4352EEC8);
+	Engine::World::Crime::teamCiv = (int*)(base + 0x4352EECC);
+	Engine::World::Crime::teamTeam = (int*)(base + 0x4352EED0);
+	Engine::World::Crime::teamTeamInBase = (int*)(base + 0x4352EED4);
+	Engine::World::Crime::noSpawn = (int*)(base + 0x4352EEE0);
 
-	Engine::Round::roundTime = (int*)(base + 0x444AE484);
-	Engine::Round::startCash = (int*)(base + 0x444AE488);
-	Engine::Round::weekly = (bool*)(base + 0x444AE48C);
-	Engine::Round::bonusRatio = (bool*)(base + 0x444AE490);
-	Engine::Round::teamDamage = (int*)(base + 0x444AE494);
+	Engine::Round::roundTime = (int*)(base + 0x4352EEAC);
+	Engine::Round::startCash = (int*)(base + 0x4352EEB0);
+	Engine::Round::weekly = (bool*)(base + 0x4352EEB4);
+	Engine::Round::bonusRatio = (bool*)(base + 0x4352EEB8);
+	Engine::Round::teamDamage = (int*)(base + 0x4352EEBC);
 
-	Engine::gameType = (int*)(base + 0x443F3988);
-	Engine::mapName = (char*)(base + 0x443F398C);
-	Engine::loadedMapName = (char*)(base + 0x3C2EEFE4);
-	Engine::gameState = (int*)(base + 0x443F3BA4);
-	Engine::gameTimer = (int*)(base + 0x443F3BAC);
-	Engine::sunTime = (unsigned int*)(base + 0x9846CC0);
-	Engine::isLevelLoaded = (int*)(base + 0x3C2EEFE0);
-	Engine::gravity = (float*)(base + 0xC72AC);
+	Engine::gameType = (int*)(base + 0x434743AC);
+	Engine::mapName = (char*)(base + 0x434743B0);
+	Engine::loadedMapName = (char*)(base + 0x3723F204);
+	Engine::gameState = (int*)(base + 0x434745CC);
+	Engine::gameTimer = (int*)(base + 0x434745D4);
+	Engine::sunTime = (unsigned int*)(base + 0x0CD5E6E0);
+	Engine::isLevelLoaded = (int*)(base + 0x3723F200);
+	Engine::gravity = (float*)(base + 0xD4B10);
 	pryMemory(Engine::gravity, 1);
 	Engine::originalGravity = *Engine::gravity;
 
-	Engine::lineIntersectResult = (LineIntersectResult*)(base + 0x55E44E00);
+	Engine::lineIntersectResult = (LineIntersectResult*)(base + 0x54F98000);
 
-	Engine::connections = (Connection*)(base + 0x43ACE0);
-	Engine::accounts = (Account*)(base + 0x334F6D0);
-	Engine::players = (Player*)(base + 0x19BC9CC0);
-	Engine::humans = (Human*)(base + 0x8B1D4A8);
-	Engine::itemTypes = (ItemType*)(base + 0x5A088680);
-	Engine::items = (Item*)(base + 0x7FE2160);
-	Engine::vehicleTypes = (VehicleType*)(base + 0x4AD1F20);
-	Engine::vehicles = (Vehicle*)(base + 0x20DEF320);
-	Engine::bullets = (Bullet*)(base + 0x4355E260);
-	Engine::bodies = (RigidBody*)(base + 0x2DACC0);
-	Engine::bonds = (Bond*)(base + 0x24964220);
-	Engine::streets = (Street*)(base + 0x3C311030);
-	Engine::streetIntersections = (StreetIntersection*)(base + 0x3C2EF02C);
-	Engine::buildings = (Building*)(base + 0x3C3E2A00);
+	Engine::connections = (Connection*)(base + 0x6221E0);
+	Engine::accounts = (Account*)(base + 0x35383D0);
+	Engine::players = (Player*)(base + 0x148E18E0);
+	Engine::humans = (Human*)(base + 0xBCAA6C8);
+	Engine::itemTypes = (ItemType*)(base + 0x58A44840);
+	Engine::items = (Item*)(base + 0x80CFC60);
+	Engine::vehicleTypes = (VehicleType*)(base + 0x4CBBC20);
+	Engine::vehicles = (Vehicle*)(base + 0x1BCEEBC0);
+	Engine::bullets = (Bullet*)(base + 0x425DECA0);
+	Engine::bodies = (RigidBody*)(base + 0x4AA1A0);
+	Engine::bonds = (Bond*)(base + 0x1F8852C0);
+	Engine::streets = (Street*)(base + 0x37261268);
+	Engine::streetIntersections = (StreetIntersection*)(base + 0x3723f264);
+	Engine::buildings = (Building*)(base + 0x37333438);
 
-	Engine::numConnections = (unsigned int*)(base + 0x4532F468);
-	Engine::numBullets = (unsigned int*)(base + 0x4532F240);
-	Engine::numStreets = (unsigned int*)(base + 0x3C31102C);
-	Engine::numStreetIntersections = (unsigned int*)(base + 0x3C2EF024);
-	Engine::numBuildings = (unsigned int*)(base + 0x3C3E29BC);
+	Engine::numConnections = (unsigned int*)(base + 0x44480688);
+	Engine::numBullets = (unsigned int*)(base + 0x443AFC60);
+	Engine::numStreets = (unsigned int*)(base + 0x37261264);
+	Engine::numStreetIntersections = (unsigned int*)(base + 0x3723F25C);
+	Engine::numBuildings = (unsigned int*)(base + 0x373333F4);
 
-	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1CF0);
+	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1FA0);
 	Engine::subRosa__printf_chk =
-	    (Engine::subRosa__printf_chkFunc)(base + 0x1FE0);
+	    (Engine::subRosa__printf_chkFunc)(base + 0x22C0);
 
-	Engine::resetGame = (Engine::voidFunc)(base + 0xB10B0);
+	Engine::resetGame = (Engine::voidFunc)(base + 0xBBA00);
 
-	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x11760);
-	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0xC400);
+	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x173F0);
+	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0x112D0);
 
-	Engine::logicSimulation = (Engine::voidFunc)(base + 0xB7BF0);
-	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xB3650);
-	Engine::logicSimulationRound = (Engine::voidFunc)(base + 0xB3DD0);
-	Engine::logicSimulationWorld = (Engine::voidFunc)(base + 0xB71A0);
-	Engine::logicSimulationTerminator = (Engine::voidFunc)(base + 0xB4D50);
-	Engine::logicSimulationCoop = (Engine::voidFunc)(base + 0xB3410);
-	Engine::logicSimulationVersus = (Engine::voidFunc)(base + 0xB65F0);
-	Engine::logicPlayerActions = (Engine::voidIndexFunc)(base + 0xA93A0);
+	Engine::logicSimulation = (Engine::voidFunc)(base + 0xC2530);
+	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xBDFD0);
+	Engine::logicSimulationRound = (Engine::voidFunc)(base + 0xBE750);
+	Engine::logicSimulationWorld = (Engine::voidFunc)(base + 0xC1AE0);
+	Engine::logicSimulationTerminator = (Engine::voidFunc)(base + 0xBF6D0);
+	Engine::logicSimulationCoop = (Engine::voidFunc)(base + 0xBDD90);
+	Engine::logicSimulationVersus = (Engine::voidFunc)(base + 0xC0F30);
+	Engine::logicPlayerActions = (Engine::voidIndexFunc)(base + 0xB6FE0);
 
-	Engine::physicsSimulation = (Engine::voidFunc)(base + 0xA6CC0);
-	Engine::rigidBodySimulation = (Engine::voidFunc)(base + 0x543A0);
-	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xC0BB0);
-	Engine::serverSend = (Engine::voidFunc)(base + 0xBDBA0);
-	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x98960);
-	Engine::bulletTimeToLive = (Engine::voidFunc)(base + 0x181B0);
+	Engine::physicsSimulation = (Engine::voidFunc)(base + 0xA5D00);
+	Engine::rigidBodySimulation = (Engine::voidFunc)(base + 0x7BF80);
+	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xCC7B0);
+	Engine::serverSend = (Engine::voidFunc)(base + 0xC97B0);
+	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x88130);
+	Engine::bulletTimeToLive = (Engine::voidFunc)(base + 0x1C820);
 
-	Engine::economyCarMarket = (Engine::voidFunc)(base + 0x1AA30);
-	Engine::saveAccountsServer = (Engine::voidFunc)(base + 0x6CC0);
+	Engine::economyCarMarket = (Engine::voidFunc)(base + 0x24950);
+	Engine::saveAccountsServer = (Engine::voidFunc)(base + 0xBD50);
 
 	Engine::createAccountByJoinTicket =
-	    (Engine::createAccountByJoinTicketFunc)(base + 0x65D0);
+	    (Engine::createAccountByJoinTicketFunc)(base + 0xB660);
 	Engine::serverSendConnectResponse =
-	    (Engine::serverSendConnectResponseFunc)(base + 0xB8FD0);
+	    (Engine::serverSendConnectResponseFunc)(base + 0xC4BD0);
 
-	Engine::scenarioArmHuman = (Engine::scenarioArmHumanFunc)(base + 0x4FDD0);
-	Engine::linkItem = (Engine::linkItemFunc)(base + 0x2B060);
-	Engine::itemSetMemo = (Engine::itemSetMemoFunc)(base + 0x25F80);
+	Engine::scenarioArmHuman = (Engine::scenarioArmHumanFunc)(base + 0x77A90);
+	Engine::linkItem = (Engine::linkItemFunc)(base + 0x42DC0);
+	Engine::itemSetMemo = (Engine::itemSetMemoFunc)(base + 0x3B6D0);
 	Engine::itemComputerTransmitLine =
-	    (Engine::itemComputerTransmitLineFunc)(base + 0x26100);
-	Engine::itemComputerIncrementLine = (Engine::voidIndexFunc)(base + 0x263a0);
-	Engine::itemComputerInput = (Engine::itemComputerInputFunc)(base + 0x4e620);
+	    (Engine::itemComputerTransmitLineFunc)(base + 0x3B850);
+	Engine::itemComputerIncrementLine = (Engine::voidIndexFunc)(base + 0x3BAf0);
+	Engine::itemComputerInput = (Engine::itemComputerInputFunc)(base + 0x747B0);
 
-	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x1E1D0);
+	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x28C00);
 	Engine::humanCollisionVehicle =
-	    (Engine::humanCollisionVehicleFunc)(base + 0x7AF50);
-	Engine::humanGrabbing = (Engine::voidIndexFunc)(base + 0xA16D0);
+	    (Engine::humanCollisionVehicleFunc)(base + 0x64D20);
 	Engine::humanLimbInverseKinematics =
-	    (Engine::humanLimbInverseKinematicsFunc)(base + 0x46330);
-	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x2A990);
+	    (Engine::humanLimbInverseKinematicsFunc)(base + 0x6E080);
+	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x400F0);
 	Engine::serverPlayerMessage =
-	    (Engine::serverPlayerMessageFunc)(base + 0xA7B80);
-	Engine::playerAI = (Engine::voidIndexFunc)(base + 0x96F80);
-	Engine::playerDeathTax = (Engine::voidIndexFunc)(base + 0x2D70);
+	    (Engine::serverPlayerMessageFunc)(base + 0xB56E0);
+	Engine::playerAI = (Engine::voidIndexFunc)(base + 0x866A0);
+	Engine::playerDeathTax = (Engine::voidIndexFunc)(base + 0x5960);
 	Engine::playerGiveWantedLevel =
-	    (Engine::playerGiveWantedLevelFunc)(base + 0x3810);
+	    (Engine::playerGiveWantedLevelFunc)(base + 0x67F0);
 	Engine::createBondRigidBodyToRigidBody =
-	    (Engine::createBondRigidBodyToRigidBodyFunc)(base + 0x12CC0);
+	    (Engine::createBondRigidBodyToRigidBodyFunc)(base + 0x18930);
 	Engine::createBondRigidBodyRotRigidBody =
-	    (Engine::createBondRigidBodyRotRigidBodyFunc)(base + 0x12f70);
+	    (Engine::createBondRigidBodyRotRigidBodyFunc)(base + 0x18BB0);
 	Engine::createBondRigidBodyToLevel =
-	    (Engine::createBondRigidBodyToLevelFunc)(base + 0x12B80);
+	    (Engine::createBondRigidBodyToLevelFunc)(base + 0x18810);
 	Engine::addCollisionRigidBodyOnRigidBody =
-	    (Engine::addCollisionRigidBodyOnRigidBodyFunc)(base + 0x13070);
+	    (Engine::addCollisionRigidBodyOnRigidBodyFunc)(base + 0x18C90);
 	Engine::addCollisionRigidBodyOnLevel =
-	    (Engine::addCollisionRigidBodyOnLevelFunc)(base + 0x13220);
+	    (Engine::addCollisionRigidBodyOnLevelFunc)(base + 0x18E20);
 
-	Engine::createBullet = (Engine::createBulletFunc)(base + 0x17CE0);
-	Engine::createPlayer = (Engine::createPlayerFunc)(base + 0x40EE0);
-	Engine::deletePlayer = (Engine::voidIndexFunc)(base + 0x411D0);
-	Engine::createHuman = (Engine::createHumanFunc)(base + 0x66D10);
-	Engine::deleteHuman = (Engine::voidIndexFunc)(base + 0x3EB0);
-	Engine::createItem = (Engine::createItemFunc)(base + 0x4DDE0);
-	Engine::deleteItem = (Engine::voidIndexFunc)(base + 0x2C180);
-	Engine::createRope = (Engine::createRopeFunc)(base + 0x4F150);
-	Engine::createVehicle = (Engine::createVehicleFunc)(base + 0x4CEA0);
-	Engine::deleteVehicle = (Engine::voidIndexFunc)(base + 0x42A0);
-	Engine::createRigidBody = (Engine::createRigidBodyFunc)(base + 0x4cc90);
+	Engine::createBullet = (Engine::createBulletFunc)(base + 0x1C350);
+	Engine::createPlayer = (Engine::createPlayerFunc)(base + 0x69910);
+	Engine::deletePlayer = (Engine::voidIndexFunc)(base + 0x69C00);
+	Engine::createHuman = (Engine::createHumanFunc)(base + 0x73330);
+	Engine::deleteHuman = (Engine::voidIndexFunc)(base + 0x6B20);
+	Engine::createItem = (Engine::createItemFunc)(base + 0x73F50);
+	Engine::deleteItem = (Engine::voidIndexFunc)(base + 0x459C0);
+	Engine::createRope = (Engine::createRopeFunc)(base + 0x752E0);
+	Engine::createVehicle = (Engine::createVehicleFunc)(base + 0x79B80);
+	Engine::deleteVehicle = (Engine::voidIndexFunc)(base + 0x6D80);
+	Engine::createRigidBody = (Engine::createRigidBodyFunc)(base + 0x730F0);
 
-	Engine::createEventMessage = (Engine::createEventMessageFunc)(base + 0x29C0);
-	Engine::createEventUpdatePlayer = (Engine::voidIndexFunc)(base + 0x2BE0);
+	Engine::createEventMessage = (Engine::createEventMessageFunc)(base + 0x54D0);
+	Engine::createEventUpdatePlayer = (Engine::voidIndexFunc)(base + 0x57D0);
 	Engine::createEventUpdatePlayerFinance =
-	    (Engine::voidIndexFunc)(base + 0x2D00);
-	Engine::createEventCreateVehicle = (Engine::voidIndexFunc)(base + 0x2AE0);
+	    (Engine::voidIndexFunc)(base + 0x58F0);
+	Engine::createEventCreateVehicle = (Engine::voidIndexFunc)(base + 0x55F0);
 	Engine::createEventUpdateVehicle =
-	    (Engine::createEventUpdateVehicleFunc)(base + 0x41C0);
-	Engine::createEventSound = (Engine::createEventSoundFunc)(base + 0x3CC0);
+	    (Engine::createEventUpdateVehicleFunc)(base + 0x5650);
+	Engine::createEventSound = (Engine::createEventSoundFunc)(base + 0x5A30);
 	Engine::createEventExplosion =
-	    (Engine::createEventExplosionFunc)(base + 0x45A0);
-	Engine::createEventBullet = (Engine::createEventBulletFunc)(base + 0x3C30);
+	    (Engine::createEventExplosionFunc)(base + 0x6100);
+	Engine::createEventBullet = (Engine::createEventBulletFunc)(base + 0x5390);
 	Engine::createEventBulletHit =
-	    (Engine::createEventBulletHitFunc)(base + 0x4110);
+	    (Engine::createEventBulletHitFunc)(base + 0x5420);
 
-	Engine::lineIntersectHuman = (Engine::lineIntersectHumanFunc)(base + 0x23AB0);
-	Engine::lineIntersectLevel = (Engine::lineIntersectLevelFunc)(base + 0x7C470);
+	Engine::lineIntersectHuman = (Engine::lineIntersectHumanFunc)(base + 0x37CE0);
+	Engine::lineIntersectLevel = (Engine::lineIntersectLevelFunc)(base + 0x85950);
 	Engine::lineIntersectVehicle =
-	    (Engine::lineIntersectVehicleFunc)(base + 0x95590);
+	    (Engine::lineIntersectVehicleFunc)(base + 0x65270);
 	Engine::lineIntersectTriangle =
-	    (Engine::lineIntersectTriangleFunc)(base + 0x6aa70);
+	    (Engine::lineIntersectTriangleFunc)(base + 0x8630);
 }
 
 static inline void installHook(
@@ -1256,7 +1251,6 @@ static inline void installHook(
 	            (void*)Hooks::name);
 
 static inline void installHooks() {
-	INSTALL(subRosaPuts);
 	INSTALL(subRosaPuts);
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
@@ -1283,7 +1277,6 @@ static inline void installHooks() {
 	INSTALL(itemComputerInput);
 	INSTALL(humanApplyDamage);
 	INSTALL(humanCollisionVehicle);
-	INSTALL(humanGrabbing);
 	INSTALL(humanLimbInverseKinematics);
 	INSTALL(grenadeExplosion);
 	INSTALL(serverPlayerMessage);
@@ -1326,8 +1319,8 @@ static getPathsFunc getPaths;
 // recreated since installing a hook before main can't be reversed for some
 // reason.
 static inline void getPathsNormally() {
-	char* pathA = (char*)(Lua::memory::baseAddress + 0x59DF0300);
-	char* pathB = (char*)(Lua::memory::baseAddress + 0x59DF0500);
+	char* pathA = (char*)(Lua::memory::baseAddress + 0x58793C40);
+	char* pathB = (char*)(Lua::memory::baseAddress + 0x58793E40);
 
 	getcwd(pathA, 0x200);
 	getcwd(pathB, 0x200);
@@ -1336,7 +1329,7 @@ static inline void getPathsNormally() {
 static void hookedGetPaths() {
 	getPathsNormally();
 
-	Console::log(RS_PREFIX "Assuming 37c\n");
+	Console::log(RS_PREFIX "Assuming 38b\n");
 
 	Console::log(RS_PREFIX "Locating memory...\n");
 	printBaseAddress(Lua::memory::baseAddress);
@@ -1355,7 +1348,7 @@ static void hookedGetPaths() {
 
 void __attribute__((constructor)) entry() {
 	Lua::memory::baseAddress = getBaseAddress();
-	getPaths = (getPathsFunc)(Lua::memory::baseAddress + 0xC5B00);
+	getPaths = (getPathsFunc)(Lua::memory::baseAddress + 0xD1770);
 
 	installHook("getPathsHook", getPathsHook, (void*)getPaths,
 	            (void*)hookedGetPaths);

@@ -33,7 +33,6 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"ItemComputerInput", EnableKeys::ItemComputerInput},
      {"HumanDamage", EnableKeys::HumanDamage},
      {"HumanCollisionVehicle", EnableKeys::HumanCollisionVehicle},
-     {"HumanGrabbing", EnableKeys::HumanGrabbing},
      {"HumanLimbInverseKinematics", EnableKeys::HumanLimbInverseKinematics},
      {"GrenadeExplode", EnableKeys::GrenadeExplode},
      {"PlayerChat", EnableKeys::PlayerChat},
@@ -84,7 +83,6 @@ subhook::Hook linkItemHook;
 subhook::Hook itemComputerInputHook;
 subhook::Hook humanApplyDamageHook;
 subhook::Hook humanCollisionVehicleHook;
-subhook::Hook humanGrabbingHook;
 subhook::Hook humanLimbInverseKinematicsHook;
 subhook::Hook grenadeExplosionHook;
 subhook::Hook serverPlayerMessageHook;
@@ -655,7 +653,7 @@ int createAccountByJoinTicket(int identifier, unsigned int ticket) {
 	}
 }
 
-void serverSendConnectResponse(unsigned int address, unsigned int port,
+void serverSendConnectResponse(unsigned int address, unsigned int port, int unk,
                                const char* message) {
 	if (enabledKeys[EnableKeys::SendConnectResponse]) {
 		bool noParent = false;
@@ -678,7 +676,7 @@ void serverSendConnectResponse(unsigned int address, unsigned int port,
 		if (!noParent) {
 			{
 				subhook::ScopedHookRemove remove(&serverSendConnectResponseHook);
-				Engine::serverSendConnectResponse(address, port, message);
+				Engine::serverSendConnectResponse(address, port, unk, message);
 			}
 			if (func != sol::nil) {
 				auto res = func("PostSendConnectResponse", addressString, port, data);
@@ -687,7 +685,7 @@ void serverSendConnectResponse(unsigned int address, unsigned int port,
 		}
 	} else {
 		subhook::ScopedHookRemove remove(&serverSendConnectResponseHook);
-		Engine::serverSendConnectResponse(address, port, message);
+		Engine::serverSendConnectResponse(address, port, unk, message);
 	}
 }
 
@@ -1132,39 +1130,12 @@ void humanCollisionVehicle(int humanID, int vehicleID) {
 	}
 }
 
-void humanGrabbing(int humanID) {
-	if (enabledKeys[EnableKeys::HumanGrabbing]) {
-		Human* human = &Engine::humans[humanID];
-		bool isGrabbingAny = human->isGrabbingLeft || human->isGrabbingRight;
-
-		bool noParent = false;
-		sol::protected_function func = (*lua)["hook"]["run"];
-
-		if (isGrabbingAny && func != sol::nil) {
-			auto res = func("HumanGrabbing", human);
-			if (noLuaCallError(&res)) noParent = (bool)res;
-		}
-		if (!noParent) {
-			{
-				subhook::ScopedHookRemove remove(&humanGrabbingHook);
-				Engine::humanGrabbing(humanID);
-			}
-			if (isGrabbingAny && func != sol::nil) {
-				auto res = func("PostHumanGrabbing", human);
-				noLuaCallError(&res);
-			}
-		}
-	} else {
-		subhook::ScopedHookRemove remove(&humanGrabbingHook);
-		Engine::humanGrabbing(humanID);
-	}
-}
-
 void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
                                 Vector* destination, RotMatrix* destinationAxis,
                                 Vector* vecA, float a, float rot,
                                 float strength, float* d /* Quaternion? */,
-                                Vector* vecB, Vector* vecC, char flags) {
+                                Vector* vecB, Vector* vecC, Vector* vecD,
+                                char flags) {
 	if (enabledKeys[EnableKeys::HumanLimbInverseKinematics]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
@@ -1178,7 +1149,7 @@ void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
 			auto res = func("HumanLimbInverseKinematics", &Engine::humans[humanID],
 			                trunkBoneID, branchBoneID, destination, destinationAxis,
 			                vecA, &wrappedA, &wrappedRot, &wrappedStrength, vecB,
-			                vecC, &wrappedFlags);
+			                vecC, vecD, &wrappedFlags);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 
 			a = wrappedA.value;
@@ -1188,15 +1159,15 @@ void humanLimbInverseKinematics(int humanID, int trunkBoneID, int branchBoneID,
 		}
 		if (!noParent) {
 			subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);
-			Engine::humanLimbInverseKinematics(humanID, trunkBoneID, branchBoneID,
-			                                   destination, destinationAxis, vecA, a,
-			                                   rot, strength, d, vecB, vecC, flags);
+			Engine::humanLimbInverseKinematics(
+			    humanID, trunkBoneID, branchBoneID, destination, destinationAxis,
+			    vecA, a, rot, strength, d, vecB, vecC, vecD, flags);
 		}
 	} else {
 		subhook::ScopedHookRemove remove(&humanLimbInverseKinematicsHook);
-		Engine::humanLimbInverseKinematics(humanID, trunkBoneID, branchBoneID,
-		                                   destination, destinationAxis, vecA, a,
-		                                   rot, strength, d, vecB, vecC, flags);
+		Engine::humanLimbInverseKinematics(
+		    humanID, trunkBoneID, branchBoneID, destination, destinationAxis, vecA,
+		    a, rot, strength, d, vecB, vecC, vecD, flags);
 	}
 }
 

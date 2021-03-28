@@ -117,7 +117,7 @@ typedef int (*createAccountByJoinTicketFunc)(int identifier,
                                              unsigned int ticket);
 extern createAccountByJoinTicketFunc createAccountByJoinTicket;
 typedef void (*serverSendConnectResponseFunc)(unsigned int address,
-                                              unsigned int port,
+                                              unsigned int port, int unk,
                                               const char* message);
 extern serverSendConnectResponseFunc serverSendConnectResponse;
 
@@ -143,13 +143,11 @@ extern humanApplyDamageFunc humanApplyDamage;
 typedef void (*humanCollisionVehicleFunc)(int humanID, int vehicleID);
 extern humanCollisionVehicleFunc humanCollisionVehicle;
 
-extern voidIndexFunc humanGrabbing;
-
 typedef void (*humanLimbInverseKinematicsFunc)(int, int, int, Vector*,
                                                RotMatrix*, Vector*, float,
                                                float, float,
                                                float* /* Quaternion? */,
-                                               Vector*, Vector*, char);
+                                               Vector*, Vector*, Vector*, char);
 extern humanLimbInverseKinematicsFunc humanLimbInverseKinematics;
 
 extern voidIndexFunc grenadeExplosion;
@@ -267,7 +265,7 @@ extern createEventBulletHitFunc createEventBulletHit;
   Math
 */
 
-typedef int (*lineIntersectLevelFunc)(Vector* posA, Vector* posB);
+typedef int (*lineIntersectLevelFunc)(Vector* posA, Vector* posB, int unk);
 extern lineIntersectLevelFunc lineIntersectLevel;
 
 typedef int (*lineIntersectHumanFunc)(int humanID, Vector* posA, Vector* posB,
