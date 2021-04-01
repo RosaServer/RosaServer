@@ -493,7 +493,7 @@ struct ItemType {
 	void setCanPutInBriefcase(bool b) { canPutInBriefcase = b; }
 };
 
-// 6784 bytes (1A80)
+// 7040 bytes (1B80)
 struct Item {
 	int active;
 	int physicsSim;      // 04
@@ -539,7 +539,7 @@ struct Item {
 	unsigned char computerLineColors[32][64];  // b74
 	padding unk10[0x1658 - 0xb74 - (64 * 32)];
 	int computerTeam;  // 1658
-	padding unk11[0x1A80 - 0x1658 - 4];
+	padding unk11[0x1B80 - 0x1658 - 4];
 
 	const char* getClass() const { return "Item"; }
 	std::string __tostring() const;
