@@ -471,10 +471,9 @@ struct ItemType {
 	float secondaryGripRotation;  // cc
 	padding unk7[0x104 - 0xcc - 4];
 	Vector boundsCenter;  // 104
-	padding unk8[0x15c - 0x104 - 12];
-	// TODO: Replace with array for all types
-	int canPutInBriefcase;  // 15c
-	padding unk9[0x1394 - 0x15c - 4];
+	padding unk8[0x11c - 0x104 - 12];
+	int canMountTo[maxNumberOfItemTypes];  // 11c
+	padding unk9[0x1394 - 0x11c - (4 * maxNumberOfItemTypes)];
 	Vector gunHoldingPos;  // 1394
 	padding unk10[0x13D0 - 0x1394 - 12];
 
@@ -487,8 +486,9 @@ struct ItemType {
 	}
 	bool getIsGun() const { return isGun; }
 	void setIsGun(bool b) { isGun = b; }
-	bool getCanPutInBriefcase() const { return canPutInBriefcase; }
-	void setCanPutInBriefcase(bool b) { canPutInBriefcase = b; }
+
+	bool getCanMountTo(ItemType* parent) const;
+	void setCanMountTo(ItemType* parent, bool b);
 };
 
 // 7040 bytes (1B80)

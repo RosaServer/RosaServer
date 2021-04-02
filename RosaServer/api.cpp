@@ -1351,6 +1351,22 @@ int ItemType::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)Engine::itemTypes) / sizeof(*this);
 }
 
+bool ItemType::getCanMountTo(ItemType* parent) const {
+	if (parent == nullptr) {
+		throw std::invalid_argument("Cannot compare to nil parent");
+	}
+
+	return canMountTo[parent->getIndex()];
+}
+
+void ItemType::setCanMountTo(ItemType* parent, bool b) {
+	if (parent == nullptr) {
+		throw std::invalid_argument("Cannot compare to nil parent");
+	}
+
+	canMountTo[parent->getIndex()] = b;
+}
+
 std::string Item::__tostring() const {
 	char buf[16];
 	sprintf(buf, "Item(%i)", getIndex());
