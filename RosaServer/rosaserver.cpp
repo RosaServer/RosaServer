@@ -402,6 +402,7 @@ void luaInit(bool redo) {
 		meta["suitColor"] = &Human::suitColor;
 		meta["tieColor"] = &Human::tieColor;
 		meta["necklace"] = &Human::necklace;
+		meta["lastUpdatedWantedGroup"] = &Human::lastUpdatedWantedGroup;
 
 		meta["class"] = sol::property(&Human::getClass);
 		meta["__tostring"] = &Human::__tostring;
@@ -417,8 +418,6 @@ void luaInit(bool redo) {
 		    sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
 		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
-		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty,
-		                                          &Human::setIsAppearanceDirty);
 
 		meta["remove"] = &Human::remove;
 		meta["teleport"] = &Human::teleport;
