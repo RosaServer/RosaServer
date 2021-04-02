@@ -620,15 +620,8 @@ struct Vehicle {
 	int unk4;            // 68
 	Vector vel;          // 6c
 	padding unk5[0x27fc - 0x6c - 12];
-	int windowState0;  // 27fc
-	int windowState1;  // 2800
-	int windowState2;  // 2804
-	int windowState3;  // 2808
-	int windowState4;  // 280c
-	int windowState5;  // 2810
-	int windowState6;  // 2814
-	int windowState7;  // 2818
-	padding unk6[0x3600 - 0x2818 - 4];
+	int windowStates[8];  // 27fc
+	padding unk6[0x3600 - 0x27fc - (4 * 8)];
 	float gearX;         // 3600
 	float steerControl;  // 3604
 	float gearY;         // 3608
@@ -656,6 +649,8 @@ struct Vehicle {
 	void updateDestruction(int updateType, int partID, Vector* pos,
 	                       Vector* normal) const;
 	void remove() const;
+	bool getIsWindowBroken(unsigned int idx) const;
+	void setIsWindowBroken(unsigned int idx, bool b);
 };
 
 // 92 bytes (5C)
