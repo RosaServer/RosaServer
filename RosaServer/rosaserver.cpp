@@ -1322,6 +1322,8 @@ static inline void getPathsNormally() {
 static void hookedGetPaths() {
 	getPathsNormally();
 
+	signal(SIGPIPE, SIG_IGN);
+
 	Console::log(RS_PREFIX "Assuming 38c\n");
 
 	Console::log(RS_PREFIX "Locating memory...\n");
