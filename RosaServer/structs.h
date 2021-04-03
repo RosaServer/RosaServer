@@ -391,18 +391,18 @@ struct Human {
 	int inventoryAnimationCounterFinished;  // 6df4
 	int inventoryAnimationCounter;          // 6df8
 	padding unk31[0x6f80 - 0x6df8 - 4];
-	int gender;             // 6f80
-	int head;               // 6f84
-	int skinColor;          // 6f88
-	int hairColor;          // 6f8c
-	int hair;               // 6f90
-	int eyeColor;           // 6f94
-	int model;              // 6f98
-	int suitColor;          // 6f9c
-	int tieColor;           // 6fa0
-	int unk32;              // 6fa4
-	int necklace;           // 6fa8
-	int isAppearanceDirty;  // 6fac
+	int gender;                  // 6f80
+	int head;                    // 6f84
+	int skinColor;               // 6f88
+	int hairColor;               // 6f8c
+	int hair;                    // 6f90
+	int eyeColor;                // 6f94
+	int model;                   // 6f98
+	int suitColor;               // 6f9c
+	int tieColor;                // 6fa0
+	int unk32;                   // 6fa4
+	int necklace;                // 6fa8
+	int lastUpdatedWantedGroup;  // 6fac
 	padding unk33[0x6FF8 - 0x6fac - 4];
 
 	const char* getClass() const { return "Human"; }
@@ -419,8 +419,6 @@ struct Human {
 	bool getIsStanding() const { return isStanding; }
 	bool getIsBleeding() const { return isBleeding; }
 	void setIsBleeding(bool b) { isBleeding = b; }
-	bool getIsAppearanceDirty() const { return isAppearanceDirty; }
-	void setIsAppearanceDirty(bool b) { isAppearanceDirty = b; }
 	Player* getPlayer() const;
 	void setPlayer(Player* player);
 	Vehicle* getVehicle() const;
@@ -473,10 +471,9 @@ struct ItemType {
 	float secondaryGripRotation;  // cc
 	padding unk7[0x104 - 0xcc - 4];
 	Vector boundsCenter;  // 104
-	padding unk8[0x15c - 0x104 - 12];
-	// TODO: Replace with array for all types
-	int canPutInBriefcase;  // 15c
-	padding unk9[0x1394 - 0x15c - 4];
+	padding unk8[0x11c - 0x104 - 12];
+	int canMountTo[maxNumberOfItemTypes];  // 11c
+	padding unk9[0x1394 - 0x11c - (4 * maxNumberOfItemTypes)];
 	Vector gunHoldingPos;  // 1394
 	padding unk10[0x13D0 - 0x1394 - 12];
 
@@ -489,8 +486,9 @@ struct ItemType {
 	}
 	bool getIsGun() const { return isGun; }
 	void setIsGun(bool b) { isGun = b; }
-	bool getCanPutInBriefcase() const { return canPutInBriefcase; }
-	void setCanPutInBriefcase(bool b) { canPutInBriefcase = b; }
+
+	bool getCanMountTo(ItemType* parent) const;
+	void setCanMountTo(ItemType* parent, bool b);
 };
 
 // 7040 bytes (1B80)
@@ -622,15 +620,8 @@ struct Vehicle {
 	int unk4;            // 68
 	Vector vel;          // 6c
 	padding unk5[0x27fc - 0x6c - 12];
-	int windowState0;  // 27fc
-	int windowState1;  // 2800
-	int windowState2;  // 2804
-	int windowState3;  // 2808
-	int windowState4;  // 280c
-	int windowState5;  // 2810
-	int windowState6;  // 2814
-	int windowState7;  // 2818
-	padding unk6[0x3600 - 0x2818 - 4];
+	int windowStates[8];  // 27fc
+	padding unk6[0x3600 - 0x27fc - (4 * 8)];
 	float gearX;         // 3600
 	float steerControl;  // 3604
 	float gearY;         // 3608
@@ -658,6 +649,8 @@ struct Vehicle {
 	void updateDestruction(int updateType, int partID, Vector* pos,
 	                       Vector* normal) const;
 	void remove() const;
+	bool getIsWindowBroken(unsigned int idx) const;
+	void setIsWindowBroken(unsigned int idx, bool b);
 };
 
 // 92 bytes (5C)

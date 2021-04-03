@@ -1351,6 +1351,22 @@ int ItemType::getIndex() const {
 	return ((uintptr_t)this - (uintptr_t)Engine::itemTypes) / sizeof(*this);
 }
 
+bool ItemType::getCanMountTo(ItemType* parent) const {
+	if (parent == nullptr) {
+		throw std::invalid_argument("Cannot compare to nil parent");
+	}
+
+	return canMountTo[parent->getIndex()];
+}
+
+void ItemType::setCanMountTo(ItemType* parent, bool b) {
+	if (parent == nullptr) {
+		throw std::invalid_argument("Cannot compare to nil parent");
+	}
+
+	canMountTo[parent->getIndex()] = b;
+}
+
 std::string Item::__tostring() const {
 	char buf[16];
 	sprintf(buf, "Item(%i)", getIndex());
@@ -1544,6 +1560,18 @@ Player* Vehicle::getLastDriver() const {
 }
 
 RigidBody* Vehicle::getRigidBody() const { return &Engine::bodies[bodyID]; }
+
+bool Vehicle::getIsWindowBroken(unsigned int idx) const {
+	if (idx >= 8) throw std::invalid_argument(errorOutOfRange);
+
+	return windowStates[idx];
+}
+
+void Vehicle::setIsWindowBroken(unsigned int idx, bool b) {
+	if (idx >= 8) throw std::invalid_argument(errorOutOfRange);
+
+	windowStates[idx] = b;
+}
 
 Player* Bullet::getPlayer() const {
 	if (playerID == -1) return nullptr;

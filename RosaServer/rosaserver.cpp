@@ -402,6 +402,7 @@ void luaInit(bool redo) {
 		meta["suitColor"] = &Human::suitColor;
 		meta["tieColor"] = &Human::tieColor;
 		meta["necklace"] = &Human::necklace;
+		meta["lastUpdatedWantedGroup"] = &Human::lastUpdatedWantedGroup;
 
 		meta["class"] = sol::property(&Human::getClass);
 		meta["__tostring"] = &Human::__tostring;
@@ -417,8 +418,6 @@ void luaInit(bool redo) {
 		    sol::property(&Human::getIsBleeding, &Human::setIsBleeding);
 		meta["player"] = sol::property(&Human::getPlayer, &Human::setPlayer);
 		meta["vehicle"] = sol::property(&Human::getVehicle, &Human::setVehicle);
-		meta["isAppearanceDirty"] = sol::property(&Human::getIsAppearanceDirty,
-		                                          &Human::setIsAppearanceDirty);
 
 		meta["remove"] = &Human::remove;
 		meta["teleport"] = &Human::teleport;
@@ -457,8 +456,9 @@ void luaInit(bool redo) {
 		meta["index"] = sol::property(&ItemType::getIndex);
 		meta["name"] = sol::property(&ItemType::getName, &ItemType::setName);
 		meta["isGun"] = sol::property(&ItemType::getIsGun, &ItemType::setIsGun);
-		meta["canPutInBriefcase"] = sol::property(&ItemType::getCanPutInBriefcase,
-		                                          &ItemType::setCanPutInBriefcase);
+
+		meta["getCanMountTo"] = &ItemType::getCanMountTo;
+		meta["setCanMountTo"] = &ItemType::setCanMountTo;
 	}
 
 	{
@@ -534,15 +534,6 @@ void luaInit(bool redo) {
 		meta["pos2"] = &Vehicle::pos2;
 		meta["rot"] = &Vehicle::rot;
 		meta["vel"] = &Vehicle::vel;
-		// TODO: something cleaner
-		meta["windowState0"] = &Vehicle::windowState0;
-		meta["windowState1"] = &Vehicle::windowState1;
-		meta["windowState2"] = &Vehicle::windowState2;
-		meta["windowState3"] = &Vehicle::windowState3;
-		meta["windowState4"] = &Vehicle::windowState4;
-		meta["windowState5"] = &Vehicle::windowState5;
-		meta["windowState6"] = &Vehicle::windowState6;
-		meta["windowState7"] = &Vehicle::windowState7;
 		meta["gearX"] = &Vehicle::gearX;
 		meta["steerControl"] = &Vehicle::steerControl;
 		meta["gearY"] = &Vehicle::gearY;
@@ -565,6 +556,8 @@ void luaInit(bool redo) {
 		meta["updateType"] = &Vehicle::updateType;
 		meta["updateDestruction"] = &Vehicle::updateDestruction;
 		meta["remove"] = &Vehicle::remove;
+		meta["getIsWindowBroken"] = &Vehicle::getIsWindowBroken;
+		meta["setIsWindowBroken"] = &Vehicle::setIsWindowBroken;
 	}
 
 	{
@@ -1328,6 +1321,8 @@ static inline void getPathsNormally() {
 
 static void hookedGetPaths() {
 	getPathsNormally();
+
+	signal(SIGPIPE, SIG_IGN);
 
 	Console::log(RS_PREFIX "Assuming 38c\n");
 
