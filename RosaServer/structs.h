@@ -217,7 +217,8 @@ struct Player {
 	MenuButton menuButtons[32];  // 1b18
 	padding unk6_1[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
 	int isBot;  // 2d18
-	padding unk7a[0x2d38 - 0x2d18 - 4];
+	int isZombie; // 2d1c
+	padding unk7a[0x2d38 - 0x2d1c - 4];
 	int botHasDestination;  // 2d38
 	Vector botDestination;  // 2d3c
 	padding unk7[0x37ac - 0x2d3c - 12];
@@ -252,6 +253,8 @@ struct Player {
 	void setIsReady(bool b) { isReady = b; }
 	bool getIsBot() const { return isBot; }
 	void setIsBot(bool b) { isBot = b; }
+	bool getIsZombie() const { return isZombie; }
+	void setIsZombie(bool b) { isZombie = b; }
 	Human* getHuman();
 	void setHuman(Human* human);
 	Connection* getConnection();
