@@ -216,8 +216,8 @@ struct Player {
 	int numMenuButtons;          // 1b14
 	MenuButton menuButtons[32];  // 1b18
 	padding unk6_1[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
-	int isBot;  // 2d18
-	int isZombie; // 2d1c
+	int isBot;     // 2d18
+	int isZombie;  // 2d1c
 	padding unk7a[0x2d38 - 0x2d1c - 4];
 	int botHasDestination;  // 2d38
 	Vector botDestination;  // 2d3c

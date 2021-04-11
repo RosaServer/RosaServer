@@ -345,7 +345,8 @@ void luaInit(bool redo) {
 		meta["isAdmin"] = sol::property(&Player::getIsAdmin, &Player::setIsAdmin);
 		meta["isReady"] = sol::property(&Player::getIsReady, &Player::setIsReady);
 		meta["isBot"] = sol::property(&Player::getIsBot, &Player::setIsBot);
-		meta["isZombie"] = sol::property(&Player::getIsZombie, &Player::setIsZombie);
+		meta["isZombie"] =
+		    sol::property(&Player::getIsZombie, &Player::setIsZombie);
 		meta["human"] = sol::property(&Player::getHuman, &Player::setHuman);
 		meta["connection"] = sol::property(&Player::getConnection);
 		meta["account"] = sol::property(&Player::getAccount, &Player::setAccount);
@@ -1089,13 +1090,13 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::World::Crime::teamCiv = (int*)(base + 0x43570ecc);
 	Engine::World::Crime::teamTeam = (int*)(base + 0x43570ed0);
 	Engine::World::Crime::teamTeamInBase = (int*)(base + 0x43570ed4);
-	Engine::World::Crime::noSpawn = (int*)(base + 0x43570ed8);
+	Engine::World::Crime::noSpawn = (int*)(base + 0x43570ee0);
 
-	Engine::Round::roundTime = (int*)(base + 0x43570ed8);
-	Engine::Round::startCash = (int*)(base + 0x43570edc);
-	Engine::Round::weekly = (bool*)(base + 0x43570ed8);
-	Engine::Round::bonusRatio = (bool*)(base + 0x43570edc);
-	Engine::Round::teamDamage = (int*)(base + 0x43570ed8);
+	Engine::Round::roundTime = (int*)(base + 0x43570eac);
+	Engine::Round::startCash = (int*)(base + 0x43570eb0);
+	Engine::Round::weekly = (bool*)(base + 0x43570eb4);
+	Engine::Round::bonusRatio = (bool*)(base + 0x43570eb8);
+	Engine::Round::teamDamage = (int*)(base + 0x43570ebc);
 
 	Engine::gameType = (int*)(base + 0x434b63ac);
 	Engine::mapName = (char*)(base + 0x434b63b0);
@@ -1104,7 +1105,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::gameTimer = (int*)(base + 0x434b65d4);
 	Engine::sunTime = (unsigned int*)(base + 0xcda06e0);
 	Engine::isLevelLoaded = (int*)(base + 0x37281200);
-	Engine::gravity = (float*)(base + 0xd5a98);
+	Engine::gravity = (float*)(base + 0xd5b98);
 	pryMemory(Engine::gravity, 1);
 	Engine::originalGravity = *Engine::gravity;
 
@@ -1135,24 +1136,24 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::subRosa__printf_chk =
 	    (Engine::subRosa__printf_chkFunc)(base + 0x22c0);
 
-	Engine::resetGame = (Engine::voidFunc)(base + 0xbc930);
+	Engine::resetGame = (Engine::voidFunc)(base + 0xbc9c0);
 
 	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x173f0);
 	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0x112d0);
 
-	Engine::logicSimulation = (Engine::voidFunc)(base + 0xc3460);
-	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xbef00);
-	Engine::logicSimulationRound = (Engine::voidFunc)(base + 0xbf680);
-	Engine::logicSimulationWorld = (Engine::voidFunc)(base + 0xc2a10);
-	Engine::logicSimulationTerminator = (Engine::voidFunc)(base + 0xc0600);
-	Engine::logicSimulationCoop = (Engine::voidFunc)(base + 0xbecc0);
-	Engine::logicSimulationVersus = (Engine::voidFunc)(base + 0xc1e60);
-	Engine::logicPlayerActions = (Engine::voidIndexFunc)(base + 0xb7f20);
+	Engine::logicSimulation = (Engine::voidFunc)(base + 0xc3570);
+	Engine::logicSimulationRace = (Engine::voidFunc)(base + 0xbf010);
+	Engine::logicSimulationRound = (Engine::voidFunc)(base + 0xbf790);
+	Engine::logicSimulationWorld = (Engine::voidFunc)(base + 0xc2b20);
+	Engine::logicSimulationTerminator = (Engine::voidFunc)(base + 0xc0710);
+	Engine::logicSimulationCoop = (Engine::voidFunc)(base + 0xbedd0);
+	Engine::logicSimulationVersus = (Engine::voidFunc)(base + 0xc1f70);
+	Engine::logicPlayerActions = (Engine::voidIndexFunc)(base + 0xb7fa0);
 
-	Engine::physicsSimulation = (Engine::voidFunc)(base + 0xa6c40);
+	Engine::physicsSimulation = (Engine::voidFunc)(base + 0xa6c30);
 	Engine::rigidBodySimulation = (Engine::voidFunc)(base + 0x7c8e0);
-	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xcd6e0);
-	Engine::serverSend = (Engine::voidFunc)(base + 0xca6e0);
+	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xcd800);
+	Engine::serverSend = (Engine::voidFunc)(base + 0xca800);
 	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x88ac0);
 	Engine::bulletTimeToLive = (Engine::voidFunc)(base + 0x1c820);
 
@@ -1162,7 +1163,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::createAccountByJoinTicket =
 	    (Engine::createAccountByJoinTicketFunc)(base + 0xb660);
 	Engine::serverSendConnectResponse =
-	    (Engine::serverSendConnectResponseFunc)(base + 0xc5b00);
+	    (Engine::serverSendConnectResponseFunc)(base + 0xc5c20);
 
 	Engine::scenarioArmHuman = (Engine::scenarioArmHumanFunc)(base + 0x783f0);
 	Engine::linkItem = (Engine::linkItemFunc)(base + 0x43bc0);
@@ -1179,7 +1180,7 @@ static inline void locateMemory(uintptr_t base) {
 	    (Engine::humanLimbInverseKinematicsFunc)(base + 0x6eea0);
 	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x40ef0);
 	Engine::serverPlayerMessage =
-	    (Engine::serverPlayerMessageFunc)(base + 0xb6620);
+	    (Engine::serverPlayerMessageFunc)(base + 0xb66a0);
 	Engine::playerAI = (Engine::voidIndexFunc)(base + 0x87030);
 	Engine::playerDeathTax = (Engine::voidIndexFunc)(base + 0x5960);
 	Engine::playerGiveWantedLevel =
@@ -1325,7 +1326,7 @@ static void hookedGetPaths() {
 
 	signal(SIGPIPE, SIG_IGN);
 
-	Console::log(RS_PREFIX "Assuming 38c\n");
+	Console::log(RS_PREFIX "Assuming 38d\n");
 
 	Console::log(RS_PREFIX "Locating memory...\n");
 	printBaseAddress(Lua::memory::baseAddress);
@@ -1344,7 +1345,7 @@ static void hookedGetPaths() {
 
 void __attribute__((constructor)) entry() {
 	Lua::memory::baseAddress = getBaseAddress();
-	getPaths = (getPathsFunc)(Lua::memory::baseAddress + 0xd26a0);
+	getPaths = (getPathsFunc)(Lua::memory::baseAddress + 0xd27b0);
 
 	installHook("getPathsHook", getPathsHook, (void*)getPaths,
 	            (void*)hookedGetPaths);
