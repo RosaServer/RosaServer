@@ -1255,6 +1255,15 @@ void Human::setPlayer(Player* player) {
 		playerID = player->getIndex();
 }
 
+Account* Human::getAccount() {
+	if (accountID == -1) return nullptr;
+	return &Engine::accounts[accountID];
+}
+
+void Human::setAccount(Account* account) {
+	accountID = account != nullptr ? account->getIndex() : -1;
+}
+
 Vehicle* Human::getVehicle() const {
 	if (vehicleID == -1) return nullptr;
 	return &Engine::vehicles[vehicleID];

@@ -301,7 +301,7 @@ struct Human {
 	int active;
 	int physicsSim;           // 04
 	int playerID;             // 08
-	int unk0;                 // 0c
+	int accountID;            // 0c
 	int unk1;                 // 10
 	int unk2;                 // 14
 	int unk3;                 // 18
@@ -424,6 +424,8 @@ struct Human {
 	void setIsBleeding(bool b) { isBleeding = b; }
 	Player* getPlayer() const;
 	void setPlayer(Player* player);
+	Account* getAccount();
+	void setAccount(Account* account);
 	Vehicle* getVehicle() const;
 	void setVehicle(Vehicle* vcl);
 	Bone* getBone(unsigned int idx);
