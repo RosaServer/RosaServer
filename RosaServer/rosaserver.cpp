@@ -1184,6 +1184,7 @@ static inline void locateMemory(uintptr_t base) {
 	    (Engine::serverPlayerMessageFunc)(base + 0xb66a0);
 	Engine::playerAI = (Engine::voidIndexFunc)(base + 0x87030);
 	Engine::playerDeathTax = (Engine::voidIndexFunc)(base + 0x5960);
+	Engine::accountDeathTax = (Engine::voidIndexFunc)(base + 0x5340);
 	Engine::playerGiveWantedLevel =
 	    (Engine::playerGiveWantedLevelFunc)(base + 0x67f0);
 	Engine::createBondRigidBodyToRigidBody =
@@ -1278,6 +1279,7 @@ static inline void installHooks() {
 	INSTALL(serverPlayerMessage);
 	INSTALL(playerAI);
 	INSTALL(playerDeathTax);
+	INSTALL(accountDeathTax);
 	INSTALL(playerGiveWantedLevel);
 	INSTALL(addCollisionRigidBodyOnRigidBody);
 	INSTALL(createBullet);

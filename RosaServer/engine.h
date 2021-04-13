@@ -156,6 +156,7 @@ typedef int (*serverPlayerMessageFunc)(int playerID, char* message);
 extern serverPlayerMessageFunc serverPlayerMessage;
 extern voidIndexFunc playerAI;
 extern voidIndexFunc playerDeathTax;
+extern voidIndexFunc accountDeathTax;
 
 typedef void (*playerGiveWantedLevelFunc)(int playerID, int victimPlayerID,
                                           int basePoints);

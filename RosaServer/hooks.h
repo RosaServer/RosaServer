@@ -41,6 +41,7 @@ enum EnableKeys {
 	PlayerChat,
 	PlayerAI,
 	PlayerDeathTax,
+	AccountDeathTax,
 	PlayerGiveWantedLevel,
 	CollideBodies,
 	BulletCreate,
@@ -160,6 +161,8 @@ extern subhook::Hook playerAIHook;
 void playerAI(int playerID);
 extern subhook::Hook playerDeathTaxHook;
 void playerDeathTax(int playerID);
+extern subhook::Hook accountDeathTaxHook;
+void accountDeathTax(int accountID);
 extern subhook::Hook playerGiveWantedLevelHook;
 void playerGiveWantedLevel(int playerID, int victimPlayerID, int basePoints);
 

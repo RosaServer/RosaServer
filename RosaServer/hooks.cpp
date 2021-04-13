@@ -38,6 +38,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"PlayerChat", EnableKeys::PlayerChat},
      {"PlayerAI", EnableKeys::PlayerAI},
      {"PlayerDeathTax", EnableKeys::PlayerDeathTax},
+     {"AccountDeathTax", EnableKeys::AccountDeathTax},
      {"PlayerGiveWantedLevel", EnableKeys::PlayerGiveWantedLevel},
      {"CollideBodies", EnableKeys::CollideBodies},
      {"BulletCreate", EnableKeys::BulletCreate},
@@ -88,6 +89,7 @@ subhook::Hook grenadeExplosionHook;
 subhook::Hook serverPlayerMessageHook;
 subhook::Hook playerAIHook;
 subhook::Hook playerDeathTaxHook;
+subhook::Hook accountDeathTaxHook;
 subhook::Hook playerGiveWantedLevelHook;
 subhook::Hook addCollisionRigidBodyOnRigidBodyHook;
 subhook::Hook createBulletHook;
@@ -1259,6 +1261,30 @@ void playerDeathTax(int playerID) {
 	} else {
 		subhook::ScopedHookRemove remove(&playerDeathTaxHook);
 		Engine::playerDeathTax(playerID);
+	}
+}
+
+void accountDeathTax(int accountID) {
+	if (enabledKeys[EnableKeys::AccountDeathTax]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			auto res = func("AccountDeathTax", &Engine::accounts[accountID]);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&accountDeathTaxHook);
+				Engine::accountDeathTax(accountID);
+			}
+			if (func != sol::nil) {
+				auto res = func("PostAccountDeathTax", &Engine::accounts[accountID]);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&accountDeathTaxHook);
+		Engine::accountDeathTax(accountID);
 	}
 }
 
