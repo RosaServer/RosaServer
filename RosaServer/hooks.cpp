@@ -634,13 +634,13 @@ int createAccountByJoinTicket(int identifier, unsigned int ticket) {
 			}
 			if (func != sol::nil) {
 				auto res = func("AccountTicketFound",
-				                id == -1 ? nullptr : &Engine::accounts[id]);
+				                id < 0 ? nullptr : &Engine::accounts[id]);
 				noParent = false;
 				if (noLuaCallError(&res)) noParent = (bool)res;
 
 				if (!noParent) {
 					auto res = func("PostAccountTicket",
-					                id == -1 ? nullptr : &Engine::accounts[id]);
+					                id < 0 ? nullptr : &Engine::accounts[id]);
 					noLuaCallError(&res);
 					return id;
 				}
