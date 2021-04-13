@@ -11,12 +11,12 @@ bool shouldReset = false;
 sol::state* lua;
 std::string hookMode;
 
-sol::table* accountDataTables[maxNumberOfAccounts];
-sol::table* playerDataTables[maxNumberOfPlayers];
-sol::table* humanDataTables[maxNumberOfHumans];
-sol::table* itemDataTables[maxNumberOfItems];
-sol::table* vehicleDataTables[maxNumberOfVehicles];
-sol::table* bodyDataTables[maxNumberOfRigidBodies];
+sol::table* accountDataTables[maxNumberOfAccounts] = {0};
+sol::table* playerDataTables[maxNumberOfPlayers] = {0};
+sol::table* humanDataTables[maxNumberOfHumans] = {0};
+sol::table* itemDataTables[maxNumberOfItems] = {0};
+sol::table* vehicleDataTables[maxNumberOfVehicles] = {0};
+sol::table* bodyDataTables[maxNumberOfRigidBodies] = {0};
 
 std::mutex stateResetMutex;
 
