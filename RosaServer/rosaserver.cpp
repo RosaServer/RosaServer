@@ -655,7 +655,7 @@ void luaInit(bool redo) {
 
 	{
 		auto meta = lua->new_usertype<Worker>(
-		    "Worker", sol::constructors<ChildProcess(std::string)>());
+		    "Worker", sol::constructors<Worker(std::string)>());
 		meta["stop"] = &Worker::stop;
 		meta["sendMessage"] = &Worker::sendMessage;
 		meta["receiveMessage"] = &Worker::receiveMessage;
