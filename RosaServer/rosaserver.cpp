@@ -103,6 +103,13 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["receiveEvent"] = &FileWatcher::receiveEvent;
 	}
 
+	{
+		auto meta = state->new_usertype<SQLite>(
+		    "SQLite", sol::constructors<SQLite(const char*)>());
+		meta["close"] = &SQLite::close;
+		meta["query"] = &SQLite::query;
+	}
+
 	(*state)["print"] = Lua::print;
 
 	(*state)["Vector"] = sol::overload(Lua::Vector_, Lua::Vector_3f);

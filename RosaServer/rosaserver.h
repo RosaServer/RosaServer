@@ -15,4 +15,5 @@
 #include "hooks.h"
 #include "image.h"
 #include "server.h"
+#include "sqlite.h"
 #include "worker.h"
