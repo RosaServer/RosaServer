@@ -119,6 +119,11 @@ std::tuple<sol::object, sol::object> SQLite::query(const char* sql,
 
 	sqlite3_finalize(statement);
 
-	return std::make_tuple(sol::make_object(lua, rows),
+	if (numColumns) {
+		return std::make_tuple(sol::make_object(lua, rows),
+		                       sol::make_object(lua, sol::lua_nil));
+	}
+
+	return std::make_tuple(sol::make_object(lua, sqlite3_changes(handle)),
 	                       sol::make_object(lua, sol::lua_nil));
 }
