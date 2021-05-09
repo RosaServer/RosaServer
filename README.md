@@ -37,6 +37,7 @@ Make sure all submodules are cloned, and run `./build.sh`
 - `build-essential` on Debian/Ubuntu
 - `cmake`
 - `libssl-dev`
+- `libsqlite3-dev`
 
 Here's a basic script I use to copy the required files after they're compiled. For example, `./build.sh && ./postbuild.sh`
 ```bash

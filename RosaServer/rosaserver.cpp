@@ -103,6 +103,13 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["receiveEvent"] = &FileWatcher::receiveEvent;
 	}
 
+	{
+		auto meta = state->new_usertype<SQLite>(
+		    "SQLite", sol::constructors<SQLite(const char*)>());
+		meta["close"] = &SQLite::close;
+		meta["query"] = &SQLite::query;
+	}
+
 	(*state)["print"] = Lua::print;
 
 	(*state)["Vector"] = sol::overload(Lua::Vector_, Lua::Vector_3f);
@@ -655,7 +662,7 @@ void luaInit(bool redo) {
 
 	{
 		auto meta = lua->new_usertype<Worker>(
-		    "Worker", sol::constructors<ChildProcess(std::string)>());
+		    "Worker", sol::constructors<Worker(std::string)>());
 		meta["stop"] = &Worker::stop;
 		meta["sendMessage"] = &Worker::sendMessage;
 		meta["receiveMessage"] = &Worker::receiveMessage;

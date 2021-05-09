@@ -21,6 +21,7 @@ add_library (rosaserver SHARED
 	hooks.cpp
 	image.cpp
 	rosaserver.cpp
+	sqlite.cpp
 	subhook.c
 	subhook_unix.c
 	subhook_x86.c
@@ -33,6 +34,7 @@ target_link_libraries (rosaserver Threads::Threads)
 target_link_libraries (rosaserver stdc++fs)
 target_link_libraries (rosaserver OpenSSL::SSL)
 target_link_libraries (rosaserver OpenSSL::Crypto)
+target_link_libraries (rosaserver sqlite3)
 target_link_libraries (rosaserver ${CMAKE_SOURCE_DIR}/moonjit/src/libluajit.so)
 include_directories (${CMAKE_SOURCE_DIR}/moonjit/src)
 include_directories (${CMAKE_SOURCE_DIR}/shared)
