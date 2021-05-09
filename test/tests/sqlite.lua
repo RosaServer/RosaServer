@@ -6,17 +6,17 @@ do
 end
 
 do
-	local _, err = db:query('create table people (age integer, height real, name text, dna blob);')
-	assert(not err, err)
+	local numChanges = assert(db:query('create table people (age integer, height real, name text, dna blob);'))
+	assert(numChanges == 0)
 end
 
 do
-	local _, err = db:query(
+	local numChanges = assert(db:query(
 		'insert into people values (?, ?, ?, ?), (?, ?, ?, ?);',
 		50, 180, 'John Smith', 'ACGT\0ACGT\1',
 		25, 190.5, nil, nil
-	)
-	assert(not err, err)
+	))
+	assert(numChanges == 2)
 end
 
 do
