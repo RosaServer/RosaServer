@@ -107,7 +107,7 @@ extern voidFunc rigidBodySimulation;
 typedef int (*serverReceiveFunc)();
 extern serverReceiveFunc serverReceive;
 extern voidFunc serverSend;
-typedef int (*sendPacketFunc)(int arg1, int arg2);
+typedef int (*sendPacketFunc)(unsigned int address, unsigned short port);
 extern sendPacketFunc sendPacket;
 extern voidFunc bulletSimulation;
 extern voidFunc bulletTimeToLive;

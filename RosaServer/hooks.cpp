@@ -546,29 +546,31 @@ void serverSend() {
 	}
 }
 
-int sendPacket(int ip_address, int port) {
+int sendPacket(unsigned int address, unsigned short port) {
 	if (enabledKeys[EnableKeys::SendPacket]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
+		auto addressString = addressFromInteger(address);
 		if (func != sol::nil) {
-    		struct in_addr addr = {ip_address};
-			auto res = func("SendPacket", inet_ntoa( addr ), port);
+			auto res = func("SendPacket", addressString, port);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
+			int ret;
 			{
 				subhook::ScopedHookRemove remove(&sendPacketHook);
-				Engine::sendPacket(ip_address, port);
+				ret = Engine::sendPacket(address, port);
 			}
 			if (func != sol::nil) {
-    			struct in_addr addr = {ip_address};
-				auto res = func("PostSendPacket", inet_ntoa( addr ), port);
+				auto res = func("PostSendPacket", addressString, port);
 				noLuaCallError(&res);
 			}
+			return ret;
 		}
+		return 0;
 	} else {
 		subhook::ScopedHookRemove remove(&sendPacketHook);
-		Engine::sendPacket(ip_address, port);
+		return Engine::sendPacket(address, port);
 	}
 }
 

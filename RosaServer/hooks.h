@@ -106,7 +106,7 @@ int serverReceive();
 extern subhook::Hook serverSendHook;
 void serverSend();
 extern subhook::Hook sendPacketHook;
-int sendPacket(int arg1, int arg2);
+int sendPacket(unsigned int address, unsigned short port);
 extern subhook::Hook bulletSimulationHook;
 void bulletSimulation();
 
