@@ -91,6 +91,7 @@ voidIndexFunc logicPlayerActions;
 voidFunc physicsSimulation;
 voidFunc rigidBodySimulation;
 serverReceiveFunc serverReceive;
+sendPacketFunc sendPacket;
 voidFunc serverSend;
 voidFunc bulletSimulation;
 voidFunc bulletTimeToLive;
