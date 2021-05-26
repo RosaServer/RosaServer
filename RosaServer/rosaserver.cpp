@@ -1082,6 +1082,8 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::serverName = (char*)(base + 0x1fed72d4);
 	Engine::serverPort = (unsigned int*)(base + 0x17b9e720);
 	Engine::numEvents = (unsigned int*)(base + 0x443f1c64);
+	Engine::packetSize = (int*)(base + 0x36e60d5c);
+	Engine::packet = (unsigned char*)(base + 0x36e60d64);
 	Engine::serverMaxBytesPerSecond = (int*)(base + 0x17b9e724);
 	Engine::adminPassword = (char*)(base + 0x17b9eb2c);
 	Engine::isPassworded = (int*)(base + 0x1fed76f0);

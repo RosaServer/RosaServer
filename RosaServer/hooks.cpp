@@ -550,9 +550,14 @@ int sendPacket(unsigned int address, unsigned short port) {
 	if (enabledKeys[EnableKeys::SendPacket]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
+
 		auto addressString = addressFromInteger(address);
+		int packetType = Engine::packet[4];
+		int packetSize = *Engine::packetSize;
+
 		if (func != sol::nil) {
-			auto res = func("SendPacket", addressString, port);
+			auto res =
+			    func("SendPacket", addressString, port, packetType, packetSize);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
@@ -562,7 +567,8 @@ int sendPacket(unsigned int address, unsigned short port) {
 				ret = Engine::sendPacket(address, port);
 			}
 			if (func != sol::nil) {
-				auto res = func("PostSendPacket", addressString, port);
+				auto res =
+				    func("PostSendPacket", addressString, port, packetType, packetSize);
 				noLuaCallError(&res);
 			}
 			return ret;

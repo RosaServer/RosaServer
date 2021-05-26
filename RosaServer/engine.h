@@ -8,6 +8,9 @@ extern char* serverName;
 extern unsigned int* serverPort;
 extern unsigned int* numEvents;
 
+extern int* packetSize;
+extern unsigned char* packet;
+
 extern int* gameType;
 extern char* mapName;
 extern char* loadedMapName;

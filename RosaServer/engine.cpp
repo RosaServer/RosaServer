@@ -7,6 +7,9 @@ char* serverName;
 unsigned int* serverPort;
 unsigned int* numEvents;
 
+int* packetSize;
+unsigned char* packet;
+
 int* gameType;
 char* mapName;
 char* loadedMapName;
