@@ -20,7 +20,8 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"PlayerActions", EnableKeys::PlayerActions},
      {"Physics", EnableKeys::Physics},
      {"PhysicsRigidBodies", EnableKeys::PhysicsRigidBodies},
-     {"InPacket", EnableKeys::InPacket},
+     {"ServerReceive", EnableKeys::ServerReceive},
+     {"ServerSend", EnableKeys::ServerSend},
      {"SendPacket", EnableKeys::SendPacket},
      {"PhysicsBullets", EnableKeys::PhysicsBullets},
      {"EconomyCarMarket", EnableKeys::EconomyCarMarket},
@@ -75,6 +76,7 @@ subhook::Hook physicsSimulationHook;
 subhook::Hook rigidBodySimulationHook;
 subhook::Hook serverReceiveHook;
 subhook::Hook serverSendHook;
+subhook::Hook sendPacketHook;
 subhook::Hook bulletSimulationHook;
 subhook::Hook economyCarMarketHook;
 subhook::Hook saveAccountsServerHook;
@@ -494,11 +496,11 @@ void rigidBodySimulation() {
 }
 
 int serverReceive() {
-	if (enabledKeys[EnableKeys::InPacket]) {
+	if (enabledKeys[EnableKeys::ServerReceive]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
-			auto res = func("InPacket");
+			auto res = func("ServerReceive");
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
@@ -508,7 +510,7 @@ int serverReceive() {
 				ret = Engine::serverReceive();
 			}
 			if (func != sol::nil) {
-				auto res = func("PostInPacket");
+				auto res = func("PostServerReceive");
 				noLuaCallError(&res);
 			}
 			return ret;
@@ -521,11 +523,11 @@ int serverReceive() {
 }
 
 void serverSend() {
-	if (enabledKeys[EnableKeys::SendPacket]) {
+	if (enabledKeys[EnableKeys::ServerSend]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
-			auto res = func("SendPacket");
+			auto res = func("ServerSend");
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
@@ -534,13 +536,39 @@ void serverSend() {
 				Engine::serverSend();
 			}
 			if (func != sol::nil) {
-				auto res = func("PostSendPacket");
+				auto res = func("PostServerSend");
 				noLuaCallError(&res);
 			}
 		}
 	} else {
 		subhook::ScopedHookRemove remove(&serverSendHook);
 		Engine::serverSend();
+	}
+}
+
+int sendPacket(int ip_address, int port) {
+	if (enabledKeys[EnableKeys::SendPacket]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+    		struct in_addr addr = {ip_address};
+			auto res = func("SendPacket", inet_ntoa( addr ), port);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&sendPacketHook);
+				Engine::sendPacket(ip_address, port);
+			}
+			if (func != sol::nil) {
+    			struct in_addr addr = {ip_address};
+				auto res = func("PostSendPacket", inet_ntoa( addr ), port);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&sendPacketHook);
+		Engine::sendPacket(ip_address, port);
 	}
 }
 

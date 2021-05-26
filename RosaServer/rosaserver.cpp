@@ -1162,6 +1162,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::rigidBodySimulation = (Engine::voidFunc)(base + 0x7c8e0);
 	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xcd800);
 	Engine::serverSend = (Engine::voidFunc)(base + 0xca800);
+	Engine::sendPacket = (Engine::sendPacketFunc)(base + 0xc5600);
 	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x88ac0);
 	Engine::bulletTimeToLive = (Engine::voidFunc)(base + 0x1c820);
 
@@ -1272,6 +1273,7 @@ static inline void installHooks() {
 	INSTALL(rigidBodySimulation);
 	INSTALL(serverReceive);
 	INSTALL(serverSend);
+	INSTALL(sendPacket);
 	INSTALL(bulletSimulation);
 	INSTALL(economyCarMarket);
 	INSTALL(saveAccountsServer);
