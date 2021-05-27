@@ -110,6 +110,8 @@ extern voidFunc rigidBodySimulation;
 typedef int (*serverReceiveFunc)();
 extern serverReceiveFunc serverReceive;
 extern voidFunc serverSend;
+typedef void (*calculatePlayerVoiceFunc)(int connectionID, int playerID);
+extern calculatePlayerVoiceFunc calculatePlayerVoice;
 typedef int (*sendPacketFunc)(unsigned int address, unsigned short port);
 extern sendPacketFunc sendPacket;
 extern voidFunc bulletSimulation;

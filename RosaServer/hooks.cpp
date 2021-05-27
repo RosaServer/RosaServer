@@ -22,6 +22,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"PhysicsRigidBodies", EnableKeys::PhysicsRigidBodies},
      {"ServerReceive", EnableKeys::ServerReceive},
      {"ServerSend", EnableKeys::ServerSend},
+     {"CalculateEarShots", EnableKeys::CalculateEarShots},
      {"SendPacket", EnableKeys::SendPacket},
      {"PhysicsBullets", EnableKeys::PhysicsBullets},
      {"EconomyCarMarket", EnableKeys::EconomyCarMarket},
@@ -76,6 +77,7 @@ subhook::Hook physicsSimulationHook;
 subhook::Hook rigidBodySimulationHook;
 subhook::Hook serverReceiveHook;
 subhook::Hook serverSendHook;
+subhook::Hook calculatePlayerVoiceHook;
 subhook::Hook sendPacketHook;
 subhook::Hook bulletSimulationHook;
 subhook::Hook economyCarMarketHook;
@@ -543,6 +545,34 @@ void serverSend() {
 	} else {
 		subhook::ScopedHookRemove remove(&serverSendHook);
 		Engine::serverSend();
+	}
+}
+
+void calculatePlayerVoice(int connectionID, int playerID) {
+	if (enabledKeys[EnableKeys::CalculateEarShots]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+
+		auto connection = &Engine::connections[connectionID];
+		auto player = &Engine::players[playerID];
+
+		if (func != sol::nil) {
+			auto res = func("CalculateEarShots", connection, player);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&calculatePlayerVoiceHook);
+				Engine::calculatePlayerVoice(connectionID, playerID);
+			}
+			if (func != sol::nil) {
+				auto res = func("PostCalculateEarShots", connection, player);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&calculatePlayerVoiceHook);
+		Engine::calculatePlayerVoice(connectionID, playerID);
 	}
 }
 

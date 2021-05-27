@@ -133,7 +133,7 @@ static sol::object handleSyncHTTPResponse(httplib::Result& res,
 		return sol::make_object(lua, table);
 	}
 
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 sol::object http::getSync(const char* scheme, const char* path,
@@ -276,7 +276,7 @@ sol::object physics::lineIntersectLevelQuick(Vector* posA, Vector* posB,
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
@@ -288,7 +288,7 @@ sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 sol::object physics::lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA,
@@ -300,7 +300,7 @@ sol::object physics::lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA,
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 sol::object physics::lineIntersectAnyQuick(Vector* posA, Vector* posB,
@@ -350,7 +350,7 @@ sol::object physics::lineIntersectAnyQuick(Vector* posA, Vector* posB,
 		return sol::make_object(lua, &Engine::humans[nearestObject]);
 	}
 
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 sol::object physics::lineIntersectTriangle(Vector* outPos, Vector* normal,
@@ -364,7 +364,7 @@ sol::object physics::lineIntersectTriangle(Vector* outPos, Vector* normal,
 	                                        posB, triA, triB, triC);
 
 	if (hit) return sol::make_object(lua, outFraction);
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 void physics::garbageCollectBullets() { Engine::bulletTimeToLive(); }
@@ -957,6 +957,54 @@ void memory::writeBytes(uintptr_t address, std::string bytes) {
 
 };  // namespace Lua
 
+Player* EarShot::getPlayer() const {
+	if (playerID == -1) return nullptr;
+	return &Engine::players[playerID];
+}
+
+void EarShot::setPlayer(Player* player) {
+	if (player == nullptr)
+		playerID = -1;
+	else
+		playerID = player->getIndex();
+}
+
+Human* EarShot::getHuman() const {
+	if (humanID == -1) return nullptr;
+	return &Engine::humans[humanID];
+}
+
+void EarShot::setHuman(Human* human) {
+	if (human == nullptr)
+		humanID = -1;
+	else
+		humanID = human->getIndex();
+}
+
+Item* EarShot::getReceivingItem() const {
+	if (receivingItemID == -1) return nullptr;
+	return &Engine::items[receivingItemID];
+}
+
+void EarShot::setReceivingItem(Item* item) {
+	if (item == nullptr)
+		receivingItemID = -1;
+	else
+		receivingItemID = item->getIndex();
+}
+
+Item* EarShot::getTransmittingItem() const {
+	if (transmittingItemID == -1) return nullptr;
+	return &Engine::items[transmittingItemID];
+}
+
+void EarShot::setTransmittingItem(Item* item) {
+	if (item == nullptr)
+		transmittingItemID = -1;
+	else
+		transmittingItemID = item->getIndex();
+}
+
 std::string addressFromInteger(unsigned int address) {
 	unsigned char* bytes = (unsigned char*)(&address);
 
@@ -968,6 +1016,12 @@ std::string addressFromInteger(unsigned int address) {
 }
 
 std::string Connection::getAddress() { return addressFromInteger(address); }
+
+EarShot* Connection::getEarShot(unsigned int idx) {
+	if (idx > 8) throw std::invalid_argument(errorOutOfRange);
+
+	return &earShots[idx];
+}
 
 Human* Connection::getSpectatingHuman() const {
 	return spectatingHumanID == -1 ? nullptr : &Engine::humans[spectatingHumanID];
@@ -1155,7 +1209,7 @@ void Player::sendMessage(const char* message) const {
 	Engine::createEventMessage(6, (char*)message, getIndex(), 0);
 }
 
-Human* Player::getHuman() {
+Human* Player::getHuman() const {
 	if (humanID == -1) return nullptr;
 	return &Engine::humans[humanID];
 }
