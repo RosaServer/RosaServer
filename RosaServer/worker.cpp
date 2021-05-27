@@ -74,7 +74,7 @@ sol::object Worker::l_receiveMessage(sol::this_state s) {
 	sendMessageQueueMutex.lock();
 	if (sendMessageQueue.empty()) {
 		sendMessageQueueMutex.unlock();
-		return sol::make_object(state, sol::lua_nil);
+		return sol::make_object(state, sol::nil);
 	}
 
 	auto message = sendMessageQueue.front();
@@ -103,7 +103,7 @@ sol::object Worker::receiveMessage(sol::this_state s) {
 	receiveMessageQueueMutex.lock();
 	if (receiveMessageQueue.empty()) {
 		receiveMessageQueueMutex.unlock();
-		return sol::make_object(state, sol::lua_nil);
+		return sol::make_object(state, sol::nil);
 	}
 
 	auto message = receiveMessageQueue.front();

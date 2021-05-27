@@ -44,7 +44,7 @@ static sol::object l_receiveMessage(sol::this_state s) {
 		}
 	}
 
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 static void l_sendMessage(std::string message) {

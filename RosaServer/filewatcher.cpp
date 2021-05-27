@@ -47,7 +47,7 @@ sol::object FileWatcher::receiveEvent(sol::this_state s) {
 			throw std::runtime_error(strerror(errno));
 		}
 
-		return sol::make_object(lua, sol::lua_nil);
+		return sol::make_object(lua, sol::nil);
 	}
 
 	const struct inotify_event* event =
