@@ -295,6 +295,8 @@ void luaInit(bool redo) {
 		meta["adminVisible"] = sol::property(&Connection::getAdminVisible,
 		                                     &Connection::setAdminVisible);
 		meta["spectatingHuman"] = sol::property(&Connection::getSpectatingHuman);
+
+		meta["getEarShot"] = &Connection::getEarShot;
 	}
 
 	{
@@ -658,6 +660,22 @@ void luaInit(bool redo) {
 		meta["text"] = sol::property(&MenuButton::getText, &MenuButton::setText);
 
 		meta["class"] = sol::property(&MenuButton::getClass);
+	}
+
+	{
+		auto meta = lua->new_usertype<EarShot>("new", sol::no_constructor);
+		meta["distance"] = &EarShot::distance;
+		meta["volume"] = &EarShot::volume;
+
+		meta["class"] = sol::property(&EarShot::getClass);
+		meta["isActive"] =
+		    sol::property(&EarShot::getIsActive, &EarShot::setIsActive);
+		meta["player"] = sol::property(&EarShot::getPlayer, &EarShot::setPlayer);
+		meta["human"] = sol::property(&EarShot::getHuman, &EarShot::setHuman);
+		meta["receivingItem"] =
+		    sol::property(&EarShot::getReceivingItem, &EarShot::setReceivingItem);
+		meta["transmittingItem"] = sol::property(&EarShot::getTransmittingItem,
+		                                         &EarShot::setTransmittingItem);
 	}
 
 	{
@@ -1082,6 +1100,8 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::serverName = (char*)(base + 0x1fed72d4);
 	Engine::serverPort = (unsigned int*)(base + 0x17b9e720);
 	Engine::numEvents = (unsigned int*)(base + 0x443f1c64);
+	Engine::packetSize = (int*)(base + 0x36e60d5c);
+	Engine::packet = (unsigned char*)(base + 0x36e60d64);
 	Engine::serverMaxBytesPerSecond = (int*)(base + 0x17b9e724);
 	Engine::adminPassword = (char*)(base + 0x17b9eb2c);
 	Engine::isPassworded = (int*)(base + 0x1fed76f0);
@@ -1162,6 +1182,9 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::rigidBodySimulation = (Engine::voidFunc)(base + 0x7c8e0);
 	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xcd800);
 	Engine::serverSend = (Engine::voidFunc)(base + 0xca800);
+	Engine::calculatePlayerVoice =
+	    (Engine::calculatePlayerVoiceFunc)(base + 0xb22d0);
+	Engine::sendPacket = (Engine::sendPacketFunc)(base + 0xc5600);
 	Engine::bulletSimulation = (Engine::voidFunc)(base + 0x88ac0);
 	Engine::bulletTimeToLive = (Engine::voidFunc)(base + 0x1c820);
 
@@ -1272,6 +1295,8 @@ static inline void installHooks() {
 	INSTALL(rigidBodySimulation);
 	INSTALL(serverReceive);
 	INSTALL(serverSend);
+	INSTALL(calculatePlayerVoice);
+	INSTALL(sendPacket);
 	INSTALL(bulletSimulation);
 	INSTALL(economyCarMarket);
 	INSTALL(saveAccountsServer);

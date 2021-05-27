@@ -128,7 +128,7 @@ sol::object ChildProcess::getExitCode(sol::this_state s) {
 		return sol::make_object(lua, exitCode);
 	}
 
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 sol::object ChildProcess::receiveMessage(sol::this_state s) {
@@ -153,7 +153,7 @@ sol::object ChildProcess::receiveMessage(sol::this_state s) {
 		}
 	}
 
-	return sol::make_object(lua, sol::lua_nil);
+	return sol::make_object(lua, sol::nil);
 }
 
 void ChildProcess::sendMessage(std::string message) {

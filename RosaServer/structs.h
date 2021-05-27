@@ -17,27 +17,40 @@ static constexpr int maxNumberOfBonds = 16384;
 
 using padding = uint8_t;
 
-/*
-  Event types:
-  0x1		1	bullethit
-  0x2		2	message
-  0x3		3	createVehicle (vehicle)
-  0x4		4	updateobject
-  0x5		5	updateitem
-  0x7		7	updateplayer
-  0x8		8	updateplayer_finance
-  0x9		9	sound
-  0xA		10	updatedoor
-  0x11	17	updatehuman
-  0x14	20	explosion
-*/
-
+struct Player;
 struct Human;
 struct Vehicle;
 struct Item;
 struct RigidBody;
 struct Bond;
 struct StreetIntersection;
+
+// 40 bytes (28)
+struct EarShot {
+	int active;
+	int playerID;            // 04
+	int humanID;             // 08
+	int receivingItemID;     // 0c
+	int transmittingItemID;  // 10
+	int unk2;                // 14
+	int unk3;                // 18
+	int unk4;                // 1c
+	float distance;          // 20
+	float volume;            // 24
+
+	const char* getClass() const { return "EarShot"; }
+	bool getIsActive() const { return active; }
+	void setIsActive(bool b) { active = b; }
+
+	Player* getPlayer() const;
+	void setPlayer(Player* player);
+	Human* getHuman() const;
+	void setHuman(Human* human);
+	Item* getReceivingItem() const;
+	void setReceivingItem(Item* item);
+	Item* getTransmittingItem() const;
+	void setTransmittingItem(Item* item);
+};
 
 // 188896 bytes (2E1E0)
 struct Connection {
@@ -49,14 +62,17 @@ struct Connection {
 	int unk1;           // 1c
 	int bandwidth;      // 20
 	int timeoutTime;    // 24
-	padding unk2[0x19c - 0x24 - 4];
+	padding unk2[0x5c - 0x24 - 4];
+	EarShot earShots[8];  // 5c
+	padding unk3[0x19c - (0x5c + (sizeof(EarShot) * 8))];
 	int spectatingHumanID;  // 19c
-	padding unk3[0x2E1E0 - 0x19c - 4];
+	padding unk4[0x2E1E0 - 0x19c - 4];
 
 	const char* getClass() const { return "Connection"; }
 	std::string getAddress();
 	bool getAdminVisible() const { return adminVisible; }
 	void setAdminVisible(bool b) { adminVisible = b; }
+	EarShot* getEarShot(unsigned int idx);
 	Human* getSpectatingHuman() const;
 };
 
@@ -255,7 +271,7 @@ struct Player {
 	void setIsBot(bool b) { isBot = b; }
 	bool getIsZombie() const { return isZombie; }
 	void setIsZombie(bool b) { isZombie = b; }
-	Human* getHuman();
+	Human* getHuman() const;
 	void setHuman(Human* human);
 	Connection* getConnection();
 	Account* getAccount();

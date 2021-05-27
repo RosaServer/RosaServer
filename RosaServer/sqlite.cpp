@@ -31,7 +31,7 @@ std::tuple<sol::object, sol::object> SQLite::query(const char* sql,
 
 		if (res != SQLITE_OK) {
 			return std::make_tuple(
-			    sol::make_object(lua, sol::lua_nil),
+			    sol::make_object(lua, sol::nil),
 			    sol::make_object(
 			        lua, handle ? sqlite3_errmsg(handle) : sqlite3_errstr(res)));
 		}
@@ -65,7 +65,7 @@ std::tuple<sol::object, sol::object> SQLite::query(const char* sql,
 
 		if (res != SQLITE_OK) {
 			sqlite3_finalize(statement);
-			return std::make_tuple(sol::make_object(lua, sol::lua_nil),
+			return std::make_tuple(sol::make_object(lua, sol::nil),
 			                       sol::make_object(lua, sqlite3_errmsg(handle)));
 		}
 	}
@@ -84,7 +84,7 @@ std::tuple<sol::object, sol::object> SQLite::query(const char* sql,
 
 		if (res != SQLITE_ROW) {
 			sqlite3_finalize(statement);
-			return std::make_tuple(sol::make_object(lua, sol::lua_nil),
+			return std::make_tuple(sol::make_object(lua, sol::nil),
 			                       sol::make_object(lua, sqlite3_errmsg(handle)));
 		}
 
@@ -110,7 +110,7 @@ std::tuple<sol::object, sol::object> SQLite::query(const char* sql,
 					break;
 				}
 				default:
-					row.set(i + 1, sol::lua_nil);
+					row.set(i + 1, sol::nil);
 					break;
 			}
 		}
@@ -121,9 +121,9 @@ std::tuple<sol::object, sol::object> SQLite::query(const char* sql,
 
 	if (numColumns) {
 		return std::make_tuple(sol::make_object(lua, rows),
-		                       sol::make_object(lua, sol::lua_nil));
+		                       sol::make_object(lua, sol::nil));
 	}
 
 	return std::make_tuple(sol::make_object(lua, sqlite3_changes(handle)),
-	                       sol::make_object(lua, sol::lua_nil));
+	                       sol::make_object(lua, sol::nil));
 }

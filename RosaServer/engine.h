@@ -8,6 +8,9 @@ extern char* serverName;
 extern unsigned int* serverPort;
 extern unsigned int* numEvents;
 
+extern int* packetSize;
+extern unsigned char* packet;
+
 extern int* gameType;
 extern char* mapName;
 extern char* loadedMapName;
@@ -107,6 +110,10 @@ extern voidFunc rigidBodySimulation;
 typedef int (*serverReceiveFunc)();
 extern serverReceiveFunc serverReceive;
 extern voidFunc serverSend;
+typedef void (*calculatePlayerVoiceFunc)(int connectionID, int playerID);
+extern calculatePlayerVoiceFunc calculatePlayerVoice;
+typedef int (*sendPacketFunc)(unsigned int address, unsigned short port);
+extern sendPacketFunc sendPacket;
 extern voidFunc bulletSimulation;
 extern voidFunc bulletTimeToLive;
 

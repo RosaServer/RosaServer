@@ -7,6 +7,9 @@ char* serverName;
 unsigned int* serverPort;
 unsigned int* numEvents;
 
+int* packetSize;
+unsigned char* packet;
+
 int* gameType;
 char* mapName;
 char* loadedMapName;
@@ -92,6 +95,8 @@ voidFunc physicsSimulation;
 voidFunc rigidBodySimulation;
 serverReceiveFunc serverReceive;
 voidFunc serverSend;
+calculatePlayerVoiceFunc calculatePlayerVoice;
+sendPacketFunc sendPacket;
 voidFunc bulletSimulation;
 voidFunc bulletTimeToLive;
 

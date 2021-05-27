@@ -23,7 +23,9 @@ enum EnableKeys {
 	PlayerActions,
 	Physics,
 	PhysicsRigidBodies,
-	InPacket,
+	ServerReceive,
+	ServerSend,
+	CalculateEarShots,
 	SendPacket,
 	PhysicsBullets,
 	EconomyCarMarket,
@@ -104,6 +106,10 @@ extern subhook::Hook serverReceiveHook;
 int serverReceive();
 extern subhook::Hook serverSendHook;
 void serverSend();
+extern subhook::Hook calculatePlayerVoiceHook;
+void calculatePlayerVoice(int connectionID, int playerID);
+extern subhook::Hook sendPacketHook;
+int sendPacket(unsigned int address, unsigned short port);
 extern subhook::Hook bulletSimulationHook;
 void bulletSimulation();
 

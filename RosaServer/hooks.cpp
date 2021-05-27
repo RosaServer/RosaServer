@@ -20,7 +20,9 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"PlayerActions", EnableKeys::PlayerActions},
      {"Physics", EnableKeys::Physics},
      {"PhysicsRigidBodies", EnableKeys::PhysicsRigidBodies},
-     {"InPacket", EnableKeys::InPacket},
+     {"ServerReceive", EnableKeys::ServerReceive},
+     {"ServerSend", EnableKeys::ServerSend},
+     {"CalculateEarShots", EnableKeys::CalculateEarShots},
      {"SendPacket", EnableKeys::SendPacket},
      {"PhysicsBullets", EnableKeys::PhysicsBullets},
      {"EconomyCarMarket", EnableKeys::EconomyCarMarket},
@@ -75,6 +77,8 @@ subhook::Hook physicsSimulationHook;
 subhook::Hook rigidBodySimulationHook;
 subhook::Hook serverReceiveHook;
 subhook::Hook serverSendHook;
+subhook::Hook calculatePlayerVoiceHook;
+subhook::Hook sendPacketHook;
 subhook::Hook bulletSimulationHook;
 subhook::Hook economyCarMarketHook;
 subhook::Hook saveAccountsServerHook;
@@ -494,11 +498,11 @@ void rigidBodySimulation() {
 }
 
 int serverReceive() {
-	if (enabledKeys[EnableKeys::InPacket]) {
+	if (enabledKeys[EnableKeys::ServerReceive]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
-			auto res = func("InPacket");
+			auto res = func("ServerReceive");
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
@@ -508,7 +512,7 @@ int serverReceive() {
 				ret = Engine::serverReceive();
 			}
 			if (func != sol::nil) {
-				auto res = func("PostInPacket");
+				auto res = func("PostServerReceive");
 				noLuaCallError(&res);
 			}
 			return ret;
@@ -521,11 +525,11 @@ int serverReceive() {
 }
 
 void serverSend() {
-	if (enabledKeys[EnableKeys::SendPacket]) {
+	if (enabledKeys[EnableKeys::ServerSend]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
-			auto res = func("SendPacket");
+			auto res = func("ServerSend");
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
@@ -534,13 +538,75 @@ void serverSend() {
 				Engine::serverSend();
 			}
 			if (func != sol::nil) {
-				auto res = func("PostSendPacket");
+				auto res = func("PostServerSend");
 				noLuaCallError(&res);
 			}
 		}
 	} else {
 		subhook::ScopedHookRemove remove(&serverSendHook);
 		Engine::serverSend();
+	}
+}
+
+void calculatePlayerVoice(int connectionID, int playerID) {
+	if (enabledKeys[EnableKeys::CalculateEarShots]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+
+		auto connection = &Engine::connections[connectionID];
+		auto player = &Engine::players[playerID];
+
+		if (func != sol::nil) {
+			auto res = func("CalculateEarShots", connection, player);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&calculatePlayerVoiceHook);
+				Engine::calculatePlayerVoice(connectionID, playerID);
+			}
+			if (func != sol::nil) {
+				auto res = func("PostCalculateEarShots", connection, player);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&calculatePlayerVoiceHook);
+		Engine::calculatePlayerVoice(connectionID, playerID);
+	}
+}
+
+int sendPacket(unsigned int address, unsigned short port) {
+	if (enabledKeys[EnableKeys::SendPacket]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+
+		auto addressString = addressFromInteger(address);
+		int packetType = Engine::packet[4];
+		int packetSize = *Engine::packetSize;
+
+		if (func != sol::nil) {
+			auto res =
+			    func("SendPacket", addressString, port, packetType, packetSize);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			int ret;
+			{
+				subhook::ScopedHookRemove remove(&sendPacketHook);
+				ret = Engine::sendPacket(address, port);
+			}
+			if (func != sol::nil) {
+				auto res =
+				    func("PostSendPacket", addressString, port, packetType, packetSize);
+				noLuaCallError(&res);
+			}
+			return ret;
+		}
+		return 0;
+	} else {
+		subhook::ScopedHookRemove remove(&sendPacketHook);
+		return Engine::sendPacket(address, port);
 	}
 }
 
