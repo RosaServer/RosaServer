@@ -8,3 +8,6 @@
 [submodule "moonjit"]
 	path = moonjit
 	url = https://github.com/moonjit/moonjit.git
+[submodule "stb"]
+	path = stb
+	url = https://github.com/nothings/stb
