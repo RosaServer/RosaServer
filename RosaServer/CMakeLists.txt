@@ -22,10 +22,10 @@ add_library (rosaserver SHARED
 	image.cpp
 	rosaserver.cpp
 	sqlite.cpp
-	subhook.c
-	subhook_unix.c
-	subhook_x86.c
 	worker.cpp
+	../subhook/subhook.c
+	../subhook/subhook_unix.c
+	../subhook/subhook_x86.c
 )
 
 set_property (TARGET rosaserver PROPERTY CXX_STANDARD 17)
@@ -40,4 +40,4 @@ include_directories (${CMAKE_SOURCE_DIR}/moonjit/src)
 include_directories (${CMAKE_SOURCE_DIR}/stb)
 include_directories (${CMAKE_SOURCE_DIR}/shared)
 include_directories (${CMAKE_SOURCE_DIR}/sol2/include)
-include_directories (${CMAKE_SOURCE_DIR}/lib)
+include_directories (${CMAKE_SOURCE_DIR}/subhook)
