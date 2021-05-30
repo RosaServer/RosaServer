@@ -56,6 +56,7 @@ extern LineIntersectResult* lineIntersectResult;
 
 extern Connection* connections;
 extern Account* accounts;
+extern Voice* voices;
 extern Player* players;
 extern Human* humans;
 extern ItemType* itemTypes;

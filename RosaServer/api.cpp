@@ -1163,6 +1163,21 @@ Vector RotMatrix::getUp() const { return Vector{x2, y2, z2}; }
 
 Vector RotMatrix::getRight() const { return Vector{x3, y3, z3}; }
 
+std::string Voice::getPacket(unsigned int idx) const {
+	if (idx > 63) throw std::invalid_argument(errorOutOfRange);
+
+	return std::string(reinterpret_cast<const char*>(packets[idx]),
+	                   packetSizes[idx]);
+}
+
+void Voice::setPacket(unsigned int idx, std::string packet) {
+	if (idx > 63) throw std::invalid_argument(errorOutOfRange);
+
+	packetSizes[idx] = packet.size();
+	std::memcpy(packets[idx], packet.data(),
+	            std::min(std::size_t(2048), packet.size()));
+}
+
 std::string Player::__tostring() const {
 	char buf[16];
 	sprintf(buf, "Player(%i)", getIndex());
@@ -1238,6 +1253,8 @@ void Player::setAccount(Account* account) {
 	else
 		accountID = account->getIndex();
 }
+
+Voice* Player::getVoice() const { return &Engine::voices[getIndex()]; }
 
 const Vector* Player::getBotDestination() const {
 	if (!botHasDestination) return nullptr;

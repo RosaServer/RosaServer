@@ -319,6 +319,18 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto meta = lua->new_usertype<Voice>("new", sol::no_constructor);
+		meta["currentPacket"] = &Voice::currentPacket;
+
+		meta["class"] = sol::property(&Voice::getClass);
+		meta["isSilenced"] =
+		    sol::property(&Voice::getIsSilenced, &Voice::setIsSilenced);
+
+		meta["getPacket"] = &Voice::getPacket;
+		meta["setPacket"] = &Voice::setPacket;
+	}
+
+	{
 		auto meta = lua->new_usertype<Player>("new", sol::no_constructor);
 		meta["subRosaID"] = &Player::subRosaID;
 		meta["phoneNumber"] = &Player::phoneNumber;
@@ -359,6 +371,7 @@ void luaInit(bool redo) {
 		meta["human"] = sol::property(&Player::getHuman, &Player::setHuman);
 		meta["connection"] = sol::property(&Player::getConnection);
 		meta["account"] = sol::property(&Player::getAccount, &Player::setAccount);
+		meta["voice"] = sol::property(&Player::getVoice);
 		meta["botDestination"] =
 		    sol::property(&Player::getBotDestination, &Player::setBotDestination);
 
@@ -1141,6 +1154,7 @@ static inline void locateMemory(uintptr_t base) {
 
 	Engine::connections = (Connection*)(base + 0x6241e0);
 	Engine::accounts = (Account*)(base + 0x353a3d0);
+	Engine::voices = (Voice*)(base + 0x9cad280);
 	Engine::players = (Player*)(base + 0x149238e0);
 	Engine::humans = (Human*)(base + 0xbcec6c8);
 	Engine::itemTypes = (ItemType*)(base + 0x58a86840);

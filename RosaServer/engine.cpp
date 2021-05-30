@@ -55,6 +55,7 @@ LineIntersectResult* lineIntersectResult;
 
 Connection* connections;
 Account* accounts;
+Voice* voices;
 Player* players;
 Human* humans;
 ItemType* itemTypes;

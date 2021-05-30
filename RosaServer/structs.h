@@ -195,6 +195,24 @@ struct MenuButton {
 	}
 };
 
+// 131604 bytes (20214)
+struct Voice {
+	int isSilenced;
+	int unk0;                         // 04
+	int unk1;                         // 08
+	int currentPacket;                // 0c
+	int unk2;                         // 10
+	int unk3[64];                     // 14
+	int packetSizes[64];              // 114
+	unsigned char packets[2048][64];  // 214
+
+	const char* getClass() const { return "Voice"; }
+	bool getIsSilenced() const { return isSilenced; }
+	void setIsSilenced(bool b) { isSilenced = b; }
+	std::string getPacket(unsigned int idx) const;
+	void setPacket(unsigned int idx, std::string packet);
+};
+
 // 14388 bytes (3834)
 struct Player {
 	int active;
@@ -276,6 +294,7 @@ struct Player {
 	Connection* getConnection();
 	Account* getAccount();
 	void setAccount(Account* account);
+	Voice* getVoice() const;
 	const Vector* getBotDestination() const;
 	void setBotDestination(Vector* vec);
 	Action* getAction(unsigned int idx);
