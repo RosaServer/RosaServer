@@ -20,4 +20,3 @@ target_link_libraries (rosaserversatellite ${CMAKE_SOURCE_DIR}/moonjit/src/liblu
 include_directories (${CMAKE_SOURCE_DIR}/moonjit/src)
 include_directories (${CMAKE_SOURCE_DIR}/shared)
 include_directories (${CMAKE_SOURCE_DIR}/sol2/include)
-include_directories (${CMAKE_SOURCE_DIR}/lib)
