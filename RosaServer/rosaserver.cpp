@@ -328,6 +328,7 @@ void luaInit(bool redo) {
 
 	{
 		auto meta = lua->new_usertype<Voice>("new", sol::no_constructor);
+		meta["volumeLevel"] = &Voice::volumeLevel;
 		meta["currentFrame"] = &Voice::currentFrame;
 
 		meta["class"] = sol::property(&Voice::getClass);

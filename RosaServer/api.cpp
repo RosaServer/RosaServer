@@ -1170,9 +1170,10 @@ std::string Voice::getFrame(unsigned int idx) const {
 	                   frameSizes[idx]);
 }
 
-void Voice::setFrame(unsigned int idx, std::string frame) {
+void Voice::setFrame(unsigned int idx, std::string frame, int volumeLevel) {
 	if (idx > 63) throw std::invalid_argument(errorOutOfRange);
 
+	frameVolumeLevels[idx] = volumeLevel;
 	frameSizes[idx] = frame.size();
 	std::memcpy(frames[idx], frame.data(),
 	            std::min(std::size_t(2048), frame.size()));

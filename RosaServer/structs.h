@@ -199,10 +199,10 @@ struct MenuButton {
 struct Voice {
 	int isSilenced;
 	int unk0;                        // 04
-	int unk1;                        // 08
+	int volumeLevel;                 // 08
 	int currentFrame;                // 0c
-	int unk2;                        // 10
-	int unk3[64];                    // 14
+	int unk1;                        // 10
+	int frameVolumeLevels[64];       // 14
 	int frameSizes[64];              // 114
 	unsigned char frames[64][2048];  // 214
 
@@ -210,7 +210,7 @@ struct Voice {
 	bool getIsSilenced() const { return isSilenced; }
 	void setIsSilenced(bool b) { isSilenced = b; }
 	std::string getFrame(unsigned int idx) const;
-	void setFrame(unsigned int idx, std::string frame);
+	void setFrame(unsigned int idx, std::string frame, int volumeLevel);
 };
 
 // 14388 bytes (3834)
