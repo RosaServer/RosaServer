@@ -198,19 +198,19 @@ struct MenuButton {
 // 131604 bytes (20214)
 struct Voice {
 	int isSilenced;
-	int unk0;                         // 04
-	int unk1;                         // 08
-	int currentPacket;                // 0c
-	int unk2;                         // 10
-	int unk3[64];                     // 14
-	int packetSizes[64];              // 114
-	unsigned char packets[2048][64];  // 214
+	int unk0;                        // 04
+	int unk1;                        // 08
+	int currentFrame;                // 0c
+	int unk2;                        // 10
+	int unk3[64];                    // 14
+	int frameSizes[64];              // 114
+	unsigned char frames[64][2048];  // 214
 
 	const char* getClass() const { return "Voice"; }
 	bool getIsSilenced() const { return isSilenced; }
 	void setIsSilenced(bool b) { isSilenced = b; }
-	std::string getPacket(unsigned int idx) const;
-	void setPacket(unsigned int idx, std::string packet);
+	std::string getFrame(unsigned int idx) const;
+	void setFrame(unsigned int idx, std::string frame);
 };
 
 // 14388 bytes (3834)

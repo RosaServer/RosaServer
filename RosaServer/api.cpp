@@ -1163,19 +1163,19 @@ Vector RotMatrix::getUp() const { return Vector{x2, y2, z2}; }
 
 Vector RotMatrix::getRight() const { return Vector{x3, y3, z3}; }
 
-std::string Voice::getPacket(unsigned int idx) const {
+std::string Voice::getFrame(unsigned int idx) const {
 	if (idx > 63) throw std::invalid_argument(errorOutOfRange);
 
-	return std::string(reinterpret_cast<const char*>(packets[idx]),
-	                   packetSizes[idx]);
+	return std::string(reinterpret_cast<const char*>(frames[idx]),
+	                   frameSizes[idx]);
 }
 
-void Voice::setPacket(unsigned int idx, std::string packet) {
+void Voice::setFrame(unsigned int idx, std::string frame) {
 	if (idx > 63) throw std::invalid_argument(errorOutOfRange);
 
-	packetSizes[idx] = packet.size();
-	std::memcpy(packets[idx], packet.data(),
-	            std::min(std::size_t(2048), packet.size()));
+	frameSizes[idx] = frame.size();
+	std::memcpy(frames[idx], frame.data(),
+	            std::min(std::size_t(2048), frame.size()));
 }
 
 std::string Player::__tostring() const {

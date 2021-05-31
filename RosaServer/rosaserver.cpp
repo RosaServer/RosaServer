@@ -97,6 +97,14 @@ void defineThreadSafeAPIs(sol::state* state) {
 	}
 
 	{
+		auto meta = state->new_usertype<LuaOpusEncoder>("OpusEncoder");
+		meta["close"] = &LuaOpusEncoder::close;
+		meta["open"] = &LuaOpusEncoder::open;
+		meta["rewind"] = &LuaOpusEncoder::rewind;
+		meta["encodeFrame"] = &LuaOpusEncoder::encodeFrame;
+	}
+
+	{
 		auto meta = state->new_usertype<FileWatcher>("FileWatcher");
 		meta["addWatch"] = &FileWatcher::addWatch;
 		meta["removeWatch"] = &FileWatcher::removeWatch;
@@ -320,14 +328,14 @@ void luaInit(bool redo) {
 
 	{
 		auto meta = lua->new_usertype<Voice>("new", sol::no_constructor);
-		meta["currentPacket"] = &Voice::currentPacket;
+		meta["currentFrame"] = &Voice::currentFrame;
 
 		meta["class"] = sol::property(&Voice::getClass);
 		meta["isSilenced"] =
 		    sol::property(&Voice::getIsSilenced, &Voice::setIsSilenced);
 
-		meta["getPacket"] = &Voice::getPacket;
-		meta["setPacket"] = &Voice::setPacket;
+		meta["getFrame"] = &Voice::getFrame;
+		meta["setFrame"] = &Voice::setFrame;
 	}
 
 	{

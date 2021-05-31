@@ -44,6 +44,9 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/release
     
+    - name: Install Opus
+      run: sudo apt-get install libopus-dev -y
+    
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/release
