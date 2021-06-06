@@ -9,6 +9,9 @@ on:
   schedule:
     - cron: '37 17 * * 6'
 
+env:
+  BUILD_TYPE: Release
+
 jobs:
   analyze:
     name: Analyze
