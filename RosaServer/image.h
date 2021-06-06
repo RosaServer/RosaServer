@@ -16,7 +16,7 @@ class Image {
 	int getWidth() const { return width; }
 	int getHeight() const { return height; }
 	int getNumChannels() const { return numChannels; }
-	void _free();
+	void free();
 	void loadFromFile(const char* fileName);
 	void loadBlank(unsigned int width, unsigned int height,
 	               unsigned int numChannels);

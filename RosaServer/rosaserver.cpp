@@ -87,7 +87,7 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["width"] = sol::property(&Image::getWidth);
 		meta["height"] = sol::property(&Image::getHeight);
 		meta["numChannels"] = sol::property(&Image::getNumChannels);
-		meta["free"] = &Image::_free;
+		meta["free"] = &Image::free;
 		meta["loadFromFile"] = &Image::loadFromFile;
 		meta["loadBlank"] = &Image::loadBlank;
 		meta["getRGB"] = &Image::getRGB;

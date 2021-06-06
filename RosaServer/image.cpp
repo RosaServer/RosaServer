@@ -17,11 +17,11 @@ static constexpr const char* errorChannels = "Too few channels";
 
 Image::Image() {}
 
-Image::~Image() { _free(); }
+Image::~Image() { free(); }
 
-void Image::_free() {
+void Image::free() {
 	if (data) {
-		stbi_image_free(data);
+		std::free(data);
 		data = nullptr;
 		width = 0;
 		height = 0;
@@ -30,7 +30,7 @@ void Image::_free() {
 }
 
 void Image::loadFromFile(const char* fileName) {
-	_free();
+	free();
 
 	data = stbi_load(fileName, &width, &height, &numChannels, 0);
 	if (!data || !numChannels) {
@@ -56,7 +56,7 @@ void Image::loadBlank(unsigned int _width, unsigned int _height,
 		throw std::invalid_argument("height cannot be 0");
 	}
 
-	_free();
+	free();
 
 	data = (uint8_t*)calloc(_width * _height * _numChannels, sizeof(uint8_t));
 	if (!data) {
@@ -158,6 +158,6 @@ std::string Image::getPNG() {
 	}
 
 	std::string pngString(reinterpret_cast<char*>(pngBuffer), length);
-	STBIW_FREE(pngBuffer);
+	std::free(pngBuffer);
 	return pngString;
 }
