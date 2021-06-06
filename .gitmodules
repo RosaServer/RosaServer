@@ -14,3 +14,6 @@
 [submodule "subhook"]
 	path = subhook
 	url = https://github.com/Zeex/subhook
+[submodule "opus"]
+	path = opus
+	url = https://github.com/xiph/opus

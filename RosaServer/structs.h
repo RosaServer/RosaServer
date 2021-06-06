@@ -195,6 +195,24 @@ struct MenuButton {
 	}
 };
 
+// 131604 bytes (20214)
+struct Voice {
+	int isSilenced;
+	int unk0;                        // 04
+	int volumeLevel;                 // 08
+	int currentFrame;                // 0c
+	int unk1;                        // 10
+	int frameVolumeLevels[64];       // 14
+	int frameSizes[64];              // 114
+	unsigned char frames[64][2048];  // 214
+
+	const char* getClass() const { return "Voice"; }
+	bool getIsSilenced() const { return isSilenced; }
+	void setIsSilenced(bool b) { isSilenced = b; }
+	std::string getFrame(unsigned int idx) const;
+	void setFrame(unsigned int idx, std::string frame, int volumeLevel);
+};
+
 // 14388 bytes (3834)
 struct Player {
 	int active;
@@ -276,6 +294,7 @@ struct Player {
 	Connection* getConnection();
 	Account* getAccount();
 	void setAccount(Account* account);
+	Voice* getVoice() const;
 	const Vector* getBotDestination() const;
 	void setBotDestination(Vector* vec);
 	Action* getAction(unsigned int idx);

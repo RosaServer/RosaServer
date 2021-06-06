@@ -9,6 +9,9 @@ on:
   schedule:
     - cron: '37 17 * * 6'
 
+env:
+  BUILD_TYPE: Release
+
 jobs:
   analyze:
     name: Analyze
@@ -43,6 +46,9 @@ jobs:
     
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/release
+    
+    - name: Install Opus
+      run: sudo apt-get install libopus-dev -y
     
     - name: Configure CMake
       shell: bash

@@ -14,6 +14,7 @@
 #include "filewatcher.h"
 #include "hooks.h"
 #include "image.h"
+#include "opusencoder.h"
 #include "server.h"
 #include "sqlite.h"
 #include "worker.h"
