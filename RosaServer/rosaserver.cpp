@@ -24,26 +24,24 @@ static void pryMemory(void* address, size_t numPages) {
 	}
 }
 
-// Catch C++ exceptions and convert them to Lua error messages.
-// Customize as needed for your own exception classes.
-static int wrapExceptions(lua_State *L, lua_CFunction f)
-{
-  try {
-    return f(L);  // Call wrapped function and return result.
-  } catch (const char *s) {  // Catch and convert exceptions.
-    lua_pushstring(L, s);
-  } catch (std::exception& e) {
-    lua_pushstring(L, e.what());
-  } catch (...) {
-    lua_pushliteral(L, "caught (...)");
-  }
-  return lua_error(L);  // Rethrow as a Lua error.
+// https://github.com/moonjit/moonjit/blob/master/doc/c_api.md#luajit_setmodel-idx-luajit_mode_wrapcfuncflag
+static int wrapExceptions(lua_State* L, lua_CFunction f) {
+	try {
+		return f(L);
+	} catch (const char* s) {
+		lua_pushstring(L, s);
+	} catch (std::exception& e) {
+		lua_pushstring(L, e.what());
+	} catch (...) {
+		lua_pushliteral(L, "caught (...)");
+	}
+	return lua_error(L);
 }
 
 void defineThreadSafeAPIs(sol::state* state) {
-  	lua_pushlightuserdata(*state, (void *)wrapExceptions);
-  	luaJIT_setmode(*state, -1, LUAJIT_MODE_WRAPCFUNC|LUAJIT_MODE_ON);
-  	lua_pop(*state, 1);
+	lua_pushlightuserdata(*state, (void*)wrapExceptions);
+	luaJIT_setmode(*state, -1, LUAJIT_MODE_WRAPCFUNC | LUAJIT_MODE_ON);
+	lua_pop(*state, 1);
 
 	state->open_libraries(sol::lib::base);
 	state->open_libraries(sol::lib::package);
