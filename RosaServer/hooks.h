@@ -205,4 +205,26 @@ struct Integer {
 struct UnsignedInteger {
 	unsigned int value;
 };
+
+struct Packet {
+	unsigned char* value;
+	int size;
+	int type;
+
+	size_t getSize() { return size; }
+
+	size_t getType() { return type; }
+
+	char getBit(int location) {
+		if (location - 1 > getSize() || location - 1 < 0) throw std::invalid_argument("Index out of range");
+		return value[location - 1];
+	}
+
+	void setBit(int location, unsigned char val) {
+		if (location - 1 > getSize() || location - 1 < 0) throw std::invalid_argument("Index out of range");
+		value[location - 1] = val;
+	}
+
+	const char* getClass() { return "Packet"; }
+};
 };  // namespace Hooks

@@ -830,6 +830,19 @@ void luaInit(bool redo) {
 		meta["value"] = &Hooks::UnsignedInteger::value;
 	}
 
+	{ 
+		auto meta = 
+		    lua->new_usertype<Hooks::Packet>("new", sol::no_constructor); 
+		meta["value"] = &Hooks::Packet::value; 
+		 
+		meta["class"] = sol::property(&Hooks::Packet::getClass); 
+		meta["size"] = sol::property(&Hooks::Packet::getSize); 
+		meta["type"] = sol::property(&Hooks::Packet::getType); 
+ 
+		meta["setBit"] = &Hooks::Packet::setBit; 
+		meta["getBit"] = &Hooks::Packet::getBit; 
+	}
+	
 	(*lua)["flagStateForReset"] = Lua::flagStateForReset;
 
 	{
