@@ -153,6 +153,13 @@ void defineThreadSafeAPIs(sol::state* state) {
 		httpTable["postSync"] = Lua::http::postSync;
 	}
 
+	{
+		auto zlibTable = state->create_table();
+		(*state)["zlib"] = zlibTable;
+		zlibTable["compress"] = Lua::zlib::_compress;
+		zlibTable["uncompress"] = Lua::zlib::_uncompress;
+	}
+
 	(*state)["FILE_WATCH_ACCESS"] = IN_ACCESS;
 	(*state)["FILE_WATCH_ATTRIB"] = IN_ATTRIB;
 	(*state)["FILE_WATCH_CLOSE_WRITE"] = IN_CLOSE_WRITE;
