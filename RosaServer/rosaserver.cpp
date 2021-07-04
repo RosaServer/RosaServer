@@ -24,7 +24,25 @@ static void pryMemory(void* address, size_t numPages) {
 	}
 }
 
+// https://github.com/moonjit/moonjit/blob/master/doc/c_api.md#luajit_setmodel-idx-luajit_mode_wrapcfuncflag
+static int wrapExceptions(lua_State* L, lua_CFunction f) {
+	try {
+		return f(L);
+	} catch (const char* s) {
+		lua_pushstring(L, s);
+	} catch (std::exception& e) {
+		lua_pushstring(L, e.what());
+	} catch (...) {
+		lua_pushliteral(L, "caught (...)");
+	}
+	return lua_error(L);
+}
+
 void defineThreadSafeAPIs(sol::state* state) {
+	lua_pushlightuserdata(*state, (void*)wrapExceptions);
+	luaJIT_setmode(*state, -1, LUAJIT_MODE_WRAPCFUNC | LUAJIT_MODE_ON);
+	lua_pop(*state, 1);
+
 	state->open_libraries(sol::lib::base);
 	state->open_libraries(sol::lib::package);
 	state->open_libraries(sol::lib::coroutine);
@@ -133,6 +151,13 @@ void defineThreadSafeAPIs(sol::state* state) {
 		(*state)["http"] = httpTable;
 		httpTable["getSync"] = Lua::http::getSync;
 		httpTable["postSync"] = Lua::http::postSync;
+	}
+
+	{
+		auto zlibTable = state->create_table();
+		(*state)["zlib"] = zlibTable;
+		zlibTable["compress"] = Lua::zlib::_compress;
+		zlibTable["uncompress"] = Lua::zlib::_uncompress;
 	}
 
 	(*state)["FILE_WATCH_ACCESS"] = IN_ACCESS;

@@ -18,3 +18,4 @@
 #include "server.h"
 #include "sqlite.h"
 #include "worker.h"
+#include "zlib.h"

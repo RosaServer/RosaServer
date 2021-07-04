@@ -27,6 +27,7 @@ local function runTests ()
 	require('tests.vector')
 	require('tests.vehicles')
 	require('tests.worker')
+	require('tests.zlib')
 end
 
 local function testsPassed ()

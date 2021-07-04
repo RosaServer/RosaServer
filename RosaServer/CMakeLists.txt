@@ -57,9 +57,13 @@ add_library (rosaserver SHARED
 	rosaserver.cpp
 	sqlite.cpp
 	worker.cpp
+	zlib.cpp
 	../subhook/subhook.c
 	../subhook/subhook_unix.c
 	../subhook/subhook_x86.c
+	../miniz/miniz.c
+	../miniz/miniz_tinfl.c
+	../miniz/miniz_tdef.c
 )
 
 set_property (TARGET rosaserver PROPERTY CXX_STANDARD 17)
@@ -77,3 +81,4 @@ include_directories (${OPUS_INCLUDEDIR})
 include_directories (${CMAKE_SOURCE_DIR}/shared)
 include_directories (${CMAKE_SOURCE_DIR}/sol2/include)
 include_directories (${CMAKE_SOURCE_DIR}/subhook)
+include_directories (${CMAKE_SOURCE_DIR}/miniz)
