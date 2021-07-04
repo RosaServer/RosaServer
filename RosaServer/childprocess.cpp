@@ -7,12 +7,16 @@
 #include <unistd.h>
 #include <thread>
 
+static constexpr int pipeBufferSize = 1024 * 1024;
+
 ChildProcess::ChildProcess(std::string fileName) {
 	if (pipe(fdParentToChild) == -1) {
 		throw std::runtime_error(strerror(errno));
 	}
 
-	if (pipe(fdChildToParent) == -1) {
+	if (pipe(fdChildToParent) == -1 ||
+	    fcntl(fdParentToChild[1], F_SETPIPE_SZ, pipeBufferSize) == -1 ||
+	    fcntl(fdChildToParent[1], F_SETPIPE_SZ, pipeBufferSize) == -1) {
 		close(fdParentToChild[0]);
 		close(fdParentToChild[1]);
 
