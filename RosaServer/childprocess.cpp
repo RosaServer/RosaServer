@@ -9,7 +9,7 @@
 
 static constexpr int pipeBufferSize = 1024 * 1024;
 
-ChildProcess::ChildProcess(std::string fileName) {
+ChildProcess::ChildProcess(const char* fileName) {
 	if (pipe(fdParentToChild) == -1) {
 		throw std::runtime_error(strerror(errno));
 	}
@@ -53,7 +53,7 @@ ChildProcess::ChildProcess(std::string fileName) {
 		sprintf(strToParentFD, "%i", fdChildToParent[1]);
 
 		char* args[] = {(char*)"./rosaserversatellite", strFromParentFD,
-		                strToParentFD, (char*)fileName.c_str(), nullptr};
+		                strToParentFD, (char*)fileName, nullptr};
 
 		char workingDirectory[PATH_MAX];
 
@@ -160,7 +160,7 @@ sol::object ChildProcess::receiveMessage(sol::this_state s) {
 	return sol::make_object(lua, sol::nil);
 }
 
-void ChildProcess::sendMessage(std::string message) {
+void ChildProcess::sendMessage(std::string_view message) {
 	if (!isRunning()) return;
 
 	unsigned int length = static_cast<unsigned int>(message.length());

@@ -736,7 +736,7 @@ void luaInit(bool redo) {
 
 	{
 		auto meta = lua->new_usertype<ChildProcess>(
-		    "ChildProcess", sol::constructors<ChildProcess(std::string)>());
+		    "ChildProcess", sol::constructors<ChildProcess(const char*)>());
 		meta["isRunning"] = &ChildProcess::isRunning;
 		meta["terminate"] = &ChildProcess::terminate;
 		meta["getExitCode"] = &ChildProcess::getExitCode;

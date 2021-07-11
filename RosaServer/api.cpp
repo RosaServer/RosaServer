@@ -800,7 +800,7 @@ Building* buildings::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::buildings[idx];
 }
 
-sol::table os::listDirectory(std::string path, sol::this_state s) {
+sol::table os::listDirectory(std::string_view path, sol::this_state s) {
 	sol::state_view lua(s);
 
 	auto arr = lua.create_table();
@@ -816,11 +816,11 @@ sol::table os::listDirectory(std::string path, sol::this_state s) {
 	return arr;
 }
 
-bool os::createDirectory(std::string path) {
+bool os::createDirectory(std::string_view path) {
 	return std::filesystem::create_directories(path);
 }
 
-double os::getLastWriteTime(std::string path) {
+double os::getLastWriteTime(std::string_view path) {
 	auto lastWriteTime = std::filesystem::last_write_time(path);
 	auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(
 	                        lastWriteTime.time_since_epoch())
@@ -959,7 +959,7 @@ void memory::writeDouble(uintptr_t address, double data) {
 	*(double*)address = data;
 }
 
-void memory::writeBytes(uintptr_t address, std::string bytes) {
+void memory::writeBytes(uintptr_t address, std::string_view bytes) {
 	std::memcpy((void*)address, bytes.data(), bytes.size());
 }
 
@@ -1178,7 +1178,8 @@ std::string Voice::getFrame(unsigned int idx) const {
 	                   frameSizes[idx]);
 }
 
-void Voice::setFrame(unsigned int idx, std::string frame, int volumeLevel) {
+void Voice::setFrame(unsigned int idx, std::string_view frame,
+                     int volumeLevel) {
 	if (idx > 63) throw std::invalid_argument(errorOutOfRange);
 
 	frameVolumeLevels[idx] = volumeLevel;
@@ -1569,7 +1570,7 @@ void Item::computerSetLine(unsigned int line, const char* newLine) {
 	std::strncpy(computerLines[line], newLine, 63);
 }
 
-void Item::computerSetLineColors(unsigned int line, std::string colors) {
+void Item::computerSetLineColors(unsigned int line, std::string_view colors) {
 	if (line >= 32) throw std::invalid_argument(errorOutOfRange);
 	std::memcpy(computerLineColors[line], colors.data(),
 	            std::min(std::size_t(63), colors.size()));

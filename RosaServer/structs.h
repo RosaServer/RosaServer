@@ -210,7 +210,7 @@ struct Voice {
 	bool getIsSilenced() const { return isSilenced; }
 	void setIsSilenced(bool b) { isSilenced = b; }
 	std::string getFrame(unsigned int idx) const;
-	void setFrame(unsigned int idx, std::string frame, int volumeLevel);
+	void setFrame(unsigned int idx, std::string_view frame, int volumeLevel);
 };
 
 // 14388 bytes (3834)
@@ -612,7 +612,7 @@ struct Item {
 	void computerTransmitLine(unsigned int line) const;
 	void computerIncrementLine() const;
 	void computerSetLine(unsigned int line, const char* newLine);
-	void computerSetLineColors(unsigned int line, std::string colors);
+	void computerSetLineColors(unsigned int line, std::string_view colors);
 	void computerSetColor(unsigned int line, unsigned int column,
 	                      unsigned char color);
 };

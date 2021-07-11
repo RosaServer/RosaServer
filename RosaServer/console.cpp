@@ -87,7 +87,7 @@ std::string getAutoCompleteInput() {
 	return autoCompleteInput;
 }
 
-void respondToAutoComplete(std::string newBuffer) {
+void respondToAutoComplete(std::string_view newBuffer) {
 	std::lock_guard<std::mutex> guard(autoCompleteMutex);
 	if (!awaitingAutoComplete) {
 		return;
@@ -386,7 +386,7 @@ void cleanup() {
 	tcsetattr(STDIN_FILENO, TCSANOW, &mode);
 }
 
-void log(std::string line) {
+void log(std::string_view line) {
 	std::lock_guard<std::mutex> guard(outputMutex);
 
 	// Erase current line, move cursor to start, print
