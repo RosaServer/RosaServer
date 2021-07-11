@@ -830,10 +830,10 @@ double os::getLastWriteTime(std::string path) {
 
 double os::realClock() {
 	auto now = std::chrono::steady_clock::now();
-	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-	auto epoch = ms.time_since_epoch();
-	auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
-	return value.count() / 1000.;
+	auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(
+	                        now.time_since_epoch())
+	                        .count();
+	return microseconds / 1'000'000.;
 }
 
 void os::exit() { exitCode(EXIT_SUCCESS); }
