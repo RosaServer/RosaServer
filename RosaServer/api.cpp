@@ -820,6 +820,14 @@ bool os::createDirectory(const char* path) {
 	return std::filesystem::create_directories(path);
 }
 
+double os::getLastWriteTime(std::string path) {
+	auto lastWriteTime = std::filesystem::last_write_time(path);
+	auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(
+	                        lastWriteTime.time_since_epoch())
+	                        .count();
+	return microseconds / 1'000'000.;
+}
+
 double os::realClock() {
 	auto now = std::chrono::steady_clock::now();
 	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);

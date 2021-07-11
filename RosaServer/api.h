@@ -222,6 +222,7 @@ Building* getByIndex(sol::table self, unsigned int idx);
 namespace os {
 sol::table listDirectory(const char* path, sol::this_state s);
 bool createDirectory(const char* path);
+double getLastWriteTime(std::string path);
 double realClock();
 void exit();
 void exitCode(int code);
