@@ -3,7 +3,7 @@
 
 namespace Lua {
 namespace zlib {
-std::string _compress(std::string input) {
+std::string _compress(std::string_view input) {
 	uLong compressedSize = compressBound(input.size());
 	uint8_t* compressed = new uint8_t[compressedSize];
 
@@ -21,7 +21,7 @@ std::string _compress(std::string input) {
 	return compressedString;
 }
 
-std::string _uncompress(std::string compressed, uLong uncompressedSize) {
+std::string _uncompress(std::string_view compressed, uLong uncompressedSize) {
 	uint8_t* uncompressed = new uint8_t[uncompressedSize];
 
 	int status = uncompress(uncompressed, &uncompressedSize,

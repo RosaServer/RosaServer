@@ -74,12 +74,6 @@ RotMatrix RotMatrix_(float x1, float y1, float z1, float x2, float y2, float z2,
                      float x3, float y3, float z3);
 
 namespace http {
-void get(const char* scheme, const char* path, sol::table headers,
-         sol::protected_function callback);
-void post(const char* scheme, const char* path, sol::table headers,
-          std::string body, const char* contentType,
-          sol::protected_function callback);
-
 sol::object getSync(const char* scheme, const char* path, sol::table headers,
                     sol::this_state s);
 sol::object postSync(const char* scheme, const char* path, sol::table headers,
@@ -220,9 +214,9 @@ Building* getByIndex(sol::table self, unsigned int idx);
 };  // namespace buildings
 
 namespace os {
-sol::table listDirectory(std::string path, sol::this_state s);
-bool createDirectory(std::string path);
-double getLastWriteTime(std::string path);
+sol::table listDirectory(std::string_view path, sol::this_state s);
+bool createDirectory(std::string_view path);
+double getLastWriteTime(std::string_view path);
 double realClock();
 void exit();
 void exitCode(int code);
@@ -270,7 +264,7 @@ void writeLong(uintptr_t address, int64_t data);
 void writeULong(uintptr_t address, uint64_t data);
 void writeFloat(uintptr_t address, float data);
 void writeDouble(uintptr_t address, double data);
-void writeBytes(uintptr_t address, std::string bytes);
+void writeBytes(uintptr_t address, std::string_view bytes);
 }  // namespace memory
 };  // namespace Lua
 

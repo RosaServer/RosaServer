@@ -4,7 +4,7 @@
 
 namespace Lua {
 namespace zlib {
-std::string _compress(std::string input);
-std::string _uncompress(std::string compressed, uLong uncompressedSize);
+std::string _compress(std::string_view input);
+std::string _uncompress(std::string_view compressed, uLong uncompressedSize);
 }  // namespace zlib
 }  // namespace Lua
