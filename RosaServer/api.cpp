@@ -800,7 +800,7 @@ Building* buildings::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::buildings[idx];
 }
 
-sol::table os::listDirectory(const char* path, sol::this_state s) {
+sol::table os::listDirectory(std::string path, sol::this_state s) {
 	sol::state_view lua(s);
 
 	auto arr = lua.create_table();
@@ -816,7 +816,7 @@ sol::table os::listDirectory(const char* path, sol::this_state s) {
 	return arr;
 }
 
-bool os::createDirectory(const char* path) {
+bool os::createDirectory(std::string path) {
 	return std::filesystem::create_directories(path);
 }
 
