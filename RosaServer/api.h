@@ -220,8 +220,9 @@ Building* getByIndex(sol::table self, unsigned int idx);
 };  // namespace buildings
 
 namespace os {
-sol::table listDirectory(const char* path, sol::this_state s);
-bool createDirectory(const char* path);
+sol::table listDirectory(std::string path, sol::this_state s);
+bool createDirectory(std::string path);
+double getLastWriteTime(std::string path);
 double realClock();
 void exit();
 void exitCode(int code);

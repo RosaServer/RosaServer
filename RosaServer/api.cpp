@@ -800,7 +800,7 @@ Building* buildings::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::buildings[idx];
 }
 
-sol::table os::listDirectory(const char* path, sol::this_state s) {
+sol::table os::listDirectory(std::string path, sol::this_state s) {
 	sol::state_view lua(s);
 
 	auto arr = lua.create_table();
@@ -816,16 +816,24 @@ sol::table os::listDirectory(const char* path, sol::this_state s) {
 	return arr;
 }
 
-bool os::createDirectory(const char* path) {
+bool os::createDirectory(std::string path) {
 	return std::filesystem::create_directories(path);
+}
+
+double os::getLastWriteTime(std::string path) {
+	auto lastWriteTime = std::filesystem::last_write_time(path);
+	auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(
+	                        lastWriteTime.time_since_epoch())
+	                        .count();
+	return microseconds / 1'000'000.;
 }
 
 double os::realClock() {
 	auto now = std::chrono::steady_clock::now();
-	auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-	auto epoch = ms.time_since_epoch();
-	auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
-	return value.count() / 1000.;
+	auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(
+	                        now.time_since_epoch())
+	                        .count();
+	return microseconds / 1'000'000.;
 }
 
 void os::exit() { exitCode(EXIT_SUCCESS); }
