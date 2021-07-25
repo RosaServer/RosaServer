@@ -6,6 +6,7 @@ static constexpr int frameSize = 960;
 static constexpr int maxPacketSize = 2048;
 
 static constexpr const char* errorNoFile = "No file opened";
+static constexpr const char* errorWrongLength = "Invalid PCM buffer length";
 
 LuaOpusEncoder::LuaOpusEncoder() {
 	int error;
@@ -78,4 +79,22 @@ sol::object LuaOpusEncoder::encodeFrame(sol::this_state s) const {
 
 	return sol::make_object(
 	    lua, std::string(reinterpret_cast<const char*>(output), length));
+}
+
+std::string LuaOpusEncoder::encodeFrameString(
+    std::string_view inputBytes) const {
+	if (inputBytes.size() != frameSize * sizeof(float)) {
+		throw std::invalid_argument(errorWrongLength);
+	}
+
+	unsigned char output[maxPacketSize];
+
+	int length = opus_encode_float(
+	    encoder, reinterpret_cast<const float*>(inputBytes.data()), frameSize,
+	    output, maxPacketSize);
+	if (length < 0) {
+		throw std::runtime_error(opus_strerror(length));
+	}
+
+	return std::string(reinterpret_cast<const char*>(output), length);
 }

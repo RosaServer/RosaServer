@@ -119,7 +119,8 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["close"] = &LuaOpusEncoder::close;
 		meta["open"] = &LuaOpusEncoder::open;
 		meta["rewind"] = &LuaOpusEncoder::rewind;
-		meta["encodeFrame"] = &LuaOpusEncoder::encodeFrame;
+		meta["encodeFrame"] = sol::overload(&LuaOpusEncoder::encodeFrame,
+		                                    &LuaOpusEncoder::encodeFrameString);
 	}
 
 	{

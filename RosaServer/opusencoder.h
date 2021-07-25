@@ -14,4 +14,5 @@ class LuaOpusEncoder {
 	void open(const char* fileName);
 	void rewind() const;
 	sol::object encodeFrame(sol::this_state s) const;
+	std::string encodeFrameString(std::string_view inputBytes) const;
 };
