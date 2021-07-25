@@ -601,6 +601,7 @@ void luaInit(bool redo) {
 		meta["gasControl"] = &Vehicle::gasControl;
 		meta["engineRPM"] = &Vehicle::engineRPM;
 		meta["bladeBodyID"] = &Vehicle::bladeBodyID;
+		meta["numSeats"] = &Vehicle::numSeats;
 
 		meta["class"] = sol::property(&Vehicle::getClass);
 		meta["__tostring"] = &Vehicle::__tostring;

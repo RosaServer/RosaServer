@@ -670,7 +670,9 @@ struct Vehicle {
 	int engineRPM;  // 3930
 	padding unk8[0x4fa8 - 0x3930 - 4];
 	int bladeBodyID;  // 4fa8
-	padding unk9[0x5168 - 0x4fa8 - 4];
+	padding unk9[0x50dc - 0x4fa8 - 4];
+	int numSeats;  // 50dc
+	padding unk10[0x5168 - 0x50dc - 4];
 
 	const char* getClass() const { return "Vehicle"; }
 	std::string __tostring() const;
