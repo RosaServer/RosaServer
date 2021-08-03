@@ -88,7 +88,10 @@ extern subRosa__printf_chkFunc subRosa__printf_chk;
 typedef void (*voidFunc)();
 typedef void (*voidIndexFunc)(int id);
 
+typedef void (*createTrafficFunc)(int32_t amount);
+
 extern voidFunc resetGame;
+extern createTrafficFunc createTraffic;
 
 typedef int (*areaCreateBlockFunc)(int zero, int blockX, int blockY, int blockZ,
                                    unsigned int flags, short unk[8]);

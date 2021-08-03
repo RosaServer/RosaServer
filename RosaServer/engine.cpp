@@ -79,6 +79,7 @@ subRosaPutsFunc subRosaPuts;
 subRosa__printf_chkFunc subRosa__printf_chk;
 
 voidFunc resetGame;
+createTrafficFunc createTraffic;
 
 areaCreateBlockFunc areaCreateBlock;
 areaDeleteBlockFunc areaDeleteBlock;
