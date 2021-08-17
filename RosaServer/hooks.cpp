@@ -6,6 +6,7 @@ namespace Hooks {
 const std::unordered_map<std::string, EnableKeys> enableNames(
     {{"InterruptSignal", EnableKeys::InterruptSignal},
      {"ResetGame", EnableKeys::ResetGame},
+     {"CreateTraffic", EnableKeys::CreateTraffic},
      {"AreaCreateBlock", EnableKeys::AreaCreateBlock},
      {"AreaDeleteBlock", EnableKeys::AreaDeleteBlock},
      {"Logic", EnableKeys::Logic},
@@ -63,6 +64,7 @@ bool enabledKeys[EnableKeys::SIZE] = {0};
 subhook::Hook subRosaPutsHook;
 subhook::Hook subRosa__printf_chkHook;
 subhook::Hook resetGameHook;
+subhook::Hook createTrafficHook;
 subhook::Hook areaCreateBlockHook;
 subhook::Hook areaDeleteBlockHook;
 subhook::Hook logicSimulationHook;
@@ -158,6 +160,35 @@ void resetGame() {
 		hookAndReset(RESET_REASON_BOOT);
 	} else {
 		hookAndReset(RESET_REASON_ENGINECALL);
+	}
+}
+
+void createTraffic(int32_t amount) {
+	if (enabledKeys[EnableKeys::CreateTraffic]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			Integer wrappedAmount = {amount};
+
+			auto res = func("CreateTraffic", wrappedAmount);
+
+			if (noLuaCallError(&res)) noParent = (bool)res;
+
+			amount = wrappedAmount.value;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&createTrafficHook);
+				Engine::createTraffic(amount);
+			}
+			if (func != sol::nil) {
+				auto res = func("PostCreateTraffic", amount);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&createTrafficHook);
+		Engine::createTraffic(amount);
 	}
 }
 

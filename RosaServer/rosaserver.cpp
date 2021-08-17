@@ -315,6 +315,7 @@ void luaInit(bool redo) {
 
 		meta["setConsoleTitle"] = &Server::setConsoleTitle;
 		meta["reset"] = &Server::reset;
+		meta["createTraffic"] = &Server::createTraffic;
 	}
 
 	server = new Server();
@@ -1216,6 +1217,7 @@ static inline void locateMemory(uintptr_t base) {
 	    (Engine::subRosa__printf_chkFunc)(base + 0x22c0);
 
 	Engine::resetGame = (Engine::voidFunc)(base + 0xbc9c0);
+	Engine::createTraffic = (Engine::createTrafficFunc)(base + 0x9cc80);
 
 	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x173f0);
 	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0x112d0);
@@ -1332,6 +1334,7 @@ static inline void installHooks() {
 	INSTALL(subRosaPuts);
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
+	INSTALL(createTraffic);
 	INSTALL(areaCreateBlock);
 	INSTALL(areaDeleteBlock);
 	INSTALL(logicSimulation);
