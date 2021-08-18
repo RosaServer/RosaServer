@@ -2,6 +2,11 @@
 #include <sys/mman.h>
 #include <cerrno>
 
+void Server::createTraffic(int amount) const {
+	subhook::ScopedHookRemove remove(&Hooks::createTrafficHook);
+	Engine::createTraffic(amount);
+}
+
 static Server* server;
 
 static void pryMemory(void* address, size_t numPages) {
