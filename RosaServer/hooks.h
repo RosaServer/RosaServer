@@ -77,7 +77,7 @@ extern subhook::Hook resetGameHook;
 void resetGame();
 
 extern subhook::Hook createTrafficHook;
-void createTraffic(int32_t amount);
+void createTraffic(int amount);
 
 extern subhook::Hook areaCreateBlockHook;
 void areaCreateBlock(int zero, int blockX, int blockY, int blockZ,

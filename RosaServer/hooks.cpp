@@ -163,7 +163,7 @@ void resetGame() {
 	}
 }
 
-void createTraffic(int32_t amount) {
+void createTraffic(int amount) {
 	if (enabledKeys[EnableKeys::CreateTraffic]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
