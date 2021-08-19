@@ -16,6 +16,7 @@ extern char* mapName;
 extern char* loadedMapName;
 extern int* gameState;
 extern int* gameTimer;
+extern int* ticksSinceReset;
 extern unsigned int* sunTime;
 
 extern int* serverMaxBytesPerSecond;
@@ -114,6 +115,8 @@ extern voidFunc rigidBodySimulation;
 typedef int (*serverReceiveFunc)();
 extern serverReceiveFunc serverReceive;
 extern voidFunc serverSend;
+typedef int (*packetWriteFunc)(void* source, int elementSize, int elementCount);
+extern packetWriteFunc packetWrite;
 typedef void (*calculatePlayerVoiceFunc)(int connectionID, int playerID);
 extern calculatePlayerVoiceFunc calculatePlayerVoice;
 typedef int (*sendPacketFunc)(unsigned int address, unsigned short port);

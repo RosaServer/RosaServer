@@ -15,6 +15,7 @@ char* mapName;
 char* loadedMapName;
 int* gameState;
 int* gameTimer;
+int* ticksSinceReset;
 unsigned int* sunTime;
 
 int* serverMaxBytesPerSecond;
@@ -97,6 +98,7 @@ voidFunc physicsSimulation;
 voidFunc rigidBodySimulation;
 serverReceiveFunc serverReceive;
 voidFunc serverSend;
+packetWriteFunc packetWrite;
 calculatePlayerVoiceFunc calculatePlayerVoice;
 sendPacketFunc sendPacket;
 voidFunc bulletSimulation;

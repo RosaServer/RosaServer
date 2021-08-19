@@ -23,6 +23,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"PhysicsRigidBodies", EnableKeys::PhysicsRigidBodies},
      {"ServerReceive", EnableKeys::ServerReceive},
      {"ServerSend", EnableKeys::ServerSend},
+     {"PacketBuilding", EnableKeys::PacketBuilding},
      {"CalculateEarShots", EnableKeys::CalculateEarShots},
      {"SendPacket", EnableKeys::SendPacket},
      {"PhysicsBullets", EnableKeys::PhysicsBullets},
@@ -79,6 +80,7 @@ subhook::Hook physicsSimulationHook;
 subhook::Hook rigidBodySimulationHook;
 subhook::Hook serverReceiveHook;
 subhook::Hook serverSendHook;
+subhook::Hook packetWriteHook;
 subhook::Hook calculatePlayerVoiceHook;
 subhook::Hook sendPacketHook;
 subhook::Hook bulletSimulationHook;
@@ -577,6 +579,26 @@ void serverSend() {
 		subhook::ScopedHookRemove remove(&serverSendHook);
 		Engine::serverSend();
 	}
+}
+
+int packetWrite(void* source, int elementSize, int elementCount) {
+	if (source == Engine::ticksSinceReset &&
+	    enabledKeys[EnableKeys::PacketBuilding]) {
+		uintptr_t connectionPlus4c;
+		asm("mov %%r15, %0" : "=r"(connectionPlus4c) :);
+
+		Connection* connection =
+		    reinterpret_cast<Connection*>(connectionPlus4c - 0x4c);
+
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			auto res = func("PacketBuilding", connection);
+			noLuaCallError(&res);
+		}
+	}
+
+	subhook::ScopedHookRemove remove(&packetWriteHook);
+	return Engine::packetWrite(source, elementSize, elementCount);
 }
 
 void calculatePlayerVoice(int connectionID, int playerID) {

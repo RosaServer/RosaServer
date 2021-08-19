@@ -1187,6 +1187,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::loadedMapName = (char*)(base + 0x37281204);
 	Engine::gameState = (int*)(base + 0x434b65cc);
 	Engine::gameTimer = (int*)(base + 0x434b65d4);
+	Engine::ticksSinceReset = (int*)(base + 0x434b6634);
 	Engine::sunTime = (unsigned int*)(base + 0xcda06e0);
 	Engine::isLevelLoaded = (int*)(base + 0x37281200);
 	Engine::gravity = (float*)(base + 0xd5b98);
@@ -1240,6 +1241,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::rigidBodySimulation = (Engine::voidFunc)(base + 0x7c8e0);
 	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xcd800);
 	Engine::serverSend = (Engine::voidFunc)(base + 0xca800);
+	Engine::packetWrite = (Engine::packetWriteFunc)(base + 0xc5840);
 	Engine::calculatePlayerVoice =
 	    (Engine::calculatePlayerVoiceFunc)(base + 0xb22d0);
 	Engine::sendPacket = (Engine::sendPacketFunc)(base + 0xc5600);
@@ -1354,6 +1356,7 @@ static inline void installHooks() {
 	INSTALL(rigidBodySimulation);
 	INSTALL(serverReceive);
 	INSTALL(serverSend);
+	INSTALL(packetWrite);
 	INSTALL(calculatePlayerVoice);
 	INSTALL(sendPacket);
 	INSTALL(bulletSimulation);
