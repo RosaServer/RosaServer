@@ -124,6 +124,7 @@ struct Vector {
 	double distSquare(Vector* other) const;
 	double length() const;
 	double lengthSquare() const;
+	double dot(Vector* other) const;
 	std::tuple<int, int, int> getBlockPos() const;
 };
 

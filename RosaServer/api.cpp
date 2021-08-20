@@ -1144,6 +1144,10 @@ double Vector::length() const { return sqrt(x * x + y * y + z * z); }
 
 double Vector::lengthSquare() const { return x * x + y * y + z * z; }
 
+double Vector::dot(Vector* other) const {
+	return x * other->x + y * other->y + z * other->z;
+}
+
 std::tuple<int, int, int> Vector::getBlockPos() const {
 	int blockX = x / 4.f;
 	int blockY = y / 4.f;
