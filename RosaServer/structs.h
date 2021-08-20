@@ -122,6 +122,8 @@ struct Vector {
 	Vector clone() const;
 	float dist(Vector* other) const;
 	float distSquare(Vector* other) const;
+	float length() const;
+	float lengthSquare() const;
 	std::tuple<int, int, int> getBlockPos() const;
 };
 

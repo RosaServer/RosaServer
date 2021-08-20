@@ -1140,6 +1140,10 @@ float Vector::distSquare(Vector* other) const {
 	return dx * dx + dy * dy + dz * dz;
 }
 
+float Vector::length() const { return sqrt(x * x + y * y + z * z); }
+
+float Vector::lengthSquare() const { return x * x + y * y + z * z; }
+
 std::tuple<int, int, int> Vector::getBlockPos() const {
 	int blockX = x / 4.f;
 	int blockY = y / 4.f;
