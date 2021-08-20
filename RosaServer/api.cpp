@@ -1126,23 +1126,23 @@ void Vector::set(Vector* other) {
 
 Vector Vector::clone() const { return Vector{x, y, z}; }
 
-float Vector::dist(Vector* other) const {
-	float dx = x - other->x;
-	float dy = y - other->y;
-	float dz = z - other->z;
+double Vector::dist(Vector* other) const {
+	double dx = x - other->x;
+	double dy = y - other->y;
+	double dz = z - other->z;
 	return sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-float Vector::distSquare(Vector* other) const {
-	float dx = x - other->x;
-	float dy = y - other->y;
-	float dz = z - other->z;
+double Vector::distSquare(Vector* other) const {
+	double dx = x - other->x;
+	double dy = y - other->y;
+	double dz = z - other->z;
 	return dx * dx + dy * dy + dz * dz;
 }
 
-float Vector::length() const { return sqrt(x * x + y * y + z * z); }
+double Vector::length() const { return sqrt(x * x + y * y + z * z); }
 
-float Vector::lengthSquare() const { return x * x + y * y + z * z; }
+double Vector::lengthSquare() const { return x * x + y * y + z * z; }
 
 std::tuple<int, int, int> Vector::getBlockPos() const {
 	int blockX = x / 4.f;

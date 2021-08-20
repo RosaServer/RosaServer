@@ -120,10 +120,10 @@ struct Vector {
 	void mult(float scalar);
 	void set(Vector* other);
 	Vector clone() const;
-	float dist(Vector* other) const;
-	float distSquare(Vector* other) const;
-	float length() const;
-	float lengthSquare() const;
+	double dist(Vector* other) const;
+	double distSquare(Vector* other) const;
+	double length() const;
+	double lengthSquare() const;
 	std::tuple<int, int, int> getBlockPos() const;
 };
 
