@@ -72,6 +72,8 @@ struct Connection {
 	std::string getAddress();
 	bool getAdminVisible() const { return adminVisible; }
 	void setAdminVisible(bool b) { adminVisible = b; }
+	Player* getPlayer() const;
+	void setPlayer(Player* player);
 	EarShot* getEarShot(unsigned int idx);
 	Human* getSpectatingHuman() const;
 };

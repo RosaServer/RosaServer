@@ -335,6 +335,8 @@ void luaInit(bool redo) {
 		meta["address"] = sol::property(&Connection::getAddress);
 		meta["adminVisible"] = sol::property(&Connection::getAdminVisible,
 		                                     &Connection::setAdminVisible);
+		meta["player"] =
+		    sol::property(&Connection::getPlayer, &Connection::setPlayer);
 		meta["spectatingHuman"] = sol::property(&Connection::getSpectatingHuman);
 
 		meta["getEarShot"] = &Connection::getEarShot;

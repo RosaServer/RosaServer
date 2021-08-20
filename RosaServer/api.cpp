@@ -1025,6 +1025,18 @@ std::string addressFromInteger(unsigned int address) {
 
 std::string Connection::getAddress() { return addressFromInteger(address); }
 
+Player* Connection::getPlayer() const {
+	if (playerID == -1) return nullptr;
+	return &Engine::players[playerID];
+}
+
+void Connection::setPlayer(Player* player) {
+	if (player == nullptr)
+		playerID = -1;
+	else
+		playerID = player->getIndex();
+}
+
 EarShot* Connection::getEarShot(unsigned int idx) {
 	if (idx > 8) throw std::invalid_argument(errorOutOfRange);
 
