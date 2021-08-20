@@ -115,5 +115,4 @@ struct Server {
 
 	void setConsoleTitle(const char* title) const { Console::setTitle(title); }
 	void reset() const { hookAndReset(RESET_REASON_LUACALL); }
-	void createTraffic(int amount) const;
 };

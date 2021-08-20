@@ -68,12 +68,14 @@ RigidBody* bodies;
 Bond* bonds;
 Street* streets;
 StreetIntersection* streetIntersections;
+TrafficCar* trafficCars;
 Building* buildings;
 
 unsigned int* numConnections;
 unsigned int* numBullets;
 unsigned int* numStreets;
 unsigned int* numStreetIntersections;
+unsigned int* numTrafficCars;
 unsigned int* numBuildings;
 
 subRosaPutsFunc subRosaPuts;

@@ -69,12 +69,14 @@ extern RigidBody* bodies;
 extern Bond* bonds;
 extern Street* streets;
 extern StreetIntersection* streetIntersections;
+extern TrafficCar* trafficCars;
 extern Building* buildings;
 
 extern unsigned int* numConnections;
 extern unsigned int* numBullets;
 extern unsigned int* numStreets;
 extern unsigned int* numStreetIntersections;
+extern unsigned int* numTrafficCars;
 extern unsigned int* numBuildings;
 
 /*

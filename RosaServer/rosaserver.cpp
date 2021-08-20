@@ -2,11 +2,6 @@
 #include <sys/mman.h>
 #include <cerrno>
 
-void Server::createTraffic(int amount) const {
-	subhook::ScopedHookRemove remove(&Hooks::createTrafficHook);
-	Engine::createTraffic(amount);
-}
-
 static Server* server;
 
 static void pryMemory(void* address, size_t numPages) {
@@ -320,7 +315,6 @@ void luaInit(bool redo) {
 
 		meta["setConsoleTitle"] = &Server::setConsoleTitle;
 		meta["reset"] = &Server::reset;
-		meta["createTraffic"] = &Server::createTraffic;
 	}
 
 	server = new Server();
@@ -807,6 +801,23 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto meta = lua->new_usertype<TrafficCar>("new", sol::no_constructor);
+		meta["pos"] = &TrafficCar::pos;
+		meta["vel"] = &TrafficCar::vel;
+		meta["yaw"] = &TrafficCar::yaw;
+		meta["rot"] = &TrafficCar::rot;
+		meta["color"] = &TrafficCar::color;
+
+		meta["class"] = sol::property(&TrafficCar::getClass);
+		meta["__tostring"] = &TrafficCar::__tostring;
+		meta["index"] = sol::property(&TrafficCar::getIndex);
+		meta["type"] = sol::property(&TrafficCar::getType, &TrafficCar::setType);
+		meta["human"] = sol::property(&TrafficCar::getHuman, &TrafficCar::setHuman);
+		meta["vehicle"] =
+		    sol::property(&TrafficCar::getVehicle, &TrafficCar::setVehicle);
+	}
+
+	{
 		auto meta = lua->new_usertype<ShopCar>("new", sol::no_constructor);
 		meta["price"] = &ShopCar::price;
 		meta["color"] = &ShopCar::color;
@@ -1051,6 +1062,19 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto trafficCarsTable = lua->create_table();
+		(*lua)["trafficCars"] = trafficCarsTable;
+		trafficCarsTable["getCount"] = Lua::trafficCars::getCount;
+		trafficCarsTable["getAll"] = Lua::trafficCars::getAll;
+		trafficCarsTable["createMany"] = Lua::trafficCars::createMany;
+
+		sol::table _meta = lua->create_table();
+		trafficCarsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = Lua::trafficCars::getCount;
+		_meta["__index"] = Lua::trafficCars::getByIndex;
+	}
+
+	{
 		auto buildingsTable = lua->create_table();
 		(*lua)["buildings"] = buildingsTable;
 		buildingsTable["getCount"] = Lua::buildings::getCount;
@@ -1212,12 +1236,14 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::bonds = (Bond*)(base + 0x1f8c72c0);
 	Engine::streets = (Street*)(base + 0x372a3268);
 	Engine::streetIntersections = (StreetIntersection*)(base + 0x37281264);
+	Engine::trafficCars = (TrafficCar*)(base + 0x58c84f20);
 	Engine::buildings = (Building*)(base + 0x37375438);
 
 	Engine::numConnections = (unsigned int*)(base + 0x444c2688);
 	Engine::numBullets = (unsigned int*)(base + 0x443f1c60);
 	Engine::numStreets = (unsigned int*)(base + 0x372a3264);
 	Engine::numStreetIntersections = (unsigned int*)(base + 0x3728125c);
+	Engine::numTrafficCars = (unsigned int*)(base + 0x149138b8);
 	Engine::numBuildings = (unsigned int*)(base + 0x373753f4);
 
 	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1fa0);

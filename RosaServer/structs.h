@@ -464,7 +464,7 @@ struct Human {
 	Account* getAccount();
 	void setAccount(Account* account);
 	Vehicle* getVehicle() const;
-	void setVehicle(Vehicle* vcl);
+	void setVehicle(Vehicle* vehicle);
 	Bone* getBone(unsigned int idx);
 	RigidBody* getRigidBody(unsigned int idx) const;
 	InventorySlot* getInventorySlot(unsigned int idx);
@@ -605,7 +605,7 @@ struct Item {
 	Item* getConnectedPhone() const;
 	void setConnectedPhone(Item* item);
 	Vehicle* getVehicle() const;
-	void setVehicle(Vehicle* vcl);
+	void setVehicle(Vehicle* vehicle);
 	bool mountItem(Item* childItem, unsigned int slot) const;
 	bool unmount() const;
 	void speak(const char* message, int distance) const;
@@ -841,6 +841,31 @@ struct StreetIntersection {
 	Street* getStreetSouth() const;
 	Street* getStreetWest() const;
 	Street* getStreetNorth() const;
+};
+
+// 1532 bytes (5fc)
+struct TrafficCar {
+	int type;       // 00
+	int humanID;    // 04
+	int vehicleID;  // 08
+	int unk0;       // 0c
+	Vector pos;     // 10
+	Vector vel;     // 1c
+	float yaw;      // 28
+	RotMatrix rot;  // 2c
+	padding unk1[0x5d8 - 0x2c - sizeof(RotMatrix)];
+	int color;  // 5d8
+	padding unk2[0x5fc - 0x5d8 - 4];
+
+	const char* getClass() const { return "TrafficCar"; }
+	std::string __tostring() const;
+	int getIndex() const;
+	VehicleType* getType();
+	void setType(VehicleType* vehicleType);
+	Human* getHuman() const;
+	void setHuman(Human* human);
+	Vehicle* getVehicle() const;
+	void setVehicle(Vehicle* vehicle);
 };
 
 // 12 bytes (C)

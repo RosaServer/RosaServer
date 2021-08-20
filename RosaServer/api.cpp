@@ -250,10 +250,10 @@ sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
 	return table;
 }
 
-sol::table physics::lineIntersectVehicle(Vehicle* vcl, Vector* posA,
+sol::table physics::lineIntersectVehicle(Vehicle* vehicle, Vector* posA,
                                          Vector* posB) {
 	sol::table table = lua->create_table();
-	int res = Engine::lineIntersectVehicle(vcl->getIndex(), posA, posB);
+	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
@@ -291,12 +291,12 @@ sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
 	return sol::make_object(lua, sol::nil);
 }
 
-sol::object physics::lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA,
+sol::object physics::lineIntersectVehicleQuick(Vehicle* vehicle, Vector* posA,
                                                Vector* posB,
                                                sol::this_state s) {
 	sol::state_view lua(s);
 
-	int res = Engine::lineIntersectVehicle(vcl->getIndex(), posA, posB);
+	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
@@ -784,6 +784,27 @@ StreetIntersection* intersections::getByIndex(sol::table self,
 	return &Engine::streetIntersections[idx];
 }
 
+int trafficCars::getCount() { return *Engine::numTrafficCars; }
+
+sol::table trafficCars::getAll() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < *Engine::numTrafficCars; i++) {
+		arr.add(&Engine::trafficCars[i]);
+	}
+	return arr;
+}
+
+TrafficCar* trafficCars::getByIndex(sol::table self, unsigned int idx) {
+	if (idx >= *Engine::numTrafficCars)
+		throw std::invalid_argument(errorOutOfRange);
+	return &Engine::trafficCars[idx];
+}
+
+void trafficCars::createMany(int amount) {
+	subhook::ScopedHookRemove remove(&Hooks::createTrafficHook);
+	Engine::createTraffic(amount);
+}
+
 int buildings::getCount() { return *Engine::numBuildings; }
 
 sol::table buildings::getAll() {
@@ -966,27 +987,19 @@ void memory::writeBytes(uintptr_t address, std::string_view bytes) {
 };  // namespace Lua
 
 Player* EarShot::getPlayer() const {
-	if (playerID == -1) return nullptr;
-	return &Engine::players[playerID];
+	return playerID == -1 ? nullptr : &Engine::players[playerID];
 }
 
 void EarShot::setPlayer(Player* player) {
-	if (player == nullptr)
-		playerID = -1;
-	else
-		playerID = player->getIndex();
+	playerID = player == nullptr ? -1 : player->getIndex();
 }
 
 Human* EarShot::getHuman() const {
-	if (humanID == -1) return nullptr;
-	return &Engine::humans[humanID];
+	return humanID == -1 ? nullptr : &Engine::humans[humanID];
 }
 
 void EarShot::setHuman(Human* human) {
-	if (human == nullptr)
-		humanID = -1;
-	else
-		humanID = human->getIndex();
+	humanID = human == nullptr ? -1 : human->getIndex();
 }
 
 Item* EarShot::getReceivingItem() const {
@@ -1026,15 +1039,11 @@ std::string addressFromInteger(unsigned int address) {
 std::string Connection::getAddress() { return addressFromInteger(address); }
 
 Player* Connection::getPlayer() const {
-	if (playerID == -1) return nullptr;
-	return &Engine::players[playerID];
+	return playerID == -1 ? nullptr : &Engine::players[playerID];
 }
 
 void Connection::setPlayer(Player* player) {
-	if (player == nullptr)
-		playerID = -1;
-	else
-		playerID = player->getIndex();
+	playerID = player == nullptr ? -1 : player->getIndex();
 }
 
 EarShot* Connection::getEarShot(unsigned int idx) {
@@ -1247,15 +1256,11 @@ void Player::sendMessage(const char* message) const {
 }
 
 Human* Player::getHuman() const {
-	if (humanID == -1) return nullptr;
-	return &Engine::humans[humanID];
+	return humanID == -1 ? nullptr : &Engine::humans[humanID];
 }
 
 void Player::setHuman(Human* human) {
-	if (human == nullptr)
-		humanID = -1;
-	else
-		humanID = human->getIndex();
+	humanID = human == nullptr ? -1 : human->getIndex();
 }
 
 Connection* Player::getConnection() {
@@ -1337,15 +1342,11 @@ void Human::remove() const {
 }
 
 Player* Human::getPlayer() const {
-	if (playerID == -1) return nullptr;
-	return &Engine::players[playerID];
+	return playerID == -1 ? nullptr : &Engine::players[playerID];
 }
 
 void Human::setPlayer(Player* player) {
-	if (player == nullptr)
-		playerID = -1;
-	else
-		playerID = player->getIndex();
+	playerID = player == nullptr ? -1 : player->getIndex();
 }
 
 Account* Human::getAccount() {
@@ -1358,15 +1359,11 @@ void Human::setAccount(Account* account) {
 }
 
 Vehicle* Human::getVehicle() const {
-	if (vehicleID == -1) return nullptr;
-	return &Engine::vehicles[vehicleID];
+	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
 }
 
-void Human::setVehicle(Vehicle* vcl) {
-	if (vcl == nullptr)
-		vehicleID = -1;
-	else
-		vehicleID = vcl->getIndex();
+void Human::setVehicle(Vehicle* vehicle) {
+	vehicleID = vehicle == nullptr ? -1 : vehicle->getIndex();
 }
 
 void Human::teleport(Vector* vec) {
@@ -1541,8 +1538,8 @@ Vehicle* Item::getVehicle() const {
 	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
 }
 
-void Item::setVehicle(Vehicle* vcl) {
-	vehicleID = vcl == nullptr ? -1 : vcl->getIndex();
+void Item::setVehicle(Vehicle* vehicle) {
+	vehicleID = vehicle == nullptr ? -1 : vehicle->getIndex();
 }
 
 bool Item::mountItem(Item* childItem, unsigned int slot) const {
@@ -1676,8 +1673,7 @@ void Vehicle::setIsWindowBroken(unsigned int idx, bool b) {
 }
 
 Player* Bullet::getPlayer() const {
-	if (playerID == -1) return nullptr;
-	return &Engine::players[playerID];
+	return playerID == -1 ? nullptr : &Engine::players[playerID];
 }
 
 std::string RigidBody::__tostring() const {
@@ -1803,6 +1799,42 @@ Street* StreetIntersection::getStreetWest() const {
 
 Street* StreetIntersection::getStreetNorth() const {
 	return streetNorth == -1 ? nullptr : &Engine::streets[streetNorth];
+}
+
+std::string TrafficCar::__tostring() const {
+	char buf[24];
+	sprintf(buf, "TrafficCar(%i)", getIndex());
+	return buf;
+}
+
+int TrafficCar::getIndex() const {
+	return ((uintptr_t)this - (uintptr_t)Engine::trafficCars) / sizeof(*this);
+}
+
+VehicleType* TrafficCar::getType() { return &Engine::vehicleTypes[type]; }
+
+void TrafficCar::setType(VehicleType* vehicleType) {
+	if (vehicleType == nullptr) {
+		throw std::invalid_argument("Cannot set a traffic car's type to nil");
+	}
+
+	type = vehicleType->getIndex();
+}
+
+Human* TrafficCar::getHuman() const {
+	return humanID == -1 ? nullptr : &Engine::humans[humanID];
+}
+
+void TrafficCar::setHuman(Human* human) {
+	humanID = human == nullptr ? -1 : human->getIndex();
+}
+
+Vehicle* TrafficCar::getVehicle() const {
+	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
+}
+
+void TrafficCar::setVehicle(Vehicle* vehicle) {
+	vehicleID = vehicle == nullptr ? -1 : vehicle->getIndex();
 }
 
 VehicleType* ShopCar::getType() { return &Engine::vehicleTypes[type]; }

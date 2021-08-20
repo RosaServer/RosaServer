@@ -207,6 +207,13 @@ sol::table getAll();
 StreetIntersection* getByIndex(sol::table self, unsigned int idx);
 };  // namespace intersections
 
+namespace trafficCars {
+int getCount();
+sol::table getAll();
+TrafficCar* getByIndex(sol::table self, unsigned int idx);
+void createMany(int amount);
+};  // namespace trafficCars
+
 namespace buildings {
 int getCount();
 sol::table getAll();
