@@ -1274,7 +1274,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::numStreetIntersections = (unsigned int*)(base + 0x3728125c);
 	Engine::numTrafficCars = (unsigned int*)(base + 0x149138b8);
 	Engine::numBuildings = (unsigned int*)(base + 0x373753f4);
-	Engine::numEvents = (unsigned int*)(base + 0x443f1c64);
+	Engine::numEvents = (unsigned short*)(base + 0x443f1c64);
 
 	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1fa0);
 	Engine::subRosa__printf_chk =

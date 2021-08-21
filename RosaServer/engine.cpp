@@ -77,7 +77,7 @@ unsigned int* numStreets;
 unsigned int* numStreetIntersections;
 unsigned int* numTrafficCars;
 unsigned int* numBuildings;
-unsigned int* numEvents;
+unsigned short* numEvents;
 
 subRosaPutsFunc subRosaPuts;
 subRosa__printf_chkFunc subRosa__printf_chk;

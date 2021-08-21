@@ -78,7 +78,7 @@ extern unsigned int* numStreets;
 extern unsigned int* numStreetIntersections;
 extern unsigned int* numTrafficCars;
 extern unsigned int* numBuildings;
-extern unsigned int* numEvents;
+extern unsigned short* numEvents;
 
 /*
   Misc
