@@ -895,6 +895,7 @@ void luaInit(bool redo) {
 	}
 
 	{
+		// TODO: merge with events table
 		auto eventTable = lua->create_table();
 		(*lua)["event"] = eventTable;
 		eventTable["sound"] =
@@ -1110,6 +1111,18 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto eventsTable = lua->create_table();
+		(*lua)["events"] = eventsTable;
+		eventsTable["getCount"] = Lua::events::getCount;
+		eventsTable["getAll"] = Lua::events::getAll;
+
+		sol::table _meta = lua->create_table();
+		eventsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = Lua::events::getCount;
+		_meta["__index"] = Lua::events::getByIndex;
+	}
+
+	{
 		auto memoryTable = lua->create_table();
 		(*lua)["memory"] = memoryTable;
 		memoryTable["getBaseAddress"] = Lua::memory::getBaseAddress;
@@ -1204,7 +1217,6 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::subVersion = (unsigned int*)(base + 0x2e6f04);
 	Engine::serverName = (char*)(base + 0x1fed72d4);
 	Engine::serverPort = (unsigned int*)(base + 0x17b9e720);
-	Engine::numEvents = (unsigned int*)(base + 0x443f1c64);
 	Engine::packetSize = (int*)(base + 0x36e60d5c);
 	Engine::packet = (unsigned char*)(base + 0x36e60d64);
 	Engine::serverMaxBytesPerSecond = (int*)(base + 0x17b9e724);
@@ -1261,6 +1273,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::streetIntersections = (StreetIntersection*)(base + 0x37281264);
 	Engine::trafficCars = (TrafficCar*)(base + 0x58c84f20);
 	Engine::buildings = (Building*)(base + 0x37375438);
+	Engine::events = (Event*)(base + 0x5e970c0);
 
 	Engine::numConnections = (unsigned int*)(base + 0x444c2688);
 	Engine::numBullets = (unsigned int*)(base + 0x443f1c60);
@@ -1268,6 +1281,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::numStreetIntersections = (unsigned int*)(base + 0x3728125c);
 	Engine::numTrafficCars = (unsigned int*)(base + 0x149138b8);
 	Engine::numBuildings = (unsigned int*)(base + 0x373753f4);
+	Engine::numEvents = (unsigned int*)(base + 0x443f1c64);
 
 	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1fa0);
 	Engine::subRosa__printf_chk =

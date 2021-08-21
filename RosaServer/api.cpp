@@ -821,6 +821,21 @@ Building* buildings::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::buildings[idx];
 }
 
+int events::getCount() { return *Engine::numEvents; }
+
+sol::table events::getAll() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < *Engine::numEvents; i++) {
+		arr.add(&Engine::events[i]);
+	}
+	return arr;
+}
+
+Event* events::getByIndex(sol::table self, unsigned int idx) {
+	if (idx >= *Engine::numEvents) throw std::invalid_argument(errorOutOfRange);
+	return &Engine::events[idx];
+}
+
 sol::table os::listDirectory(std::string_view path, sol::this_state s) {
 	sol::state_view lua(s);
 
@@ -1876,4 +1891,14 @@ ShopCar* Building::getShopCar(unsigned int idx) {
 	if (idx > 15) throw std::invalid_argument(errorOutOfRange);
 
 	return &shopCars[idx];
+}
+
+std::string Event::__tostring() const {
+	char buf[16];
+	sprintf(buf, "Event(%i)", getIndex());
+	return buf;
+}
+
+int Event::getIndex() const {
+	return ((uintptr_t)this - (uintptr_t)Engine::events) / sizeof(*this);
 }

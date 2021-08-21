@@ -6,7 +6,6 @@ extern unsigned int* version;
 extern unsigned int* subVersion;
 extern char* serverName;
 extern unsigned int* serverPort;
-extern unsigned int* numEvents;
 
 extern int* packetSize;
 extern unsigned char* packet;
@@ -71,6 +70,7 @@ extern Street* streets;
 extern StreetIntersection* streetIntersections;
 extern TrafficCar* trafficCars;
 extern Building* buildings;
+extern Event* events;
 
 extern unsigned int* numConnections;
 extern unsigned int* numBullets;
@@ -78,6 +78,7 @@ extern unsigned int* numStreets;
 extern unsigned int* numStreetIntersections;
 extern unsigned int* numTrafficCars;
 extern unsigned int* numBuildings;
+extern unsigned int* numEvents;
 
 /*
   Misc

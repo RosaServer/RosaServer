@@ -5,7 +5,6 @@ unsigned int* version;
 unsigned int* subVersion;
 char* serverName;
 unsigned int* serverPort;
-unsigned int* numEvents;
 
 int* packetSize;
 unsigned char* packet;
@@ -70,6 +69,7 @@ Street* streets;
 StreetIntersection* streetIntersections;
 TrafficCar* trafficCars;
 Building* buildings;
+Event* events;
 
 unsigned int* numConnections;
 unsigned int* numBullets;
@@ -77,6 +77,7 @@ unsigned int* numStreets;
 unsigned int* numStreetIntersections;
 unsigned int* numTrafficCars;
 unsigned int* numBuildings;
+unsigned int* numEvents;
 
 subRosaPutsFunc subRosaPuts;
 subRosa__printf_chkFunc subRosa__printf_chk;

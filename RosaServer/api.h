@@ -220,6 +220,12 @@ sol::table getAll();
 Building* getByIndex(sol::table self, unsigned int idx);
 };  // namespace buildings
 
+namespace events {
+int getCount();
+sol::table getAll();
+Event* getByIndex(sol::table self, unsigned int idx);
+};  // namespace events
+
 namespace os {
 sol::table listDirectory(std::string_view path, sol::this_state s);
 bool createDirectory(std::string_view path);
