@@ -8,7 +8,7 @@ local function runTests ()
 	require('tests.bonds')
 	require('tests.bullets')
 	require('tests.chat')
-	require('tests.event')
+	require('tests.events')
 	require('tests.fileWatcher')
 	require('tests.http')
 	require('tests.humans')
@@ -82,9 +82,9 @@ function nextTick (func, ticksToWait)
 end
 
 function assertAddsEvent (func, message)
-	local numEvents = server.numEvents
+	local numEvents = #events
 	func()
-	if server.numEvents ~= numEvents + 1 then
+	if #events ~= numEvents + 1 then
 		error(message or 'event assertion failed!', 2)
 	end
 end

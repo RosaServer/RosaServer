@@ -203,27 +203,6 @@ void hook::clear() {
 	}
 }
 
-void event::sound(int soundType, Vector* pos, float volume, float pitch) {
-	Engine::createEventSound(soundType, pos, volume, pitch);
-}
-
-void event::soundSimple(int soundType, Vector* pos) {
-	Engine::createEventSound(soundType, pos, 1.0f, 1.0f);
-}
-
-void event::explosion(Vector* pos) { Engine::createEventExplosion(0, pos); }
-
-void event::bullet(int bulletType, Vector* pos, Vector* vel, Item* item) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHook);
-	Engine::createEventBullet(bulletType, pos, vel,
-	                          item == nullptr ? -1 : item->getIndex());
-}
-
-void event::bulletHit(int hitType, Vector* pos, Vector* normal) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
-	Engine::createEventBulletHit(0, hitType, pos, normal);
-}
-
 sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
 	int res = Engine::lineIntersectLevel(posA, posB, 1);
@@ -834,6 +813,36 @@ sol::table events::getAll() {
 Event* events::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= *Engine::numEvents) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::events[idx];
+}
+
+Event* events::createSound(int soundType, Vector* pos, float volume,
+                           float pitch) {
+	Engine::createEventSound(soundType, pos, volume, pitch);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createSoundSimple(int soundType, Vector* pos) {
+	Engine::createEventSound(soundType, pos, 1.0f, 1.0f);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createExplosion(Vector* pos) {
+	Engine::createEventExplosion(0, pos);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createBullet(int bulletType, Vector* pos, Vector* vel,
+                            Item* item) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHook);
+	Engine::createEventBullet(bulletType, pos, vel,
+	                          item == nullptr ? -1 : item->getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createBulletHit(int hitType, Vector* pos, Vector* normal) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
+	Engine::createEventBulletHit(0, hitType, pos, normal);
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
 sol::table os::listDirectory(std::string_view path, sol::this_state s) {

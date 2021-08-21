@@ -87,14 +87,6 @@ bool disable(std::string name);
 void clear();
 };  // namespace hook
 
-namespace event {
-void sound(int soundType, Vector* pos, float volume, float pitch);
-void soundSimple(int soundType, Vector* pos);
-void explosion(Vector* pos);
-void bullet(int bulletType, Vector* pos, Vector* vel, Item* item);
-void bulletHit(int hitType, Vector* pos, Vector* normal);
-};  // namespace event
-
 namespace physics {
 sol::table lineIntersectLevel(Vector* posA, Vector* posB);
 sol::table lineIntersectHuman(Human* man, Vector* posA, Vector* posB);
@@ -224,6 +216,11 @@ namespace events {
 int getCount();
 sol::table getAll();
 Event* getByIndex(sol::table self, unsigned int idx);
+Event* createSound(int soundType, Vector* pos, float volume, float pitch);
+Event* createSoundSimple(int soundType, Vector* pos);
+Event* createExplosion(Vector* pos);
+Event* createBullet(int bulletType, Vector* pos, Vector* vel, Item* item);
+Event* createBulletHit(int hitType, Vector* pos, Vector* normal);
 };  // namespace events
 
 namespace os {

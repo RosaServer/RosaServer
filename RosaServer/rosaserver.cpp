@@ -895,17 +895,6 @@ void luaInit(bool redo) {
 	}
 
 	{
-		// TODO: merge with events table
-		auto eventTable = lua->create_table();
-		(*lua)["event"] = eventTable;
-		eventTable["sound"] =
-		    sol::overload(Lua::event::sound, Lua::event::soundSimple);
-		eventTable["explosion"] = Lua::event::explosion;
-		eventTable["bullet"] = Lua::event::bullet;
-		eventTable["bulletHit"] = Lua::event::bulletHit;
-	}
-
-	{
 		auto physicsTable = lua->create_table();
 		(*lua)["physics"] = physicsTable;
 		physicsTable["lineIntersectLevel"] = Lua::physics::lineIntersectLevel;
@@ -1115,6 +1104,11 @@ void luaInit(bool redo) {
 		(*lua)["events"] = eventsTable;
 		eventsTable["getCount"] = Lua::events::getCount;
 		eventsTable["getAll"] = Lua::events::getAll;
+		eventsTable["createSound"] =
+		    sol::overload(Lua::events::createSound, Lua::events::createSoundSimple);
+		eventsTable["createExplosion"] = Lua::events::createExplosion;
+		eventsTable["createBullet"] = Lua::events::createBullet;
+		eventsTable["createBulletHit"] = Lua::events::createBulletHit;
 
 		sol::table _meta = lua->create_table();
 		eventsTable[sol::metatable_key] = _meta;
