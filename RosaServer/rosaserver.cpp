@@ -848,6 +848,25 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto meta = lua->new_usertype<Event>("new", sol::no_constructor);
+		meta["type"] = &Event::type;
+		meta["tickCreated"] = &Event::tickCreated;
+		meta["vectorA"] = &Event::vectorA;
+		meta["vectorB"] = &Event::vectorB;
+		meta["a"] = &Event::a;
+		meta["b"] = &Event::b;
+		meta["c"] = &Event::c;
+		meta["d"] = &Event::d;
+		meta["floatA"] = &Event::floatA;
+		meta["floatB"] = &Event::floatB;
+
+		meta["class"] = sol::property(&Event::getClass);
+		meta["__tostring"] = &Event::__tostring;
+		meta["index"] = sol::property(&Event::getIndex);
+		meta["message"] = sol::property(&Event::getMessage, &Event::setMessage);
+	}
+
+	{
 		auto meta = lua->new_usertype<Hooks::Float>("new", sol::no_constructor);
 		meta["value"] = &Hooks::Float::value;
 	}

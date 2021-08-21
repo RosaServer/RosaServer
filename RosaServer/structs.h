@@ -902,3 +902,28 @@ struct Building {
 	int getIndex() const;
 	ShopCar* getShopCar(unsigned int idx);
 };
+
+// 128 bytes (80)
+struct Event {
+	int type;          // 00
+	int tickCreated;   // 04
+	Vector vectorA;    // 08
+	Vector vectorB;    // 14
+	int a;             // 20
+	int b;             // 24
+	int c;             // 28
+	int d;             // 2c
+	float floatA;      // 30
+	float floatB;      // 34
+	int unk0;          // 38
+	int unk1;          // 3c
+	char message[64];  // 40
+
+	const char* getClass() const { return "Event"; }
+	std::string __tostring() const;
+	int getIndex() const;
+	char* getMessage() { return message; }
+	void setMessage(const char* newMessage) {
+		std::strncpy(message, newMessage, sizeof(message) - 1);
+	}
+};
