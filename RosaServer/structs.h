@@ -24,6 +24,7 @@ struct Item;
 struct RigidBody;
 struct Bond;
 struct StreetIntersection;
+struct Event;
 
 // 40 bytes (28)
 struct EarShot {
@@ -306,8 +307,8 @@ struct Player {
 	Action* getAction(unsigned int idx);
 	MenuButton* getMenuButton(unsigned int idx);
 
-	void update() const;
-	void updateFinance() const;
+	Event* update() const;
+	Event* updateFinance() const;
 	void remove() const;
 	void sendMessage(const char* message) const;
 };
@@ -693,9 +694,9 @@ struct Vehicle {
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
 
-	void updateType() const;
-	void updateDestruction(int updateType, int partID, Vector* pos,
-	                       Vector* normal) const;
+	Event* updateType() const;
+	Event* updateDestruction(int updateType, int partID, Vector* pos,
+	                         Vector* normal) const;
 	void remove() const;
 	bool getIsWindowBroken(unsigned int idx) const;
 	void setIsWindowBroken(unsigned int idx, bool b);

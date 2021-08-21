@@ -1268,13 +1268,15 @@ sol::table Player::getDataTable() const {
 	return *playerDataTables[index];
 }
 
-void Player::update() const {
+Event* Player::update() const {
 	subhook::ScopedHookRemove remove(&Hooks::createEventUpdatePlayerHook);
 	Engine::createEventUpdatePlayer(getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
-void Player::updateFinance() const {
+Event* Player::updateFinance() const {
 	Engine::createEventUpdatePlayerFinance(getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
 void Player::remove() const {
@@ -1670,14 +1672,16 @@ sol::table Vehicle::getDataTable() const {
 	return *vehicleDataTables[index];
 }
 
-void Vehicle::updateType() const {
+Event* Vehicle::updateType() const {
 	Engine::createEventCreateVehicle(getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
-void Vehicle::updateDestruction(int updateType, int partID, Vector* pos,
-                                Vector* normal) const {
+Event* Vehicle::updateDestruction(int updateType, int partID, Vector* pos,
+                                  Vector* normal) const {
 	subhook::ScopedHookRemove remove(&Hooks::createEventUpdateVehicleHook);
 	Engine::createEventUpdateVehicle(getIndex(), updateType, partID, pos, normal);
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
 void Vehicle::remove() const {
