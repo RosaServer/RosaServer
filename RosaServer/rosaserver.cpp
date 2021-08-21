@@ -315,7 +315,6 @@ void luaInit(bool redo) {
 		meta["version"] = sol::property(&Server::getVersion);
 		meta["versionMajor"] = sol::property(&Server::getVersionMajor);
 		meta["versionMinor"] = sol::property(&Server::getVersionMinor);
-		meta["numEvents"] = sol::property(&Server::getNumEvents);
 
 		meta["setConsoleTitle"] = &Server::setConsoleTitle;
 		meta["reset"] = &Server::reset;

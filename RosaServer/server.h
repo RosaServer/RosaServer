@@ -111,7 +111,6 @@ struct Server {
 	}
 	unsigned int getVersionMajor() const { return *Engine::version; }
 	unsigned int getVersionMinor() const { return *Engine::subVersion; }
-	unsigned int getNumEvents() const { return *Engine::numEvents; }
 
 	void setConsoleTitle(const char* title) const { Console::setTitle(title); }
 	void reset() const { hookAndReset(RESET_REASON_LUACALL); }
