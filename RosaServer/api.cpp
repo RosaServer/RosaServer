@@ -1080,6 +1080,21 @@ Human* Connection::getSpectatingHuman() const {
 	return spectatingHumanID == -1 ? nullptr : &Engine::humans[spectatingHumanID];
 }
 
+bool Connection::hasReceivedEvent(Event* event) const {
+	if (!event) {
+		return false;
+	}
+
+	int numEventsUpToThis = event->getIndex() + 1;
+
+	if (*Engine::numEvents < numEventsUpToThis) {
+		// The event is no longer valid, the count must have wrapped
+		return true;
+	}
+
+	return numReceivedEvents >= numEventsUpToThis;
+}
+
 std::string Account::__tostring() const {
 	char buf[32];
 	sprintf(buf, "Account(%i)", getIndex());

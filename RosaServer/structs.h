@@ -63,11 +63,13 @@ struct Connection {
 	int unk1;           // 1c
 	int bandwidth;      // 20
 	int timeoutTime;    // 24
-	padding unk2[0x5c - 0x24 - 4];
+	padding unk2[0x4c - 0x24 - 4];
+	int numReceivedEvents;  // 4c
+	padding unk3[0x5c - 0x4c - 4];
 	EarShot earShots[8];  // 5c
-	padding unk3[0x19c - (0x5c + (sizeof(EarShot) * 8))];
+	padding unk4[0x19c - (0x5c + (sizeof(EarShot) * 8))];
 	int spectatingHumanID;  // 19c
-	padding unk4[0x2E1E0 - 0x19c - 4];
+	padding unk5[0x2E1E0 - 0x19c - 4];
 
 	const char* getClass() const { return "Connection"; }
 	std::string getAddress();
@@ -77,6 +79,7 @@ struct Connection {
 	void setPlayer(Player* player);
 	EarShot* getEarShot(unsigned int idx);
 	Human* getSpectatingHuman() const;
+	bool hasReceivedEvent(Event* event) const;
 };
 
 // 112 bytes (70)

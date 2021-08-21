@@ -337,6 +337,7 @@ void luaInit(bool redo) {
 		meta["spectatingHuman"] = sol::property(&Connection::getSpectatingHuman);
 
 		meta["getEarShot"] = &Connection::getEarShot;
+		meta["hasReceivedEvent"] = &Connection::hasReceivedEvent;
 	}
 
 	{
