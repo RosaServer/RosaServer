@@ -815,6 +815,20 @@ Event* events::getByIndex(sol::table self, unsigned int idx) {
 	return &Engine::events[idx];
 }
 
+Event* events::createBullet(int bulletType, Vector* pos, Vector* vel,
+                            Item* item) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHook);
+	Engine::createEventBullet(bulletType, pos, vel,
+	                          item == nullptr ? -1 : item->getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createBulletHit(int hitType, Vector* pos, Vector* normal) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
+	Engine::createEventBulletHit(0, hitType, pos, normal);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
 Event* events::createSound(int soundType, Vector* pos, float volume,
                            float pitch) {
 	Engine::createEventSound(soundType, pos, volume, pitch);
@@ -828,20 +842,6 @@ Event* events::createSoundSimple(int soundType, Vector* pos) {
 
 Event* events::createExplosion(Vector* pos) {
 	Engine::createEventExplosion(0, pos);
-	return &Engine::events[*Engine::numEvents - 1];
-}
-
-Event* events::createBullet(int bulletType, Vector* pos, Vector* vel,
-                            Item* item) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHook);
-	Engine::createEventBullet(bulletType, pos, vel,
-	                          item == nullptr ? -1 : item->getIndex());
-	return &Engine::events[*Engine::numEvents - 1];
-}
-
-Event* events::createBulletHit(int hitType, Vector* pos, Vector* normal) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
-	Engine::createEventBulletHit(0, hitType, pos, normal);
 	return &Engine::events[*Engine::numEvents - 1];
 }
 

@@ -216,11 +216,11 @@ namespace events {
 int getCount();
 sol::table getAll();
 Event* getByIndex(sol::table self, unsigned int idx);
+Event* createBullet(int bulletType, Vector* pos, Vector* vel, Item* item);
+Event* createBulletHit(int hitType, Vector* pos, Vector* normal);
 Event* createSound(int soundType, Vector* pos, float volume, float pitch);
 Event* createSoundSimple(int soundType, Vector* pos);
 Event* createExplosion(Vector* pos);
-Event* createBullet(int bulletType, Vector* pos, Vector* vel, Item* item);
-Event* createBulletHit(int hitType, Vector* pos, Vector* normal);
 };  // namespace events
 
 namespace os {
