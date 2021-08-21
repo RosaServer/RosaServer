@@ -918,7 +918,6 @@ void luaInit(bool redo) {
 		(*lua)["chat"] = chatTable;
 		chatTable["announce"] = Lua::chat::announce;
 		chatTable["tellAdmins"] = Lua::chat::tellAdmins;
-		chatTable["addRaw"] = Lua::chat::addRaw;
 	}
 
 	{
