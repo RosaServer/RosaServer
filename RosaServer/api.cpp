@@ -1155,6 +1155,13 @@ std::tuple<int, int, int> Vector::getBlockPos() const {
 	return std::make_tuple(blockX, blockY, blockZ);
 }
 
+void Vector::normalize() {
+	double length = this->length();
+	x /= length;
+	y /= length;
+	z /= length;
+}
+
 std::string RotMatrix::__tostring() const {
 	char buf[256];
 	sprintf(buf, "RotMatrix(%f, %f, %f, %f, %f, %f, %f, %f, %f)", x1, y1, z1, x2,

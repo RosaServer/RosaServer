@@ -79,6 +79,7 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["lengthSquare"] = &Vector::lengthSquare;
 		meta["dot"] = &Vector::dot;
 		meta["getBlockPos"] = &Vector::getBlockPos;
+		meta["normalize"] = &Vector::normalize;
 	}
 
 	{

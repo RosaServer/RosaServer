@@ -126,6 +126,7 @@ struct Vector {
 	double lengthSquare() const;
 	double dot(Vector* other) const;
 	std::tuple<int, int, int> getBlockPos() const;
+	void normalize();
 };
 
 struct RotMatrix {
