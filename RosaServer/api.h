@@ -140,8 +140,8 @@ Vehicle* createVel(VehicleType* type, Vector* pos, Vector* vel, RotMatrix* rot,
 };  // namespace vehicles
 
 namespace chat {
-void announce(const char* message);
-void tellAdmins(const char* message);
+Event* announce(const char* message);
+Event* tellAdmins(const char* message);
 };  // namespace chat
 
 namespace accounts {

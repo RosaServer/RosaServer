@@ -505,14 +505,12 @@ Vehicle* vehicles::createVel(VehicleType* type, Vector* pos, Vector* vel,
 	return id == -1 ? nullptr : &Engine::vehicles[id];
 }
 
-void chat::announce(const char* message) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
-	Engine::createEventMessage(0, (char*)message, -1, 0);
+Event* chat::announce(const char* message) {
+	return events::createMessage(0, (char*)message, -1, 0);
 }
 
-void chat::tellAdmins(const char* message) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
-	Engine::createEventMessage(4, (char*)message, -1, 0);
+Event* chat::tellAdmins(const char* message) {
+	return events::createMessage(4, (char*)message, -1, 0);
 }
 
 void accounts::save() {
