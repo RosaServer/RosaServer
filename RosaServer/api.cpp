@@ -515,11 +515,6 @@ void chat::tellAdmins(const char* message) {
 	Engine::createEventMessage(4, (char*)message, -1, 0);
 }
 
-void chat::addRaw(int type, const char* message, int speakerID, int distance) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
-	Engine::createEventMessage(type, (char*)message, speakerID, distance);
-}
-
 void accounts::save() {
 	subhook::ScopedHookRemove remove(&Hooks::saveAccountsServerHook);
 	Engine::saveAccountsServer();
@@ -826,6 +821,14 @@ Event* events::createBullet(int bulletType, Vector* pos, Vector* vel,
 Event* events::createBulletHit(int hitType, Vector* pos, Vector* normal) {
 	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
 	Engine::createEventBulletHit(0, hitType, pos, normal);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createMessage(int messageType, const char* message,
+                             int speakerID, int volumeLevel) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
+	Engine::createEventMessage(messageType, (char*)message, speakerID,
+	                           volumeLevel);
 	return &Engine::events[*Engine::numEvents - 1];
 }
 

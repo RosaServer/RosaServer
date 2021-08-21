@@ -1106,6 +1106,7 @@ void luaInit(bool redo) {
 		eventsTable["getAll"] = Lua::events::getAll;
 		eventsTable["createBullet"] = Lua::events::createBullet;
 		eventsTable["createBulletHit"] = Lua::events::createBulletHit;
+		eventsTable["createMessage"] = Lua::events::createMessage;
 		eventsTable["createSound"] =
 		    sol::overload(Lua::events::createSound, Lua::events::createSoundSimple);
 		eventsTable["createExplosion"] = Lua::events::createExplosion;

@@ -142,7 +142,6 @@ Vehicle* createVel(VehicleType* type, Vector* pos, Vector* vel, RotMatrix* rot,
 namespace chat {
 void announce(const char* message);
 void tellAdmins(const char* message);
-void addRaw(int type, const char* message, int speakerID, int distance);
 };  // namespace chat
 
 namespace accounts {
@@ -218,6 +217,8 @@ sol::table getAll();
 Event* getByIndex(sol::table self, unsigned int idx);
 Event* createBullet(int bulletType, Vector* pos, Vector* vel, Item* item);
 Event* createBulletHit(int hitType, Vector* pos, Vector* normal);
+Event* createMessage(int messageType, const char* message, int speakerID,
+                     int volumeLevel);
 Event* createSound(int soundType, Vector* pos, float volume, float pitch);
 Event* createSoundSimple(int soundType, Vector* pos);
 Event* createExplosion(Vector* pos);
