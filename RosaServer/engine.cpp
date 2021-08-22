@@ -5,7 +5,6 @@ unsigned int* version;
 unsigned int* subVersion;
 char* serverName;
 unsigned int* serverPort;
-unsigned int* numEvents;
 
 int* packetSize;
 unsigned char* packet;
@@ -15,6 +14,7 @@ char* mapName;
 char* loadedMapName;
 int* gameState;
 int* gameTimer;
+int* ticksSinceReset;
 unsigned int* sunTime;
 
 int* serverMaxBytesPerSecond;
@@ -67,18 +67,23 @@ RigidBody* bodies;
 Bond* bonds;
 Street* streets;
 StreetIntersection* streetIntersections;
+TrafficCar* trafficCars;
 Building* buildings;
+Event* events;
 
 unsigned int* numConnections;
 unsigned int* numBullets;
 unsigned int* numStreets;
 unsigned int* numStreetIntersections;
+unsigned int* numTrafficCars;
 unsigned int* numBuildings;
+unsigned short* numEvents;
 
 subRosaPutsFunc subRosaPuts;
 subRosa__printf_chkFunc subRosa__printf_chk;
 
 voidFunc resetGame;
+createTrafficFunc createTraffic;
 
 areaCreateBlockFunc areaCreateBlock;
 areaDeleteBlockFunc areaDeleteBlock;
@@ -96,6 +101,7 @@ voidFunc physicsSimulation;
 voidFunc rigidBodySimulation;
 serverReceiveFunc serverReceive;
 voidFunc serverSend;
+packetWriteFunc packetWrite;
 calculatePlayerVoiceFunc calculatePlayerVoice;
 sendPacketFunc sendPacket;
 voidFunc bulletSimulation;

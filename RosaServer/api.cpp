@@ -203,27 +203,6 @@ void hook::clear() {
 	}
 }
 
-void event::sound(int soundType, Vector* pos, float volume, float pitch) {
-	Engine::createEventSound(soundType, pos, volume, pitch);
-}
-
-void event::soundSimple(int soundType, Vector* pos) {
-	Engine::createEventSound(soundType, pos, 1.0f, 1.0f);
-}
-
-void event::explosion(Vector* pos) { Engine::createEventExplosion(0, pos); }
-
-void event::bullet(int bulletType, Vector* pos, Vector* vel, Item* item) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHook);
-	Engine::createEventBullet(bulletType, pos, vel,
-	                          item == nullptr ? -1 : item->getIndex());
-}
-
-void event::bulletHit(int hitType, Vector* pos, Vector* normal) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
-	Engine::createEventBulletHit(0, hitType, pos, normal);
-}
-
 sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
 	int res = Engine::lineIntersectLevel(posA, posB, 1);
@@ -250,10 +229,10 @@ sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
 	return table;
 }
 
-sol::table physics::lineIntersectVehicle(Vehicle* vcl, Vector* posA,
+sol::table physics::lineIntersectVehicle(Vehicle* vehicle, Vector* posA,
                                          Vector* posB) {
 	sol::table table = lua->create_table();
-	int res = Engine::lineIntersectVehicle(vcl->getIndex(), posA, posB);
+	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
@@ -291,12 +270,12 @@ sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
 	return sol::make_object(lua, sol::nil);
 }
 
-sol::object physics::lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA,
+sol::object physics::lineIntersectVehicleQuick(Vehicle* vehicle, Vector* posA,
                                                Vector* posB,
                                                sol::this_state s) {
 	sol::state_view lua(s);
 
-	int res = Engine::lineIntersectVehicle(vcl->getIndex(), posA, posB);
+	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
@@ -526,19 +505,12 @@ Vehicle* vehicles::createVel(VehicleType* type, Vector* pos, Vector* vel,
 	return id == -1 ? nullptr : &Engine::vehicles[id];
 }
 
-void chat::announce(const char* message) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
-	Engine::createEventMessage(0, (char*)message, -1, 0);
+Event* chat::announce(const char* message) {
+	return events::createMessage(0, (char*)message, -1, 0);
 }
 
-void chat::tellAdmins(const char* message) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
-	Engine::createEventMessage(4, (char*)message, -1, 0);
-}
-
-void chat::addRaw(int type, const char* message, int speakerID, int distance) {
-	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
-	Engine::createEventMessage(type, (char*)message, speakerID, distance);
+Event* chat::tellAdmins(const char* message) {
+	return events::createMessage(4, (char*)message, -1, 0);
 }
 
 void accounts::save() {
@@ -784,6 +756,27 @@ StreetIntersection* intersections::getByIndex(sol::table self,
 	return &Engine::streetIntersections[idx];
 }
 
+int trafficCars::getCount() { return *Engine::numTrafficCars; }
+
+sol::table trafficCars::getAll() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < *Engine::numTrafficCars; i++) {
+		arr.add(&Engine::trafficCars[i]);
+	}
+	return arr;
+}
+
+TrafficCar* trafficCars::getByIndex(sol::table self, unsigned int idx) {
+	if (idx >= *Engine::numTrafficCars)
+		throw std::invalid_argument(errorOutOfRange);
+	return &Engine::trafficCars[idx];
+}
+
+void trafficCars::createMany(int amount) {
+	subhook::ScopedHookRemove remove(&Hooks::createTrafficHook);
+	Engine::createTraffic(amount);
+}
+
 int buildings::getCount() { return *Engine::numBuildings; }
 
 sol::table buildings::getAll() {
@@ -798,6 +791,59 @@ Building* buildings::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= *Engine::numBuildings)
 		throw std::invalid_argument(errorOutOfRange);
 	return &Engine::buildings[idx];
+}
+
+int events::getCount() { return *Engine::numEvents; }
+
+sol::table events::getAll() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < *Engine::numEvents; i++) {
+		arr.add(&Engine::events[i]);
+	}
+	return arr;
+}
+
+Event* events::getByIndex(sol::table self, unsigned int idx) {
+	if (idx >= *Engine::numEvents) throw std::invalid_argument(errorOutOfRange);
+	return &Engine::events[idx];
+}
+
+Event* events::createBullet(int bulletType, Vector* pos, Vector* vel,
+                            Item* item) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHook);
+	Engine::createEventBullet(bulletType, pos, vel,
+	                          item == nullptr ? -1 : item->getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createBulletHit(int hitType, Vector* pos, Vector* normal) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventBulletHitHook);
+	Engine::createEventBulletHit(0, hitType, pos, normal);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createMessage(int messageType, const char* message,
+                             int speakerID, int volumeLevel) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
+	Engine::createEventMessage(messageType, (char*)message, speakerID,
+	                           volumeLevel);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createSound(int soundType, Vector* pos, float volume,
+                           float pitch) {
+	Engine::createEventSound(soundType, pos, volume, pitch);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createSoundSimple(int soundType, Vector* pos) {
+	Engine::createEventSound(soundType, pos, 1.0f, 1.0f);
+	return &Engine::events[*Engine::numEvents - 1];
+}
+
+Event* events::createExplosion(Vector* pos) {
+	Engine::createEventExplosion(0, pos);
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
 sol::table os::listDirectory(std::string_view path, sol::this_state s) {
@@ -966,27 +1012,19 @@ void memory::writeBytes(uintptr_t address, std::string_view bytes) {
 };  // namespace Lua
 
 Player* EarShot::getPlayer() const {
-	if (playerID == -1) return nullptr;
-	return &Engine::players[playerID];
+	return playerID == -1 ? nullptr : &Engine::players[playerID];
 }
 
 void EarShot::setPlayer(Player* player) {
-	if (player == nullptr)
-		playerID = -1;
-	else
-		playerID = player->getIndex();
+	playerID = player == nullptr ? -1 : player->getIndex();
 }
 
 Human* EarShot::getHuman() const {
-	if (humanID == -1) return nullptr;
-	return &Engine::humans[humanID];
+	return humanID == -1 ? nullptr : &Engine::humans[humanID];
 }
 
 void EarShot::setHuman(Human* human) {
-	if (human == nullptr)
-		humanID = -1;
-	else
-		humanID = human->getIndex();
+	humanID = human == nullptr ? -1 : human->getIndex();
 }
 
 Item* EarShot::getReceivingItem() const {
@@ -1025,6 +1063,14 @@ std::string addressFromInteger(unsigned int address) {
 
 std::string Connection::getAddress() { return addressFromInteger(address); }
 
+Player* Connection::getPlayer() const {
+	return playerID == -1 ? nullptr : &Engine::players[playerID];
+}
+
+void Connection::setPlayer(Player* player) {
+	playerID = player == nullptr ? -1 : player->getIndex();
+}
+
 EarShot* Connection::getEarShot(unsigned int idx) {
 	if (idx > 8) throw std::invalid_argument(errorOutOfRange);
 
@@ -1033,6 +1079,21 @@ EarShot* Connection::getEarShot(unsigned int idx) {
 
 Human* Connection::getSpectatingHuman() const {
 	return spectatingHumanID == -1 ? nullptr : &Engine::humans[spectatingHumanID];
+}
+
+bool Connection::hasReceivedEvent(Event* event) const {
+	if (!event) {
+		return false;
+	}
+
+	int numEventsUpToThis = event->getIndex() + 1;
+
+	if (*Engine::numEvents < numEventsUpToThis) {
+		// The event is no longer valid, the count must have wrapped
+		return true;
+	}
+
+	return numReceivedEvents >= numEventsUpToThis;
 }
 
 std::string Account::__tostring() const {
@@ -1105,18 +1166,26 @@ void Vector::set(Vector* other) {
 
 Vector Vector::clone() const { return Vector{x, y, z}; }
 
-float Vector::dist(Vector* other) const {
-	float dx = x - other->x;
-	float dy = y - other->y;
-	float dz = z - other->z;
+double Vector::dist(Vector* other) const {
+	double dx = x - other->x;
+	double dy = y - other->y;
+	double dz = z - other->z;
 	return sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-float Vector::distSquare(Vector* other) const {
-	float dx = x - other->x;
-	float dy = y - other->y;
-	float dz = z - other->z;
+double Vector::distSquare(Vector* other) const {
+	double dx = x - other->x;
+	double dy = y - other->y;
+	double dz = z - other->z;
 	return dx * dx + dy * dy + dz * dz;
+}
+
+double Vector::length() const { return sqrt(x * x + y * y + z * z); }
+
+double Vector::lengthSquare() const { return x * x + y * y + z * z; }
+
+double Vector::dot(Vector* other) const {
+	return x * other->x + y * other->y + z * other->z;
 }
 
 std::tuple<int, int, int> Vector::getBlockPos() const {
@@ -1124,6 +1193,13 @@ std::tuple<int, int, int> Vector::getBlockPos() const {
 	int blockY = y / 4.f;
 	int blockZ = z / 4.f;
 	return std::make_tuple(blockX, blockY, blockZ);
+}
+
+void Vector::normalize() {
+	double length = this->length();
+	x /= length;
+	y /= length;
+	z /= length;
 }
 
 std::string RotMatrix::__tostring() const {
@@ -1208,13 +1284,15 @@ sol::table Player::getDataTable() const {
 	return *playerDataTables[index];
 }
 
-void Player::update() const {
+Event* Player::update() const {
 	subhook::ScopedHookRemove remove(&Hooks::createEventUpdatePlayerHook);
 	Engine::createEventUpdatePlayer(getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
-void Player::updateFinance() const {
+Event* Player::updateFinance() const {
 	Engine::createEventUpdatePlayerFinance(getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
 void Player::remove() const {
@@ -1235,15 +1313,11 @@ void Player::sendMessage(const char* message) const {
 }
 
 Human* Player::getHuman() const {
-	if (humanID == -1) return nullptr;
-	return &Engine::humans[humanID];
+	return humanID == -1 ? nullptr : &Engine::humans[humanID];
 }
 
 void Player::setHuman(Human* human) {
-	if (human == nullptr)
-		humanID = -1;
-	else
-		humanID = human->getIndex();
+	humanID = human == nullptr ? -1 : human->getIndex();
 }
 
 Connection* Player::getConnection() {
@@ -1325,15 +1399,11 @@ void Human::remove() const {
 }
 
 Player* Human::getPlayer() const {
-	if (playerID == -1) return nullptr;
-	return &Engine::players[playerID];
+	return playerID == -1 ? nullptr : &Engine::players[playerID];
 }
 
 void Human::setPlayer(Player* player) {
-	if (player == nullptr)
-		playerID = -1;
-	else
-		playerID = player->getIndex();
+	playerID = player == nullptr ? -1 : player->getIndex();
 }
 
 Account* Human::getAccount() {
@@ -1346,15 +1416,11 @@ void Human::setAccount(Account* account) {
 }
 
 Vehicle* Human::getVehicle() const {
-	if (vehicleID == -1) return nullptr;
-	return &Engine::vehicles[vehicleID];
+	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
 }
 
-void Human::setVehicle(Vehicle* vcl) {
-	if (vcl == nullptr)
-		vehicleID = -1;
-	else
-		vehicleID = vcl->getIndex();
+void Human::setVehicle(Vehicle* vehicle) {
+	vehicleID = vehicle == nullptr ? -1 : vehicle->getIndex();
 }
 
 void Human::teleport(Vector* vec) {
@@ -1529,8 +1595,8 @@ Vehicle* Item::getVehicle() const {
 	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
 }
 
-void Item::setVehicle(Vehicle* vcl) {
-	vehicleID = vcl == nullptr ? -1 : vcl->getIndex();
+void Item::setVehicle(Vehicle* vehicle) {
+	vehicleID = vehicle == nullptr ? -1 : vehicle->getIndex();
 }
 
 bool Item::mountItem(Item* childItem, unsigned int slot) const {
@@ -1622,14 +1688,16 @@ sol::table Vehicle::getDataTable() const {
 	return *vehicleDataTables[index];
 }
 
-void Vehicle::updateType() const {
+Event* Vehicle::updateType() const {
 	Engine::createEventCreateVehicle(getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
-void Vehicle::updateDestruction(int updateType, int partID, Vector* pos,
-                                Vector* normal) const {
+Event* Vehicle::updateDestruction(int updateType, int partID, Vector* pos,
+                                  Vector* normal) const {
 	subhook::ScopedHookRemove remove(&Hooks::createEventUpdateVehicleHook);
 	Engine::createEventUpdateVehicle(getIndex(), updateType, partID, pos, normal);
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
 void Vehicle::remove() const {
@@ -1664,8 +1732,7 @@ void Vehicle::setIsWindowBroken(unsigned int idx, bool b) {
 }
 
 Player* Bullet::getPlayer() const {
-	if (playerID == -1) return nullptr;
-	return &Engine::players[playerID];
+	return playerID == -1 ? nullptr : &Engine::players[playerID];
 }
 
 std::string RigidBody::__tostring() const {
@@ -1793,6 +1860,42 @@ Street* StreetIntersection::getStreetNorth() const {
 	return streetNorth == -1 ? nullptr : &Engine::streets[streetNorth];
 }
 
+std::string TrafficCar::__tostring() const {
+	char buf[24];
+	sprintf(buf, "TrafficCar(%i)", getIndex());
+	return buf;
+}
+
+int TrafficCar::getIndex() const {
+	return ((uintptr_t)this - (uintptr_t)Engine::trafficCars) / sizeof(*this);
+}
+
+VehicleType* TrafficCar::getType() { return &Engine::vehicleTypes[type]; }
+
+void TrafficCar::setType(VehicleType* vehicleType) {
+	if (vehicleType == nullptr) {
+		throw std::invalid_argument("Cannot set a traffic car's type to nil");
+	}
+
+	type = vehicleType->getIndex();
+}
+
+Human* TrafficCar::getHuman() const {
+	return humanID == -1 ? nullptr : &Engine::humans[humanID];
+}
+
+void TrafficCar::setHuman(Human* human) {
+	humanID = human == nullptr ? -1 : human->getIndex();
+}
+
+Vehicle* TrafficCar::getVehicle() const {
+	return vehicleID == -1 ? nullptr : &Engine::vehicles[vehicleID];
+}
+
+void TrafficCar::setVehicle(Vehicle* vehicle) {
+	vehicleID = vehicle == nullptr ? -1 : vehicle->getIndex();
+}
+
 VehicleType* ShopCar::getType() { return &Engine::vehicleTypes[type]; }
 
 void ShopCar::setType(VehicleType* vehicleType) {
@@ -1817,4 +1920,14 @@ ShopCar* Building::getShopCar(unsigned int idx) {
 	if (idx > 15) throw std::invalid_argument(errorOutOfRange);
 
 	return &shopCars[idx];
+}
+
+std::string Event::__tostring() const {
+	char buf[16];
+	sprintf(buf, "Event(%i)", getIndex());
+	return buf;
+}
+
+int Event::getIndex() const {
+	return ((uintptr_t)this - (uintptr_t)Engine::events) / sizeof(*this);
 }

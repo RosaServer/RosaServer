@@ -6,7 +6,6 @@ extern unsigned int* version;
 extern unsigned int* subVersion;
 extern char* serverName;
 extern unsigned int* serverPort;
-extern unsigned int* numEvents;
 
 extern int* packetSize;
 extern unsigned char* packet;
@@ -16,6 +15,7 @@ extern char* mapName;
 extern char* loadedMapName;
 extern int* gameState;
 extern int* gameTimer;
+extern int* ticksSinceReset;
 extern unsigned int* sunTime;
 
 extern int* serverMaxBytesPerSecond;
@@ -68,13 +68,17 @@ extern RigidBody* bodies;
 extern Bond* bonds;
 extern Street* streets;
 extern StreetIntersection* streetIntersections;
+extern TrafficCar* trafficCars;
 extern Building* buildings;
+extern Event* events;
 
 extern unsigned int* numConnections;
 extern unsigned int* numBullets;
 extern unsigned int* numStreets;
 extern unsigned int* numStreetIntersections;
+extern unsigned int* numTrafficCars;
 extern unsigned int* numBuildings;
+extern unsigned short* numEvents;
 
 /*
   Misc
@@ -88,7 +92,10 @@ extern subRosa__printf_chkFunc subRosa__printf_chk;
 typedef void (*voidFunc)();
 typedef void (*voidIndexFunc)(int id);
 
+typedef void (*createTrafficFunc)(int amount);
+
 extern voidFunc resetGame;
+extern createTrafficFunc createTraffic;
 
 typedef int (*areaCreateBlockFunc)(int zero, int blockX, int blockY, int blockZ,
                                    unsigned int flags, short unk[8]);
@@ -111,6 +118,8 @@ extern voidFunc rigidBodySimulation;
 typedef int (*serverReceiveFunc)();
 extern serverReceiveFunc serverReceive;
 extern voidFunc serverSend;
+typedef int (*packetWriteFunc)(void* source, int elementSize, int elementCount);
+extern packetWriteFunc packetWrite;
 typedef void (*calculatePlayerVoiceFunc)(int connectionID, int playerID);
 extern calculatePlayerVoiceFunc calculatePlayerVoice;
 typedef int (*sendPacketFunc)(unsigned int address, unsigned short port);

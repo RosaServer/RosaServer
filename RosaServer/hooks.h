@@ -8,6 +8,7 @@
 namespace Hooks {
 enum EnableKeys {
 	ResetGame,
+	CreateTraffic,
 	AreaCreateBlock,
 	AreaDeleteBlock,
 	InterruptSignal,
@@ -25,6 +26,7 @@ enum EnableKeys {
 	PhysicsRigidBodies,
 	ServerReceive,
 	ServerSend,
+	PacketBuilding,
 	CalculateEarShots,
 	SendPacket,
 	PhysicsBullets,
@@ -75,6 +77,9 @@ int subRosa__printf_chk(int flag, const char* format, ...);
 extern subhook::Hook resetGameHook;
 void resetGame();
 
+extern subhook::Hook createTrafficHook;
+void createTraffic(int amount);
+
 extern subhook::Hook areaCreateBlockHook;
 void areaCreateBlock(int zero, int blockX, int blockY, int blockZ,
                      unsigned int flags, short[8]);
@@ -106,6 +111,8 @@ extern subhook::Hook serverReceiveHook;
 int serverReceive();
 extern subhook::Hook serverSendHook;
 void serverSend();
+extern subhook::Hook packetWriteHook;
+int packetWrite(void* source, int elementSize, int elementCount);
 extern subhook::Hook calculatePlayerVoiceHook;
 void calculatePlayerVoice(int connectionID, int playerID);
 extern subhook::Hook sendPacketHook;

@@ -6,6 +6,7 @@ namespace Hooks {
 const std::unordered_map<std::string, EnableKeys> enableNames(
     {{"InterruptSignal", EnableKeys::InterruptSignal},
      {"ResetGame", EnableKeys::ResetGame},
+     {"CreateTraffic", EnableKeys::CreateTraffic},
      {"AreaCreateBlock", EnableKeys::AreaCreateBlock},
      {"AreaDeleteBlock", EnableKeys::AreaDeleteBlock},
      {"Logic", EnableKeys::Logic},
@@ -22,6 +23,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"PhysicsRigidBodies", EnableKeys::PhysicsRigidBodies},
      {"ServerReceive", EnableKeys::ServerReceive},
      {"ServerSend", EnableKeys::ServerSend},
+     {"PacketBuilding", EnableKeys::PacketBuilding},
      {"CalculateEarShots", EnableKeys::CalculateEarShots},
      {"SendPacket", EnableKeys::SendPacket},
      {"PhysicsBullets", EnableKeys::PhysicsBullets},
@@ -63,6 +65,7 @@ bool enabledKeys[EnableKeys::SIZE] = {0};
 subhook::Hook subRosaPutsHook;
 subhook::Hook subRosa__printf_chkHook;
 subhook::Hook resetGameHook;
+subhook::Hook createTrafficHook;
 subhook::Hook areaCreateBlockHook;
 subhook::Hook areaDeleteBlockHook;
 subhook::Hook logicSimulationHook;
@@ -77,6 +80,7 @@ subhook::Hook physicsSimulationHook;
 subhook::Hook rigidBodySimulationHook;
 subhook::Hook serverReceiveHook;
 subhook::Hook serverSendHook;
+subhook::Hook packetWriteHook;
 subhook::Hook calculatePlayerVoiceHook;
 subhook::Hook sendPacketHook;
 subhook::Hook bulletSimulationHook;
@@ -158,6 +162,35 @@ void resetGame() {
 		hookAndReset(RESET_REASON_BOOT);
 	} else {
 		hookAndReset(RESET_REASON_ENGINECALL);
+	}
+}
+
+void createTraffic(int amount) {
+	if (enabledKeys[EnableKeys::CreateTraffic]) {
+		bool noParent = false;
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			Integer wrappedAmount = {amount};
+
+			auto res = func("CreateTraffic", wrappedAmount);
+
+			if (noLuaCallError(&res)) noParent = (bool)res;
+
+			amount = wrappedAmount.value;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&createTrafficHook);
+				Engine::createTraffic(amount);
+			}
+			if (func != sol::nil) {
+				auto res = func("PostCreateTraffic", amount);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&createTrafficHook);
+		Engine::createTraffic(amount);
 	}
 }
 
@@ -546,6 +579,26 @@ void serverSend() {
 		subhook::ScopedHookRemove remove(&serverSendHook);
 		Engine::serverSend();
 	}
+}
+
+int packetWrite(void* source, int elementSize, int elementCount) {
+	if (source == Engine::ticksSinceReset &&
+	    enabledKeys[EnableKeys::PacketBuilding]) {
+		uintptr_t connectionPlus4c;
+		asm("mov %%r15, %0" : "=r"(connectionPlus4c) :);
+
+		Connection* connection =
+		    reinterpret_cast<Connection*>(connectionPlus4c - 0x4c);
+
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			auto res = func("PacketBuilding", connection);
+			noLuaCallError(&res);
+		}
+	}
+
+	subhook::ScopedHookRemove remove(&packetWriteHook);
+	return Engine::packetWrite(source, elementSize, elementCount);
 }
 
 void calculatePlayerVoice(int connectionID, int playerID) {

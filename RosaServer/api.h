@@ -87,14 +87,6 @@ bool disable(std::string name);
 void clear();
 };  // namespace hook
 
-namespace event {
-void sound(int soundType, Vector* pos, float volume, float pitch);
-void soundSimple(int soundType, Vector* pos);
-void explosion(Vector* pos);
-void bullet(int bulletType, Vector* pos, Vector* vel, Item* item);
-void bulletHit(int hitType, Vector* pos, Vector* normal);
-};  // namespace event
-
 namespace physics {
 sol::table lineIntersectLevel(Vector* posA, Vector* posB);
 sol::table lineIntersectHuman(Human* man, Vector* posA, Vector* posB);
@@ -148,9 +140,8 @@ Vehicle* createVel(VehicleType* type, Vector* pos, Vector* vel, RotMatrix* rot,
 };  // namespace vehicles
 
 namespace chat {
-void announce(const char* message);
-void tellAdmins(const char* message);
-void addRaw(int type, const char* message, int speakerID, int distance);
+Event* announce(const char* message);
+Event* tellAdmins(const char* message);
 };  // namespace chat
 
 namespace accounts {
@@ -207,11 +198,31 @@ sol::table getAll();
 StreetIntersection* getByIndex(sol::table self, unsigned int idx);
 };  // namespace intersections
 
+namespace trafficCars {
+int getCount();
+sol::table getAll();
+TrafficCar* getByIndex(sol::table self, unsigned int idx);
+void createMany(int amount);
+};  // namespace trafficCars
+
 namespace buildings {
 int getCount();
 sol::table getAll();
 Building* getByIndex(sol::table self, unsigned int idx);
 };  // namespace buildings
+
+namespace events {
+int getCount();
+sol::table getAll();
+Event* getByIndex(sol::table self, unsigned int idx);
+Event* createBullet(int bulletType, Vector* pos, Vector* vel, Item* item);
+Event* createBulletHit(int hitType, Vector* pos, Vector* normal);
+Event* createMessage(int messageType, const char* message, int speakerID,
+                     int volumeLevel);
+Event* createSound(int soundType, Vector* pos, float volume, float pitch);
+Event* createSoundSimple(int soundType, Vector* pos);
+Event* createExplosion(Vector* pos);
+};  // namespace events
 
 namespace os {
 sol::table listDirectory(std::string_view path, sol::this_state s);

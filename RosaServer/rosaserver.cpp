@@ -75,7 +75,11 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["clone"] = &Vector::clone;
 		meta["dist"] = &Vector::dist;
 		meta["distSquare"] = &Vector::distSquare;
+		meta["length"] = &Vector::length;
+		meta["lengthSquare"] = &Vector::lengthSquare;
+		meta["dot"] = &Vector::dot;
 		meta["getBlockPos"] = &Vector::getBlockPos;
+		meta["normalize"] = &Vector::normalize;
 	}
 
 	{
@@ -119,7 +123,8 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["close"] = &LuaOpusEncoder::close;
 		meta["open"] = &LuaOpusEncoder::open;
 		meta["rewind"] = &LuaOpusEncoder::rewind;
-		meta["encodeFrame"] = &LuaOpusEncoder::encodeFrame;
+		meta["encodeFrame"] = sol::overload(&LuaOpusEncoder::encodeFrame,
+		                                    &LuaOpusEncoder::encodeFrameString);
 	}
 
 	{
@@ -310,7 +315,6 @@ void luaInit(bool redo) {
 		meta["version"] = sol::property(&Server::getVersion);
 		meta["versionMajor"] = sol::property(&Server::getVersionMajor);
 		meta["versionMinor"] = sol::property(&Server::getVersionMinor);
-		meta["numEvents"] = sol::property(&Server::getNumEvents);
 
 		meta["setConsoleTitle"] = &Server::setConsoleTitle;
 		meta["reset"] = &Server::reset;
@@ -328,9 +332,12 @@ void luaInit(bool redo) {
 		meta["address"] = sol::property(&Connection::getAddress);
 		meta["adminVisible"] = sol::property(&Connection::getAdminVisible,
 		                                     &Connection::setAdminVisible);
+		meta["player"] =
+		    sol::property(&Connection::getPlayer, &Connection::setPlayer);
 		meta["spectatingHuman"] = sol::property(&Connection::getSpectatingHuman);
 
 		meta["getEarShot"] = &Connection::getEarShot;
+		meta["hasReceivedEvent"] = &Connection::hasReceivedEvent;
 	}
 
 	{
@@ -600,6 +607,7 @@ void luaInit(bool redo) {
 		meta["gasControl"] = &Vehicle::gasControl;
 		meta["engineRPM"] = &Vehicle::engineRPM;
 		meta["bladeBodyID"] = &Vehicle::bladeBodyID;
+		meta["numSeats"] = &Vehicle::numSeats;
 
 		meta["class"] = sol::property(&Vehicle::getClass);
 		meta["__tostring"] = &Vehicle::__tostring;
@@ -797,6 +805,23 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto meta = lua->new_usertype<TrafficCar>("new", sol::no_constructor);
+		meta["pos"] = &TrafficCar::pos;
+		meta["vel"] = &TrafficCar::vel;
+		meta["yaw"] = &TrafficCar::yaw;
+		meta["rot"] = &TrafficCar::rot;
+		meta["color"] = &TrafficCar::color;
+
+		meta["class"] = sol::property(&TrafficCar::getClass);
+		meta["__tostring"] = &TrafficCar::__tostring;
+		meta["index"] = sol::property(&TrafficCar::getIndex);
+		meta["type"] = sol::property(&TrafficCar::getType, &TrafficCar::setType);
+		meta["human"] = sol::property(&TrafficCar::getHuman, &TrafficCar::setHuman);
+		meta["vehicle"] =
+		    sol::property(&TrafficCar::getVehicle, &TrafficCar::setVehicle);
+	}
+
+	{
 		auto meta = lua->new_usertype<ShopCar>("new", sol::no_constructor);
 		meta["price"] = &ShopCar::price;
 		meta["color"] = &ShopCar::color;
@@ -820,6 +845,25 @@ void luaInit(bool redo) {
 		meta["index"] = sol::property(&Building::getIndex);
 
 		meta["getShopCar"] = &Building::getShopCar;
+	}
+
+	{
+		auto meta = lua->new_usertype<Event>("new", sol::no_constructor);
+		meta["type"] = &Event::type;
+		meta["tickCreated"] = &Event::tickCreated;
+		meta["vectorA"] = &Event::vectorA;
+		meta["vectorB"] = &Event::vectorB;
+		meta["a"] = &Event::a;
+		meta["b"] = &Event::b;
+		meta["c"] = &Event::c;
+		meta["d"] = &Event::d;
+		meta["floatA"] = &Event::floatA;
+		meta["floatB"] = &Event::floatB;
+
+		meta["class"] = sol::property(&Event::getClass);
+		meta["__tostring"] = &Event::__tostring;
+		meta["index"] = sol::property(&Event::getIndex);
+		meta["message"] = sol::property(&Event::getMessage, &Event::setMessage);
 	}
 
 	{
@@ -851,16 +895,6 @@ void luaInit(bool redo) {
 	}
 
 	{
-		auto eventTable = lua->create_table();
-		(*lua)["event"] = eventTable;
-		eventTable["sound"] =
-		    sol::overload(Lua::event::sound, Lua::event::soundSimple);
-		eventTable["explosion"] = Lua::event::explosion;
-		eventTable["bullet"] = Lua::event::bullet;
-		eventTable["bulletHit"] = Lua::event::bulletHit;
-	}
-
-	{
 		auto physicsTable = lua->create_table();
 		(*lua)["physics"] = physicsTable;
 		physicsTable["lineIntersectLevel"] = Lua::physics::lineIntersectLevel;
@@ -884,7 +918,6 @@ void luaInit(bool redo) {
 		(*lua)["chat"] = chatTable;
 		chatTable["announce"] = Lua::chat::announce;
 		chatTable["tellAdmins"] = Lua::chat::tellAdmins;
-		chatTable["addRaw"] = Lua::chat::addRaw;
 	}
 
 	{
@@ -1041,6 +1074,19 @@ void luaInit(bool redo) {
 	}
 
 	{
+		auto trafficCarsTable = lua->create_table();
+		(*lua)["trafficCars"] = trafficCarsTable;
+		trafficCarsTable["getCount"] = Lua::trafficCars::getCount;
+		trafficCarsTable["getAll"] = Lua::trafficCars::getAll;
+		trafficCarsTable["createMany"] = Lua::trafficCars::createMany;
+
+		sol::table _meta = lua->create_table();
+		trafficCarsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = Lua::trafficCars::getCount;
+		_meta["__index"] = Lua::trafficCars::getByIndex;
+	}
+
+	{
 		auto buildingsTable = lua->create_table();
 		(*lua)["buildings"] = buildingsTable;
 		buildingsTable["getCount"] = Lua::buildings::getCount;
@@ -1050,6 +1096,24 @@ void luaInit(bool redo) {
 		buildingsTable[sol::metatable_key] = _meta;
 		_meta["__len"] = Lua::buildings::getCount;
 		_meta["__index"] = Lua::buildings::getByIndex;
+	}
+
+	{
+		auto eventsTable = lua->create_table();
+		(*lua)["events"] = eventsTable;
+		eventsTable["getCount"] = Lua::events::getCount;
+		eventsTable["getAll"] = Lua::events::getAll;
+		eventsTable["createBullet"] = Lua::events::createBullet;
+		eventsTable["createBulletHit"] = Lua::events::createBulletHit;
+		eventsTable["createMessage"] = Lua::events::createMessage;
+		eventsTable["createSound"] =
+		    sol::overload(Lua::events::createSound, Lua::events::createSoundSimple);
+		eventsTable["createExplosion"] = Lua::events::createExplosion;
+
+		sol::table _meta = lua->create_table();
+		eventsTable[sol::metatable_key] = _meta;
+		_meta["__len"] = Lua::events::getCount;
+		_meta["__index"] = Lua::events::getByIndex;
 	}
 
 	{
@@ -1147,7 +1211,6 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::subVersion = (unsigned int*)(base + 0x2e6f04);
 	Engine::serverName = (char*)(base + 0x1fed72d4);
 	Engine::serverPort = (unsigned int*)(base + 0x17b9e720);
-	Engine::numEvents = (unsigned int*)(base + 0x443f1c64);
 	Engine::packetSize = (int*)(base + 0x36e60d5c);
 	Engine::packet = (unsigned char*)(base + 0x36e60d64);
 	Engine::serverMaxBytesPerSecond = (int*)(base + 0x17b9e724);
@@ -1179,6 +1242,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::loadedMapName = (char*)(base + 0x37281204);
 	Engine::gameState = (int*)(base + 0x434b65cc);
 	Engine::gameTimer = (int*)(base + 0x434b65d4);
+	Engine::ticksSinceReset = (int*)(base + 0x434b6634);
 	Engine::sunTime = (unsigned int*)(base + 0xcda06e0);
 	Engine::isLevelLoaded = (int*)(base + 0x37281200);
 	Engine::gravity = (float*)(base + 0xd5b98);
@@ -1201,19 +1265,24 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::bonds = (Bond*)(base + 0x1f8c72c0);
 	Engine::streets = (Street*)(base + 0x372a3268);
 	Engine::streetIntersections = (StreetIntersection*)(base + 0x37281264);
+	Engine::trafficCars = (TrafficCar*)(base + 0x58c84f20);
 	Engine::buildings = (Building*)(base + 0x37375438);
+	Engine::events = (Event*)(base + 0x5e970c0);
 
 	Engine::numConnections = (unsigned int*)(base + 0x444c2688);
 	Engine::numBullets = (unsigned int*)(base + 0x443f1c60);
 	Engine::numStreets = (unsigned int*)(base + 0x372a3264);
 	Engine::numStreetIntersections = (unsigned int*)(base + 0x3728125c);
+	Engine::numTrafficCars = (unsigned int*)(base + 0x149138b8);
 	Engine::numBuildings = (unsigned int*)(base + 0x373753f4);
+	Engine::numEvents = (unsigned short*)(base + 0x443f1c64);
 
 	Engine::subRosaPuts = (Engine::subRosaPutsFunc)(base + 0x1fa0);
 	Engine::subRosa__printf_chk =
 	    (Engine::subRosa__printf_chkFunc)(base + 0x22c0);
 
 	Engine::resetGame = (Engine::voidFunc)(base + 0xbc9c0);
+	Engine::createTraffic = (Engine::createTrafficFunc)(base + 0x9cc80);
 
 	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x173f0);
 	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0x112d0);
@@ -1231,6 +1300,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::rigidBodySimulation = (Engine::voidFunc)(base + 0x7c8e0);
 	Engine::serverReceive = (Engine::serverReceiveFunc)(base + 0xcd800);
 	Engine::serverSend = (Engine::voidFunc)(base + 0xca800);
+	Engine::packetWrite = (Engine::packetWriteFunc)(base + 0xc5840);
 	Engine::calculatePlayerVoice =
 	    (Engine::calculatePlayerVoiceFunc)(base + 0xb22d0);
 	Engine::sendPacket = (Engine::sendPacketFunc)(base + 0xc5600);
@@ -1330,6 +1400,7 @@ static inline void installHooks() {
 	INSTALL(subRosaPuts);
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
+	INSTALL(createTraffic);
 	INSTALL(areaCreateBlock);
 	INSTALL(areaDeleteBlock);
 	INSTALL(logicSimulation);
@@ -1344,6 +1415,7 @@ static inline void installHooks() {
 	INSTALL(rigidBodySimulation);
 	INSTALL(serverReceive);
 	INSTALL(serverSend);
+	INSTALL(packetWrite);
 	INSTALL(calculatePlayerVoice);
 	INSTALL(sendPacket);
 	INSTALL(bulletSimulation);

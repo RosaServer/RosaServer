@@ -24,6 +24,7 @@ struct Item;
 struct RigidBody;
 struct Bond;
 struct StreetIntersection;
+struct Event;
 
 // 40 bytes (28)
 struct EarShot {
@@ -62,18 +63,23 @@ struct Connection {
 	int unk1;           // 1c
 	int bandwidth;      // 20
 	int timeoutTime;    // 24
-	padding unk2[0x5c - 0x24 - 4];
+	padding unk2[0x4c - 0x24 - 4];
+	int numReceivedEvents;  // 4c
+	padding unk3[0x5c - 0x4c - 4];
 	EarShot earShots[8];  // 5c
-	padding unk3[0x19c - (0x5c + (sizeof(EarShot) * 8))];
+	padding unk4[0x19c - (0x5c + (sizeof(EarShot) * 8))];
 	int spectatingHumanID;  // 19c
-	padding unk4[0x2E1E0 - 0x19c - 4];
+	padding unk5[0x2E1E0 - 0x19c - 4];
 
 	const char* getClass() const { return "Connection"; }
 	std::string getAddress();
 	bool getAdminVisible() const { return adminVisible; }
 	void setAdminVisible(bool b) { adminVisible = b; }
+	Player* getPlayer() const;
+	void setPlayer(Player* player);
 	EarShot* getEarShot(unsigned int idx);
 	Human* getSpectatingHuman() const;
+	bool hasReceivedEvent(Event* event) const;
 };
 
 // 112 bytes (70)
@@ -118,9 +124,13 @@ struct Vector {
 	void mult(float scalar);
 	void set(Vector* other);
 	Vector clone() const;
-	float dist(Vector* other) const;
-	float distSquare(Vector* other) const;
+	double dist(Vector* other) const;
+	double distSquare(Vector* other) const;
+	double length() const;
+	double lengthSquare() const;
+	double dot(Vector* other) const;
 	std::tuple<int, int, int> getBlockPos() const;
+	void normalize();
 };
 
 struct RotMatrix {
@@ -300,8 +310,8 @@ struct Player {
 	Action* getAction(unsigned int idx);
 	MenuButton* getMenuButton(unsigned int idx);
 
-	void update() const;
-	void updateFinance() const;
+	Event* update() const;
+	Event* updateFinance() const;
 	void remove() const;
 	void sendMessage(const char* message) const;
 };
@@ -462,7 +472,7 @@ struct Human {
 	Account* getAccount();
 	void setAccount(Account* account);
 	Vehicle* getVehicle() const;
-	void setVehicle(Vehicle* vcl);
+	void setVehicle(Vehicle* vehicle);
 	Bone* getBone(unsigned int idx);
 	RigidBody* getRigidBody(unsigned int idx) const;
 	InventorySlot* getInventorySlot(unsigned int idx);
@@ -603,7 +613,7 @@ struct Item {
 	Item* getConnectedPhone() const;
 	void setConnectedPhone(Item* item);
 	Vehicle* getVehicle() const;
-	void setVehicle(Vehicle* vcl);
+	void setVehicle(Vehicle* vehicle);
 	bool mountItem(Item* childItem, unsigned int slot) const;
 	bool unmount() const;
 	void speak(const char* message, int distance) const;
@@ -670,7 +680,9 @@ struct Vehicle {
 	int engineRPM;  // 3930
 	padding unk8[0x4fa8 - 0x3930 - 4];
 	int bladeBodyID;  // 4fa8
-	padding unk9[0x5168 - 0x4fa8 - 4];
+	padding unk9[0x50dc - 0x4fa8 - 4];
+	int numSeats;  // 50dc
+	padding unk10[0x5168 - 0x50dc - 4];
 
 	const char* getClass() const { return "Vehicle"; }
 	std::string __tostring() const;
@@ -685,9 +697,9 @@ struct Vehicle {
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
 
-	void updateType() const;
-	void updateDestruction(int updateType, int partID, Vector* pos,
-	                       Vector* normal) const;
+	Event* updateType() const;
+	Event* updateDestruction(int updateType, int partID, Vector* pos,
+	                         Vector* normal) const;
 	void remove() const;
 	bool getIsWindowBroken(unsigned int idx) const;
 	void setIsWindowBroken(unsigned int idx, bool b);
@@ -839,6 +851,31 @@ struct StreetIntersection {
 	Street* getStreetNorth() const;
 };
 
+// 1532 bytes (5fc)
+struct TrafficCar {
+	int type;       // 00
+	int humanID;    // 04
+	int vehicleID;  // 08
+	int unk0;       // 0c
+	Vector pos;     // 10
+	Vector vel;     // 1c
+	float yaw;      // 28
+	RotMatrix rot;  // 2c
+	padding unk1[0x5d8 - 0x2c - sizeof(RotMatrix)];
+	int color;  // 5d8
+	padding unk2[0x5fc - 0x5d8 - 4];
+
+	const char* getClass() const { return "TrafficCar"; }
+	std::string __tostring() const;
+	int getIndex() const;
+	VehicleType* getType();
+	void setType(VehicleType* vehicleType);
+	Human* getHuman() const;
+	void setHuman(Human* human);
+	Vehicle* getVehicle() const;
+	void setVehicle(Vehicle* vehicle);
+};
+
 // 12 bytes (C)
 struct ShopCar {
 	int type;
@@ -868,4 +905,29 @@ struct Building {
 	std::string __tostring() const;
 	int getIndex() const;
 	ShopCar* getShopCar(unsigned int idx);
+};
+
+// 128 bytes (80)
+struct Event {
+	int type;          // 00
+	int tickCreated;   // 04
+	Vector vectorA;    // 08
+	Vector vectorB;    // 14
+	int a;             // 20
+	int b;             // 24
+	int c;             // 28
+	int d;             // 2c
+	float floatA;      // 30
+	float floatB;      // 34
+	int unk0;          // 38
+	int unk1;          // 3c
+	char message[64];  // 40
+
+	const char* getClass() const { return "Event"; }
+	std::string __tostring() const;
+	int getIndex() const;
+	char* getMessage() { return message; }
+	void setMessage(const char* newMessage) {
+		std::strncpy(message, newMessage, sizeof(message) - 1);
+	}
 };
