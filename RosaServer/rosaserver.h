@@ -6,6 +6,7 @@
 
 #include "sol/sol.hpp"
 #include "subhook.h"
+#include "backward.hpp"
 
 #include "api.h"
 #include "childprocess.h"

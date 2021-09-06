@@ -1,5 +1,7 @@
 ﻿#include "rosaserver.h"
+
 #include <sys/mman.h>
+
 #include <cerrno>
 
 static Server* server;
@@ -1477,10 +1479,73 @@ static inline void getPathsNormally() {
 	getcwd(pathB, 0x200);
 }
 
+void signalHandler(int sig) {
+	backward::StackTrace st;
+	st.load_here(32);
+
+	backward::TraceResolver tr;
+	tr.load_stacktrace(st);
+
+	std::stringstream stream;
+	stream << "Oh no, game crash..." << std::endl;
+
+	for (size_t i = 0; i < st.size(); ++i) {
+		backward::ResolvedTrace trace = tr.resolve(st[i]);
+		stream << "#" << i << " " << trace.object_filename << " "
+		       << trace.object_function << " [" << trace.addr << "]" << std::endl;
+	}
+
+	// backward::Printer p;
+	// p.object = true;
+	// p.color_mode = backward::ColorMode::always;
+	// p.address = true;
+	// p.print(st, stderr);
+
+	lua_Debug ar;
+	lua_getstack(*lua, 1, &ar);
+	auto error = lua_getinfo(*lua, "nSlu", &ar);
+
+	stream << std::endl
+	       << "LUA Debug information: " << std::endl
+	       << "\tLast line: " << ar.source << ":" << ar.currentline << std::endl
+	       << "\tWhat: " << ar.what << std::endl
+	       << "\tNumber of up values: " << ar.nups << std::endl
+	       << "\tEvent: " << ar.event << std::endl
+	       << "\tLast line defined: " << ar.lastlinedefined << std::endl
+	       << "\tLine defined: " << ar.linedefined << std::endl;
+
+	luaL_traceback(*lua, *lua, NULL, 1);
+
+	stream << lua_tostring(*lua, -1) << std::endl;
+
+	Console::log(stream.str());
+	raise(sig);
+
+	_exit(EXIT_FAILURE);
+}
+
+const std::vector<int> posix_signals = {
+    SIGABRT,  // Abort signal from abort(3)
+    SIGBUS,   // Bus error (bad memory access)
+    SIGFPE,   // Floating point exception
+    SIGILL,   // Illegal Instruction
+    SIGIOT,   // IOT trap. A synonym for SIGABRT
+    SIGQUIT,  // Quit from keyboard
+    SIGSEGV,  // Invalid memory reference
+    SIGSYS,   // Bad argument to routine (SVr4)
+    SIGTRAP,  // Trace/breakpoint trap
+    SIGXCPU,  // CPU time limit exceeded (4.2BSD)
+    SIGXFSZ,  // File size limit exceeded (4.2BSD)
+};
+
 static void hookedGetPaths() {
 	getPathsNormally();
 
 	signal(SIGPIPE, SIG_IGN);
+	for (auto&& sig : posix_signals) {
+		sighandler_t handler;
+		signal(sig, signalHandler);
+	}
 
 	Console::log(RS_PREFIX "Assuming 38e\n");
 
