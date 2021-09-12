@@ -3,8 +3,11 @@
 
 #include "console.h"
 
+#include <stdio.h>
+#include <stdarg.h>
 #include <termios.h>
 #include <unistd.h>
+
 #include <deque>
 #include <iostream>
 #include <sstream>
@@ -386,12 +389,29 @@ void cleanup() {
 	tcsetattr(STDIN_FILENO, TCSANOW, &mode);
 }
 
-void log(std::string_view line) {
+// void log(std::string_view line) {
+// 	std::lock_guard<std::mutex> guard(outputMutex);
+
+// 	// Erase current line, move cursor to start, print
+// 	std::cout << "\33[2K\r";
+// 	std::cout << line;
+
+// 	if (inputInitialized && !shouldExit) redrawLine();
+// }
+
+void log(std::string_view line, ...) {
 	std::lock_guard<std::mutex> guard(outputMutex);
 
 	// Erase current line, move cursor to start, print
 	std::cout << "\33[2K\r";
-	std::cout << line;
+
+	char buffer[512];
+	va_list args;
+	va_start(args, line.data());
+	vsprintf(buffer, line.data(), args);
+	va_end(args);
+
+	std::cout << buffer;
 
 	if (inputInitialized && !shouldExit) redrawLine();
 }
