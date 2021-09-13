@@ -1,5 +1,9 @@
 ﻿#include "rosaserver.h"
+
+#include <cxxabi.h>
+#include <execinfo.h>
 #include <sys/mman.h>
+
 #include <cerrno>
 
 static Server* server;
@@ -1453,7 +1457,7 @@ static inline void installHooks() {
 	INSTALL(lineIntersectHuman);
 }
 
-static inline void attachSignalHandler() {
+static inline void attachInterruptSignalHandler() {
 	struct sigaction action;
 	action.sa_handler = Console::handleInterruptSignal;
 
@@ -1477,9 +1481,61 @@ static inline void getPathsNormally() {
 	getcwd(pathB, 0x200);
 }
 
+static void crashSignalHandler(int signal) {
+	Console::shouldExit = true;
+
+	std::cerr << std::flush << "\033[41;1m " << strsignal(signal)
+	          << " \033[0m\n\033[31m";
+
+	std::cerr << "Stack traceback:\n";
+
+	void* backtraceEntries[10];
+
+	size_t backtraceSize = backtrace(backtraceEntries, 10);
+	auto backtraceSymbols = backtrace_symbols(backtraceEntries, backtraceSize);
+
+	for (int i = 0; i < backtraceSize; i++) {
+		std::cerr << "\t#" << i << ' ' << backtraceSymbols[i] << '\n';
+	}
+
+	std::cerr << std::flush;
+
+	luaL_traceback(*lua, *lua, nullptr, 0);
+	std::cerr << "Lua " << lua_tostring(*lua, -1);
+
+	std::cerr << "\033[0m" << std::endl;
+
+	raise(signal);
+	_exit(EXIT_FAILURE);
+}
+
+static const std::array handledSignals = {
+    SIGABRT, SIGBUS, SIGFPE,  SIGILL,  SIGQUIT,
+    SIGSEGV, SIGSYS, SIGTRAP, SIGXCPU, SIGXFSZ,
+};
+
+static inline void attachCrashSignalHandler() {
+	struct sigaction signalAction;
+
+	signalAction.sa_handler = crashSignalHandler;
+	signalAction.sa_flags = SA_RESTART | SA_SIGINFO;
+
+	for (const auto signal : handledSignals) {
+		if (sigaction(signal, &signalAction, nullptr) == -1) {
+			std::ostringstream stream;
+			stream << RS_PREFIX "Signal handler failed to attach for signal "
+			       << signal << " (" << strsignal(signal) << "): " << strerror(errno);
+
+			throw std::runtime_error(stream.str());
+		}
+	}
+}
+
 static void hookedGetPaths() {
 	getPathsNormally();
 
+	attachCrashSignalHandler();
+	attachInterruptSignalHandler();
 	signal(SIGPIPE, SIG_IGN);
 
 	Console::log(RS_PREFIX "Assuming 38e\n");
@@ -1495,8 +1551,6 @@ static void hookedGetPaths() {
 
 	// Don't load self into future child processes
 	unsetenv("LD_PRELOAD");
-
-	attachSignalHandler();
 }
 
 void __attribute__((constructor)) entry() {
