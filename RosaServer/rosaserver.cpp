@@ -1457,7 +1457,7 @@ static inline void installHooks() {
 	INSTALL(lineIntersectHuman);
 }
 
-static inline void attachSignalHandler() {
+static inline void attachInterruptSignalHandler() {
 	struct sigaction action;
 	action.sa_handler = Console::handleInterruptSignal;
 
@@ -1481,145 +1481,62 @@ static inline void getPathsNormally() {
 	getcwd(pathB, 0x200);
 }
 
-const std::list<std::pair<int, std::string_view>> posix_signals = {
-    {SIGABRT, "Abort signal from abort(3)"},
-    {SIGBUS, "Bus error (bad memory access)"},
-    {SIGFPE, "Floating point exception"},
-    {SIGILL, "Illegal Instruction"},
-    {SIGIOT, "IOT trap. A synonym for SIGABRT"},
-    {SIGQUIT, "Quit from keyboard"},
-    {SIGSEGV, "Invalid memory reference"},
-    {SIGSYS, "Bad argument to routine (SVr4)"},
-    {SIGTRAP, "Trace/breakpoint trap"},
-    {SIGXCPU, "CPU time limit exceeded (4.2BSD)"},
-    {SIGXFSZ, "File size limit exceeded (4.2BSD)"},
+static void crashSignalHandler(int signal) {
+	Console::shouldExit = true;
+
+	std::cerr << std::flush << "\033[41;1m " << strsignal(signal)
+	          << " \033[0m\n\033[31m";
+
+	std::cerr << "Stack traceback:\n";
+
+	void* backtraceEntries[10];
+
+	size_t backtraceSize = backtrace(backtraceEntries, 10);
+	auto backtraceSymbols = backtrace_symbols(backtraceEntries, backtraceSize);
+
+	for (int i = 0; i < backtraceSize; i++) {
+		std::cerr << "\t#" << i << ' ' << backtraceSymbols[i] << '\n';
+	}
+
+	std::cerr << std::flush;
+
+	luaL_traceback(*lua, *lua, nullptr, 0);
+	std::cerr << "Lua " << lua_tostring(*lua, -1);
+
+	std::cerr << "\033[0m" << std::endl;
+
+	raise(signal);
+	_exit(EXIT_FAILURE);
+}
+
+static const std::array handledSignals = {
+    SIGABRT, SIGBUS, SIGFPE,  SIGILL,  SIGQUIT,
+    SIGSEGV, SIGSYS, SIGTRAP, SIGXCPU, SIGXFSZ,
 };
 
-void signalHandler(int sig, siginfo_t* info, void* ucontext) {
-	std::string_view def = "Unknown";
-	for (auto&& item : posix_signals) {
-		if (item.first == sig) {
-			def = item.second;
-			break;
+static inline void attachCrashSignalHandler() {
+	struct sigaction signalAction;
+
+	signalAction.sa_handler = crashSignalHandler;
+	signalAction.sa_flags = SA_RESTART | SA_SIGINFO;
+
+	for (const auto signal : handledSignals) {
+		if (sigaction(signal, &signalAction, nullptr) == -1) {
+			std::ostringstream stream;
+			stream << RS_PREFIX "Signal handler failed to attach for signal "
+			       << signal << " (" << strsignal(signal) << "): " << strerror(errno);
+
+			throw std::runtime_error(stream.str());
 		}
 	}
-
-	Console::log(DBG_PREFIX "Oh no, game crash...\n");
-	Console::log(DBG_PREFIX "Signal: %i (%s, %s)\n", sig, strsignal(sig),
-	             def.data());
-	Console::log(DBG_PREFIX "Stacktrace: \n");
-
-	void* array[10];
-	size_t size;
-
-	size = backtrace(array, 10);
-	auto stacktraceString = backtrace_symbols(array, size);
-	// backtrace_symbols_fd(array, size, STDERR_FILENO);
-
-	auto formatBacktrace = [](int index, std::string str) {
-		std::string constructed = "";
-
-		std::string mod = "";
-		std::string fun = "";
-		std::string adr = "";
-
-		int open_pos = str.find_first_of("(");
-		mod = str.substr(0, open_pos);
-
-		int plus_pos = str.find_first_of("+", open_pos);
-		fun = str.substr(open_pos + 1, plus_pos - open_pos - 1);
-		if (fun.length() > 0) {
-			int status;
-
-			std::size_t sz = 256;
-			char* buffer = static_cast<char*>(std::malloc(sz));
-
-			abi::__cxa_demangle(fun.data(), buffer, &sz, &status);
-
-			if (status == 0)
-				fun = buffer;
-			else if (status == -1)
-				Console::log(
-				    "Error while demangling, a memory allocation failure occurred.");
-			else if (status == -2)
-				Console::log(
-				    "Error while demangling, mangled_name is not a valid name under "
-				    "the C++ ABI mangling rules.");
-			else if (status == -3)
-				Console::log(
-				    "Error while demangling, one of the arguments is invalid.");
-		}
-		int open_box_pos = str.find_first_of("[");
-		int close_box_pos = str.find_first_of("]", open_box_pos);
-		adr = str.substr(open_box_pos + 1, close_box_pos - open_box_pos - 1);
-
-		constructed = "#" + std::to_string(index) + "\t" + "Module \"" +
-		              mod.c_str() + "\"" + ", at " + adr.c_str() + ", in " +
-		              fun.c_str();
-		return constructed;
-	};
-
-	std::vector<std::string> backtracePretty = {};
-
-	for (int i = 0; i < size; i++)
-		backtracePretty.push_back(
-		    formatBacktrace(i, std::string(stacktraceString[i])));
-
-	for (auto&& item : backtracePretty)
-		Console::log(DBG_PREFIX "  %s\n", item.c_str());
-
-	lua_Debug ar;
-	lua_getstack(*lua, 1, &ar);
-	auto error = lua_getinfo(*lua, "nSlu", &ar);
-
-	Console::log(DBG_PREFIX "LUA Debug information:\n");
-	Console::log(DBG_PREFIX "  Last line: %s:%i\n", ar.source, ar.currentline);
-	Console::log(DBG_PREFIX "  What: %s\n", ar.what);
-	Console::log(DBG_PREFIX "  Number of up values: %o\n", ar.nups);
-	Console::log(DBG_PREFIX "  Event: %i\n", ar.event);
-	Console::log(DBG_PREFIX "  Last line defined: %i\n", ar.lastlinedefined);
-	Console::log(DBG_PREFIX "  Line defined: %i\n", ar.linedefined);
-
-	luaL_traceback(*lua, *lua, NULL, 1);
-
-	std::string luaTracebackString = lua_tostring(*lua, -1);
-	std::string line = "";
-	for (auto c : luaTracebackString) {
-		if (c == '\t')
-			line += "  ";
-		else
-			line += c;
-
-		if (c == '\n') {
-			Console::log(DBG_PREFIX "%s", line.c_str());
-			line = "";
-		}
-	}
-
-	raise(sig);
-
-	_exit(EXIT_FAILURE);
 }
 
 static void hookedGetPaths() {
 	getPathsNormally();
 
-	struct sigaction sigact;
-
-	sigact.sa_sigaction = signalHandler;
-	sigact.sa_flags = SA_RESTART | SA_SIGINFO;
-
+	attachCrashSignalHandler();
+	attachInterruptSignalHandler();
 	signal(SIGPIPE, SIG_IGN);
-	for (auto&& sig : posix_signals) {
-		sighandler_t handler;
-
-		if (sigaction(sig.first, &sigact, (struct sigaction*)NULL) != 0) {
-			Console::log(DBG_PREFIX
-			             "Error while assigning signal handler for %i (%s)\n",
-			             sig.first, strsignal(sig.first));
-			exit(EXIT_FAILURE);
-		}
-	}
 
 	Console::log(RS_PREFIX "Assuming 38e\n");
 
@@ -1634,8 +1551,6 @@ static void hookedGetPaths() {
 
 	// Don't load self into future child processes
 	unsetenv("LD_PRELOAD");
-
-	attachSignalHandler();
 }
 
 void __attribute__((constructor)) entry() {

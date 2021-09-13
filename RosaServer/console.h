@@ -17,8 +17,7 @@ void respondToAutoComplete(std::string_view newBuffer);
 void threadMain();
 void init();
 void cleanup();
-// void log(std::string_view line);
-void log(std::string_view line, ...);
+void log(std::string_view line);
 void handleInterruptSignal(int signal);
 void setTitle(const char* title);
 }  // namespace Console
