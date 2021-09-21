@@ -1328,7 +1328,9 @@ Connection* Player::getConnection() {
 	return nullptr;
 }
 
-Account* Player::getAccount() { return &Engine::accounts[accountID]; }
+Account* Player::getAccount() {
+	return accountID == -1 ? nullptr : &Engine::accounts[accountID];
+}
 
 void Player::setAccount(Account* account) {
 	if (account == nullptr)
