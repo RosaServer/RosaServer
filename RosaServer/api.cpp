@@ -1028,8 +1028,7 @@ void EarShot::setHuman(Human* human) {
 }
 
 Item* EarShot::getReceivingItem() const {
-	if (receivingItemID == -1) return nullptr;
-	return &Engine::items[receivingItemID];
+	return receivingItemID == -1 ? nullptr : &Engine::items[receivingItemID];
 }
 
 void EarShot::setReceivingItem(Item* item) {
@@ -1040,8 +1039,8 @@ void EarShot::setReceivingItem(Item* item) {
 }
 
 Item* EarShot::getTransmittingItem() const {
-	if (transmittingItemID == -1) return nullptr;
-	return &Engine::items[transmittingItemID];
+	return transmittingItemID == -1 ? nullptr
+	                                : &Engine::items[transmittingItemID];
 }
 
 void EarShot::setTransmittingItem(Item* item) {
@@ -1341,8 +1340,7 @@ void Player::setAccount(Account* account) {
 Voice* Player::getVoice() const { return &Engine::voices[getIndex()]; }
 
 const Vector* Player::getBotDestination() const {
-	if (!botHasDestination) return nullptr;
-	return &botDestination;
+	return !botHasDestination ? nullptr : &botDestination;
 }
 
 void Player::setBotDestination(Vector* vec) {
@@ -1407,8 +1405,7 @@ void Human::setPlayer(Player* player) {
 }
 
 Account* Human::getAccount() {
-	if (accountID == -1) return nullptr;
-	return &Engine::accounts[accountID];
+	return accountID == -1 ? nullptr : &Engine::accounts[accountID];
 }
 
 void Human::setAccount(Account* account) {
@@ -1713,8 +1710,8 @@ void Vehicle::remove() const {
 }
 
 Player* Vehicle::getLastDriver() const {
-	if (lastDriverPlayerID == -1) return nullptr;
-	return &Engine::players[lastDriverPlayerID];
+	return lastDriverPlayerID == -1 ? nullptr
+	                                : &Engine::players[lastDriverPlayerID];
 }
 
 RigidBody* Vehicle::getRigidBody() const { return &Engine::bodies[bodyID]; }
