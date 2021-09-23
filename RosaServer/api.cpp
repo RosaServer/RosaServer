@@ -1133,7 +1133,6 @@ Vector Vector::__sub(Vector* other) const {
 }
 
 Vector Vector::__mul(float scalar) const {
-	if (!scalar) throw std::invalid_argument(missingArgument);
 	return {x * scalar, y * scalar, z * scalar};
 }
 
@@ -1145,7 +1144,6 @@ Vector Vector::__mul_RotMatrix(RotMatrix* rot) const {
 }
 
 Vector Vector::__div(float scalar) const {
-	if (!scalar) throw std::invalid_argument(missingArgument);
 	return {x / scalar, y / scalar, z / scalar};
 }
 
@@ -1159,7 +1157,6 @@ void Vector::add(Vector* other) {
 }
 
 void Vector::mult(float scalar) {
-	if (!scalar) throw std::invalid_argument(missingArgument);
 	x *= scalar;
 	y *= scalar;
 	z *= scalar;

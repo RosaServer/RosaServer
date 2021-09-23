@@ -4,6 +4,7 @@
 #include <iostream>
 #include <thread>
 
+#define SOL_SAFE_FUNCTION_CALLS 1
 #include "sol/sol.hpp"
 #include "subhook.h"
 
