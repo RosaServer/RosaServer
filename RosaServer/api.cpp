@@ -205,6 +205,7 @@ void hook::clear() {
 
 sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
 	sol::table table = lua->create_table();
+	subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
 	int res = Engine::lineIntersectLevel(posA, posB, 1);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
@@ -251,6 +252,7 @@ sol::object physics::lineIntersectLevelQuick(Vector* posA, Vector* posB,
                                              sol::this_state s) {
 	sol::state_view lua(s);
 
+	subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
 	int res = Engine::lineIntersectLevel(posA, posB, 1);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
@@ -292,8 +294,11 @@ sol::object physics::lineIntersectAnyQuick(Vector* posA, Vector* posB,
 	bool nearestIsVehicle = false;
 	int ignoreHumanId = ignoreHuman ? ignoreHuman->getIndex() : -1;
 
-	if (Engine::lineIntersectLevel(posA, posB, 1)) {
-		nearestFraction = Engine::lineIntersectResult->fraction;
+	{
+		subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
+		if (Engine::lineIntersectLevel(posA, posB, 1)) {
+			nearestFraction = Engine::lineIntersectResult->fraction;
+		}
 	}
 
 	{

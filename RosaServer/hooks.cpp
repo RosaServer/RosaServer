@@ -116,6 +116,7 @@ subhook::Hook createEventUpdateVehicleHook;
 subhook::Hook createEventBulletHook;
 subhook::Hook createEventBulletHitHook;
 subhook::Hook lineIntersectHumanHook;
+subhook::Hook lineIntersectLevelHook;
 
 int subRosaPuts(const char* str) {
 	std::ostringstream stream;
@@ -664,6 +665,7 @@ int sendPacket(unsigned int address, unsigned short port) {
 }
 
 void bulletSimulation() {
+	isInBulletSimulation = true;
 	if (enabledKeys[EnableKeys::PhysicsBullets]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
@@ -685,6 +687,7 @@ void bulletSimulation() {
 		subhook::ScopedHookRemove remove(&bulletSimulationHook);
 		Engine::bulletSimulation();
 	}
+	isInBulletSimulation = false;
 }
 
 void economyCarMarket() {
@@ -1628,4 +1631,22 @@ int lineIntersectHuman(int humanID, Vector* posA, Vector* posB, float padding) {
 		return Engine::lineIntersectHuman(humanID, posA, posB, padding);
 	}
 }
+
+int lineIntersectLevel(Vector* posA, Vector* posB, int unk) {
+	if (isInBulletSimulation) {
+		sol::protected_function func = (*lua)["hook"]["run"];
+		if (func != sol::nil) {
+			// posA is Bullet.pos in this case
+			Bullet* bullet =
+			    reinterpret_cast<Bullet*>(reinterpret_cast<uintptr_t>(posA) - 0x20);
+			auto res = func("BulletMayHit", bullet);
+			noLuaCallError(&res);
+		}
+	}
+
+	subhook::ScopedHookRemove remove(&lineIntersectLevelHook);
+	return Engine::lineIntersectLevel(posA, posB, unk);
+}
+
+bool isInBulletSimulation = false;
 };  // namespace Hooks

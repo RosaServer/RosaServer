@@ -1455,6 +1455,7 @@ static inline void installHooks() {
 	INSTALL(createEventBullet);
 	INSTALL(createEventBulletHit);
 	INSTALL(lineIntersectHuman);
+	INSTALL(lineIntersectLevel);
 }
 
 static inline void attachInterruptSignalHandler() {

@@ -200,6 +200,8 @@ void createEventBulletHit(int unk, int hitType, Vector* pos, Vector* normal);
 
 extern subhook::Hook lineIntersectHumanHook;
 int lineIntersectHuman(int humanID, Vector* posA, Vector* posB, float padding);
+extern subhook::Hook lineIntersectLevelHook;
+int lineIntersectLevel(Vector* posA, Vector* posB, int unk);
 
 struct Float {
 	float value;
@@ -212,4 +214,6 @@ struct Integer {
 struct UnsignedInteger {
 	unsigned int value;
 };
+
+extern bool isInBulletSimulation;
 };  // namespace Hooks
