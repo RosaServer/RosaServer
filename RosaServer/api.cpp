@@ -21,6 +21,7 @@ sol::table* bodyDataTables[maxNumberOfRigidBodies] = {0};
 std::mutex stateResetMutex;
 
 static constexpr const char* errorOutOfRange = "Index out of range";
+static constexpr const char* missingArgument = "Missing argument";
 
 void printLuaError(sol::error* err) {
 	std::ostringstream stream;
@@ -1127,10 +1128,12 @@ std::string Vector::__tostring() const {
 }
 
 Vector Vector::__add(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	return {x + other->x, y + other->y, z + other->z};
 }
 
 Vector Vector::__sub(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	return {x - other->x, y - other->y, z - other->z};
 }
 
@@ -1139,6 +1142,7 @@ Vector Vector::__mul(float scalar) const {
 }
 
 Vector Vector::__mul_RotMatrix(RotMatrix* rot) const {
+	if (!rot) throw std::invalid_argument(missingArgument);
 	return {rot->x1 * x + rot->y1 * y + rot->z1 * z,
 	        rot->x2 * x + rot->y2 * y + rot->z2 * z,
 	        rot->x3 * x + rot->y3 * y + rot->z3 * z};
@@ -1151,6 +1155,7 @@ Vector Vector::__div(float scalar) const {
 Vector Vector::__unm() const { return {-x, -y, -z}; }
 
 void Vector::add(Vector* other) {
+	if (!other) throw std::invalid_argument(missingArgument);
 	x += other->x;
 	y += other->y;
 	z += other->z;
@@ -1163,6 +1168,7 @@ void Vector::mult(float scalar) {
 }
 
 void Vector::set(Vector* other) {
+	if (!other) throw std::invalid_argument(missingArgument);
 	x = other->x;
 	y = other->y;
 	z = other->z;
@@ -1171,6 +1177,7 @@ void Vector::set(Vector* other) {
 Vector Vector::clone() const { return Vector{x, y, z}; }
 
 double Vector::dist(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	double dx = x - other->x;
 	double dy = y - other->y;
 	double dz = z - other->z;
@@ -1178,6 +1185,7 @@ double Vector::dist(Vector* other) const {
 }
 
 double Vector::distSquare(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	double dx = x - other->x;
 	double dy = y - other->y;
 	double dz = z - other->z;
@@ -1189,6 +1197,7 @@ double Vector::length() const { return sqrt(x * x + y * y + z * z); }
 double Vector::lengthSquare() const { return x * x + y * y + z * z; }
 
 double Vector::dot(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	return x * other->x + y * other->y + z * other->z;
 }
 
@@ -1214,6 +1223,7 @@ std::string RotMatrix::__tostring() const {
 }
 
 RotMatrix RotMatrix::__mul(RotMatrix* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	return {x1 * other->x1 + y1 * other->x2 + z1 * other->x3,
 	        x1 * other->y1 + y1 * other->y2 + z1 * other->y3,
 	        x1 * other->z1 + y1 * other->z2 + z1 * other->z3,
@@ -1228,6 +1238,7 @@ RotMatrix RotMatrix::__mul(RotMatrix* other) const {
 }
 
 void RotMatrix::set(RotMatrix* other) {
+	if (!other) throw std::invalid_argument(missingArgument);
 	x1 = other->x1;
 	y1 = other->y1;
 	z1 = other->z1;
