@@ -899,7 +899,69 @@ uintptr_t memory::baseAddress;
 
 uintptr_t memory::getBaseAddress() { return baseAddress; }
 
-uintptr_t memory::getAddress(void* address) {
+uintptr_t memory::getAddressOfConnection(Connection* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfAccount(Account* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfPlayer(Player* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfHuman(Human* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfItemType(ItemType* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfItem(Item* address) { return (uintptr_t)address; }
+
+uintptr_t memory::getAddressOfVehicleType(VehicleType* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfVehicle(Vehicle* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfBullet(Bullet* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfBone(Bone* address) { return (uintptr_t)address; }
+
+uintptr_t memory::getAddressOfRigidBody(RigidBody* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfBond(Bond* address) { return (uintptr_t)address; }
+
+uintptr_t memory::getAddressOfAction(Action* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfMenuButton(MenuButton* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfStreetLane(StreetLane* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfStreet(Street* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfInventorySlot(InventorySlot* address) {
+	return (uintptr_t)address;
+}
+
+uintptr_t memory::getAddressOfStreetIntersection(StreetIntersection* address) {
 	return (uintptr_t)address;
 }
 
