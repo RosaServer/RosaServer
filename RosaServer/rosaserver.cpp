@@ -1,4 +1,4 @@
-﻿#include "rosaserver.h"
+#include "rosaserver.h"
 
 #include <cxxabi.h>
 #include <execinfo.h>
@@ -1124,18 +1124,7 @@ void luaInit(bool redo) {
 		auto memoryTable = lua->create_table();
 		(*lua)["memory"] = memoryTable;
 		memoryTable["getBaseAddress"] = Lua::memory::getBaseAddress;
-		memoryTable["getAddress"] = sol::overload(
-		    &Lua::memory::getAddressOfConnection, &Lua::memory::getAddressOfAccount,
-		    &Lua::memory::getAddressOfPlayer, &Lua::memory::getAddressOfHuman,
-		    &Lua::memory::getAddressOfItemType, &Lua::memory::getAddressOfItem,
-		    &Lua::memory::getAddressOfVehicleType,
-		    &Lua::memory::getAddressOfVehicle, &Lua::memory::getAddressOfBullet,
-		    &Lua::memory::getAddressOfBone, &Lua::memory::getAddressOfRigidBody,
-		    &Lua::memory::getAddressOfBond, &Lua::memory::getAddressOfAction,
-		    &Lua::memory::getAddressOfMenuButton,
-		    &Lua::memory::getAddressOfStreetLane, &Lua::memory::getAddressOfStreet,
-		    &Lua::memory::getAddressOfStreetIntersection,
-		    &Lua::memory::getAddressOfInventorySlot);
+		memoryTable["getAddress"] = sol::overload(&Lua::memory::getAddress);
 		memoryTable["readByte"] = Lua::memory::readByte;
 		memoryTable["readUByte"] = Lua::memory::readUByte;
 		memoryTable["readShort"] = Lua::memory::readShort;
@@ -1287,6 +1276,9 @@ static inline void locateMemory(uintptr_t base) {
 
 	Engine::resetGame = (Engine::voidFunc)(base + 0xbf380);
 	Engine::createTraffic = (Engine::createTrafficFunc)(base + 0x9f690);
+	Engine::trafficSimulation = (Engine::voidFunc)(base + 0xa28d0);
+	Engine::aiTrafficCar = (Engine::aiTrafficCarFunc)(base + 0xfe00);
+	Engine::aiTrafficCarDestination = (Engine::aiTrafficCarDestinationFunc)(base + 0xf7a0);
 
 	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x19920);
 	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0x13800);
@@ -1405,6 +1397,9 @@ static inline void installHooks() {
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
 	INSTALL(createTraffic);
+	INSTALL(trafficSimulation);
+	INSTALL(aiTrafficCar);
+	INSTALL(aiTrafficCarDestination);
 	INSTALL(areaCreateBlock);
 	INSTALL(areaDeleteBlock);
 	INSTALL(logicSimulation);

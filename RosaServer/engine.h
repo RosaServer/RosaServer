@@ -93,9 +93,14 @@ typedef void (*voidFunc)();
 typedef void (*voidIndexFunc)(int id);
 
 typedef void (*createTrafficFunc)(int amount);
+typedef void (*aiTrafficCarFunc)(int id);
+typedef void (*aiTrafficCarDestinationFunc)(int id, int a, int b, int c);
 
 extern voidFunc resetGame;
 extern createTrafficFunc createTraffic;
+extern voidFunc trafficSimulation;
+extern aiTrafficCarFunc aiTrafficCar;
+extern aiTrafficCarDestinationFunc aiTrafficCarDestination;
 
 typedef int (*areaCreateBlockFunc)(int zero, int blockX, int blockY, int blockZ,
                                    unsigned int flags, short unk[8]);
