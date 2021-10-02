@@ -175,6 +175,7 @@ void defineThreadSafeAPIs(sol::state* state) {
 	{
 		auto cryptoTable = state->create_table();
 		(*state)["crypto"] = cryptoTable;
+		cryptoTable["md5"] = Lua::crypto::md5;
 		cryptoTable["sha256"] = Lua::crypto::sha256;
 	}
 
