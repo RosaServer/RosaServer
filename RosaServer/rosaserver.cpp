@@ -823,7 +823,8 @@ void luaInit(bool redo) {
 		meta["type"] = sol::property(&TrafficCar::getType, &TrafficCar::setType);
 		meta["human"] = sol::property(&TrafficCar::getHuman, &TrafficCar::setHuman);
 		meta["isBot"] = sol::property(&TrafficCar::getIsBot, &TrafficCar::setIsBot);
-		meta["isAggressive"] = sol::property(&TrafficCar::getIsAggressive, &TrafficCar::setIsAggressive);
+		meta["isAggressive"] = sol::property(&TrafficCar::getIsAggressive,
+		                                     &TrafficCar::setIsAggressive);
 		meta["vehicle"] =
 		    sol::property(&TrafficCar::getVehicle, &TrafficCar::setVehicle);
 	}
@@ -1292,7 +1293,8 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::createTraffic = (Engine::createTrafficFunc)(base + 0x9f690);
 	Engine::trafficSimulation = (Engine::voidFunc)(base + 0xa28d0);
 	Engine::aiTrafficCar = (Engine::aiTrafficCarFunc)(base + 0xfe00);
-	Engine::aiTrafficCarDestination = (Engine::aiTrafficCarDestinationFunc)(base + 0xf7a0);
+	Engine::aiTrafficCarDestination =
+	    (Engine::aiTrafficCarDestinationFunc)(base + 0xf7a0);
 
 	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x19920);
 	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0x13800);

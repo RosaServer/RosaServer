@@ -260,7 +260,8 @@ void aiTrafficCarDestination(int id, int a, int b, int c) {
 			Integer wrappedB = {b};
 			Integer wrappedC = {c};
 
-			auto res = func("TrafficCarDestination", &Engine::trafficCars[id], wrappedA, wrappedB, wrappedC);
+			auto res = func("TrafficCarDestination", &Engine::trafficCars[id],
+			                wrappedA, wrappedB, wrappedC);
 
 			if (noLuaCallError(&res)) noParent = (bool)res;
 
@@ -274,7 +275,8 @@ void aiTrafficCarDestination(int id, int a, int b, int c) {
 				Engine::aiTrafficCarDestination(id, a, b, c);
 			}
 			if (func != sol::nil) {
-				auto res = func("PostTrafficCarDestination", &Engine::trafficCars[id], a, b, c);
+				auto res = func("PostTrafficCarDestination", &Engine::trafficCars[id],
+				                a, b, c);
 				noLuaCallError(&res);
 			}
 		}
