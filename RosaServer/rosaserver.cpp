@@ -124,6 +124,8 @@ void defineThreadSafeAPIs(sol::state* state) {
 
 	{
 		auto meta = state->new_usertype<LuaOpusEncoder>("OpusEncoder");
+		meta["bitRate"] =
+		    sol::property(&LuaOpusEncoder::getBitRate, &LuaOpusEncoder::setBitRate);
 		meta["close"] = &LuaOpusEncoder::close;
 		meta["open"] = &LuaOpusEncoder::open;
 		meta["rewind"] = &LuaOpusEncoder::rewind;

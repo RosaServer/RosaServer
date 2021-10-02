@@ -10,6 +10,8 @@ class LuaOpusEncoder {
  public:
 	LuaOpusEncoder();
 	~LuaOpusEncoder();
+	void setBitRate(opus_int32 bitRate) const;
+	opus_int32 getBitRate() const;
 	void close();
 	void open(const char* fileName);
 	void rewind() const;

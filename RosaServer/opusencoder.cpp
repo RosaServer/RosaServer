@@ -1,7 +1,7 @@
 #include "opusencoder.h"
 
 static constexpr int sampleRate = 48000;
-static constexpr int bitRate = 16000;
+static constexpr int defaultBitRate = 16000;
 static constexpr int frameSize = 960;
 static constexpr int maxPacketSize = 2048;
 
@@ -12,19 +12,32 @@ LuaOpusEncoder::LuaOpusEncoder() {
 	int error;
 
 	encoder = opus_encoder_create(sampleRate, 1, OPUS_APPLICATION_VOIP, &error);
-	if (error < 0) {
+	if (error != OPUS_OK) {
 		throw std::runtime_error(opus_strerror(error));
 	}
 
-	error = opus_encoder_ctl(encoder, OPUS_SET_BITRATE(bitRate));
-	if (error < 0) {
-		throw std::runtime_error(opus_strerror(error));
-	}
+	setBitRate(defaultBitRate);
 }
 
 LuaOpusEncoder::~LuaOpusEncoder() {
 	opus_encoder_destroy(encoder);
 	close();
+}
+
+void LuaOpusEncoder::setBitRate(opus_int32 bitRate) const {
+	int error = opus_encoder_ctl(encoder, OPUS_SET_BITRATE(bitRate));
+	if (error != OPUS_OK) {
+		throw std::runtime_error(opus_strerror(error));
+	}
+}
+
+opus_int32 LuaOpusEncoder::getBitRate() const {
+	opus_int32 bitRate;
+	int error = opus_encoder_ctl(encoder, OPUS_GET_BITRATE(&bitRate));
+	if (error != OPUS_OK) {
+		throw std::runtime_error(opus_strerror(error));
+	}
+	return bitRate;
 }
 
 void LuaOpusEncoder::close() {
