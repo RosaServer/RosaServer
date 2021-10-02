@@ -172,6 +172,12 @@ void defineThreadSafeAPIs(sol::state* state) {
 		zlibTable["uncompress"] = Lua::zlib::_uncompress;
 	}
 
+	{
+		auto cryptoTable = state->create_table();
+		(*state)["crypto"] = cryptoTable;
+		cryptoTable["sha256"] = Lua::crypto::sha256;
+	}
+
 	(*state)["FILE_WATCH_ACCESS"] = IN_ACCESS;
 	(*state)["FILE_WATCH_ATTRIB"] = IN_ATTRIB;
 	(*state)["FILE_WATCH_CLOSE_WRITE"] = IN_CLOSE_WRITE;

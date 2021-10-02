@@ -10,6 +10,7 @@
 #include "api.h"
 #include "childprocess.h"
 #include "console.h"
+#include "crypto.h"
 #include "engine.h"
 #include "filewatcher.h"
 #include "hooks.h"

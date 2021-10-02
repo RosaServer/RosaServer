@@ -49,6 +49,7 @@ add_library (rosaserver SHARED
 	api.cpp
 	childprocess.cpp
 	console.cpp
+	crypto.cpp
 	engine.cpp
 	filewatcher.cpp
 	hooks.cpp
