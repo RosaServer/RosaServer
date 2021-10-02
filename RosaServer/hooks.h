@@ -9,6 +9,9 @@ namespace Hooks {
 enum EnableKeys {
 	ResetGame,
 	CreateTraffic,
+	TrafficSimulation,
+	TrafficCarAI,
+	TrafficCarLOD,
 	AreaCreateBlock,
 	AreaDeleteBlock,
 	InterruptSignal,
@@ -79,6 +82,15 @@ void resetGame();
 
 extern subhook::Hook createTrafficHook;
 void createTraffic(int amount);
+
+extern subhook::Hook trafficSimulationHook;
+void trafficSimulation();
+
+extern subhook::Hook aiTrafficCarHook;
+void aiTrafficCar(int id);
+
+extern subhook::Hook aiTrafficCarDestinationHook;
+void aiTrafficCarDestination(int id, int a, int b, int c);
 
 extern subhook::Hook areaCreateBlockHook;
 void areaCreateBlock(int zero, int blockX, int blockY, int blockZ,

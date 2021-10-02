@@ -84,6 +84,9 @@ subRosa__printf_chkFunc subRosa__printf_chk;
 
 voidFunc resetGame;
 createTrafficFunc createTraffic;
+voidFunc trafficSimulation;
+aiTrafficCarFunc aiTrafficCar;
+aiTrafficCarDestinationFunc aiTrafficCarDestination;
 
 areaCreateBlockFunc areaCreateBlock;
 areaDeleteBlockFunc areaDeleteBlock;

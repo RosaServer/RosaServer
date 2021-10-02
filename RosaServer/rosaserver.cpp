@@ -815,12 +815,15 @@ void luaInit(bool redo) {
 		meta["yaw"] = &TrafficCar::yaw;
 		meta["rot"] = &TrafficCar::rot;
 		meta["color"] = &TrafficCar::color;
+		meta["state"] = &TrafficCar::state;
 
 		meta["class"] = sol::property(&TrafficCar::getClass);
 		meta["__tostring"] = &TrafficCar::__tostring;
 		meta["index"] = sol::property(&TrafficCar::getIndex);
 		meta["type"] = sol::property(&TrafficCar::getType, &TrafficCar::setType);
 		meta["human"] = sol::property(&TrafficCar::getHuman, &TrafficCar::setHuman);
+		meta["isBot"] = sol::property(&TrafficCar::getIsBot, &TrafficCar::setIsBot);
+		meta["isAggressive"] = sol::property(&TrafficCar::getIsAggressive, &TrafficCar::setIsAggressive);
 		meta["vehicle"] =
 		    sol::property(&TrafficCar::getVehicle, &TrafficCar::setVehicle);
 	}
@@ -1287,6 +1290,9 @@ static inline void locateMemory(uintptr_t base) {
 
 	Engine::resetGame = (Engine::voidFunc)(base + 0xbf380);
 	Engine::createTraffic = (Engine::createTrafficFunc)(base + 0x9f690);
+	Engine::trafficSimulation = (Engine::voidFunc)(base + 0xa28d0);
+	Engine::aiTrafficCar = (Engine::aiTrafficCarFunc)(base + 0xfe00);
+	Engine::aiTrafficCarDestination = (Engine::aiTrafficCarDestinationFunc)(base + 0xf7a0);
 
 	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x19920);
 	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0x13800);
@@ -1405,6 +1411,9 @@ static inline void installHooks() {
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
 	INSTALL(createTraffic);
+	INSTALL(trafficSimulation);
+	INSTALL(aiTrafficCar);
+	INSTALL(aiTrafficCarDestination);
 	INSTALL(areaCreateBlock);
 	INSTALL(areaDeleteBlock);
 	INSTALL(logicSimulation);
