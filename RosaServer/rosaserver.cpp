@@ -1,4 +1,4 @@
-#include "rosaserver.h"
+﻿#include "rosaserver.h"
 
 #include <cxxabi.h>
 #include <execinfo.h>
@@ -815,12 +815,15 @@ void luaInit(bool redo) {
 		meta["yaw"] = &TrafficCar::yaw;
 		meta["rot"] = &TrafficCar::rot;
 		meta["color"] = &TrafficCar::color;
+		meta["state"] = &TrafficCar::state;
 
 		meta["class"] = sol::property(&TrafficCar::getClass);
 		meta["__tostring"] = &TrafficCar::__tostring;
 		meta["index"] = sol::property(&TrafficCar::getIndex);
 		meta["type"] = sol::property(&TrafficCar::getType, &TrafficCar::setType);
 		meta["human"] = sol::property(&TrafficCar::getHuman, &TrafficCar::setHuman);
+		meta["isBot"] = sol::property(&TrafficCar::getIsBot, &TrafficCar::setIsBot);
+		meta["isAggressive"] = sol::property(&TrafficCar::getIsAggressive, &TrafficCar::setIsAggressive);
 		meta["vehicle"] =
 		    sol::property(&TrafficCar::getVehicle, &TrafficCar::setVehicle);
 	}
@@ -1124,7 +1127,18 @@ void luaInit(bool redo) {
 		auto memoryTable = lua->create_table();
 		(*lua)["memory"] = memoryTable;
 		memoryTable["getBaseAddress"] = Lua::memory::getBaseAddress;
-		memoryTable["getAddress"] = sol::overload(&Lua::memory::getAddress);
+		memoryTable["getAddress"] = sol::overload(
+		    &Lua::memory::getAddressOfConnection, &Lua::memory::getAddressOfAccount,
+		    &Lua::memory::getAddressOfPlayer, &Lua::memory::getAddressOfHuman,
+		    &Lua::memory::getAddressOfItemType, &Lua::memory::getAddressOfItem,
+		    &Lua::memory::getAddressOfVehicleType,
+		    &Lua::memory::getAddressOfVehicle, &Lua::memory::getAddressOfBullet,
+		    &Lua::memory::getAddressOfBone, &Lua::memory::getAddressOfRigidBody,
+		    &Lua::memory::getAddressOfBond, &Lua::memory::getAddressOfAction,
+		    &Lua::memory::getAddressOfMenuButton,
+		    &Lua::memory::getAddressOfStreetLane, &Lua::memory::getAddressOfStreet,
+		    &Lua::memory::getAddressOfStreetIntersection,
+		    &Lua::memory::getAddressOfInventorySlot);
 		memoryTable["readByte"] = Lua::memory::readByte;
 		memoryTable["readUByte"] = Lua::memory::readUByte;
 		memoryTable["readShort"] = Lua::memory::readShort;

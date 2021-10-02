@@ -856,12 +856,15 @@ struct TrafficCar {
 	int type;       // 00
 	int humanID;    // 04
 	int vehicleID;  // 08
-	int unk0;       // 0c
+	int state;      // 0c
 	Vector pos;     // 10
 	Vector vel;     // 1c
 	float yaw;      // 28
 	RotMatrix rot;  // 2c
-	padding unk1[0x5d8 - 0x2c - sizeof(RotMatrix)];
+	padding unk0[0x7c - 0x2c - sizeof(RotMatrix)];
+	int isBot;      // 7c
+	int isAggressive; // 80
+	padding unk1[0x5d8 - 0x80 - 4];
 	int color;  // 5d8
 	padding unk2[0x5fc - 0x5d8 - 4];
 
@@ -874,6 +877,10 @@ struct TrafficCar {
 	void setHuman(Human* human);
 	Vehicle* getVehicle() const;
 	void setVehicle(Vehicle* vehicle);
+	bool getIsBot() const { return isBot; };
+	void setIsBot(bool b) { isBot = b; };
+	bool getIsAggressive() const { return isAggressive; };
+	void setIsAggressive(bool b) { isAggressive = b; };
 };
 
 // 12 bytes (C)
