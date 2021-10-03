@@ -25,6 +25,7 @@ struct RigidBody;
 struct Bond;
 struct StreetIntersection;
 struct Event;
+struct TrafficCar;
 
 // 40 bytes (28)
 struct EarShot {
@@ -577,17 +578,20 @@ struct Item {
 	int phoneTexture;  // 278
 	int unk0;          // 27C
 	int vehicleID;     // 280
-	padding unk8[0x368 - 0x280 - 4];
+	padding unk8[0x2a0 - 0x280 - 4];
+	int moneySpread;   // 2A0
+	int moneyThing;    // 2A4
+	padding unk9[0x368 - 0x2a4 - 4];
 	unsigned int computerCurrentLine;  // 368
 	unsigned int computerTopLine;      // 36c
 	//-1 for no cursor
 	int computerCursor;          // 370
 	char computerLines[32][64];  // 374
-	padding unk9[0xb74 - 0x374 - (64 * 32)];
+	padding unk10[0xb74 - 0x374 - (64 * 32)];
 	unsigned char computerLineColors[32][64];  // b74
-	padding unk10[0x1658 - 0xb74 - (64 * 32)];
+	padding unk11[0x1658 - 0xb74 - (64 * 32)];
 	int computerTeam;  // 1658
-	padding unk11[0x1B80 - 0x1658 - 4];
+	padding unk12[0x1B80 - 0x1658 - 4];
 
 	const char* getClass() const { return "Item"; }
 	std::string __tostring() const;
@@ -625,6 +629,9 @@ struct Item {
 	void computerSetLineColors(unsigned int line, std::string_view colors);
 	void computerSetColor(unsigned int line, unsigned int column,
 	                      unsigned char color);
+	void addBill(int position, int value) const;
+	void removeBill(int position) const;
+	int getBillValue() const;
 };
 
 // 99776 bytes (185C0)
@@ -676,13 +683,15 @@ struct Vehicle {
 	float steerControl;  // 3604
 	float gearY;         // 3608
 	float gasControl;    // 360c
-	padding unk7[0x3930 - 0x360c - 4];
+	padding unk7[0x3648 - 0x360c - 4];
+	int trafficCarID;    // 3648
+	padding unk8[0x3930 - 0x3648 - 4];
 	int engineRPM;  // 3930
-	padding unk8[0x4fa8 - 0x3930 - 4];
+	padding unk9[0x4fa8 - 0x3930 - 4];
 	int bladeBodyID;  // 4fa8
-	padding unk9[0x50dc - 0x4fa8 - 4];
+	padding unk10[0x50dc - 0x4fa8 - 4];
 	int numSeats;  // 50dc
-	padding unk10[0x5168 - 0x50dc - 4];
+	padding unk11[0x5168 - 0x50dc - 4];
 
 	const char* getClass() const { return "Vehicle"; }
 	std::string __tostring() const;
@@ -696,6 +705,8 @@ struct Vehicle {
 	sol::table getDataTable() const;
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
+	TrafficCar* getTrafficCar() const;
+	void setTrafficCar(TrafficCar* trafficCar);
 
 	Event* updateType() const;
 	Event* updateDestruction(int updateType, int partID, Vector* pos,

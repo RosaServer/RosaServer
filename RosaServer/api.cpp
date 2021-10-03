@@ -1663,6 +1663,19 @@ void Item::computerSetColor(unsigned int line, unsigned int column,
 	computerLineColors[line][column] = color;
 }
 
+void Item::addBill(int position, int value) const {
+	if (value > 8) throw std::invalid_argument(errorOutOfRange);
+	Engine::itemAddBill(getIndex(), position, value);
+}
+
+void Item::removeBill(int position) const {
+	Engine::itemRemoveBill(getIndex(), position);
+}
+
+int Item::getBillValue() const {
+	return Engine::itemGetBillValue(getIndex());
+}
+
 std::string VehicleType::__tostring() const {
 	char buf[16];
 	sprintf(buf, "VehicleType(%i)", getIndex());
@@ -1733,6 +1746,14 @@ Player* Vehicle::getLastDriver() const {
 }
 
 RigidBody* Vehicle::getRigidBody() const { return &Engine::bodies[bodyID]; }
+
+TrafficCar* Vehicle::getTrafficCar() const {
+	return &Engine::trafficCars[trafficCarID];
+};
+
+void Vehicle::setTrafficCar(TrafficCar* trafficCar) {
+	trafficCarID = trafficCar == nullptr ? -1 : trafficCar->getIndex();
+};
 
 bool Vehicle::getIsWindowBroken(unsigned int idx) const {
 	if (idx >= 8) throw std::invalid_argument(errorOutOfRange);
