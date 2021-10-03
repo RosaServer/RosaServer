@@ -1323,7 +1323,6 @@ void Player::remove() const {
 }
 
 void Player::sendMessage(const char* message) const {
-	if (!message) throw std::invalid_argument(missingArgument);
 	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(6, (char*)message, getIndex(), 0);
 }
@@ -1664,16 +1663,16 @@ void Item::computerSetColor(unsigned int line, unsigned int column,
 	computerLineColors[line][column] = color;
 }
 
-void Item::moneyAddBill(int position, int value) const {
+void Item::cashAddBill(int position, int value) const {
 	if (value > 8) throw std::invalid_argument(errorOutOfRange);
 	Engine::itemMoneyAddBill(getIndex(), position, value);
 }
 
-void Item::moneyRemoveBill(int position) const {
+void Item::cashRemoveBill(int position) const {
 	Engine::itemMoneyRemoveBill(getIndex(), position);
 }
 
-int Item::moneyBillValue() const {
+int Item::cashGetBillValue() const {
 	return Engine::itemMoneyBillValue(getIndex());
 }
 
@@ -1749,7 +1748,7 @@ Player* Vehicle::getLastDriver() const {
 RigidBody* Vehicle::getRigidBody() const { return &Engine::bodies[bodyID]; }
 
 TrafficCar* Vehicle::getTrafficCar() const {
-	return &Engine::trafficCars[trafficCarID];
+	return trafficCarID == -1 ? nullptr : &Engine::trafficCars[trafficCarID];
 };
 
 void Vehicle::setTrafficCar(TrafficCar* trafficCar) {
