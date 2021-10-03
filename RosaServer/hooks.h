@@ -11,7 +11,7 @@ enum EnableKeys {
 	CreateTraffic,
 	TrafficSimulation,
 	TrafficCarAI,
-	TrafficCarLOD,
+	TrafficCarDestination,
 	AreaCreateBlock,
 	AreaDeleteBlock,
 	InterruptSignal,
@@ -90,7 +90,7 @@ extern subhook::Hook aiTrafficCarHook;
 void aiTrafficCar(int id);
 
 extern subhook::Hook aiTrafficCarDestinationHook;
-void aiTrafficCarDestination(int id, int a, int b, int c);
+void aiTrafficCarDestination(int id, int a, int b, int c, int d);
 
 extern subhook::Hook areaCreateBlockHook;
 void areaCreateBlock(int zero, int blockX, int blockY, int blockZ,

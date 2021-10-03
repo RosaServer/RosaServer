@@ -9,7 +9,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"CreateTraffic", EnableKeys::CreateTraffic},
      {"TrafficSimulation", EnableKeys::TrafficSimulation},
      {"TrafficCarAI", EnableKeys::TrafficCarAI},
-     {"TrafficCarLOD", EnableKeys::TrafficCarLOD},
+     {"TrafficCarDestination", EnableKeys::TrafficCarDestination},
      {"AreaCreateBlock", EnableKeys::AreaCreateBlock},
      {"AreaDeleteBlock", EnableKeys::AreaDeleteBlock},
      {"Logic", EnableKeys::Logic},
@@ -251,38 +251,40 @@ void aiTrafficCar(int id) {
 	}
 }
 
-void aiTrafficCarDestination(int id, int a, int b, int c) {
-	if (enabledKeys[EnableKeys::TrafficCarLOD]) {
+void aiTrafficCarDestination(int id, int a, int b, int c, int d) {
+	if (enabledKeys[EnableKeys::TrafficCarDestination]) {
 		bool noParent = false;
 		sol::protected_function func = (*lua)["hook"]["run"];
 		if (func != sol::nil) {
 			Integer wrappedA = {a};
 			Integer wrappedB = {b};
 			Integer wrappedC = {c};
+			Integer wrappedD = {d};
 
 			auto res = func("TrafficCarDestination", &Engine::trafficCars[id],
-			                wrappedA, wrappedB, wrappedC);
+			                wrappedA, wrappedB, wrappedC, wrappedD);
 
 			if (noLuaCallError(&res)) noParent = (bool)res;
 
 			a = wrappedA.value;
 			b = wrappedB.value;
 			c = wrappedC.value;
+			d = wrappedD.value;
 		}
 		if (!noParent) {
 			{
 				subhook::ScopedHookRemove remove(&aiTrafficCarDestinationHook);
-				Engine::aiTrafficCarDestination(id, a, b, c);
+				Engine::aiTrafficCarDestination(id, a, b, c, d);
 			}
 			if (func != sol::nil) {
 				auto res = func("PostTrafficCarDestination", &Engine::trafficCars[id],
-				                a, b, c);
+				                a, b, c, d);
 				noLuaCallError(&res);
 			}
 		}
 	} else {
 		subhook::ScopedHookRemove remove(&aiTrafficCarDestinationHook);
-		Engine::aiTrafficCarDestination(id, a, b, c);
+		Engine::aiTrafficCarDestination(id, a, b, c, d);
 	}
 }
 
