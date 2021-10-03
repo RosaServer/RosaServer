@@ -550,6 +550,7 @@ void luaInit(bool redo) {
 		meta["vel"] = &Item::vel;
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
+		meta["cooldown"] = &Item::cooldown;
 		meta["billSpread"] = &Item::moneySpread;
 		meta["billAmount"] = &Item::moneyBillAmount;
 		meta["billValue"] = &Item::moneyBillValue;

@@ -551,13 +551,13 @@ struct Item {
 	int physicsSettledTimer;  // 0c
 	int isStatic;             // 10
 	int type;                 // 14
-	int unk2;                 // 18
+	int unk0;                 // 18
 	int despawnTime;          // 1c
 	int grenadePrimerID;      // 20
 	int parentHumanID;        // 24
 	int parentItemID;         // 28
 	int parentSlot;           // 2c
-	padding unk5[0x58 - 0x2c - 4];
+	padding unk1[0x58 - 0x2c - 4];
 	int bodyID;     // 58
 	Vector pos;     // 5c
 	Vector pos2;    // 68
@@ -566,17 +566,19 @@ struct Item {
 	Vector vel3;    // 8c
 	Vector vel4;    // 98
 	RotMatrix rot;  // a4
-	padding unk6[0x144 - 0xa4 - 36];
-	int bullets;  // 144
-	padding unk7_1[0x15C - 0x144 - 4];
+	padding unk2[0x13c - 0xa4 - 36];
+	int cooldown;   // 13C
+	int unk3;	    // 140
+	int bullets;    // 144
+	padding unk4[0x15C - 0x144 - 4];
 	int connectedPhoneID;    // 15C
 	int phoneNumber;         // 160
-	int unk7_2;              // 164
+	int unk5;                // 164
 	int displayPhoneNumber;  // 168
 	int enteredPhoneNumber;  // 16C
-	padding unk7[0x278 - 0x16C - 4];
+	padding unk6[0x278 - 0x16C - 4];
 	int phoneTexture;  // 278
-	int unk0;          // 27C
+	int unk7;          // 27C
 	int vehicleID;     // 280
 	padding unk8[0x2a0 - 0x280 - 4];
 	int moneySpread;          // 2A0
