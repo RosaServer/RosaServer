@@ -579,9 +579,10 @@ struct Item {
 	int unk0;          // 27C
 	int vehicleID;     // 280
 	padding unk8[0x2a0 - 0x280 - 4];
-	int moneySpread;   // 2A0
-	int moneyThing;    // 2A4
-	padding unk9[0x368 - 0x2a4 - 4];
+	int moneySpread;          // 2A0
+	int moneyBillAmount;      // 2A4
+	int moneyBillPureValue;   // 2A8
+	padding unk9[0x368 - 0x2a8 - 4];
 	unsigned int computerCurrentLine;  // 368
 	unsigned int computerTopLine;      // 36c
 	//-1 for no cursor
@@ -629,9 +630,9 @@ struct Item {
 	void computerSetLineColors(unsigned int line, std::string_view colors);
 	void computerSetColor(unsigned int line, unsigned int column,
 	                      unsigned char color);
-	void addBill(int position, int value) const;
-	void removeBill(int position) const;
-	int getBillValue() const;
+	void moneyAddBill(int position, int value) const;
+	void moneyRemoveBill(int position) const;
+	int moneyBillValue() const;
 };
 
 // 99776 bytes (185C0)

@@ -1663,17 +1663,17 @@ void Item::computerSetColor(unsigned int line, unsigned int column,
 	computerLineColors[line][column] = color;
 }
 
-void Item::addBill(int position, int value) const {
+void Item::moneyAddBill(int position, int value) const {
 	if (value > 8) throw std::invalid_argument(errorOutOfRange);
-	Engine::itemAddBill(getIndex(), position, value);
+	Engine::itemMoneyAddBill(getIndex(), position, value);
 }
 
-void Item::removeBill(int position) const {
-	Engine::itemRemoveBill(getIndex(), position);
+void Item::moneyRemoveBill(int position) const {
+	Engine::itemMoneyRemoveBill(getIndex(), position);
 }
 
-int Item::getBillValue() const {
-	return Engine::itemGetBillValue(getIndex());
+int Item::moneyBillValue() const {
+	return Engine::itemMoneyBillValue(getIndex());
 }
 
 std::string VehicleType::__tostring() const {

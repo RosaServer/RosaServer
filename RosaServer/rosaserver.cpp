@@ -550,7 +550,9 @@ void luaInit(bool redo) {
 		meta["vel"] = &Item::vel;
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
-		meta["moneyThing"] = &Item::moneyThing;
+		meta["billSpread"] = &Item::moneySpread;
+		meta["billAmount"] = &Item::moneyBillAmount;
+		meta["billValue"] = &Item::moneyBillValue;
 		meta["phoneNumber"] = &Item::phoneNumber;
 		meta["displayPhoneNumber"] = &Item::displayPhoneNumber;
 		meta["enteredPhoneNumber"] = &Item::enteredPhoneNumber;
@@ -590,9 +592,9 @@ void luaInit(bool redo) {
 		meta["computerSetLine"] = &Item::computerSetLine;
 		meta["computerSetLineColors"] = &Item::computerSetLineColors;
 		meta["computerSetColor"] = &Item::computerSetColor;
-		meta["addBill"] = &Item::addBill;
-		meta["removeBill"] = &Item::removeBill;
-		meta["getBillValue"] = &Item::getBillValue;
+		meta["moneyAddBill"] = &Item::moneyAddBill;
+		meta["moneyRemoveBill"] = &Item::moneyRemoveBill;
+		meta["moneyBillValue"] = &Item::moneyBillValue;
 	}
 
 	{
@@ -1349,9 +1351,9 @@ static inline void locateMemory(uintptr_t base) {
 	    (Engine::itemComputerTransmitLineFunc)(base + 0x3dd70);
 	Engine::itemComputerIncrementLine = (Engine::voidIndexFunc)(base + 0x3e0e0);
 	Engine::itemComputerInput = (Engine::itemComputerInputFunc)(base + 0x78000);
-	Engine::itemAddBill = (Engine::itemAddBillFunc)(base + 0x3c8a0);
-	Engine::itemRemoveBill = (Engine::itemRemoveBillFunc)(base + 0x3c990);
-	Engine::itemGetBillValue = (Engine::itemGetBillValueFunc)(base + 0x3c840);
+	Engine::itemMoneyAddBill = (Engine::itemMoneyAddBillFunc)(base + 0x3c8a0);
+	Engine::itemMoneyRemoveBill = (Engine::itemMoneyRemoveBillFunc)(base + 0x3c990);
+	Engine::itemMoneyBillValue = (Engine::itemMoneyBillValueFunc)(base + 0x3c840);
 
 	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x2b120);
 	Engine::humanCollisionVehicle =
