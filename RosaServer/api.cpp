@@ -1323,6 +1323,7 @@ void Player::remove() const {
 }
 
 void Player::sendMessage(const char* message) const {
+	if (!message) throw std::invalid_argument(missingArgument);
 	subhook::ScopedHookRemove remove(&Hooks::createEventMessageHook);
 	Engine::createEventMessage(6, (char*)message, getIndex(), 0);
 }
