@@ -640,8 +640,8 @@ void luaInit(bool redo) {
 		meta["data"] = sol::property(&Vehicle::getDataTable);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
 		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);
-		meta["trafficCar"] = 
-			sol::property(&Vehicle::getTrafficCar, &Vehicle::setTrafficCar);
+		meta["trafficCar"] =
+		    sol::property(&Vehicle::getTrafficCar, &Vehicle::setTrafficCar);
 
 		meta["updateType"] = &Vehicle::updateType;
 		meta["updateDestruction"] = &Vehicle::updateDestruction;
@@ -1353,7 +1353,8 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::itemComputerIncrementLine = (Engine::voidIndexFunc)(base + 0x3e0e0);
 	Engine::itemComputerInput = (Engine::itemComputerInputFunc)(base + 0x78000);
 	Engine::itemMoneyAddBill = (Engine::itemMoneyAddBillFunc)(base + 0x3c8a0);
-	Engine::itemMoneyRemoveBill = (Engine::itemMoneyRemoveBillFunc)(base + 0x3c990);
+	Engine::itemMoneyRemoveBill =
+	    (Engine::itemMoneyRemoveBillFunc)(base + 0x3c990);
 	Engine::itemMoneyBillValue = (Engine::itemMoneyBillValueFunc)(base + 0x3c840);
 
 	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x2b120);

@@ -567,9 +567,9 @@ struct Item {
 	Vector vel4;    // 98
 	RotMatrix rot;  // a4
 	padding unk2[0x13c - 0xa4 - 36];
-	int cooldown;   // 13C
-	int unk3;	    // 140
-	int bullets;    // 144
+	int cooldown;  // 13C
+	int unk3;      // 140
+	int bullets;   // 144
 	padding unk4[0x15C - 0x144 - 4];
 	int connectedPhoneID;    // 15C
 	int phoneNumber;         // 160
@@ -687,7 +687,7 @@ struct Vehicle {
 	float gearY;         // 3608
 	float gasControl;    // 360c
 	padding unk7[0x3648 - 0x360c - 4];
-	int trafficCarID;    // 3648
+	int trafficCarID;  // 3648
 	padding unk8[0x3930 - 0x3648 - 4];
 	int engineRPM;  // 3930
 	padding unk9[0x4fa8 - 0x3930 - 4];
@@ -876,8 +876,8 @@ struct TrafficCar {
 	float yaw;      // 28
 	RotMatrix rot;  // 2c
 	padding unk0[0x7c - 0x2c - sizeof(RotMatrix)];
-	int isBot;      // 7c
-	int isAggressive; // 80
+	int isBot;         // 7c
+	int isAggressive;  // 80
 	padding unk1[0x5d8 - 0x80 - 4];
 	int color;  // 5d8
 	padding unk2[0x5fc - 0x5d8 - 4];
