@@ -94,7 +94,8 @@ typedef void (*voidIndexFunc)(int id);
 
 typedef void (*createTrafficFunc)(int amount);
 typedef void (*aiTrafficCarFunc)(int id);
-typedef void (*aiTrafficCarDestinationFunc)(int id, int a, int b, int c);
+typedef void (*aiTrafficCarDestinationFunc)(int id, int a, int b, int c, int d);
+typedef long (*aiFunc)(float a, int b, int c, int d, int e, int f);
 
 extern voidFunc resetGame;
 extern createTrafficFunc createTraffic;
@@ -154,6 +155,12 @@ typedef int (*itemSetMemoFunc)(int itemID, const char* memo);
 extern itemSetMemoFunc itemSetMemo;
 typedef int (*itemComputerTransmitLineFunc)(int itemID, unsigned int line);
 extern itemComputerTransmitLineFunc itemComputerTransmitLine;
+typedef bool (*itemMoneyAddBillFunc)(int itemID, int zero, int amount);
+extern itemMoneyAddBillFunc itemMoneyAddBill;
+typedef void (*itemMoneyRemoveBillFunc)(int itemID, int amount);
+extern itemMoneyRemoveBillFunc itemMoneyRemoveBill;
+typedef int (*itemMoneyBillValueFunc)(int itemID);
+extern itemMoneyBillValueFunc itemMoneyBillValue;
 extern voidIndexFunc itemComputerIncrementLine;
 typedef int (*itemComputerInputFunc)(int itemID, unsigned int character);
 extern itemComputerInputFunc itemComputerInput;

@@ -25,6 +25,7 @@ struct RigidBody;
 struct Bond;
 struct StreetIntersection;
 struct Event;
+struct TrafficCar;
 
 // 40 bytes (28)
 struct EarShot {
@@ -550,13 +551,13 @@ struct Item {
 	int physicsSettledTimer;  // 0c
 	int isStatic;             // 10
 	int type;                 // 14
-	int unk2;                 // 18
+	int unk0;                 // 18
 	int despawnTime;          // 1c
 	int grenadePrimerID;      // 20
 	int parentHumanID;        // 24
 	int parentItemID;         // 28
 	int parentSlot;           // 2c
-	padding unk5[0x58 - 0x2c - 4];
+	padding unk1[0x58 - 0x2c - 4];
 	int bodyID;     // 58
 	Vector pos;     // 5c
 	Vector pos2;    // 68
@@ -565,29 +566,35 @@ struct Item {
 	Vector vel3;    // 8c
 	Vector vel4;    // 98
 	RotMatrix rot;  // a4
-	padding unk6[0x144 - 0xa4 - 36];
-	int bullets;  // 144
-	padding unk7_1[0x15C - 0x144 - 4];
+	padding unk2[0x13c - 0xa4 - 36];
+	int cooldown;   // 13C
+	int unk3;	    // 140
+	int bullets;    // 144
+	padding unk4[0x15C - 0x144 - 4];
 	int connectedPhoneID;    // 15C
 	int phoneNumber;         // 160
-	int unk7_2;              // 164
+	int unk5;                // 164
 	int displayPhoneNumber;  // 168
 	int enteredPhoneNumber;  // 16C
-	padding unk7[0x278 - 0x16C - 4];
+	padding unk6[0x278 - 0x16C - 4];
 	int phoneTexture;  // 278
-	int unk0;          // 27C
+	int unk7;          // 27C
 	int vehicleID;     // 280
-	padding unk8[0x368 - 0x280 - 4];
+	padding unk8[0x2a0 - 0x280 - 4];
+	int cashSpread;      // 2A0
+	int cashBillAmount;  // 2A4
+	int cashPureValue;   // 2A8
+	padding unk9[0x368 - 0x2a8 - 4];
 	unsigned int computerCurrentLine;  // 368
 	unsigned int computerTopLine;      // 36c
 	//-1 for no cursor
 	int computerCursor;          // 370
 	char computerLines[32][64];  // 374
-	padding unk9[0xb74 - 0x374 - (64 * 32)];
+	padding unk10[0xb74 - 0x374 - (64 * 32)];
 	unsigned char computerLineColors[32][64];  // b74
-	padding unk10[0x1658 - 0xb74 - (64 * 32)];
+	padding unk11[0x1658 - 0xb74 - (64 * 32)];
 	int computerTeam;  // 1658
-	padding unk11[0x1B80 - 0x1658 - 4];
+	padding unk12[0x1B80 - 0x1658 - 4];
 
 	const char* getClass() const { return "Item"; }
 	std::string __tostring() const;
@@ -625,6 +632,9 @@ struct Item {
 	void computerSetLineColors(unsigned int line, std::string_view colors);
 	void computerSetColor(unsigned int line, unsigned int column,
 	                      unsigned char color);
+	void cashAddBill(int position, int value) const;
+	void cashRemoveBill(int position) const;
+	int cashGetBillValue() const;
 };
 
 // 99776 bytes (185C0)
@@ -676,13 +686,15 @@ struct Vehicle {
 	float steerControl;  // 3604
 	float gearY;         // 3608
 	float gasControl;    // 360c
-	padding unk7[0x3930 - 0x360c - 4];
+	padding unk7[0x3648 - 0x360c - 4];
+	int trafficCarID;    // 3648
+	padding unk8[0x3930 - 0x3648 - 4];
 	int engineRPM;  // 3930
-	padding unk8[0x4fa8 - 0x3930 - 4];
+	padding unk9[0x4fa8 - 0x3930 - 4];
 	int bladeBodyID;  // 4fa8
-	padding unk9[0x50dc - 0x4fa8 - 4];
+	padding unk10[0x50dc - 0x4fa8 - 4];
 	int numSeats;  // 50dc
-	padding unk10[0x5168 - 0x50dc - 4];
+	padding unk11[0x5168 - 0x50dc - 4];
 
 	const char* getClass() const { return "Vehicle"; }
 	std::string __tostring() const;
@@ -696,6 +708,8 @@ struct Vehicle {
 	sol::table getDataTable() const;
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
+	TrafficCar* getTrafficCar() const;
+	void setTrafficCar(TrafficCar* trafficCar);
 
 	Event* updateType() const;
 	Event* updateDestruction(int updateType, int partID, Vector* pos,
