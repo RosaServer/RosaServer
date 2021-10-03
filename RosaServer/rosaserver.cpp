@@ -551,9 +551,9 @@ void luaInit(bool redo) {
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
 		meta["cooldown"] = &Item::cooldown;
-		meta["billSpread"] = &Item::moneySpread;
-		meta["billAmount"] = &Item::moneyBillAmount;
-		meta["billValue"] = &Item::moneyBillValue;
+		meta["cashSpread"] = &Item::cashSpread;
+		meta["cashAmount"] = &Item::cashBillAmount;
+		meta["cashPureValue"] = &Item::cashPureValue;
 		meta["phoneNumber"] = &Item::phoneNumber;
 		meta["displayPhoneNumber"] = &Item::displayPhoneNumber;
 		meta["enteredPhoneNumber"] = &Item::enteredPhoneNumber;
@@ -593,9 +593,9 @@ void luaInit(bool redo) {
 		meta["computerSetLine"] = &Item::computerSetLine;
 		meta["computerSetLineColors"] = &Item::computerSetLineColors;
 		meta["computerSetColor"] = &Item::computerSetColor;
-		meta["moneyAddBill"] = &Item::moneyAddBill;
-		meta["moneyRemoveBill"] = &Item::moneyRemoveBill;
-		meta["moneyBillValue"] = &Item::moneyBillValue;
+		meta["cashAddBill"] = &Item::cashAddBill;
+		meta["cashRemoveBill"] = &Item::cashRemoveBill;
+		meta["cashGetBillValue"] = &Item::cashGetBillValue;
 	}
 
 	{
