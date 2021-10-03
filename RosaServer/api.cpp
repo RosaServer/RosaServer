@@ -1665,15 +1665,15 @@ void Item::computerSetColor(unsigned int line, unsigned int column,
 
 void Item::cashAddBill(int position, int value) const {
 	if (value > 8) throw std::invalid_argument(errorOutOfRange);
-	Engine::itemMoneyAddBill(getIndex(), position, value);
+	Engine::itemCashAddBill(getIndex(), position, value);
 }
 
 void Item::cashRemoveBill(int position) const {
-	Engine::itemMoneyRemoveBill(getIndex(), position);
+	Engine::itemCashRemoveBill(getIndex(), position);
 }
 
 int Item::cashGetBillValue() const {
-	return Engine::itemMoneyBillValue(getIndex());
+	return Engine::itemCashBillValue(getIndex());
 }
 
 std::string VehicleType::__tostring() const {
