@@ -122,7 +122,7 @@ itemSetMemoFunc itemSetMemo;
 itemComputerTransmitLineFunc itemComputerTransmitLine;
 itemCashAddBillFunc itemCashAddBill;
 itemCashRemoveBillFunc itemCashRemoveBill;
-itemCashBillValueFunc itemCashBillValue;
+itemCashGetBillValueFunc itemCashGetBillValue;
 voidIndexFunc itemComputerIncrementLine;
 itemComputerInputFunc itemComputerInput;
 humanApplyDamageFunc humanApplyDamage;

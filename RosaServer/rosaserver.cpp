@@ -1354,7 +1354,8 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::itemComputerInput = (Engine::itemComputerInputFunc)(base + 0x78000);
 	Engine::itemCashAddBill = (Engine::itemCashAddBillFunc)(base + 0x3c8a0);
 	Engine::itemCashRemoveBill = (Engine::itemCashRemoveBillFunc)(base + 0x3c990);
-	Engine::itemCashBillValue = (Engine::itemCashBillValueFunc)(base + 0x3c840);
+	Engine::itemCashGetBillValue =
+	    (Engine::itemCashGetBillValueFunc)(base + 0x3c840);
 
 	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x2b120);
 	Engine::humanCollisionVehicle =

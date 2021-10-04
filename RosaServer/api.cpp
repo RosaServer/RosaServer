@@ -1673,7 +1673,7 @@ void Item::cashRemoveBill(int position) const {
 }
 
 int Item::cashGetBillValue() const {
-	return Engine::itemCashBillValue(getIndex());
+	return Engine::itemCashGetBillValue(getIndex());
 }
 
 std::string VehicleType::__tostring() const {
