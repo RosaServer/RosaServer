@@ -1077,7 +1077,7 @@ void Connection::setPlayer(Player* player) {
 }
 
 EarShot* Connection::getEarShot(unsigned int idx) {
-	if (idx > 8) throw std::invalid_argument(errorOutOfRange);
+	if (idx >= 8) throw std::invalid_argument(errorOutOfRange);
 
 	return &earShots[idx];
 }
@@ -1664,7 +1664,7 @@ void Item::computerSetColor(unsigned int line, unsigned int column,
 }
 
 void Item::cashAddBill(int position, int value) const {
-	if (value > 8) throw std::invalid_argument(errorOutOfRange);
+	if (value >= 8) throw std::invalid_argument(errorOutOfRange);
 	Engine::itemCashAddBill(getIndex(), position, value);
 }
 
