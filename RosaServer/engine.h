@@ -155,7 +155,7 @@ typedef int (*itemSetMemoFunc)(int itemID, const char* memo);
 extern itemSetMemoFunc itemSetMemo;
 typedef int (*itemComputerTransmitLineFunc)(int itemID, unsigned int line);
 extern itemComputerTransmitLineFunc itemComputerTransmitLine;
-typedef bool (*itemCashAddBillFunc)(int itemID, int zero, int amount);
+typedef int (*itemCashAddBillFunc)(int itemID, int zero, int amount);
 extern itemCashAddBillFunc itemCashAddBill;
 typedef void (*itemCashRemoveBillFunc)(int itemID, int amount);
 extern itemCashRemoveBillFunc itemCashRemoveBill;
