@@ -37,7 +37,8 @@ nextTick(function ()
 			local ray = physics.lineIntersectHuman(
 				man,
 				Vector(-10, airLevel, 0),
-				Vector(10, airLevel, 0)
+				Vector(10, airLevel, 0),
+				0.0
 			)
 
 			assert(ray.hit)
@@ -48,7 +49,8 @@ nextTick(function ()
 			local fraction = assert(physics.lineIntersectHumanQuick(
 				man,
 				Vector(-10, airLevel, 0),
-				Vector(10, airLevel, 0)
+				Vector(10, airLevel, 0),
+				0.0
 			))
 
 			assert(fraction <= 0.5)

@@ -89,12 +89,13 @@ void clear();
 
 namespace physics {
 sol::table lineIntersectLevel(Vector* posA, Vector* posB);
-sol::table lineIntersectHuman(Human* man, Vector* posA, Vector* posB);
+sol::table lineIntersectHuman(Human* man, Vector* posA, Vector* posB,
+                              float padding);
 sol::table lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB);
 sol::object lineIntersectLevelQuick(Vector* posA, Vector* posB,
                                     sol::this_state s);
 sol::object lineIntersectHumanQuick(Human* man, Vector* posA, Vector* posB,
-                                    sol::this_state s);
+                                    float padding, sol::this_state s);
 sol::object lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA, Vector* posB,
                                       sol::this_state s);
 std::tuple<sol::object, sol::object> lineIntersectAnyQuick(Vector* posA,

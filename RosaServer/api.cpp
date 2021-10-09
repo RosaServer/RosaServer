@@ -217,10 +217,11 @@ sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
 	return table;
 }
 
-sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
+sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB,
+                                       float padding) {
 	sol::table table = lua->create_table();
 	subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
-	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, 0.f);
+	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, padding);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
@@ -262,11 +263,12 @@ sol::object physics::lineIntersectLevelQuick(Vector* posA, Vector* posB,
 }
 
 sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
-                                             Vector* posB, sol::this_state s) {
+                                             Vector* posB, float padding,
+                                             sol::this_state s) {
 	sol::state_view lua(s);
 
 	subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
-	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, 0.f);
+	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, padding);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
