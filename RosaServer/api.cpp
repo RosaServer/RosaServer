@@ -285,57 +285,67 @@ sol::object physics::lineIntersectVehicleQuick(Vehicle* vehicle, Vector* posA,
 	return sol::make_object(lua, sol::nil);
 }
 
-sol::object physics::lineIntersectAnyQuick(Vector* posA, Vector* posB,
-                                           Human* ignoreHuman,
-                                           sol::this_state s) {
+std::tuple<sol::object, sol::object> physics::lineIntersectAnyQuick(
+    Vector* posA, Vector* posB, Human* ignoreHuman, sol::this_state s) {
 	sol::state_view lua(s);
 
 	float nearestFraction = std::numeric_limits<float>::infinity();
-	int nearestObject = -1;
+	void* nearestObject = nullptr;
 	bool nearestIsVehicle = false;
 	int ignoreHumanId = ignoreHuman ? ignoreHuman->getIndex() : -1;
+	bool didHitLevel = false;
 
 	{
 		subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
 		if (Engine::lineIntersectLevel(posA, posB, 1)) {
 			nearestFraction = Engine::lineIntersectResult->fraction;
+			didHitLevel = true;
 		}
 	}
 
 	{
 		subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
 		for (int i = 0; i < maxNumberOfHumans; i++) {
-			if (i != ignoreHumanId && Engine::humans[i].active &&
+			Human* human = &Engine::humans[i];
+			if (i != ignoreHumanId && human->active &&
 			    Engine::lineIntersectHuman(i, posA, posB, 0.f)) {
 				float fraction = Engine::lineIntersectResult->fraction;
 				if (fraction < nearestFraction) {
 					nearestFraction = fraction;
-					nearestObject = i;
+					nearestObject = human;
 				}
 			}
 		}
 	}
 
 	for (int i = 0; i < maxNumberOfVehicles; i++) {
-		if (Engine::vehicles[i].active &&
-		    Engine::lineIntersectVehicle(i, posA, posB)) {
+		Vehicle* vehicle = &Engine::vehicles[i];
+		if (vehicle->active && Engine::lineIntersectVehicle(i, posA, posB)) {
 			float fraction = Engine::lineIntersectResult->fraction;
 			if (fraction < nearestFraction) {
 				nearestFraction = fraction;
-				nearestObject = i;
+				nearestObject = vehicle;
 				nearestIsVehicle = true;
 			}
 		}
 	}
 
-	if (nearestObject != -1) {
+	if (nearestObject) {
 		if (nearestIsVehicle) {
-			return sol::make_object(lua, &Engine::vehicles[nearestObject]);
+			return std::make_tuple(
+			    sol::make_object(lua, reinterpret_cast<Vehicle*>(nearestObject)),
+			    sol::make_object(lua, nearestFraction));
 		}
-		return sol::make_object(lua, &Engine::humans[nearestObject]);
+		return std::make_tuple(
+		    sol::make_object(lua, reinterpret_cast<Human*>(nearestObject)),
+		    sol::make_object(lua, nearestFraction));
 	}
 
-	return sol::make_object(lua, sol::nil);
+	if (didHitLevel) {
+		return std::make_tuple(sol::nil, sol::make_object(lua, nearestFraction));
+	}
+
+	return std::make_tuple(sol::nil, sol::nil);
 }
 
 sol::object physics::lineIntersectTriangle(Vector* outPos, Vector* normal,
