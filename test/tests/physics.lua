@@ -76,7 +76,8 @@ nextTick(function ()
 			local ray = physics.lineIntersectVehicle(
 				vehicle,
 				Vector(0, airLevel + 10, 0),
-				Vector(0, airLevel - 10, 0)
+				Vector(0, airLevel - 10, 0),
+				false
 			)
 
 			assert(ray.hit)
@@ -87,7 +88,8 @@ nextTick(function ()
 			local fraction = assert(physics.lineIntersectVehicleQuick(
 				vehicle,
 				Vector(0, airLevel + 10, 0),
-				Vector(0, airLevel - 10, 0)
+				Vector(0, airLevel - 10, 0),
+				false
 			))
 
 			assert(fraction <= 0.5)

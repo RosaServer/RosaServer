@@ -233,9 +233,10 @@ sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB,
 }
 
 sol::table physics::lineIntersectVehicle(Vehicle* vehicle, Vector* posA,
-                                         Vector* posB) {
+                                         Vector* posB, bool includeWheels) {
 	sol::table table = lua->create_table();
-	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB, 0);
+	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB,
+	                                       includeWheels);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
@@ -276,11 +277,12 @@ sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
 }
 
 sol::object physics::lineIntersectVehicleQuick(Vehicle* vehicle, Vector* posA,
-                                               Vector* posB,
+                                               Vector* posB, bool includeWheels,
                                                sol::this_state s) {
 	sol::state_view lua(s);
 
-	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB, 0);
+	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB,
+	                                       includeWheels);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
@@ -289,7 +291,7 @@ sol::object physics::lineIntersectVehicleQuick(Vehicle* vehicle, Vector* posA,
 
 std::tuple<sol::object, sol::object> physics::lineIntersectAnyQuick(
     Vector* posA, Vector* posB, Human* ignoreHuman, float humanPadding,
-    sol::this_state s) {
+    bool includeWheels, sol::this_state s) {
 	sol::state_view lua(s);
 
 	float nearestFraction = std::numeric_limits<float>::infinity();
@@ -323,7 +325,8 @@ std::tuple<sol::object, sol::object> physics::lineIntersectAnyQuick(
 
 	for (int i = 0; i < maxNumberOfVehicles; i++) {
 		Vehicle* vehicle = &Engine::vehicles[i];
-		if (vehicle->active && Engine::lineIntersectVehicle(i, posA, posB, 0)) {
+		if (vehicle->active &&
+		    Engine::lineIntersectVehicle(i, posA, posB, includeWheels)) {
 			float fraction = Engine::lineIntersectResult->fraction;
 			if (fraction < nearestFraction) {
 				nearestFraction = fraction;

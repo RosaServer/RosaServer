@@ -91,18 +91,17 @@ namespace physics {
 sol::table lineIntersectLevel(Vector* posA, Vector* posB);
 sol::table lineIntersectHuman(Human* man, Vector* posA, Vector* posB,
                               float padding);
-sol::table lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB);
+sol::table lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB,
+                                bool includeWheels);
 sol::object lineIntersectLevelQuick(Vector* posA, Vector* posB,
                                     sol::this_state s);
 sol::object lineIntersectHumanQuick(Human* man, Vector* posA, Vector* posB,
                                     float padding, sol::this_state s);
 sol::object lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA, Vector* posB,
-                                      sol::this_state s);
-std::tuple<sol::object, sol::object> lineIntersectAnyQuick(Vector* posA,
-                                                           Vector* posB,
-                                                           Human* ignoreHuman,
-                                                           float humanPadding,
-                                                           sol::this_state s);
+                                      bool includeWheels, sol::this_state s);
+std::tuple<sol::object, sol::object> lineIntersectAnyQuick(
+    Vector* posA, Vector* posB, Human* ignoreHuman, float humanPadding,
+    bool includeWheels, sol::this_state s);
 sol::object lineIntersectTriangle(Vector* outPos, Vector* normal, Vector* posA,
                                   Vector* posB, Vector* triA, Vector* triB,
                                   Vector* triC, sol::this_state s);
