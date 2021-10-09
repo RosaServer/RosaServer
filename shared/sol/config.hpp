@@ -7,4 +7,4 @@
 // For whatever reason, the automatic detection doesn't work
 #define SOL_IN_DEBUG_DETECTED 0
 
-#endif // SOL_SINGLE_CONFIG_HPP
+#endif  // SOL_SINGLE_CONFIG_HPP
