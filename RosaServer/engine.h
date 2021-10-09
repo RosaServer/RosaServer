@@ -304,7 +304,7 @@ typedef int (*lineIntersectHumanFunc)(int humanID, Vector* posA, Vector* posB,
 extern lineIntersectHumanFunc lineIntersectHuman;
 
 typedef int (*lineIntersectVehicleFunc)(int vehicleID, Vector* posA,
-                                        Vector* posB);
+                                        Vector* posB, int includeWheels);
 extern lineIntersectVehicleFunc lineIntersectVehicle;
 
 typedef int (*lineIntersectTriangleFunc)(Vector* outPos, Vector* normal,

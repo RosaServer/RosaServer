@@ -1410,7 +1410,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::lineIntersectHuman = (Engine::lineIntersectHumanFunc)(base + 0x3a200);
 	Engine::lineIntersectLevel = (Engine::lineIntersectLevelFunc)(base + 0x88cf0);
 	Engine::lineIntersectVehicle =
-	    (Engine::lineIntersectVehicleFunc)(base + 0x689a0);
+	    (Engine::lineIntersectVehicleFunc)(base + 0x6b2a0);
 	Engine::lineIntersectTriangle =
 	    (Engine::lineIntersectTriangleFunc)(base + 0x8ef0);
 }

@@ -100,6 +100,7 @@ sol::object lineIntersectVehicleQuick(Vehicle* vcl, Vector* posA, Vector* posB,
 std::tuple<sol::object, sol::object> lineIntersectAnyQuick(Vector* posA,
                                                            Vector* posB,
                                                            Human* ignoreHuman,
+                                                           float humanPadding,
                                                            sol::this_state s);
 sol::object lineIntersectTriangle(Vector* outPos, Vector* normal, Vector* posA,
                                   Vector* posB, Vector* triA, Vector* triB,
