@@ -295,7 +295,8 @@ extern createEventBulletHitFunc createEventBulletHit;
   Math
 */
 
-typedef int (*lineIntersectLevelFunc)(Vector* posA, Vector* posB, int unk);
+typedef int (*lineIntersectLevelFunc)(Vector* posA, Vector* posB,
+                                      int includeCityObjects);
 extern lineIntersectLevelFunc lineIntersectLevel;
 
 typedef int (*lineIntersectHumanFunc)(int humanID, Vector* posA, Vector* posB,
