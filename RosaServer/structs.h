@@ -167,7 +167,7 @@ struct LineIntersectResult {
 	int unk10;        // 48
 	int unk11;        // 4c
 	int unk12;        // 50
-	int unk13;        // 54
+	int areaId;       // 54
 	int blockX;       // 58
 	int blockY;       // 5c
 	int blockZ;       // 60
@@ -179,6 +179,9 @@ struct LineIntersectResult {
 	int unk22;        // 78
 	int unk23;        // 7c
 	int unk24;        // 80
+	int unk25;        // 84
+	int unk26;        // 88
+	int unk27;        // 8c
 };
 
 // 84 bytes (54)

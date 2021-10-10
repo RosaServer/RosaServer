@@ -88,12 +88,12 @@ void clear();
 };  // namespace hook
 
 namespace physics {
-sol::table lineIntersectLevel(Vector* posA, Vector* posB);
+sol::table lineIntersectLevel(Vector* posA, Vector* posB, bool onlyCity);
 sol::table lineIntersectHuman(Human* man, Vector* posA, Vector* posB,
                               float padding);
 sol::table lineIntersectVehicle(Vehicle* vcl, Vector* posA, Vector* posB,
                                 bool includeWheels);
-sol::object lineIntersectLevelQuick(Vector* posA, Vector* posB,
+sol::object lineIntersectLevelQuick(Vector* posA, Vector* posB, bool onlyCity,
                                     sol::this_state s);
 sol::object lineIntersectHumanQuick(Human* man, Vector* posA, Vector* posB,
                                     float padding, sol::this_state s);

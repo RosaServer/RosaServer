@@ -204,11 +204,12 @@ void hook::clear() {
 	}
 }
 
-sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
+sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB,
+                                       bool onlyCity) {
 	sol::table table = lua->create_table();
 	subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
-	int res = Engine::lineIntersectLevel(posA, posB, 1);
-	if (res) {
+	int res = Engine::lineIntersectLevel(posA, posB, !onlyCity);
+	if (res && (!onlyCity || Engine::lineIntersectResult->areaId != -1)) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
 		table["fraction"] = Engine::lineIntersectResult->fraction;
@@ -252,12 +253,12 @@ sol::table physics::lineIntersectVehicle(Vehicle* vehicle, Vector* posA,
 }
 
 sol::object physics::lineIntersectLevelQuick(Vector* posA, Vector* posB,
-                                             sol::this_state s) {
+                                             bool onlyCity, sol::this_state s) {
 	sol::state_view lua(s);
 
 	subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
-	int res = Engine::lineIntersectLevel(posA, posB, 1);
-	if (res) {
+	int res = Engine::lineIntersectLevel(posA, posB, !onlyCity);
+	if (res && (!onlyCity || Engine::lineIntersectResult->areaId != -1)) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
 	return sol::make_object(lua, sol::nil);

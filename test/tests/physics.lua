@@ -4,7 +4,8 @@ local airLevel = groundLevel * 2
 do
 	local ray = physics.lineIntersectLevel(
 		Vector(0, airLevel, 0),
-		Vector(0, 0, 0)
+		Vector(0, 0, 0),
+		false
 	)
 
 	assert(ray.hit)
@@ -14,7 +15,8 @@ do
 
 	local fraction = assert(physics.lineIntersectLevelQuick(
 		Vector(0, airLevel, 0),
-		Vector(0, 0, 0)
+		Vector(0, 0, 0),
+		false
 	))
 
 	assert(fraction == 0.5)
