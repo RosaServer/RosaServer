@@ -16,6 +16,7 @@
 #include "hooks.h"
 #include "image.h"
 #include "opusencoder.h"
+#include "pointgraph.h"
 #include "server.h"
 #include "sqlite.h"
 #include "worker.h"

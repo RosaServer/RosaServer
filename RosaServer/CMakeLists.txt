@@ -55,6 +55,7 @@ add_library (rosaserver SHARED
 	hooks.cpp
 	image.cpp
 	opusencoder.cpp
+	pointgraph.cpp
 	rosaserver.cpp
 	sqlite.cpp
 	worker.cpp

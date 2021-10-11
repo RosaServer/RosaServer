@@ -134,6 +134,17 @@ void defineThreadSafeAPIs(sol::state* state) {
 	}
 
 	{
+		auto meta = state->new_usertype<PointGraph>(
+		    "PointGraph", sol::constructors<PointGraph(unsigned int)>());
+		meta["getSize"] = &PointGraph::getSize;
+		meta["addNode"] = &PointGraph::addNode;
+		meta["getNodePoint"] = &PointGraph::getNodePoint;
+		meta["addLink"] = &PointGraph::addLink;
+		meta["getNodeByPoint"] = &PointGraph::getNodeByPoint;
+		meta["findShortestPath"] = &PointGraph::findShortestPath;
+	}
+
+	{
 		auto meta = state->new_usertype<FileWatcher>("FileWatcher");
 		meta["addWatch"] = &FileWatcher::addWatch;
 		meta["removeWatch"] = &FileWatcher::removeWatch;
