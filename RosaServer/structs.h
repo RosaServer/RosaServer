@@ -241,35 +241,53 @@ struct Player {
 	padding unk2[0x48 - 0x3C - 4];
 	int isReady;          // 48
 	int money;            // 4C
-	int unk2a;            // 50
-	int unk2b;            // 54
+	int unk3;             // 50
+	int unk4;             // 54
 	int corporateRating;  // 58
 	int criminalRating;   // 5c
-	padding unk3[0x84 - 0x5c - 4];
+	padding unk5[0x84 - 0x5c - 4];
 	unsigned int team;             // 84
 	unsigned int teamSwitchTimer;  // 88
 	int stocks;                    // 8c
-	int unk4[2];
+	int unk6[2];
 	int spawnTimer;  // 98
 	int humanID;     // 9c
-	padding unk5[0x164 - 0x9c - 4];
+	padding unk7[0xa0 - 0x9c - 4];
+	float gearX;             // a0
+	float leftRightInput;    // a4
+	float gearY;             // a8
+	float forwardBackInput;  // ac
+	int unk8;                // b0
+	float viewPitch;         // b4
+	float pointYaw;          // b8
+	float pointPitch;        // bc
+	float viewYaw;           // c0
+	padding unk9[0x120 - 0xc0 - 4];
+	unsigned int inputFlags;      // 120
+	unsigned int lastInputFlags;  // 124
+	padding unk10[0x134 - 0x124 - 4];
+	int zoomLevel;  // 134
+	padding unk11[0x158 - 0x134 - 4];
+	// 0 = none, 1 = human, 2 = in car, 3 = in helicopter
+	int inputType;  // 158
+	padding unk12[0x164 - 0x158 - 4];
 	// 0 = none, 1-19 = shop, 2X = base
 	int menuTab;  // 164
-	padding unk5_1[0x1b4 - 0x164 - 4];
+	padding unk13[0x1b4 - 0x164 - 4];
 	int numActions;      // 1b4
 	int lastNumActions;  // 1b8
-	padding unk5_2[0x1c8 - 0x1b8 - 4];
+	padding unk14[0x1c8 - 0x1b8 - 4];
 	Action actions[64];  // 1c8
-	padding unk6[0x1b14 - (0x1c8 + (sizeof(Action) * 64))];
+	padding unk15[0x1b14 - (0x1c8 + (sizeof(Action) * 64))];
 	int numMenuButtons;          // 1b14
 	MenuButton menuButtons[32];  // 1b18
-	padding unk6_1[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
+	padding unk16[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
 	int isBot;     // 2d18
 	int isZombie;  // 2d1c
-	padding unk7a[0x2d38 - 0x2d1c - 4];
+	padding unk17[0x2d38 - 0x2d1c - 4];
 	int botHasDestination;  // 2d38
 	Vector botDestination;  // 2d3c
-	padding unk7[0x37ac - 0x2d3c - 12];
+	padding unk18[0x37ac - 0x2d3c - 12];
 	int gender;     // 37ac
 	int skinColor;  // 37b0
 	int hairColor;  // 37b4
@@ -280,10 +298,10 @@ struct Player {
 	int suitColor;  // 37c4
 	// 0 = no tie
 	int tieColor;  // 37c8
-	int unk10;     // 37cc
+	int unk19;     // 37cc
 	int head;      // 37d0
 	int necklace;  // 37d4
-	padding unk11[0x3834 - 0x37d4 - 4];
+	padding unk20[0x3834 - 0x37d4 - 4];
 
 	const char* getClass() const { return "Player"; }
 	std::string __tostring() const;
