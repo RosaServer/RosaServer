@@ -218,6 +218,8 @@ void defineThreadSafeAPIs(sol::state* state) {
 void luaInit(bool redo) {
 	std::lock_guard<std::mutex> guard(stateResetMutex);
 
+	Hooks::run = sol::nil;
+
 	if (redo) {
 		Console::log(LUA_PREFIX "Resetting state...\n");
 		delete server;
@@ -1230,7 +1232,11 @@ void luaInit(bool redo) {
 	if (noLuaCallError(&load)) {
 		sol::protected_function_result res = load();
 		if (noLuaCallError(&res)) {
+			Hooks::run = (*lua)["hook"]["run"];
 			Console::log(LUA_PREFIX "No problems!\n");
+			if (Hooks::run == sol::nil) {
+				Console::log(LUA_PREFIX "To use hooks, define hook.run!\n");
+			}
 		}
 	}
 }

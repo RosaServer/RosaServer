@@ -6,6 +6,8 @@
 #include <unordered_map>
 
 namespace Hooks {
+extern sol::protected_function run;
+
 enum EnableKeys {
 	ResetGame,
 	CreateTraffic,

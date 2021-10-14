@@ -50,9 +50,8 @@ bool noLuaCallError(sol::load_result* res) {
 void hookAndReset(int reason) {
 	if (Hooks::enabledKeys[Hooks::EnableKeys::ResetGame]) {
 		bool noParent = false;
-		sol::protected_function func = (*lua)["hook"]["run"];
-		if (func != sol::nil) {
-			auto res = func("ResetGame", reason);
+		if (Hooks::run != sol::nil) {
+			auto res = Hooks::run("ResetGame", reason);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
@@ -60,8 +59,8 @@ void hookAndReset(int reason) {
 				subhook::ScopedHookRemove remove(&Hooks::resetGameHook);
 				Engine::resetGame();
 			}
-			if (func != sol::nil) {
-				auto res = func("PostResetGame", reason);
+			if (Hooks::run != sol::nil) {
+				auto res = Hooks::run("PostResetGame", reason);
 				noLuaCallError(&res);
 			}
 		}
