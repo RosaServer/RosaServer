@@ -401,7 +401,7 @@ void luaInit(bool redo) {
 		meta["subRosaID"] = &Player::subRosaID;
 		meta["phoneNumber"] = &Player::phoneNumber;
 		meta["money"] = &Player::money;
-		meta["moneySpent"] = &Player::moneySpent;
+		meta["teamMoney"] = &Player::teamMoney;
 		meta["budget"] = &Player::budget;
 		meta["corporateRating"] = &Player::corporateRating;
 		meta["criminalRating"] = &Player::criminalRating;
