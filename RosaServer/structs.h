@@ -241,8 +241,8 @@ struct Player {
 	padding unk2[0x48 - 0x3C - 4];
 	int isReady;          // 48
 	int money;            // 4C
-	int unk3;             // 50
-	int unk4;             // 54
+	int moneySpent;       // 50
+	int budget;           // 54
 	int corporateRating;  // 58
 	int criminalRating;   // 5c
 	padding unk5[0x84 - 0x5c - 4];
