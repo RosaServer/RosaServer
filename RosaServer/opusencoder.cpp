@@ -94,19 +94,46 @@ sol::object LuaOpusEncoder::encodeFrame(sol::this_state s) const {
 	    lua, std::string(reinterpret_cast<const char*>(output), length));
 }
 
-std::string LuaOpusEncoder::encodeFrameString(
-    std::string_view inputBytes) const {
-	if (inputBytes.size() != frameSize * sizeof(float)) {
-		throw std::invalid_argument(errorWrongLength);
+int LuaOpusEncoder::encodeFrameStringShorts(std::string_view inputBytes,
+                                            unsigned char output[]) const {
+	int length = opus_encode(
+	    encoder, reinterpret_cast<const opus_int16*>(inputBytes.data()),
+	    frameSize, output, maxPacketSize);
+	if (length < 0) {
+		throw std::runtime_error(opus_strerror(length));
 	}
+	return length;
+}
 
-	unsigned char output[maxPacketSize];
-
+int LuaOpusEncoder::encodeFrameStringFloats(std::string_view inputBytes,
+                                            unsigned char output[]) const {
 	int length = opus_encode_float(
 	    encoder, reinterpret_cast<const float*>(inputBytes.data()), frameSize,
 	    output, maxPacketSize);
 	if (length < 0) {
 		throw std::runtime_error(opus_strerror(length));
+	}
+	return length;
+}
+
+std::string LuaOpusEncoder::encodeFrameString(
+    std::string_view inputBytes) const {
+	unsigned char output[maxPacketSize];
+
+	int length;
+
+	switch (inputBytes.size()) {
+		case frameSize * sizeof(opus_int16):
+			length = encodeFrameStringShorts(inputBytes, output);
+			break;
+
+		case frameSize * sizeof(float):
+			length = encodeFrameStringFloats(inputBytes, output);
+			break;
+
+		default:
+			throw std::invalid_argument(errorWrongLength);
+			break;
 	}
 
 	return std::string(reinterpret_cast<const char*>(output), length);
