@@ -84,6 +84,9 @@ subRosa__printf_chkFunc subRosa__printf_chk;
 
 voidFunc resetGame;
 createTrafficFunc createTraffic;
+voidFunc trafficSimulation;
+aiTrafficCarFunc aiTrafficCar;
+aiTrafficCarDestinationFunc aiTrafficCarDestination;
 
 areaCreateBlockFunc areaCreateBlock;
 areaDeleteBlockFunc areaDeleteBlock;
@@ -117,6 +120,9 @@ scenarioArmHumanFunc scenarioArmHuman;
 linkItemFunc linkItem;
 itemSetMemoFunc itemSetMemo;
 itemComputerTransmitLineFunc itemComputerTransmitLine;
+itemCashAddBillFunc itemCashAddBill;
+itemCashRemoveBillFunc itemCashRemoveBill;
+itemCashGetBillValueFunc itemCashGetBillValue;
 voidIndexFunc itemComputerIncrementLine;
 itemComputerInputFunc itemComputerInput;
 humanApplyDamageFunc humanApplyDamage;

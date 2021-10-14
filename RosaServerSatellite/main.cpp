@@ -65,6 +65,20 @@ static void l_sendMessage(std::string message) {
 	}
 }
 
+// https://github.com/moonjit/moonjit/blob/master/doc/c_api.md#luajit_setmodel-idx-luajit_mode_wrapcfuncflag
+static int wrapExceptions(lua_State* L, lua_CFunction f) {
+	try {
+		return f(L);
+	} catch (const char* s) {
+		lua_pushstring(L, s);
+	} catch (std::exception& e) {
+		lua_pushstring(L, e.what());
+	} catch (...) {
+		lua_pushliteral(L, "caught (...)");
+	}
+	return lua_error(L);
+}
+
 int main(int argc, const char* argv[]) {
 	if (argc < 4) return CODE_INVALID_USAGE;
 
@@ -73,6 +87,11 @@ int main(int argc, const char* argv[]) {
 	const char* fileName = argv[3];
 
 	sol::state lua;
+	
+	lua_pushlightuserdata(lua, (void*)wrapExceptions);
+	luaJIT_setmode(lua, -1, LUAJIT_MODE_WRAPCFUNC | LUAJIT_MODE_ON);
+	lua_pop(lua, 1);
+
 	lua.open_libraries(sol::lib::base);
 	lua.open_libraries(sol::lib::package);
 	lua.open_libraries(sol::lib::coroutine);

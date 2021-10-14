@@ -25,6 +25,7 @@ struct RigidBody;
 struct Bond;
 struct StreetIntersection;
 struct Event;
+struct TrafficCar;
 
 // 40 bytes (28)
 struct EarShot {
@@ -166,7 +167,7 @@ struct LineIntersectResult {
 	int unk10;        // 48
 	int unk11;        // 4c
 	int unk12;        // 50
-	int unk13;        // 54
+	int areaId;       // 54
 	int blockX;       // 58
 	int blockY;       // 5c
 	int blockZ;       // 60
@@ -178,6 +179,9 @@ struct LineIntersectResult {
 	int unk22;        // 78
 	int unk23;        // 7c
 	int unk24;        // 80
+	int unk25;        // 84
+	int unk26;        // 88
+	int unk27;        // 8c
 };
 
 // 84 bytes (54)
@@ -237,35 +241,53 @@ struct Player {
 	padding unk2[0x48 - 0x3C - 4];
 	int isReady;          // 48
 	int money;            // 4C
-	int unk2a;            // 50
-	int unk2b;            // 54
+	int teamMoney;        // 50
+	int budget;           // 54
 	int corporateRating;  // 58
 	int criminalRating;   // 5c
-	padding unk3[0x84 - 0x5c - 4];
+	padding unk5[0x84 - 0x5c - 4];
 	unsigned int team;             // 84
 	unsigned int teamSwitchTimer;  // 88
 	int stocks;                    // 8c
-	int unk4[2];
+	int unk6[2];
 	int spawnTimer;  // 98
 	int humanID;     // 9c
-	padding unk5[0x164 - 0x9c - 4];
+	padding unk7[0xa0 - 0x9c - 4];
+	float gearX;             // a0
+	float leftRightInput;    // a4
+	float gearY;             // a8
+	float forwardBackInput;  // ac
+	int unk8;                // b0
+	float viewPitch;         // b4
+	float pointYaw;          // b8
+	float pointPitch;        // bc
+	float viewYaw;           // c0
+	padding unk9[0x120 - 0xc0 - 4];
+	unsigned int inputFlags;      // 120
+	unsigned int lastInputFlags;  // 124
+	padding unk10[0x134 - 0x124 - 4];
+	int zoomLevel;  // 134
+	padding unk11[0x158 - 0x134 - 4];
+	// 0 = none, 1 = human, 2 = in car, 3 = in helicopter
+	int inputType;  // 158
+	padding unk12[0x164 - 0x158 - 4];
 	// 0 = none, 1-19 = shop, 2X = base
 	int menuTab;  // 164
-	padding unk5_1[0x1b4 - 0x164 - 4];
+	padding unk13[0x1b4 - 0x164 - 4];
 	int numActions;      // 1b4
 	int lastNumActions;  // 1b8
-	padding unk5_2[0x1c8 - 0x1b8 - 4];
+	padding unk14[0x1c8 - 0x1b8 - 4];
 	Action actions[64];  // 1c8
-	padding unk6[0x1b14 - (0x1c8 + (sizeof(Action) * 64))];
+	padding unk15[0x1b14 - (0x1c8 + (sizeof(Action) * 64))];
 	int numMenuButtons;          // 1b14
 	MenuButton menuButtons[32];  // 1b18
-	padding unk6_1[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
+	padding unk16[0x2d18 - (0x1b18 + (sizeof(MenuButton) * 32))];
 	int isBot;     // 2d18
 	int isZombie;  // 2d1c
-	padding unk7a[0x2d38 - 0x2d1c - 4];
+	padding unk17[0x2d38 - 0x2d1c - 4];
 	int botHasDestination;  // 2d38
 	Vector botDestination;  // 2d3c
-	padding unk7[0x37ac - 0x2d3c - 12];
+	padding unk18[0x37ac - 0x2d3c - 12];
 	int gender;     // 37ac
 	int skinColor;  // 37b0
 	int hairColor;  // 37b4
@@ -276,10 +298,10 @@ struct Player {
 	int suitColor;  // 37c4
 	// 0 = no tie
 	int tieColor;  // 37c8
-	int unk10;     // 37cc
+	int unk19;     // 37cc
 	int head;      // 37d0
 	int necklace;  // 37d4
-	padding unk11[0x3834 - 0x37d4 - 4];
+	padding unk20[0x3834 - 0x37d4 - 4];
 
 	const char* getClass() const { return "Player"; }
 	std::string __tostring() const;
@@ -550,13 +572,13 @@ struct Item {
 	int physicsSettledTimer;  // 0c
 	int isStatic;             // 10
 	int type;                 // 14
-	int unk2;                 // 18
+	int unk0;                 // 18
 	int despawnTime;          // 1c
 	int grenadePrimerID;      // 20
 	int parentHumanID;        // 24
 	int parentItemID;         // 28
 	int parentSlot;           // 2c
-	padding unk5[0x58 - 0x2c - 4];
+	padding unk1[0x58 - 0x2c - 4];
 	int bodyID;     // 58
 	Vector pos;     // 5c
 	Vector pos2;    // 68
@@ -565,29 +587,35 @@ struct Item {
 	Vector vel3;    // 8c
 	Vector vel4;    // 98
 	RotMatrix rot;  // a4
-	padding unk6[0x144 - 0xa4 - 36];
-	int bullets;  // 144
-	padding unk7_1[0x15C - 0x144 - 4];
+	padding unk2[0x13c - 0xa4 - 36];
+	int cooldown;  // 13C
+	int unk3;      // 140
+	int bullets;   // 144
+	padding unk4[0x15C - 0x144 - 4];
 	int connectedPhoneID;    // 15C
 	int phoneNumber;         // 160
-	int unk7_2;              // 164
+	int unk5;                // 164
 	int displayPhoneNumber;  // 168
 	int enteredPhoneNumber;  // 16C
-	padding unk7[0x278 - 0x16C - 4];
+	padding unk6[0x278 - 0x16C - 4];
 	int phoneTexture;  // 278
-	int unk0;          // 27C
+	int unk7;          // 27C
 	int vehicleID;     // 280
-	padding unk8[0x368 - 0x280 - 4];
+	padding unk8[0x2a0 - 0x280 - 4];
+	int cashSpread;      // 2A0
+	int cashBillAmount;  // 2A4
+	int cashPureValue;   // 2A8
+	padding unk9[0x368 - 0x2a8 - 4];
 	unsigned int computerCurrentLine;  // 368
 	unsigned int computerTopLine;      // 36c
 	//-1 for no cursor
 	int computerCursor;          // 370
 	char computerLines[32][64];  // 374
-	padding unk9[0xb74 - 0x374 - (64 * 32)];
+	padding unk10[0xb74 - 0x374 - (64 * 32)];
 	unsigned char computerLineColors[32][64];  // b74
-	padding unk10[0x1658 - 0xb74 - (64 * 32)];
+	padding unk11[0x1658 - 0xb74 - (64 * 32)];
 	int computerTeam;  // 1658
-	padding unk11[0x1B80 - 0x1658 - 4];
+	padding unk12[0x1B80 - 0x1658 - 4];
 
 	const char* getClass() const { return "Item"; }
 	std::string __tostring() const;
@@ -625,6 +653,9 @@ struct Item {
 	void computerSetLineColors(unsigned int line, std::string_view colors);
 	void computerSetColor(unsigned int line, unsigned int column,
 	                      unsigned char color);
+	void cashAddBill(int position, int value) const;
+	void cashRemoveBill(int position) const;
+	int cashGetBillValue() const;
 };
 
 // 99776 bytes (185C0)
@@ -676,13 +707,15 @@ struct Vehicle {
 	float steerControl;  // 3604
 	float gearY;         // 3608
 	float gasControl;    // 360c
-	padding unk7[0x3930 - 0x360c - 4];
+	padding unk7[0x3648 - 0x360c - 4];
+	int trafficCarID;  // 3648
+	padding unk8[0x3930 - 0x3648 - 4];
 	int engineRPM;  // 3930
-	padding unk8[0x4fa8 - 0x3930 - 4];
+	padding unk9[0x4fa8 - 0x3930 - 4];
 	int bladeBodyID;  // 4fa8
-	padding unk9[0x50dc - 0x4fa8 - 4];
+	padding unk10[0x50dc - 0x4fa8 - 4];
 	int numSeats;  // 50dc
-	padding unk10[0x5168 - 0x50dc - 4];
+	padding unk11[0x5168 - 0x50dc - 4];
 
 	const char* getClass() const { return "Vehicle"; }
 	std::string __tostring() const;
@@ -696,6 +729,8 @@ struct Vehicle {
 	sol::table getDataTable() const;
 	Player* getLastDriver() const;
 	RigidBody* getRigidBody() const;
+	TrafficCar* getTrafficCar() const;
+	void setTrafficCar(TrafficCar* trafficCar);
 
 	Event* updateType() const;
 	Event* updateDestruction(int updateType, int partID, Vector* pos,
@@ -856,12 +891,15 @@ struct TrafficCar {
 	int type;       // 00
 	int humanID;    // 04
 	int vehicleID;  // 08
-	int unk0;       // 0c
+	int state;      // 0c
 	Vector pos;     // 10
 	Vector vel;     // 1c
 	float yaw;      // 28
 	RotMatrix rot;  // 2c
-	padding unk1[0x5d8 - 0x2c - sizeof(RotMatrix)];
+	padding unk0[0x7c - 0x2c - sizeof(RotMatrix)];
+	int isBot;         // 7c
+	int isAggressive;  // 80
+	padding unk1[0x5d8 - 0x80 - 4];
 	int color;  // 5d8
 	padding unk2[0x5fc - 0x5d8 - 4];
 
@@ -874,6 +912,10 @@ struct TrafficCar {
 	void setHuman(Human* human);
 	Vehicle* getVehicle() const;
 	void setVehicle(Vehicle* vehicle);
+	bool getIsBot() const { return isBot; };
+	void setIsBot(bool b) { isBot = b; };
+	bool getIsAggressive() const { return isAggressive; };
+	void setIsAggressive(bool b) { isAggressive = b; };
 };
 
 // 12 bytes (C)

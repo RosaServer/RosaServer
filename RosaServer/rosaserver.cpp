@@ -124,11 +124,24 @@ void defineThreadSafeAPIs(sol::state* state) {
 
 	{
 		auto meta = state->new_usertype<LuaOpusEncoder>("OpusEncoder");
+		meta["bitRate"] =
+		    sol::property(&LuaOpusEncoder::getBitRate, &LuaOpusEncoder::setBitRate);
 		meta["close"] = &LuaOpusEncoder::close;
 		meta["open"] = &LuaOpusEncoder::open;
 		meta["rewind"] = &LuaOpusEncoder::rewind;
 		meta["encodeFrame"] = sol::overload(&LuaOpusEncoder::encodeFrame,
 		                                    &LuaOpusEncoder::encodeFrameString);
+	}
+
+	{
+		auto meta = state->new_usertype<PointGraph>(
+		    "PointGraph", sol::constructors<PointGraph(unsigned int)>());
+		meta["getSize"] = &PointGraph::getSize;
+		meta["addNode"] = &PointGraph::addNode;
+		meta["getNodePoint"] = &PointGraph::getNodePoint;
+		meta["addLink"] = &PointGraph::addLink;
+		meta["getNodeByPoint"] = &PointGraph::getNodeByPoint;
+		meta["findShortestPath"] = &PointGraph::findShortestPath;
 	}
 
 	{
@@ -170,6 +183,13 @@ void defineThreadSafeAPIs(sol::state* state) {
 		zlibTable["uncompress"] = Lua::zlib::_uncompress;
 	}
 
+	{
+		auto cryptoTable = state->create_table();
+		(*state)["crypto"] = cryptoTable;
+		cryptoTable["md5"] = Lua::crypto::md5;
+		cryptoTable["sha256"] = Lua::crypto::sha256;
+	}
+
 	(*state)["FILE_WATCH_ACCESS"] = IN_ACCESS;
 	(*state)["FILE_WATCH_ATTRIB"] = IN_ATTRIB;
 	(*state)["FILE_WATCH_CLOSE_WRITE"] = IN_CLOSE_WRITE;
@@ -197,6 +217,8 @@ void defineThreadSafeAPIs(sol::state* state) {
 
 void luaInit(bool redo) {
 	std::lock_guard<std::mutex> guard(stateResetMutex);
+
+	Hooks::run = sol::nil;
 
 	if (redo) {
 		Console::log(LUA_PREFIX "Resetting state...\n");
@@ -381,12 +403,26 @@ void luaInit(bool redo) {
 		meta["subRosaID"] = &Player::subRosaID;
 		meta["phoneNumber"] = &Player::phoneNumber;
 		meta["money"] = &Player::money;
+		meta["teamMoney"] = &Player::teamMoney;
+		meta["budget"] = &Player::budget;
 		meta["corporateRating"] = &Player::corporateRating;
 		meta["criminalRating"] = &Player::criminalRating;
 		meta["team"] = &Player::team;
 		meta["teamSwitchTimer"] = &Player::teamSwitchTimer;
 		meta["stocks"] = &Player::stocks;
 		meta["spawnTimer"] = &Player::spawnTimer;
+		meta["gearX"] = &Player::gearX;
+		meta["leftRightInput"] = &Player::leftRightInput;
+		meta["gearY"] = &Player::gearY;
+		meta["forwardBackInput"] = &Player::forwardBackInput;
+		meta["viewPitch"] = &Player::viewPitch;
+		meta["pointYaw"] = &Player::pointYaw;
+		meta["pointPitch"] = &Player::pointPitch;
+		meta["viewYaw"] = &Player::viewYaw;
+		meta["inputFlags"] = &Player::inputFlags;
+		meta["lastInputFlags"] = &Player::lastInputFlags;
+		meta["zoomLevel"] = &Player::zoomLevel;
+		meta["inputType"] = &Player::inputType;
 		meta["menuTab"] = &Player::menuTab;
 		meta["numActions"] = &Player::numActions;
 		meta["lastNumActions"] = &Player::lastNumActions;
@@ -541,6 +577,10 @@ void luaInit(bool redo) {
 		meta["vel"] = &Item::vel;
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
+		meta["cooldown"] = &Item::cooldown;
+		meta["cashSpread"] = &Item::cashSpread;
+		meta["cashAmount"] = &Item::cashBillAmount;
+		meta["cashPureValue"] = &Item::cashPureValue;
 		meta["phoneNumber"] = &Item::phoneNumber;
 		meta["displayPhoneNumber"] = &Item::displayPhoneNumber;
 		meta["enteredPhoneNumber"] = &Item::enteredPhoneNumber;
@@ -580,6 +620,9 @@ void luaInit(bool redo) {
 		meta["computerSetLine"] = &Item::computerSetLine;
 		meta["computerSetLineColors"] = &Item::computerSetLineColors;
 		meta["computerSetColor"] = &Item::computerSetColor;
+		meta["cashAddBill"] = &Item::cashAddBill;
+		meta["cashRemoveBill"] = &Item::cashRemoveBill;
+		meta["cashGetBillValue"] = &Item::cashGetBillValue;
 	}
 
 	{
@@ -624,6 +667,8 @@ void luaInit(bool redo) {
 		meta["data"] = sol::property(&Vehicle::getDataTable);
 		meta["lastDriver"] = sol::property(&Vehicle::getLastDriver);
 		meta["rigidBody"] = sol::property(&Vehicle::getRigidBody);
+		meta["trafficCar"] =
+		    sol::property(&Vehicle::getTrafficCar, &Vehicle::setTrafficCar);
 
 		meta["updateType"] = &Vehicle::updateType;
 		meta["updateDestruction"] = &Vehicle::updateDestruction;
@@ -815,12 +860,16 @@ void luaInit(bool redo) {
 		meta["yaw"] = &TrafficCar::yaw;
 		meta["rot"] = &TrafficCar::rot;
 		meta["color"] = &TrafficCar::color;
+		meta["state"] = &TrafficCar::state;
 
 		meta["class"] = sol::property(&TrafficCar::getClass);
 		meta["__tostring"] = &TrafficCar::__tostring;
 		meta["index"] = sol::property(&TrafficCar::getIndex);
 		meta["type"] = sol::property(&TrafficCar::getType, &TrafficCar::setType);
 		meta["human"] = sol::property(&TrafficCar::getHuman, &TrafficCar::setHuman);
+		meta["isBot"] = sol::property(&TrafficCar::getIsBot, &TrafficCar::setIsBot);
+		meta["isAggressive"] = sol::property(&TrafficCar::getIsAggressive,
+		                                     &TrafficCar::setIsAggressive);
 		meta["vehicle"] =
 		    sol::property(&TrafficCar::getVehicle, &TrafficCar::setVehicle);
 	}
@@ -1183,7 +1232,11 @@ void luaInit(bool redo) {
 	if (noLuaCallError(&load)) {
 		sol::protected_function_result res = load();
 		if (noLuaCallError(&res)) {
+			Hooks::run = (*lua)["hook"]["run"];
 			Console::log(LUA_PREFIX "No problems!\n");
+			if (Hooks::run == sol::nil) {
+				Console::log(LUA_PREFIX "To use hooks, define hook.run!\n");
+			}
 		}
 	}
 }
@@ -1287,6 +1340,10 @@ static inline void locateMemory(uintptr_t base) {
 
 	Engine::resetGame = (Engine::voidFunc)(base + 0xbf380);
 	Engine::createTraffic = (Engine::createTrafficFunc)(base + 0x9f690);
+	Engine::trafficSimulation = (Engine::voidFunc)(base + 0xa28d0);
+	Engine::aiTrafficCar = (Engine::aiTrafficCarFunc)(base + 0xfe00);
+	Engine::aiTrafficCarDestination =
+	    (Engine::aiTrafficCarDestinationFunc)(base + 0xf7a0);
 
 	Engine::areaCreateBlock = (Engine::areaCreateBlockFunc)(base + 0x19920);
 	Engine::areaDeleteBlock = (Engine::areaDeleteBlockFunc)(base + 0x13800);
@@ -1326,6 +1383,10 @@ static inline void locateMemory(uintptr_t base) {
 	    (Engine::itemComputerTransmitLineFunc)(base + 0x3dd70);
 	Engine::itemComputerIncrementLine = (Engine::voidIndexFunc)(base + 0x3e0e0);
 	Engine::itemComputerInput = (Engine::itemComputerInputFunc)(base + 0x78000);
+	Engine::itemCashAddBill = (Engine::itemCashAddBillFunc)(base + 0x3c8a0);
+	Engine::itemCashRemoveBill = (Engine::itemCashRemoveBillFunc)(base + 0x3c990);
+	Engine::itemCashGetBillValue =
+	    (Engine::itemCashGetBillValueFunc)(base + 0x3c840);
 
 	Engine::humanApplyDamage = (Engine::humanApplyDamageFunc)(base + 0x2b120);
 	Engine::humanCollisionVehicle =
@@ -1380,7 +1441,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::lineIntersectHuman = (Engine::lineIntersectHumanFunc)(base + 0x3a200);
 	Engine::lineIntersectLevel = (Engine::lineIntersectLevelFunc)(base + 0x88cf0);
 	Engine::lineIntersectVehicle =
-	    (Engine::lineIntersectVehicleFunc)(base + 0x689a0);
+	    (Engine::lineIntersectVehicleFunc)(base + 0x6b2a0);
 	Engine::lineIntersectTriangle =
 	    (Engine::lineIntersectTriangleFunc)(base + 0x8ef0);
 }
@@ -1405,6 +1466,9 @@ static inline void installHooks() {
 	INSTALL(subRosa__printf_chk);
 	INSTALL(resetGame);
 	INSTALL(createTraffic);
+	INSTALL(trafficSimulation);
+	INSTALL(aiTrafficCar);
+	INSTALL(aiTrafficCarDestination);
 	INSTALL(areaCreateBlock);
 	INSTALL(areaDeleteBlock);
 	INSTALL(logicSimulation);
@@ -1455,6 +1519,7 @@ static inline void installHooks() {
 	INSTALL(createEventBullet);
 	INSTALL(createEventBulletHit);
 	INSTALL(lineIntersectHuman);
+	INSTALL(lineIntersectLevel);
 }
 
 static inline void attachInterruptSignalHandler() {

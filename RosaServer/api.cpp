@@ -21,6 +21,7 @@ sol::table* bodyDataTables[maxNumberOfRigidBodies] = {0};
 std::mutex stateResetMutex;
 
 static constexpr const char* errorOutOfRange = "Index out of range";
+static constexpr const char* missingArgument = "Missing argument";
 
 void printLuaError(sol::error* err) {
 	std::ostringstream stream;
@@ -49,9 +50,8 @@ bool noLuaCallError(sol::load_result* res) {
 void hookAndReset(int reason) {
 	if (Hooks::enabledKeys[Hooks::EnableKeys::ResetGame]) {
 		bool noParent = false;
-		sol::protected_function func = (*lua)["hook"]["run"];
-		if (func != sol::nil) {
-			auto res = func("ResetGame", reason);
+		if (Hooks::run != sol::nil) {
+			auto res = Hooks::run("ResetGame", reason);
 			if (noLuaCallError(&res)) noParent = (bool)res;
 		}
 		if (!noParent) {
@@ -59,8 +59,8 @@ void hookAndReset(int reason) {
 				subhook::ScopedHookRemove remove(&Hooks::resetGameHook);
 				Engine::resetGame();
 			}
-			if (func != sol::nil) {
-				auto res = func("PostResetGame", reason);
+			if (Hooks::run != sol::nil) {
+				auto res = Hooks::run("PostResetGame", reason);
 				noLuaCallError(&res);
 			}
 		}
@@ -203,10 +203,12 @@ void hook::clear() {
 	}
 }
 
-sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
+sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB,
+                                       bool onlyCity) {
 	sol::table table = lua->create_table();
-	int res = Engine::lineIntersectLevel(posA, posB, 1);
-	if (res) {
+	subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
+	int res = Engine::lineIntersectLevel(posA, posB, !onlyCity);
+	if (res && (!onlyCity || Engine::lineIntersectResult->areaId != -1)) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
 		table["fraction"] = Engine::lineIntersectResult->fraction;
@@ -215,10 +217,11 @@ sol::table physics::lineIntersectLevel(Vector* posA, Vector* posB) {
 	return table;
 }
 
-sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
+sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB,
+                                       float padding) {
 	sol::table table = lua->create_table();
 	subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
-	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, 0.f);
+	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, padding);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
@@ -230,9 +233,10 @@ sol::table physics::lineIntersectHuman(Human* man, Vector* posA, Vector* posB) {
 }
 
 sol::table physics::lineIntersectVehicle(Vehicle* vehicle, Vector* posA,
-                                         Vector* posB) {
+                                         Vector* posB, bool includeWheels) {
 	sol::table table = lua->create_table();
-	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB);
+	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB,
+	                                       includeWheels);
 	if (res) {
 		table["pos"] = Engine::lineIntersectResult->pos;
 		table["normal"] = Engine::lineIntersectResult->normal;
@@ -248,22 +252,24 @@ sol::table physics::lineIntersectVehicle(Vehicle* vehicle, Vector* posA,
 }
 
 sol::object physics::lineIntersectLevelQuick(Vector* posA, Vector* posB,
-                                             sol::this_state s) {
+                                             bool onlyCity, sol::this_state s) {
 	sol::state_view lua(s);
 
-	int res = Engine::lineIntersectLevel(posA, posB, 1);
-	if (res) {
+	subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
+	int res = Engine::lineIntersectLevel(posA, posB, !onlyCity);
+	if (res && (!onlyCity || Engine::lineIntersectResult->areaId != -1)) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
 	return sol::make_object(lua, sol::nil);
 }
 
 sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
-                                             Vector* posB, sol::this_state s) {
+                                             Vector* posB, float padding,
+                                             sol::this_state s) {
 	sol::state_view lua(s);
 
 	subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
-	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, 0.f);
+	int res = Engine::lineIntersectHuman(man->getIndex(), posA, posB, padding);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
@@ -271,65 +277,81 @@ sol::object physics::lineIntersectHumanQuick(Human* man, Vector* posA,
 }
 
 sol::object physics::lineIntersectVehicleQuick(Vehicle* vehicle, Vector* posA,
-                                               Vector* posB,
+                                               Vector* posB, bool includeWheels,
                                                sol::this_state s) {
 	sol::state_view lua(s);
 
-	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB);
+	int res = Engine::lineIntersectVehicle(vehicle->getIndex(), posA, posB,
+	                                       includeWheels);
 	if (res) {
 		return sol::make_object(lua, Engine::lineIntersectResult->fraction);
 	}
 	return sol::make_object(lua, sol::nil);
 }
 
-sol::object physics::lineIntersectAnyQuick(Vector* posA, Vector* posB,
-                                           Human* ignoreHuman,
-                                           sol::this_state s) {
+std::tuple<sol::object, sol::object> physics::lineIntersectAnyQuick(
+    Vector* posA, Vector* posB, Human* ignoreHuman, float humanPadding,
+    bool includeWheels, sol::this_state s) {
 	sol::state_view lua(s);
 
 	float nearestFraction = std::numeric_limits<float>::infinity();
-	int nearestObject = -1;
+	void* nearestObject = nullptr;
 	bool nearestIsVehicle = false;
 	int ignoreHumanId = ignoreHuman ? ignoreHuman->getIndex() : -1;
+	bool didHitLevel = false;
 
-	if (Engine::lineIntersectLevel(posA, posB, 1)) {
-		nearestFraction = Engine::lineIntersectResult->fraction;
+	{
+		subhook::ScopedHookRemove remove(&Hooks::lineIntersectLevelHook);
+		if (Engine::lineIntersectLevel(posA, posB, 1)) {
+			nearestFraction = Engine::lineIntersectResult->fraction;
+			didHitLevel = true;
+		}
 	}
 
 	{
 		subhook::ScopedHookRemove remove(&Hooks::lineIntersectHumanHook);
 		for (int i = 0; i < maxNumberOfHumans; i++) {
-			if (i != ignoreHumanId && Engine::humans[i].active &&
-			    Engine::lineIntersectHuman(i, posA, posB, 0.f)) {
+			Human* human = &Engine::humans[i];
+			if (i != ignoreHumanId && human->active &&
+			    Engine::lineIntersectHuman(i, posA, posB, humanPadding)) {
 				float fraction = Engine::lineIntersectResult->fraction;
 				if (fraction < nearestFraction) {
 					nearestFraction = fraction;
-					nearestObject = i;
+					nearestObject = human;
 				}
 			}
 		}
 	}
 
 	for (int i = 0; i < maxNumberOfVehicles; i++) {
-		if (Engine::vehicles[i].active &&
-		    Engine::lineIntersectVehicle(i, posA, posB)) {
+		Vehicle* vehicle = &Engine::vehicles[i];
+		if (vehicle->active &&
+		    Engine::lineIntersectVehicle(i, posA, posB, includeWheels)) {
 			float fraction = Engine::lineIntersectResult->fraction;
 			if (fraction < nearestFraction) {
 				nearestFraction = fraction;
-				nearestObject = i;
+				nearestObject = vehicle;
 				nearestIsVehicle = true;
 			}
 		}
 	}
 
-	if (nearestObject != -1) {
+	if (nearestObject) {
 		if (nearestIsVehicle) {
-			return sol::make_object(lua, &Engine::vehicles[nearestObject]);
+			return std::make_tuple(
+			    sol::make_object(lua, reinterpret_cast<Vehicle*>(nearestObject)),
+			    sol::make_object(lua, nearestFraction));
 		}
-		return sol::make_object(lua, &Engine::humans[nearestObject]);
+		return std::make_tuple(
+		    sol::make_object(lua, reinterpret_cast<Human*>(nearestObject)),
+		    sol::make_object(lua, nearestFraction));
 	}
 
-	return sol::make_object(lua, sol::nil);
+	if (didHitLevel) {
+		return std::make_tuple(sol::nil, sol::make_object(lua, nearestFraction));
+	}
+
+	return std::make_tuple(sol::nil, sol::nil);
 }
 
 sol::object physics::lineIntersectTriangle(Vector* outPos, Vector* normal,
@@ -1071,7 +1093,7 @@ void Connection::setPlayer(Player* player) {
 }
 
 EarShot* Connection::getEarShot(unsigned int idx) {
-	if (idx > 8) throw std::invalid_argument(errorOutOfRange);
+	if (idx >= 8) throw std::invalid_argument(errorOutOfRange);
 
 	return &earShots[idx];
 }
@@ -1122,10 +1144,12 @@ std::string Vector::__tostring() const {
 }
 
 Vector Vector::__add(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	return {x + other->x, y + other->y, z + other->z};
 }
 
 Vector Vector::__sub(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	return {x - other->x, y - other->y, z - other->z};
 }
 
@@ -1134,6 +1158,7 @@ Vector Vector::__mul(float scalar) const {
 }
 
 Vector Vector::__mul_RotMatrix(RotMatrix* rot) const {
+	if (!rot) throw std::invalid_argument(missingArgument);
 	return {rot->x1 * x + rot->y1 * y + rot->z1 * z,
 	        rot->x2 * x + rot->y2 * y + rot->z2 * z,
 	        rot->x3 * x + rot->y3 * y + rot->z3 * z};
@@ -1146,6 +1171,7 @@ Vector Vector::__div(float scalar) const {
 Vector Vector::__unm() const { return {-x, -y, -z}; }
 
 void Vector::add(Vector* other) {
+	if (!other) throw std::invalid_argument(missingArgument);
 	x += other->x;
 	y += other->y;
 	z += other->z;
@@ -1158,6 +1184,7 @@ void Vector::mult(float scalar) {
 }
 
 void Vector::set(Vector* other) {
+	if (!other) throw std::invalid_argument(missingArgument);
 	x = other->x;
 	y = other->y;
 	z = other->z;
@@ -1166,6 +1193,7 @@ void Vector::set(Vector* other) {
 Vector Vector::clone() const { return Vector{x, y, z}; }
 
 double Vector::dist(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	double dx = x - other->x;
 	double dy = y - other->y;
 	double dz = z - other->z;
@@ -1173,6 +1201,7 @@ double Vector::dist(Vector* other) const {
 }
 
 double Vector::distSquare(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	double dx = x - other->x;
 	double dy = y - other->y;
 	double dz = z - other->z;
@@ -1184,6 +1213,7 @@ double Vector::length() const { return sqrt(x * x + y * y + z * z); }
 double Vector::lengthSquare() const { return x * x + y * y + z * z; }
 
 double Vector::dot(Vector* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	return x * other->x + y * other->y + z * other->z;
 }
 
@@ -1209,6 +1239,7 @@ std::string RotMatrix::__tostring() const {
 }
 
 RotMatrix RotMatrix::__mul(RotMatrix* other) const {
+	if (!other) throw std::invalid_argument(missingArgument);
 	return {x1 * other->x1 + y1 * other->x2 + z1 * other->x3,
 	        x1 * other->y1 + y1 * other->y2 + z1 * other->y3,
 	        x1 * other->z1 + y1 * other->z2 + z1 * other->z3,
@@ -1223,6 +1254,7 @@ RotMatrix RotMatrix::__mul(RotMatrix* other) const {
 }
 
 void RotMatrix::set(RotMatrix* other) {
+	if (!other) throw std::invalid_argument(missingArgument);
 	x1 = other->x1;
 	y1 = other->y1;
 	z1 = other->z1;
@@ -1647,6 +1679,19 @@ void Item::computerSetColor(unsigned int line, unsigned int column,
 	computerLineColors[line][column] = color;
 }
 
+void Item::cashAddBill(int position, int value) const {
+	if (value >= 8) throw std::invalid_argument(errorOutOfRange);
+	Engine::itemCashAddBill(getIndex(), position, value);
+}
+
+void Item::cashRemoveBill(int position) const {
+	Engine::itemCashRemoveBill(getIndex(), position);
+}
+
+int Item::cashGetBillValue() const {
+	return Engine::itemCashGetBillValue(getIndex());
+}
+
 std::string VehicleType::__tostring() const {
 	char buf[16];
 	sprintf(buf, "VehicleType(%i)", getIndex());
@@ -1717,6 +1762,14 @@ Player* Vehicle::getLastDriver() const {
 }
 
 RigidBody* Vehicle::getRigidBody() const { return &Engine::bodies[bodyID]; }
+
+TrafficCar* Vehicle::getTrafficCar() const {
+	return trafficCarID == -1 ? nullptr : &Engine::trafficCars[trafficCarID];
+};
+
+void Vehicle::setTrafficCar(TrafficCar* trafficCar) {
+	trafficCarID = trafficCar == nullptr ? -1 : trafficCar->getIndex();
+};
 
 bool Vehicle::getIsWindowBroken(unsigned int idx) const {
 	if (idx >= 8) throw std::invalid_argument(errorOutOfRange);

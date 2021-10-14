@@ -4,7 +4,8 @@ local airLevel = groundLevel * 2
 do
 	local ray = physics.lineIntersectLevel(
 		Vector(0, airLevel, 0),
-		Vector(0, 0, 0)
+		Vector(0, 0, 0),
+		false
 	)
 
 	assert(ray.hit)
@@ -14,7 +15,8 @@ do
 
 	local fraction = assert(physics.lineIntersectLevelQuick(
 		Vector(0, airLevel, 0),
-		Vector(0, 0, 0)
+		Vector(0, 0, 0),
+		false
 	))
 
 	assert(fraction == 0.5)
@@ -37,7 +39,8 @@ nextTick(function ()
 			local ray = physics.lineIntersectHuman(
 				man,
 				Vector(-10, airLevel, 0),
-				Vector(10, airLevel, 0)
+				Vector(10, airLevel, 0),
+				0.0
 			)
 
 			assert(ray.hit)
@@ -48,7 +51,8 @@ nextTick(function ()
 			local fraction = assert(physics.lineIntersectHumanQuick(
 				man,
 				Vector(-10, airLevel, 0),
-				Vector(10, airLevel, 0)
+				Vector(10, airLevel, 0),
+				0.0
 			))
 
 			assert(fraction <= 0.5)
@@ -74,7 +78,8 @@ nextTick(function ()
 			local ray = physics.lineIntersectVehicle(
 				vehicle,
 				Vector(0, airLevel + 10, 0),
-				Vector(0, airLevel - 10, 0)
+				Vector(0, airLevel - 10, 0),
+				false
 			)
 
 			assert(ray.hit)
@@ -85,7 +90,8 @@ nextTick(function ()
 			local fraction = assert(physics.lineIntersectVehicleQuick(
 				vehicle,
 				Vector(0, airLevel + 10, 0),
-				Vector(0, airLevel - 10, 0)
+				Vector(0, airLevel - 10, 0),
+				false
 			))
 
 			assert(fraction <= 0.5)

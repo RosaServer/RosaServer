@@ -6,9 +6,14 @@
 #include <unordered_map>
 
 namespace Hooks {
+extern sol::protected_function run;
+
 enum EnableKeys {
 	ResetGame,
 	CreateTraffic,
+	TrafficSimulation,
+	TrafficCarAI,
+	TrafficCarDestination,
 	AreaCreateBlock,
 	AreaDeleteBlock,
 	InterruptSignal,
@@ -79,6 +84,15 @@ void resetGame();
 
 extern subhook::Hook createTrafficHook;
 void createTraffic(int amount);
+
+extern subhook::Hook trafficSimulationHook;
+void trafficSimulation();
+
+extern subhook::Hook aiTrafficCarHook;
+void aiTrafficCar(int id);
+
+extern subhook::Hook aiTrafficCarDestinationHook;
+void aiTrafficCarDestination(int id, int a, int b, int c, int d);
 
 extern subhook::Hook areaCreateBlockHook;
 void areaCreateBlock(int zero, int blockX, int blockY, int blockZ,
@@ -200,6 +214,8 @@ void createEventBulletHit(int unk, int hitType, Vector* pos, Vector* normal);
 
 extern subhook::Hook lineIntersectHumanHook;
 int lineIntersectHuman(int humanID, Vector* posA, Vector* posB, float padding);
+extern subhook::Hook lineIntersectLevelHook;
+int lineIntersectLevel(Vector* posA, Vector* posB, int unk);
 
 struct Float {
 	float value;
@@ -212,4 +228,6 @@ struct Integer {
 struct UnsignedInteger {
 	unsigned int value;
 };
+
+extern bool isInBulletSimulation;
 };  // namespace Hooks

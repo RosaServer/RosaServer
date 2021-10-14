@@ -93,9 +93,15 @@ typedef void (*voidFunc)();
 typedef void (*voidIndexFunc)(int id);
 
 typedef void (*createTrafficFunc)(int amount);
+typedef void (*aiTrafficCarFunc)(int id);
+typedef void (*aiTrafficCarDestinationFunc)(int id, int a, int b, int c, int d);
+typedef long (*aiFunc)(float a, int b, int c, int d, int e, int f);
 
 extern voidFunc resetGame;
 extern createTrafficFunc createTraffic;
+extern voidFunc trafficSimulation;
+extern aiTrafficCarFunc aiTrafficCar;
+extern aiTrafficCarDestinationFunc aiTrafficCarDestination;
 
 typedef int (*areaCreateBlockFunc)(int zero, int blockX, int blockY, int blockZ,
                                    unsigned int flags, short unk[8]);
@@ -149,6 +155,12 @@ typedef int (*itemSetMemoFunc)(int itemID, const char* memo);
 extern itemSetMemoFunc itemSetMemo;
 typedef int (*itemComputerTransmitLineFunc)(int itemID, unsigned int line);
 extern itemComputerTransmitLineFunc itemComputerTransmitLine;
+typedef int (*itemCashAddBillFunc)(int itemID, int zero, int amount);
+extern itemCashAddBillFunc itemCashAddBill;
+typedef void (*itemCashRemoveBillFunc)(int itemID, int amount);
+extern itemCashRemoveBillFunc itemCashRemoveBill;
+typedef int (*itemCashGetBillValueFunc)(int itemID);
+extern itemCashGetBillValueFunc itemCashGetBillValue;
 extern voidIndexFunc itemComputerIncrementLine;
 typedef int (*itemComputerInputFunc)(int itemID, unsigned int character);
 extern itemComputerInputFunc itemComputerInput;
@@ -283,7 +295,8 @@ extern createEventBulletHitFunc createEventBulletHit;
   Math
 */
 
-typedef int (*lineIntersectLevelFunc)(Vector* posA, Vector* posB, int unk);
+typedef int (*lineIntersectLevelFunc)(Vector* posA, Vector* posB,
+                                      int includeCityObjects);
 extern lineIntersectLevelFunc lineIntersectLevel;
 
 typedef int (*lineIntersectHumanFunc)(int humanID, Vector* posA, Vector* posB,
@@ -291,7 +304,7 @@ typedef int (*lineIntersectHumanFunc)(int humanID, Vector* posA, Vector* posB,
 extern lineIntersectHumanFunc lineIntersectHuman;
 
 typedef int (*lineIntersectVehicleFunc)(int vehicleID, Vector* posA,
-                                        Vector* posB);
+                                        Vector* posB, int includeWheels);
 extern lineIntersectVehicleFunc lineIntersectVehicle;
 
 typedef int (*lineIntersectTriangleFunc)(Vector* outPos, Vector* normal,
