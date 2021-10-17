@@ -611,6 +611,16 @@ sol::table players::getNonBots() {
 	return arr;
 }
 
+sol::table players::getBots() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < maxNumberOfPlayers; i++) {
+		auto ply = &Engine::players[i];
+		if (!ply->active || !ply->isBot) continue;
+		arr.add(ply);
+	}
+	return arr;
+}
+
 Player* players::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfPlayers) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::players[idx];

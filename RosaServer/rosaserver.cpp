@@ -994,6 +994,7 @@ void luaInit(bool redo) {
 		playersTable["getAll"] = Lua::players::getAll;
 		playersTable["getByPhone"] = Lua::players::getByPhone;
 		playersTable["getNonBots"] = Lua::players::getNonBots;
+		playersTable["getBots"] = Lua::players::getBots;
 		playersTable["createBot"] = Lua::players::createBot;
 
 		sol::table _meta = lua->create_table();
