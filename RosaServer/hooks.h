@@ -65,6 +65,7 @@ enum EnableKeys {
 	EventMessage,
 	EventUpdatePlayer,
 	EventUpdateVehicle,
+	EventSound,
 	EventBullet,
 	EventBulletHit,
 	LineIntersectHuman,
@@ -207,6 +208,8 @@ void createEventUpdatePlayer(int id);
 extern subhook::Hook createEventUpdateVehicleHook;
 void createEventUpdateVehicle(int vehicleID, int updateType, int partID,
                               Vector* pos, Vector* normal);
+extern subhook::Hook createEventSoundHook;
+void createEventSound(int soundType, Vector* pos, float volume, float pitch);
 extern subhook::Hook createEventBulletHook;
 void createEventBullet(int bulletType, Vector* pos, Vector* vel, int itemID);
 extern subhook::Hook createEventBulletHitHook;

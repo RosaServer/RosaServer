@@ -1516,6 +1516,7 @@ static inline void installHooks() {
 	INSTALL(createEventMessage);
 	INSTALL(createEventUpdatePlayer);
 	INSTALL(createEventUpdateVehicle);
+	INSTALL(createEventSound);
 	INSTALL(createEventBullet);
 	INSTALL(createEventBulletHit);
 	INSTALL(lineIntersectHuman);
