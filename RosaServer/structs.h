@@ -3,6 +3,7 @@
 #include <cstring>
 #include <string>
 #include <tuple>
+
 #include "sol/sol.hpp"
 
 static constexpr int maxNumberOfAccounts = 32768;
@@ -257,7 +258,7 @@ struct Player {
 	float leftRightInput;    // a4
 	float gearY;             // a8
 	float forwardBackInput;  // ac
-	int unk8;                // b0
+	float viewYawDelta;      // b0
 	float viewPitch;         // b4
 	float pointYaw;          // b8
 	float pointPitch;        // bc
