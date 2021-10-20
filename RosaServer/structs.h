@@ -342,12 +342,14 @@ struct Player {
 // 312 bytes (138)
 struct Bone {
 	int bodyID;
-	Vector pos;
-	Vector pos2;
-	Vector vel;
-	Vector vel2;
-	RotMatrix rot;
-	padding unk[312 - 88];
+	Vector pos;     // 04
+	Vector pos2;    // 10
+	Vector vel;     // 1c
+	int unk0;       // 28
+	int unk1;       // 2c
+	int unk2;       // 30
+	RotMatrix rot;  // 34
+	padding unk3[0x138 - 0x34 - sizeof(RotMatrix)];
 
 	const char* getClass() const { return "Bone"; }
 };

@@ -694,6 +694,8 @@ void luaInit(bool redo) {
 		auto meta = lua->new_usertype<Bone>("new", sol::no_constructor);
 		meta["pos"] = &Bone::pos;
 		meta["pos2"] = &Bone::pos2;
+		meta["vel"] = &Bone::vel;
+		meta["rot"] = &Bone::rot;
 
 		meta["class"] = sol::property(&Bone::getClass);
 	}
