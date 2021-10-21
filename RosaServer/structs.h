@@ -263,7 +263,9 @@ struct Player {
 	float pointYaw;          // b8
 	float pointPitch;        // bc
 	float viewYaw;           // c0
-	padding unk9[0x120 - 0xc0 - 4];
+	padding unk8[0xe4 - 0xc0 - 4];
+	float viewPitchDelta;  // e4
+	padding unk9[0x120 - 0xe4 - 4];
 	unsigned int inputFlags;      // 120
 	unsigned int lastInputFlags;  // 124
 	padding unk10[0x134 - 0x124 - 4];
@@ -419,7 +421,9 @@ struct Human {
 	float strafeInput;  // 12c
 	float unk21;        // 130
 	float walkInput;    // 134
-	padding unk22[0x214 - 0x134 - 4];
+	int unk22;          // 138
+	float viewPitch2;   // 13c
+	padding unk23[0x214 - 0x13c - 4];
 	/*
 	mouse1 = 1		1 << 0
 	mouse2 = 2		1 << 1
@@ -437,26 +441,26 @@ struct Human {
 	*/
 	unsigned int inputFlags;      // 214
 	unsigned int lastInputFlags;  // 218
-	padding unk23[0x220 - 0x218 - 4];
+	padding unk24[0x220 - 0x218 - 4];
 	Bone bones[16];  // 220
-	padding unk24[0x6ad0 - (0x220 + (sizeof(Bone) * 16))];
+	padding unk25[0x6ad0 - (0x220 + (sizeof(Bone) * 16))];
 	InventorySlot inventorySlots[6];  // 6ad0
-	padding unk25[0x6d50 - (0x6ad0 + (sizeof(InventorySlot) * 6))];
+	padding unk26[0x6d50 - (0x6ad0 + (sizeof(InventorySlot) * 6))];
 	int health;      // 6d50
 	int bloodLevel;  // 6d54
 	int isBleeding;  // 6d58
 	int chestHP;     // 6d5c
-	int unk26;       // 6d60
+	int unk27;       // 6d60
 	int headHP;      // 6d64
-	int unk27;       // 6d68
+	int unk28;       // 6d68
 	int leftArmHP;   // 6d6c
-	int unk28;       // 6d70
+	int unk29;       // 6d70
 	int rightArmHP;  // 6d74
-	int unk29;       // 6d78
+	int unk30;       // 6d78
 	int leftLegHP;   // 6d7c
-	int unk30;       // 6d80
+	int unk31;       // 6d80
 	int rightLegHP;  // 6d84
-	padding unk30_1[0x6ddc - 0x6d84 - 4];
+	padding unk32[0x6ddc - 0x6d84 - 4];
 	int progressBar;                        // 6ddc
 	int inventoryAnimationFlags;            // 6de0
 	float inventoryAnimationProgress;       // 6de4
@@ -465,7 +469,7 @@ struct Human {
 	int inventoryAnimationSlot;             // 6df0
 	int inventoryAnimationCounterFinished;  // 6df4
 	int inventoryAnimationCounter;          // 6df8
-	padding unk31[0x6f80 - 0x6df8 - 4];
+	padding unk33[0x6f80 - 0x6df8 - 4];
 	int gender;                  // 6f80
 	int head;                    // 6f84
 	int skinColor;               // 6f88
@@ -475,10 +479,10 @@ struct Human {
 	int model;                   // 6f98
 	int suitColor;               // 6f9c
 	int tieColor;                // 6fa0
-	int unk32;                   // 6fa4
+	int unk34;                   // 6fa4
 	int necklace;                // 6fa8
 	int lastUpdatedWantedGroup;  // 6fac
-	padding unk33[0x6FF8 - 0x6fac - 4];
+	padding unk35[0x6FF8 - 0x6fac - 4];
 
 	const char* getClass() const { return "Human"; }
 	std::string __tostring() const;

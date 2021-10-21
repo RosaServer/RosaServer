@@ -420,6 +420,7 @@ void luaInit(bool redo) {
 		meta["pointYaw"] = &Player::pointYaw;
 		meta["pointPitch"] = &Player::pointPitch;
 		meta["viewYaw"] = &Player::viewYaw;
+		meta["viewPitchDelta"] = &Player::viewPitchDelta;
 		meta["inputFlags"] = &Player::inputFlags;
 		meta["lastInputFlags"] = &Player::lastInputFlags;
 		meta["zoomLevel"] = &Player::zoomLevel;
@@ -481,6 +482,7 @@ void luaInit(bool redo) {
 		meta["viewYaw2"] = &Human::viewYaw2;
 		meta["strafeInput"] = &Human::strafeInput;
 		meta["walkInput"] = &Human::walkInput;
+		meta["viewPitch2"] = &Human::viewPitch2;
 		meta["inputFlags"] = &Human::inputFlags;
 		meta["lastInputFlags"] = &Human::lastInputFlags;
 		meta["health"] = &Human::health;
