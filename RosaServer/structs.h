@@ -413,11 +413,13 @@ struct Human {
 	Vector pos2;      // 8c
 	float viewYaw;    // 98
 	float viewPitch;  // 9c
-	padding unk19[0x12c - 0x9c - 4];
+	padding unk19[0xd8 - 0x9c - 4];
+	float viewYaw2;  // d8
+	padding unk20[0x12c - 0xd8 - 4];
 	float strafeInput;  // 12c
-	float unk20;        // 130
+	float unk21;        // 130
 	float walkInput;    // 134
-	padding unk21[0x214 - 0x134 - 4];
+	padding unk22[0x214 - 0x134 - 4];
 	/*
 	mouse1 = 1		1 << 0
 	mouse2 = 2		1 << 1
@@ -435,9 +437,9 @@ struct Human {
 	*/
 	unsigned int inputFlags;      // 214
 	unsigned int lastInputFlags;  // 218
-	padding unk22[0x220 - 0x218 - 4];
+	padding unk23[0x220 - 0x218 - 4];
 	Bone bones[16];  // 220
-	padding unk23[0x6ad0 - (0x220 + (sizeof(Bone) * 16))];
+	padding unk24[0x6ad0 - (0x220 + (sizeof(Bone) * 16))];
 	InventorySlot inventorySlots[6];  // 6ad0
 	padding unk25[0x6d50 - (0x6ad0 + (sizeof(InventorySlot) * 6))];
 	int health;      // 6d50

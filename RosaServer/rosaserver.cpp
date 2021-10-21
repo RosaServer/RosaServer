@@ -478,6 +478,7 @@ void luaInit(bool redo) {
 		meta["pos"] = &Human::pos;
 		meta["viewYaw"] = &Human::viewYaw;
 		meta["viewPitch"] = &Human::viewPitch;
+		meta["viewYaw2"] = &Human::viewYaw2;
 		meta["strafeInput"] = &Human::strafeInput;
 		meta["walkInput"] = &Human::walkInput;
 		meta["inputFlags"] = &Human::inputFlags;
