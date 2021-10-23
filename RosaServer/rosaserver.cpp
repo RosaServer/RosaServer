@@ -417,8 +417,8 @@ void luaInit(bool redo) {
 		meta["forwardBackInput"] = &Player::forwardBackInput;
 		meta["viewYawDelta"] = &Player::viewYawDelta;
 		meta["viewPitch"] = &Player::viewPitch;
-		meta["pointYaw"] = &Player::pointYaw;
-		meta["pointPitch"] = &Player::pointPitch;
+		meta["freeLookYaw"] = &Player::freeLookYaw;
+		meta["freeLookPitch"] = &Player::freeLookPitch;
 		meta["viewYaw"] = &Player::viewYaw;
 		meta["viewPitchDelta"] = &Player::viewPitchDelta;
 		meta["inputFlags"] = &Player::inputFlags;

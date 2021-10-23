@@ -260,8 +260,8 @@ struct Player {
 	float forwardBackInput;  // ac
 	float viewYawDelta;      // b0
 	float viewPitch;         // b4
-	float pointYaw;          // b8
-	float pointPitch;        // bc
+	float freeLookYaw;       // b8
+	float freeLookPitch;     // bc
 	float viewYaw;           // c0
 	padding unk8[0xe4 - 0xc0 - 4];
 	float viewPitchDelta;  // e4
