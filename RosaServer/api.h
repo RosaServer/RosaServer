@@ -160,6 +160,7 @@ int getCount();
 sol::table getAll();
 Player* getByPhone(int phone);
 sol::table getNonBots();
+sol::table getBots();
 Player* getByIndex(sol::table self, unsigned int idx);
 Player* createBot();
 };  // namespace players

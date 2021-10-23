@@ -611,6 +611,16 @@ sol::table players::getNonBots() {
 	return arr;
 }
 
+sol::table players::getBots() {
+	auto arr = lua->create_table();
+	for (int i = 0; i < maxNumberOfPlayers; i++) {
+		auto ply = &Engine::players[i];
+		if (!ply->active || !ply->isBot) continue;
+		arr.add(ply);
+	}
+	return arr;
+}
+
 Player* players::getByIndex(sol::table self, unsigned int idx) {
 	if (idx >= maxNumberOfPlayers) throw std::invalid_argument(errorOutOfRange);
 	return &Engine::players[idx];
@@ -854,11 +864,13 @@ Event* events::createMessage(int messageType, const char* message,
 
 Event* events::createSound(int soundType, Vector* pos, float volume,
                            float pitch) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventSoundHook);
 	Engine::createEventSound(soundType, pos, volume, pitch);
 	return &Engine::events[*Engine::numEvents - 1];
 }
 
 Event* events::createSoundSimple(int soundType, Vector* pos) {
+	subhook::ScopedHookRemove remove(&Hooks::createEventSoundHook);
 	Engine::createEventSound(soundType, pos, 1.0f, 1.0f);
 	return &Engine::events[*Engine::numEvents - 1];
 }

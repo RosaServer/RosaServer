@@ -415,10 +415,12 @@ void luaInit(bool redo) {
 		meta["leftRightInput"] = &Player::leftRightInput;
 		meta["gearY"] = &Player::gearY;
 		meta["forwardBackInput"] = &Player::forwardBackInput;
+		meta["viewYawDelta"] = &Player::viewYawDelta;
 		meta["viewPitch"] = &Player::viewPitch;
 		meta["pointYaw"] = &Player::pointYaw;
 		meta["pointPitch"] = &Player::pointPitch;
 		meta["viewYaw"] = &Player::viewYaw;
+		meta["viewPitchDelta"] = &Player::viewPitchDelta;
 		meta["inputFlags"] = &Player::inputFlags;
 		meta["lastInputFlags"] = &Player::lastInputFlags;
 		meta["zoomLevel"] = &Player::zoomLevel;
@@ -477,8 +479,10 @@ void luaInit(bool redo) {
 		meta["pos"] = &Human::pos;
 		meta["viewYaw"] = &Human::viewYaw;
 		meta["viewPitch"] = &Human::viewPitch;
+		meta["viewYaw2"] = &Human::viewYaw2;
 		meta["strafeInput"] = &Human::strafeInput;
 		meta["walkInput"] = &Human::walkInput;
+		meta["viewPitch2"] = &Human::viewPitch2;
 		meta["inputFlags"] = &Human::inputFlags;
 		meta["lastInputFlags"] = &Human::lastInputFlags;
 		meta["health"] = &Human::health;
@@ -693,6 +697,8 @@ void luaInit(bool redo) {
 		auto meta = lua->new_usertype<Bone>("new", sol::no_constructor);
 		meta["pos"] = &Bone::pos;
 		meta["pos2"] = &Bone::pos2;
+		meta["vel"] = &Bone::vel;
+		meta["rot"] = &Bone::rot;
 
 		meta["class"] = sol::property(&Bone::getClass);
 	}
@@ -994,6 +1000,7 @@ void luaInit(bool redo) {
 		playersTable["getAll"] = Lua::players::getAll;
 		playersTable["getByPhone"] = Lua::players::getByPhone;
 		playersTable["getNonBots"] = Lua::players::getNonBots;
+		playersTable["getBots"] = Lua::players::getBots;
 		playersTable["createBot"] = Lua::players::createBot;
 
 		sol::table _meta = lua->create_table();
@@ -1516,6 +1523,7 @@ static inline void installHooks() {
 	INSTALL(createEventMessage);
 	INSTALL(createEventUpdatePlayer);
 	INSTALL(createEventUpdateVehicle);
+	INSTALL(createEventSound);
 	INSTALL(createEventBullet);
 	INSTALL(createEventBulletHit);
 	INSTALL(lineIntersectHuman);

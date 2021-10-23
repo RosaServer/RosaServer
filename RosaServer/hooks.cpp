@@ -62,6 +62,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"EventMessage", EnableKeys::EventMessage},
      {"EventUpdatePlayer", EnableKeys::EventUpdatePlayer},
      {"EventUpdateVehicle", EnableKeys::EventUpdateVehicle},
+     {"EventSound", EnableKeys::EventSound},
      {"EventBullet", EnableKeys::EventBullet},
      {"EventBulletHit", EnableKeys::EventBulletHit},
      {"LineIntersectHuman", EnableKeys::LineIntersectHuman}});
@@ -121,6 +122,7 @@ subhook::Hook createRigidBodyHook;
 subhook::Hook createEventMessageHook;
 subhook::Hook createEventUpdatePlayerHook;
 subhook::Hook createEventUpdateVehicleHook;
+subhook::Hook createEventSoundHook;
 subhook::Hook createEventBulletHook;
 subhook::Hook createEventBulletHitHook;
 subhook::Hook lineIntersectHumanHook;
@@ -1596,6 +1598,42 @@ void createEventUpdateVehicle(int vehicleID, int updateType, int partID,
 		Engine::createEventUpdateVehicle(vehicleID, updateType, partID, pos,
 		                                 normal);
 	}
+}
+
+void createEventSound(int soundType, Vector* pos, float volume, float pitch) {
+	// Stop a segfault from gear shift sounds caused by the hook overwriting the
+	// r10 register used at subrosadedicated.38e.x64+6c542
+	uintptr_t r10;
+	asm("mov %%r10, %0" : "=r"(r10) :);
+
+	if (enabledKeys[EnableKeys::EventSound]) {
+		bool noParent = false;
+		if (run != sol::nil) {
+			Float wrappedVolume = {volume};
+			Float wrappedPitch = {pitch};
+
+			auto res = run("EventSound", soundType, pos, wrappedVolume, wrappedPitch);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+
+			volume = wrappedVolume.value;
+			pitch = wrappedPitch.value;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&createEventSoundHook);
+				Engine::createEventSound(soundType, pos, volume, pitch);
+			}
+			if (run != sol::nil) {
+				auto res = run("PostEventSound", soundType, pos, volume, pitch);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&createEventSoundHook);
+		Engine::createEventSound(soundType, pos, volume, pitch);
+	}
+
+	asm("mov %0, %%r10" : : "r"(r10));
 }
 
 void createEventBullet(int bulletType, Vector* pos, Vector* vel, int itemID) {
