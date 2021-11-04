@@ -641,6 +641,8 @@ struct Item {
 	void setPhysicsSettled(bool b) { physicsSettled = b; }
 	bool getIsStatic() const { return isStatic; }
 	void setIsStatic(bool b) { isStatic = b; }
+	bool getIsInPocket() const { return isInPocket; }
+	void setIsInPocket(bool b) { isInPocket = b; }
 	ItemType* getType();
 	void setType(ItemType* itemType);
 
@@ -650,6 +652,7 @@ struct Item {
 	Human* getParentHuman() const;
 	Item* getParentItem() const;
 	RigidBody* getRigidBody() const;
+	Item* getChildItem(int idx) const;
 	Item* getConnectedPhone() const;
 	void setConnectedPhone(Item* item);
 	Vehicle* getVehicle() const;
