@@ -652,7 +652,7 @@ struct Item {
 	Human* getParentHuman() const;
 	Item* getParentItem() const;
 	RigidBody* getRigidBody() const;
-	Item* getChildItem(int idx) const;
+	Item* getChildItem(unsigned int idx) const;
 	Item* getConnectedPhone() const;
 	void setConnectedPhone(Item* item);
 	Vehicle* getVehicle() const;
