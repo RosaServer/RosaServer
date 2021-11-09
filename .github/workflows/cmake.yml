@@ -18,9 +18,8 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-
-    - name: Checkout Submodules
-      uses: textbook/git-checkout-submodule-action@2.1.1
+      with:
+        submodules: recursive
     
     - name: Build moonjit
       shell: bash
