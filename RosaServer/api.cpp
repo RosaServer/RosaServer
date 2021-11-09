@@ -1627,7 +1627,7 @@ Item* Item::getParentItem() const {
 RigidBody* Item::getRigidBody() const { return &Engine::bodies[bodyID]; }
 
 Item* Item::getChildItem(int idx) const {
-	return (idx > childItemCount) ? nullptr : &Engine::items[childItemIDs[idx]];
+	return (idx >= childItemCount) ? nullptr : &Engine::items[childItemIDs[idx]];
 }
 
 Item* Item::getConnectedPhone() const {

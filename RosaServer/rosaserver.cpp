@@ -614,7 +614,7 @@ void luaInit(bool redo) {
 		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
 		meta["parentHuman"] = sol::property(&Item::getParentHuman);
 		meta["parentItem"] = sol::property(&Item::getParentItem);
-		meta["getChildItem"] = sol::property(&Item::getChildItem);
+		meta["getChildItem"] = &Item::getChildItem;
 
 		meta["remove"] = &Item::remove;
 		meta["mountItem"] = &Item::mountItem;
