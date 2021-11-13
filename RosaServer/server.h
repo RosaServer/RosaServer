@@ -81,6 +81,8 @@ struct Server {
 	void setRoundHasBonusRatio(bool ratio) const {
 		*Engine::Round::bonusRatio = ratio;
 	}
+	int getRoundWeekDay() const { return *Engine::Round::weekDay; }
+	void setRoundWeekDay(int day) const { *Engine::Round::weekDay = day; }
 	int getRoundTeamDamage() const { return *Engine::Round::teamDamage; }
 	void setRoundTeamDamage(int damage) const {
 		*Engine::Round::teamDamage = damage;
