@@ -1,9 +1,12 @@
 #include "api.h"
+
 #include <algorithm>
 #include <chrono>
 #include <filesystem>
 #include <limits>
+
 #include "console.h"
+
 
 bool initialized = false;
 bool shouldReset = false;
@@ -1627,7 +1630,9 @@ Item* Item::getParentItem() const {
 RigidBody* Item::getRigidBody() const { return &Engine::bodies[bodyID]; }
 
 Item* Item::getChildItem(unsigned int idx) const {
-	return (idx >= childItemCount) ? nullptr : &Engine::items[childItemIDs[idx]];
+	if (idx >= childItemCount) throw std::invalid_argument(errorOutOfRange);
+
+	return &Engine::items[childItemIDs[idx]];
 }
 
 Item* Item::getConnectedPhone() const {
