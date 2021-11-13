@@ -581,7 +581,7 @@ void luaInit(bool redo) {
 		meta["vel"] = &Item::vel;
 		meta["rot"] = &Item::rot;
 		meta["bullets"] = &Item::bullets;
-		meta["childItemCount"] = &Item::childItemCount;
+		meta["numChildItems"] = &Item::numChildItems;
 		meta["cooldown"] = &Item::cooldown;
 		meta["cashSpread"] = &Item::cashSpread;
 		meta["cashAmount"] = &Item::cashBillAmount;
@@ -604,7 +604,8 @@ void luaInit(bool redo) {
 		meta["physicsSettled"] =
 		    sol::property(&Item::getPhysicsSettled, &Item::setPhysicsSettled);
 		meta["isStatic"] = sol::property(&Item::getIsStatic, &Item::setIsStatic);
-		meta["isInPocket"] = sol::property(&Item::getIsInPocket, &Item::setIsInPocket);
+		meta["isInPocket"] =
+		    sol::property(&Item::getIsInPocket, &Item::setIsInPocket);
 		meta["type"] = sol::property(&Item::getType, &Item::setType);
 		meta["rigidBody"] = sol::property(&Item::getRigidBody);
 		meta["connectedPhone"] =

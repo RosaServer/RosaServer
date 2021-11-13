@@ -7,7 +7,6 @@
 
 #include "console.h"
 
-
 bool initialized = false;
 bool shouldReset = false;
 
@@ -1630,7 +1629,7 @@ Item* Item::getParentItem() const {
 RigidBody* Item::getRigidBody() const { return &Engine::bodies[bodyID]; }
 
 Item* Item::getChildItem(unsigned int idx) const {
-	if (idx >= childItemCount) throw std::invalid_argument(errorOutOfRange);
+	if (idx >= numChildItems) throw std::invalid_argument(errorOutOfRange);
 
 	return &Engine::items[childItemIDs[idx]];
 }

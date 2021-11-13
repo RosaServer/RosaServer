@@ -588,7 +588,7 @@ struct Item {
 	int parentItemID;         // 28
 	int parentSlot;           // 2c
 	int isInPocket;           // 30
-	int childItemCount;       // 34
+	int numChildItems;        // 34
 	int childItemIDs[4];      // 38
 	padding unk1[0x58 - 0x38 - 16];
 	int bodyID;     // 58
