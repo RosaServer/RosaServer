@@ -587,7 +587,10 @@ struct Item {
 	int parentHumanID;        // 24
 	int parentItemID;         // 28
 	int parentSlot;           // 2c
-	padding unk1[0x58 - 0x2c - 4];
+	int isInPocket;           // 30
+	int childItemCount;       // 34
+	int childItemIDs[4];      // 38
+	padding unk1[0x58 - 0x38 - 16];
 	int bodyID;     // 58
 	Vector pos;     // 5c
 	Vector pos2;    // 68
@@ -638,6 +641,8 @@ struct Item {
 	void setPhysicsSettled(bool b) { physicsSettled = b; }
 	bool getIsStatic() const { return isStatic; }
 	void setIsStatic(bool b) { isStatic = b; }
+	bool getIsInPocket() const { return isInPocket; }
+	void setIsInPocket(bool b) { isInPocket = b; }
 	ItemType* getType();
 	void setType(ItemType* itemType);
 
@@ -647,6 +652,7 @@ struct Item {
 	Human* getParentHuman() const;
 	Item* getParentItem() const;
 	RigidBody* getRigidBody() const;
+	Item* getChildItem(unsigned int idx) const;
 	Item* getConnectedPhone() const;
 	void setConnectedPhone(Item* item);
 	Vehicle* getVehicle() const;
