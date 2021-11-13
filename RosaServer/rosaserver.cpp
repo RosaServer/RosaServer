@@ -1,4 +1,4 @@
-﻿#include "rosaserver.h"
+#include "rosaserver.h"
 
 #include <cxxabi.h>
 #include <execinfo.h>
@@ -326,6 +326,8 @@ void luaInit(bool redo) {
 		                                           &Server::setRoundHasBonusRatio);
 		meta["roundTeamDamage"] =
 		    sol::property(&Server::getRoundTeamDamage, &Server::setRoundTeamDamage);
+		meta["roundWeekDay"] =
+		    sol::property(&Server::getRoundWeekDay, &Server::setRoundWeekDay);
 
 		meta["type"] = sol::property(&Server::getType, &Server::setType);
 		meta["levelToLoad"] =
@@ -1298,6 +1300,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::Round::roundTime = (int*)(base + 0x44f855cc);
 	Engine::Round::startCash = (int*)(base + 0x44f855d0);
 	Engine::Round::weekly = (bool*)(base + 0x44f855d4);
+	Engine::Round::weekDay = (int*)(base + 0x44ecace4);
 	Engine::Round::bonusRatio = (bool*)(base + 0x44f855d8);
 	Engine::Round::teamDamage = (int*)(base + 0x44f855dc);
 
