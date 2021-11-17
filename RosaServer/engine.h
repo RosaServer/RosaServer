@@ -258,8 +258,6 @@ extern createEventMessageFunc createEventMessage;
 extern voidIndexFunc createEventUpdatePlayer;
 // Sends money, stocks, phoneNumber
 extern voidIndexFunc createEventUpdatePlayerFinance;
-// Sends active, type, parentHumanID, parentItemID, parentSlot
-extern voidIndexFunc createevent_updateitem;
 // Sends type, color
 extern voidIndexFunc createEventCreateVehicle;
 /*
