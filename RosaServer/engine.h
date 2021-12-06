@@ -191,16 +191,6 @@ typedef void (*playerGiveWantedLevelFunc)(int playerID, int victimPlayerID,
                                           int basePoints);
 extern playerGiveWantedLevelFunc playerGiveWantedLevel;
 
-typedef int (*createBondRigidBodyToRigidBodyFunc)(int aBodyID, int bBodyID,
-                                                  Vector* aLocalPos,
-                                                  Vector* bLocalPos);
-extern createBondRigidBodyToRigidBodyFunc createBondRigidBodyToRigidBody;
-typedef int (*createBondRigidBodyRotRigidBodyFunc)(int aBodyID, int bBodyID);
-extern createBondRigidBodyRotRigidBodyFunc createBondRigidBodyRotRigidBody;
-typedef int (*createBondRigidBodyToLevelFunc)(int bodyID, Vector* localPos,
-                                              Vector* globalPos);
-extern createBondRigidBodyToLevelFunc createBondRigidBodyToLevel;
-
 typedef void (*addCollisionRigidBodyOnRigidBodyFunc)(int aBodyID, int bBodyID,
                                                      Vector* aLocalPos,
                                                      Vector* bLocalPos,
@@ -216,6 +206,17 @@ extern addCollisionRigidBodyOnLevelFunc addCollisionRigidBodyOnLevel;
 /*
   Object Handling
 */
+
+typedef int (*createBondRigidBodyToRigidBodyFunc)(int aBodyID, int bBodyID,
+                                                  Vector* aLocalPos,
+                                                  Vector* bLocalPos);
+extern createBondRigidBodyToRigidBodyFunc createBondRigidBodyToRigidBody;
+typedef int (*createBondRigidBodyRotRigidBodyFunc)(int aBodyID, int bBodyID);
+extern createBondRigidBodyRotRigidBodyFunc createBondRigidBodyRotRigidBody;
+typedef int (*createBondRigidBodyToLevelFunc)(int bodyID, Vector* localPos,
+                                              Vector* globalPos);
+extern createBondRigidBodyToLevelFunc createBondRigidBodyToLevel;
+extern voidIndexFunc deleteBond;
 
 typedef int (*createBulletFunc)(int type, Vector* pos, Vector* vel,
                                 int playerID);
@@ -241,8 +242,6 @@ typedef int (*createVehicleFunc)(int type, Vector* pos, Vector* vel,
                                  RotMatrix* rot, int color);
 extern createVehicleFunc createVehicle;
 extern voidIndexFunc deleteVehicle;
-
-extern voidIndexFunc deleteBond;
 
 typedef int (*createRigidBodyFunc)(int type, Vector* pos, RotMatrix* rot,
                                    Vector* vel, Vector* scale, float mass);

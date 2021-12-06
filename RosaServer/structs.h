@@ -833,7 +833,7 @@ struct Bond {
 	const char* getClass() const { return "Bond"; }
 	std::string __tostring() const;
 	int getIndex() const;
-  void remove() const;
+	void remove() const;
 	bool getIsActive() const { return active; }
 	void setIsActive(bool b) { active = b; }
 	RigidBody* getBody() const;
