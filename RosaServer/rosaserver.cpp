@@ -756,6 +756,7 @@ void luaInit(bool redo) {
 		meta["isActive"] = sol::property(&Bond::getIsActive, &Bond::setIsActive);
 		meta["body"] = sol::property(&Bond::getBody);
 		meta["otherBody"] = sol::property(&Bond::getOtherBody);
+		meta["remove"] = &Bond::remove;
 	}
 
 	{
@@ -1433,6 +1434,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::createRope = (Engine::createRopeFunc)(base + 0x78b70);
 	Engine::createVehicle = (Engine::createVehicleFunc)(base + 0x7cf20);
 	Engine::deleteVehicle = (Engine::voidIndexFunc)(base + 0x7150);
+  Engine::deleteBond = (Engine::voidIndexFunc)(base + 0x5550);
 	Engine::createRigidBody = (Engine::createRigidBodyFunc)(base + 0x76940);
 
 	Engine::createEventMessage = (Engine::createEventMessageFunc)(base + 0x58a0);

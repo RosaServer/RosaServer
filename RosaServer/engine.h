@@ -242,6 +242,8 @@ typedef int (*createVehicleFunc)(int type, Vector* pos, Vector* vel,
 extern createVehicleFunc createVehicle;
 extern voidIndexFunc deleteVehicle;
 
+extern voidIndexFunc deleteBond;
+
 typedef int (*createRigidBodyFunc)(int type, Vector* pos, RotMatrix* rot,
                                    Vector* vel, Vector* scale, float mass);
 extern createRigidBodyFunc createRigidBody;

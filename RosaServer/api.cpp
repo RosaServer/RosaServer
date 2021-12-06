@@ -1881,6 +1881,11 @@ RigidBody* Bond::getBody() const { return &Engine::bodies[bodyID]; }
 
 RigidBody* Bond::getOtherBody() const { return &Engine::bodies[otherBodyID]; }
 
+void Bond::remove() const {
+	int index = getIndex();
+	Engine::deleteBond(index);
+}
+
 std::string Street::__tostring() const {
 	char buf[16];
 	sprintf(buf, "Street(%i)", getIndex());

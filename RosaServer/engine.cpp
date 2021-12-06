@@ -151,6 +151,7 @@ createRopeFunc createRope;
 createVehicleFunc createVehicle;
 voidIndexFunc deleteVehicle;
 createRigidBodyFunc createRigidBody;
+voidIndexFunc deleteBond;
 
 createEventMessageFunc createEventMessage;
 voidIndexFunc createEventUpdatePlayer;
