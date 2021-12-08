@@ -45,6 +45,7 @@ int* startCash;
 bool* weekly;
 bool* bonusRatio;
 int* teamDamage;
+int* weekDay;
 };  // namespace Round
 
 int* isLevelLoaded;
