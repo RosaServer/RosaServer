@@ -158,6 +158,27 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["query"] = &SQLite::query;
 	}
 
+	{
+		auto meta = state->new_usertype<TCPServer>(
+		    "TCPServer", sol::constructors<TCPServer(unsigned short)>());
+		meta["close"] = &TCPServer::close;
+		meta["accept"] = &TCPServer::accept;
+
+		meta["isOpen"] = sol::property(&TCPServer::isOpen);
+	}
+
+	{
+		auto meta =
+		    state->new_usertype<TCPServerConnection>("new", sol::no_constructor);
+		meta["close"] = &TCPServerConnection::close;
+		meta["send"] = &TCPServerConnection::send;
+		meta["receive"] = &TCPServerConnection::receive;
+
+		meta["isOpen"] = sol::property(&TCPServerConnection::isOpen);
+		meta["port"] = sol::property(&TCPServerConnection::getPort);
+		meta["address"] = sol::property(&TCPServerConnection::getAddress);
+	}
+
 	(*state)["print"] = Lua::print;
 
 	(*state)["Vector"] = sol::overload(Lua::Vector_, Lua::Vector_3f);
@@ -326,6 +347,8 @@ void luaInit(bool redo) {
 		                                           &Server::setRoundHasBonusRatio);
 		meta["roundTeamDamage"] =
 		    sol::property(&Server::getRoundTeamDamage, &Server::setRoundTeamDamage);
+		meta["roundWeekDay"] =
+		    sol::property(&Server::getRoundWeekDay, &Server::setRoundWeekDay);
 
 		meta["type"] = sol::property(&Server::getType, &Server::setType);
 		meta["levelToLoad"] =
@@ -757,6 +780,7 @@ void luaInit(bool redo) {
 		meta["isActive"] = sol::property(&Bond::getIsActive, &Bond::setIsActive);
 		meta["body"] = sol::property(&Bond::getBody);
 		meta["otherBody"] = sol::property(&Bond::getOtherBody);
+
 		meta["remove"] = &Bond::remove;
 	}
 
@@ -1304,6 +1328,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::Round::roundTime = (int*)(base + 0x44f855cc);
 	Engine::Round::startCash = (int*)(base + 0x44f855d0);
 	Engine::Round::weekly = (bool*)(base + 0x44f855d4);
+	Engine::Round::weekDay = (int*)(base + 0x44ecace4);
 	Engine::Round::bonusRatio = (bool*)(base + 0x44f855d8);
 	Engine::Round::teamDamage = (int*)(base + 0x44f855dc);
 
@@ -1435,7 +1460,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::createRope = (Engine::createRopeFunc)(base + 0x78b70);
 	Engine::createVehicle = (Engine::createVehicleFunc)(base + 0x7cf20);
 	Engine::deleteVehicle = (Engine::voidIndexFunc)(base + 0x7150);
-  Engine::deleteBond = (Engine::voidIndexFunc)(base + 0x5550);
+	Engine::deleteBond = (Engine::voidIndexFunc)(base + 0x5550);
 	Engine::createRigidBody = (Engine::createRigidBodyFunc)(base + 0x76940);
 
 	Engine::createEventMessage = (Engine::createEventMessageFunc)(base + 0x58a0);

@@ -58,6 +58,7 @@ add_library (rosaserver SHARED
 	pointgraph.cpp
 	rosaserver.cpp
 	sqlite.cpp
+	tcpserver.cpp
 	worker.cpp
 	zlib.cpp
 	../subhook/subhook.c

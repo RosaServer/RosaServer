@@ -45,6 +45,7 @@ int* startCash;
 bool* weekly;
 bool* bonusRatio;
 int* teamDamage;
+int* weekDay;
 };  // namespace Round
 
 int* isLevelLoaded;
@@ -134,12 +135,13 @@ voidIndexFunc playerAI;
 voidIndexFunc playerDeathTax;
 voidIndexFunc accountDeathTax;
 playerGiveWantedLevelFunc playerGiveWantedLevel;
-createBondRigidBodyToRigidBodyFunc createBondRigidBodyToRigidBody;
-createBondRigidBodyRotRigidBodyFunc createBondRigidBodyRotRigidBody;
-createBondRigidBodyToLevelFunc createBondRigidBodyToLevel;
 addCollisionRigidBodyOnRigidBodyFunc addCollisionRigidBodyOnRigidBody;
 addCollisionRigidBodyOnLevelFunc addCollisionRigidBodyOnLevel;
 
+createBondRigidBodyToRigidBodyFunc createBondRigidBodyToRigidBody;
+createBondRigidBodyRotRigidBodyFunc createBondRigidBodyRotRigidBody;
+createBondRigidBodyToLevelFunc createBondRigidBodyToLevel;
+voidIndexFunc deleteBond;
 createBulletFunc createBullet;
 createPlayerFunc createPlayer;
 voidIndexFunc deletePlayer;
@@ -151,7 +153,6 @@ createRopeFunc createRope;
 createVehicleFunc createVehicle;
 voidIndexFunc deleteVehicle;
 createRigidBodyFunc createRigidBody;
-voidIndexFunc deleteBond;
 
 createEventMessageFunc createEventMessage;
 voidIndexFunc createEventUpdateItemInfo;
