@@ -1552,6 +1552,11 @@ void createEventMessage(int speakerType, char* message, int speakerID,
 }
 
 void createEventUpdateItemInfo(int id) {
+	// Stop a segfault from pressing a number on the phone caused by the hook overwriting the
+	// r8 register used at subrosadedicated.38e.x64+bc1b0
+	uintptr_t r8;
+	asm("mov %%r8, %0" : "=r"(r8) :);
+
 	if (enabledKeys[EnableKeys::EventUpdateItemInfo]) {
 		bool noParent = false;
 		if (run != sol::nil) {
@@ -1572,6 +1577,8 @@ void createEventUpdateItemInfo(int id) {
 		subhook::ScopedHookRemove remove(&createEventUpdateItemInfoHook);
 		Engine::createEventUpdateItemInfo(id);
 	}
+	
+	asm("mov %0, %%r8" : : "r"(r8));
 }
 
 void createEventUpdatePlayer(int id) {
