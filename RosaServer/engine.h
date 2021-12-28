@@ -255,6 +255,8 @@ extern createRigidBodyFunc createRigidBody;
 typedef void (*createEventMessageFunc)(int type, char* message, int speakerID,
                                        int distance);
 extern createEventMessageFunc createEventMessage;
+// Sends phoneTexture, displayedPhoneNumber
+extern voidIndexFunc createEventUpdateItemInfo;
 // Sends team, active, isBot, humanID, skinColor, hair, gender, head, necklace,
 // eyeColor, tieColor, suitColor, shirtColor, hairColor, name
 extern voidIndexFunc createEventUpdatePlayer;

@@ -60,6 +60,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"VehicleCreate", EnableKeys::VehicleCreate},
      {"VehicleDelete", EnableKeys::VehicleDelete},
      {"EventMessage", EnableKeys::EventMessage},
+     {"EventUpdateItemInfo", EnableKeys::EventUpdateItemInfo},
      {"EventUpdatePlayer", EnableKeys::EventUpdatePlayer},
      {"EventUpdateVehicle", EnableKeys::EventUpdateVehicle},
      {"EventSound", EnableKeys::EventSound},
@@ -120,6 +121,7 @@ subhook::Hook createVehicleHook;
 subhook::Hook deleteVehicleHook;
 subhook::Hook createRigidBodyHook;
 subhook::Hook createEventMessageHook;
+subhook::Hook createEventUpdateItemInfoHook;
 subhook::Hook createEventUpdatePlayerHook;
 subhook::Hook createEventUpdateVehicleHook;
 subhook::Hook createEventSoundHook;
@@ -1547,6 +1549,36 @@ void createEventMessage(int speakerType, char* message, int speakerID,
 		subhook::ScopedHookRemove remove(&createEventMessageHook);
 		Engine::createEventMessage(speakerType, message, speakerID, distance);
 	}
+}
+
+void createEventUpdateItemInfo(int id) {
+	// Stop a segfault from pressing a number on the phone caused by the hook overwriting the
+	// r8 register used at subrosadedicated.38e.x64+bc1b0
+	uintptr_t r8;
+	asm("mov %%r8, %0" : "=r"(r8) :);
+
+	if (enabledKeys[EnableKeys::EventUpdateItemInfo]) {
+		bool noParent = false;
+		if (run != sol::nil) {
+			auto res = run("EventUpdateItemInfo", &Engine::items[id]);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&createEventUpdateItemInfoHook);
+				Engine::createEventUpdateItemInfo(id);
+			}
+			if (run != sol::nil) {
+				auto res = run("PostEventUpdateItemInfo", &Engine::items[id]);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&createEventUpdateItemInfoHook);
+		Engine::createEventUpdateItemInfo(id);
+	}
+	
+	asm("mov %0, %%r8" : : "r"(r8));
 }
 
 void createEventUpdatePlayer(int id) {

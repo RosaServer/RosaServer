@@ -636,11 +636,12 @@ void luaInit(bool redo) {
 		meta["vehicle"] = sol::property(&Item::getVehicle, &Item::setVehicle);
 		meta["grenadePrimer"] =
 		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
-		meta["parentHuman"] = sol::property(&Item::getParentHuman);
-		meta["parentItem"] = sol::property(&Item::getParentItem);
+		meta["parentHuman"] = sol::property(&Item::getParentHuman, &Item::setParentHuman);
+		meta["parentItem"] = sol::property(&Item::getParentItem, &Item::setParentItem);
 		meta["getChildItem"] = &Item::getChildItem;
 
 		meta["remove"] = &Item::remove;
+		meta["update"] = &Item::update;
 		meta["mountItem"] = &Item::mountItem;
 		meta["unmount"] = &Item::unmount;
 		meta["speak"] = &Item::speak;
@@ -1463,6 +1464,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::createRigidBody = (Engine::createRigidBodyFunc)(base + 0x76940);
 
 	Engine::createEventMessage = (Engine::createEventMessageFunc)(base + 0x58a0);
+	Engine::createEventUpdateItemInfo = (Engine::voidIndexFunc)(base + 0x5b20);
 	Engine::createEventUpdatePlayer = (Engine::voidIndexFunc)(base + 0x5ba0);
 	Engine::createEventUpdatePlayerFinance =
 	    (Engine::voidIndexFunc)(base + 0x5cc0);
@@ -1552,6 +1554,7 @@ static inline void installHooks() {
 	INSTALL(deleteVehicle);
 	INSTALL(createRigidBody);
 	INSTALL(createEventMessage);
+	INSTALL(createEventUpdateItemInfo);
 	INSTALL(createEventUpdatePlayer);
 	INSTALL(createEventUpdateVehicle);
 	INSTALL(createEventSound);

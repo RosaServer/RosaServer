@@ -155,6 +155,7 @@ voidIndexFunc deleteVehicle;
 createRigidBodyFunc createRigidBody;
 
 createEventMessageFunc createEventMessage;
+voidIndexFunc createEventUpdateItemInfo;
 voidIndexFunc createEventUpdatePlayer;
 voidIndexFunc createEventUpdatePlayerFinance;
 voidIndexFunc createEventCreateVehicle;

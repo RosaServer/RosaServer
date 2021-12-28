@@ -650,7 +650,9 @@ struct Item {
 	Player* getGrenadePrimer() const;
 	void setGrenadePrimer(Player* player);
 	Human* getParentHuman() const;
+	void setParentHuman(Human* human);
 	Item* getParentItem() const;
+	void setParentItem(Item* item);
 	RigidBody* getRigidBody() const;
 	Item* getChildItem(unsigned int idx) const;
 	Item* getConnectedPhone() const;
@@ -659,6 +661,7 @@ struct Item {
 	void setVehicle(Vehicle* vehicle);
 	bool mountItem(Item* childItem, unsigned int slot) const;
 	bool unmount() const;
+	Event* update() const;
 	void speak(const char* message, int distance) const;
 	void explode() const;
 	void setMemo(const char* memo) const;

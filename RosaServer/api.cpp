@@ -1622,8 +1622,16 @@ Human* Item::getParentHuman() const {
 	return parentHumanID == -1 ? nullptr : &Engine::humans[parentHumanID];
 }
 
+void Item::setParentHuman(Human* human) {
+	parentHumanID = human == nullptr ? -1 : human->getIndex();
+}
+
 Item* Item::getParentItem() const {
 	return parentItemID == -1 ? nullptr : &Engine::items[parentItemID];
+}
+
+void Item::setParentItem(Item* item) {
+	parentItemID = item == nullptr ? -1 : item->getIndex();
 }
 
 RigidBody* Item::getRigidBody() const { return &Engine::bodies[bodyID]; }
@@ -1658,6 +1666,12 @@ bool Item::mountItem(Item* childItem, unsigned int slot) const {
 bool Item::unmount() const {
 	subhook::ScopedHookRemove remove(&Hooks::linkItemHook);
 	return Engine::linkItem(getIndex(), -1, -1, 0);
+}
+
+Event* Item::update() const {
+	subhook::ScopedHookRemove remove(&Hooks::createEventUpdateItemInfoHook);
+	Engine::createEventUpdateItemInfo(getIndex());
+	return &Engine::events[*Engine::numEvents - 1];
 }
 
 void Item::speak(const char* message, int distance) const {
