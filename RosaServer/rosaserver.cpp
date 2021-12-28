@@ -158,6 +158,27 @@ void defineThreadSafeAPIs(sol::state* state) {
 		meta["query"] = &SQLite::query;
 	}
 
+	{
+		auto meta = state->new_usertype<TCPServer>(
+		    "TCPServer", sol::constructors<TCPServer(unsigned short)>());
+		meta["close"] = &TCPServer::close;
+		meta["accept"] = &TCPServer::accept;
+
+		meta["isOpen"] = sol::property(&TCPServer::isOpen);
+	}
+
+	{
+		auto meta =
+		    state->new_usertype<TCPServerConnection>("new", sol::no_constructor);
+		meta["close"] = &TCPServerConnection::close;
+		meta["send"] = &TCPServerConnection::send;
+		meta["receive"] = &TCPServerConnection::receive;
+
+		meta["isOpen"] = sol::property(&TCPServerConnection::isOpen);
+		meta["port"] = sol::property(&TCPServerConnection::getPort);
+		meta["address"] = sol::property(&TCPServerConnection::getAddress);
+	}
+
 	(*state)["print"] = Lua::print;
 
 	(*state)["Vector"] = sol::overload(Lua::Vector_, Lua::Vector_3f);
