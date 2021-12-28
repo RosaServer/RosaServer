@@ -63,6 +63,7 @@ enum EnableKeys {
 	VehicleCreate,
 	VehicleDelete,
 	EventMessage,
+	EventUpdateItemInfo,
 	EventUpdatePlayer,
 	EventUpdateVehicle,
 	EventSound,
@@ -203,6 +204,8 @@ void addCollisionRigidBodyOnRigidBody(int aBodyID, int bBodyID,
 extern subhook::Hook createEventMessageHook;
 void createEventMessage(int speakerType, char* message, int speakerID,
                         int distance);
+extern subhook::Hook createEventUpdateItemInfoHook;
+void createEventUpdateItemInfo(int id);
 extern subhook::Hook createEventUpdatePlayerHook;
 void createEventUpdatePlayer(int id);
 extern subhook::Hook createEventUpdateVehicleHook;

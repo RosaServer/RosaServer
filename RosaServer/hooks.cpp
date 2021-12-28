@@ -60,6 +60,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"VehicleCreate", EnableKeys::VehicleCreate},
      {"VehicleDelete", EnableKeys::VehicleDelete},
      {"EventMessage", EnableKeys::EventMessage},
+     {"EventUpdateItemInfo", EnableKeys::EventUpdateItemInfo},
      {"EventUpdatePlayer", EnableKeys::EventUpdatePlayer},
      {"EventUpdateVehicle", EnableKeys::EventUpdateVehicle},
      {"EventSound", EnableKeys::EventSound},
@@ -120,6 +121,7 @@ subhook::Hook createVehicleHook;
 subhook::Hook deleteVehicleHook;
 subhook::Hook createRigidBodyHook;
 subhook::Hook createEventMessageHook;
+subhook::Hook createEventUpdateItemInfoHook;
 subhook::Hook createEventUpdatePlayerHook;
 subhook::Hook createEventUpdateVehicleHook;
 subhook::Hook createEventSoundHook;
@@ -1546,6 +1548,29 @@ void createEventMessage(int speakerType, char* message, int speakerID,
 	} else {
 		subhook::ScopedHookRemove remove(&createEventMessageHook);
 		Engine::createEventMessage(speakerType, message, speakerID, distance);
+	}
+}
+
+void createEventUpdateItemInfo(int id) {
+	if (enabledKeys[EnableKeys::EventUpdateItemInfo]) {
+		bool noParent = false;
+		if (run != sol::nil) {
+			auto res = run("EventUpdateItemInfo", &Engine::items[id]);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&createEventUpdateItemInfoHook);
+				Engine::createEventUpdateItemInfo(id);
+			}
+			if (run != sol::nil) {
+				auto res = run("PostEventUpdateItemInfo", &Engine::items[id]);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&createEventUpdateItemInfoHook);
+		Engine::createEventUpdateItemInfo(id);
 	}
 }
 

@@ -154,6 +154,7 @@ createRigidBodyFunc createRigidBody;
 voidIndexFunc deleteBond;
 
 createEventMessageFunc createEventMessage;
+voidIndexFunc createEventUpdateItemInfo;
 voidIndexFunc createEventUpdatePlayer;
 voidIndexFunc createEventUpdatePlayerFinance;
 voidIndexFunc createEventCreateVehicle;
