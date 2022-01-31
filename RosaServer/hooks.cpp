@@ -1,4 +1,5 @@
 #include "hooks.h"
+
 #include "api.h"
 #include "console.h"
 
@@ -44,6 +45,7 @@ const std::unordered_map<std::string, EnableKeys> enableNames(
      {"HumanCollisionVehicle", EnableKeys::HumanCollisionVehicle},
      {"HumanLimbInverseKinematics", EnableKeys::HumanLimbInverseKinematics},
      {"GrenadeExplode", EnableKeys::GrenadeExplode},
+     {"VehicleDamage", EnableKeys::VehicleDamage},
      {"PlayerChat", EnableKeys::PlayerChat},
      {"PlayerAI", EnableKeys::PlayerAI},
      {"PlayerDeathTax", EnableKeys::PlayerDeathTax},
@@ -104,6 +106,7 @@ subhook::Hook humanApplyDamageHook;
 subhook::Hook humanCollisionVehicleHook;
 subhook::Hook humanLimbInverseKinematicsHook;
 subhook::Hook grenadeExplosionHook;
+subhook::Hook vehicleApplyDamageHook;
 subhook::Hook serverPlayerMessageHook;
 subhook::Hook playerAIHook;
 subhook::Hook playerDeathTaxHook;
@@ -1376,6 +1379,30 @@ void grenadeExplosion(int itemID) {
 	}
 }
 
+void vehicleApplyDamage(int vehicleID, int damage) {
+	if (enabledKeys[EnableKeys::VehicleDamage]) {
+		bool noParent = false;
+		if (run != sol::nil) {
+			auto res = run("VehicleDamage", &Engine::vehicles[vehicleID], damage);
+			if (noLuaCallError(&res)) noParent = (bool)res;
+		}
+		if (!noParent) {
+			{
+				subhook::ScopedHookRemove remove(&vehicleApplyDamageHook);
+				Engine::vehicleApplyDamage(vehicleID, damage);
+			}
+			if (run != sol::nil) {
+				auto res =
+				    run("PostVehicleDamage", &Engine::vehicles[vehicleID], damage);
+				noLuaCallError(&res);
+			}
+		}
+	} else {
+		subhook::ScopedHookRemove remove(&vehicleApplyDamageHook);
+		Engine::vehicleApplyDamage(vehicleID, damage);
+	}
+}
+
 int serverPlayerMessage(int playerID, char* message) {
 	if (enabledKeys[EnableKeys::PlayerChat]) {
 		bool noParent = false;
@@ -1552,8 +1579,8 @@ void createEventMessage(int speakerType, char* message, int speakerID,
 }
 
 void createEventUpdateItemInfo(int id) {
-	// Stop a segfault from pressing a number on the phone caused by the hook overwriting the
-	// r8 register used at subrosadedicated.38e.x64+bc1b0
+	// Stop a segfault from pressing a number on the phone caused by the hook
+	// overwriting the r8 register used at subrosadedicated.38e.x64+bc1b0
 	uintptr_t r8;
 	asm("mov %%r8, %0" : "=r"(r8) :);
 
@@ -1577,7 +1604,7 @@ void createEventUpdateItemInfo(int id) {
 		subhook::ScopedHookRemove remove(&createEventUpdateItemInfoHook);
 		Engine::createEventUpdateItemInfo(id);
 	}
-	
+
 	asm("mov %0, %%r8" : : "r"(r8));
 }
 

@@ -182,6 +182,9 @@ extern humanLimbInverseKinematicsFunc humanLimbInverseKinematics;
 
 extern voidIndexFunc grenadeExplosion;
 
+typedef void (*vehicleApplyDamageFunc)(int vehicleID, int damage);
+extern vehicleApplyDamageFunc vehicleApplyDamage;
+
 typedef int (*serverPlayerMessageFunc)(int playerID, char* message);
 extern serverPlayerMessageFunc serverPlayerMessage;
 extern voidIndexFunc playerAI;
