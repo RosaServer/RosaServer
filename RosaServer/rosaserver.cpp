@@ -472,6 +472,7 @@ void luaInit(bool redo) {
 		meta["name"] = sol::property(&Player::getName, &Player::setName);
 		meta["isAdmin"] = sol::property(&Player::getIsAdmin, &Player::setIsAdmin);
 		meta["isReady"] = sol::property(&Player::getIsReady, &Player::setIsReady);
+		meta["isGodMode"] = sol::property(&Player::getIsGodMode, &Player::setIsGodMode);
 		meta["isBot"] = sol::property(&Player::getIsBot, &Player::setIsBot);
 		meta["isZombie"] =
 		    sol::property(&Player::getIsZombie, &Player::setIsZombie);
