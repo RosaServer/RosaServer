@@ -246,7 +246,7 @@ struct Player {
 	int budget;           // 54
 	int corporateRating;  // 58
 	int criminalRating;   // 5c
-	int isGodmode	// 60
+	int isGodMode	// 60
 	padding unk5[0x84 - 0x60 - 4];
 	unsigned int team;             // 84
 	unsigned int teamSwitchTimer;  // 88
