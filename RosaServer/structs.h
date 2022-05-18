@@ -246,7 +246,11 @@ struct Player {
 	int budget;           // 54
 	int corporateRating;  // 58
 	int criminalRating;   // 5c
-	padding unk5[0x84 - 0x5c - 4];
+	int isGodMode;	      // 60
+	int unk3;
+	// for buy limit
+	int itemsBought;	      // 68
+	padding unk5[0x84 - 0x68 - 4];
 	unsigned int team;             // 84
 	unsigned int teamSwitchTimer;  // 88
 	int stocks;                    // 8c
@@ -320,6 +324,8 @@ struct Player {
 	void setIsAdmin(bool b) { isAdmin = b; }
 	bool getIsReady() const { return isReady; }
 	void setIsReady(bool b) { isReady = b; }
+	bool getIsGodMode() const { return isGodMode; }
+	void setIsGodMode(bool b) { isGodMode = b; }
 	bool getIsBot() const { return isBot; }
 	void setIsBot(bool b) { isBot = b; }
 	bool getIsZombie() const { return isZombie; }
