@@ -1,9 +1,9 @@
 #pragma once
-#include "structs.h"
-#include "subhook.h"
-
 #include <set>
 #include <unordered_map>
+
+#include "structs.h"
+#include "subhook.h"
 
 namespace Hooks {
 extern sol::protected_function run;
@@ -47,6 +47,7 @@ enum EnableKeys {
 	HumanCollisionVehicle,
 	HumanLimbInverseKinematics,
 	GrenadeExplode,
+	VehicleDamage,
 	PlayerChat,
 	PlayerAI,
 	PlayerDeathTax,
@@ -184,6 +185,8 @@ void humanLimbInverseKinematics(int, int, int, Vector*, RotMatrix*, Vector*,
                                 Vector*, Vector*, Vector*, char);
 extern subhook::Hook grenadeExplosionHook;
 void grenadeExplosion(int itemID);
+extern subhook::Hook vehicleApplyDamageHook;
+void vehicleApplyDamage(int vehicleID, int damage);
 extern subhook::Hook serverPlayerMessageHook;
 int serverPlayerMessage(int playerID, char* message);
 extern subhook::Hook playerAIHook;

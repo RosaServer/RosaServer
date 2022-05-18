@@ -1,4 +1,4 @@
-﻿#include "rosaserver.h"
+#include "rosaserver.h"
 
 #include <cxxabi.h>
 #include <execinfo.h>
@@ -638,8 +638,10 @@ void luaInit(bool redo) {
 		meta["vehicle"] = sol::property(&Item::getVehicle, &Item::setVehicle);
 		meta["grenadePrimer"] =
 		    sol::property(&Item::getGrenadePrimer, &Item::setGrenadePrimer);
-		meta["parentHuman"] = sol::property(&Item::getParentHuman, &Item::setParentHuman);
-		meta["parentItem"] = sol::property(&Item::getParentItem, &Item::setParentItem);
+		meta["parentHuman"] =
+		    sol::property(&Item::getParentHuman, &Item::setParentHuman);
+		meta["parentItem"] =
+		    sol::property(&Item::getParentItem, &Item::setParentItem);
 		meta["getChildItem"] = &Item::getChildItem;
 
 		meta["remove"] = &Item::remove;
@@ -1434,6 +1436,7 @@ static inline void locateMemory(uintptr_t base) {
 	Engine::humanLimbInverseKinematics =
 	    (Engine::humanLimbInverseKinematicsFunc)(base + 0x718d0);
 	Engine::grenadeExplosion = (Engine::voidIndexFunc)(base + 0x43410);
+	Engine::vehicleApplyDamage = (Engine::vehicleApplyDamageFunc)(base + 0x5e850);
 	Engine::serverPlayerMessage =
 	    (Engine::serverPlayerMessageFunc)(base + 0xb9050);
 	Engine::playerAI = (Engine::voidIndexFunc)(base + 0x89a60);
@@ -1539,6 +1542,7 @@ static inline void installHooks() {
 	INSTALL(humanCollisionVehicle);
 	INSTALL(humanLimbInverseKinematics);
 	INSTALL(grenadeExplosion);
+	INSTALL(vehicleApplyDamage);
 	INSTALL(serverPlayerMessage);
 	INSTALL(playerAI);
 	INSTALL(playerDeathTax);

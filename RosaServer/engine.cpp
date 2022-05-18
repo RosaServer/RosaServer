@@ -130,6 +130,7 @@ humanApplyDamageFunc humanApplyDamage;
 humanCollisionVehicleFunc humanCollisionVehicle;
 humanLimbInverseKinematicsFunc humanLimbInverseKinematics;
 voidIndexFunc grenadeExplosion;
+vehicleApplyDamageFunc vehicleApplyDamage;
 serverPlayerMessageFunc serverPlayerMessage;
 voidIndexFunc playerAI;
 voidIndexFunc playerDeathTax;
